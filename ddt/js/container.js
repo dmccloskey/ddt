@@ -1,3 +1,96 @@
+var d3_data = function () {
+    //data function
+    this.keys = []; // list of columns that can be applied as nest keys and filters
+    this.nestkey = ''; // key to apply to nest
+    this.filters = {}; // {key1:[string1,string2,...],...}
+    this.listdata = []; // data in database table form (must contain a column "_used");
+    this.listdatafiltered = []; // data in database table form
+    this.nestdatafiltered = []; // data in nested form
+};
+d3_data.prototype.convert_list2nestlist = function (data_I,key_I) {
+    // convert a list of objects to a d3 nest by a key
+    var nesteddata_O = d3.nest()
+        .key(function (d) { return d[key_I]; })
+        //.rollup()
+        .entries(data_I);
+    return nesteddata_O;
+};
+d3_data.prototype.convert_list2nestmap = function (data_I,key_I) {
+    // convert a list of objects to a d3 nest by a key
+    var nesteddata_O = d3.nest()
+        .key(function (d) { return d[key_I]; })
+        //.rollup()
+        .map(data_I);
+    return nesteddata_O;
+};
+d3_data.prototype.filter_stringdata = function () {
+    // apply filters to listdata
+
+    var listdatacopy = this.listdata;
+    var listdatafiltered_O = [];
+    
+    //set _used to false:
+    for (i = 0; i < listdatacopy.length; i++) {
+        listdatacopy[i]['used_'] = true;
+    };
+
+    //pass each row through the filter
+    for (i = 0; i < listdatacopy.length; i++) {
+        for (filter in this.filters) {
+            if (!listdatacopy[i][filter].match(this.filters[filter].join('|'))) {
+                listdatacopy[i]['used_'] = false;
+            };
+        };
+    };
+
+    // add in the filtered data
+    listdatacopy.forEach(function (d) {
+        if (d['used_']) {
+            listdatafiltered_O.push(d)
+        };
+    });
+
+    // re-make the nestdatafiltered
+    this.listdatafiltered = listdatafiltered_O;
+    this.nestdatafiltered = this.convert_list2nestlist(listdatafiltered_O,this.nestkey);
+};
+d3_data.prototype.set_listdata = function (listdata_I,nestkey_I) {
+    // set list data and initialize filtered data
+    this.nestkey = nestkey_I;
+    this.listdata = listdata_I;
+    this.listdatafiltered = listdata_I;
+    this.nestdatafiltered = this.convert_list2nestlist(listdata_I,this.nestkey);
+};
+d3_data.prototype.set_keys = function (keys_I) {
+    // add list data
+    this.keys = keys_I;
+};
+d3_data.prototype.reset_filters = function () {
+    // generate the initial filter
+
+    var filters = {};
+    for (key_cnt = 0; key_cnt < this.keys.length;key_cnt++) {
+        var colentries = d3.set();
+        for (i = 0; i < this.listdata.length; i++) {
+            colentries.add(this.listdata[i][this.keys[key_cnt]]);
+        };
+        filters[this.keys[key_cnt]] = colentries.values();
+    };
+    this.filters = filters;
+};
+d3_data.prototype.clear_data = function () {
+    // add list data
+    this.listdata = [];
+    this.listdatafiltered = [];
+    this.nestdatafiltered = [];
+};
+d3_data.prototype.change_filters = function (filter_I) {
+    // modify the filter according to the new filter
+    
+    for (key in filter_I) {
+        this.filters[key] = filter_I[key];
+    };
+};
 d3_tile = function () {
     // generic d3_tile element
     this.containerid = 'container'
@@ -227,14 +320,6 @@ d3_chart2d = function () {
     this.y1axis = null;
     this.y2axis = null;
     this.colorscale = null;
-    this.data1xdata = '';
-    this.data1ydata = '';
-    this.data1serieslabel = '';
-    this.data1featurelabel = '';
-    this.data2xdata = '';
-    this.data2ydata = '';
-    this.data2serieslabel = '';
-    this.data2featureslabel = '';
     this.data1 = null; //d3_data
     this.data2 = null; //d3_data
     this.clippath = null;
@@ -252,6 +337,7 @@ d3_chart2d = function () {
     this.legenddata1enter = null;
     this.render = null; // function defining the calls to make the chart
     this.filterdata1and2 = false;
+    this.keymap = {}; // mapping of keys to data element, chart elements, or other descriptor
 
 };
 d3_chart2d.prototype = Object.create(d3_svg.prototype);
@@ -274,17 +360,6 @@ d3_chart2d.prototype.add_chart2d2tile = function(){
         .attr("height", this.height + this.margin.top + this.margin.bottom);
 
     this.svgg = this.svgelement.select('g');
-
-    //this.svgelement = d3.select('#' + this.tileid).selectAll("svg");
-    //this.svgdata = this.svgelement.data([this.data1.listdatafiltered]);
-    //this.svgenter = this.svgdata.enter();
-    //this.svgsvg = this.svgenter
-    //    .append("svg").attr("id", this.id);
-    //this.svgg = this.svgsvg.append('g')
-    //    .attr("transform", "translate(" + this.margin.left + "," + this.margin.top + ")");
-    ////set the svgdata attribute after appending g
-    //this.svgdata.attr("width", this.width + this.margin.left + this.margin.right)
-    //    .attr("height", this.height + this.margin.top + this.margin.bottom);
 
 };
 d3_chart2d.prototype.add_title = function (title_I) {
@@ -358,39 +433,77 @@ d3_chart2d.prototype.add_data2 = function (data2_I) {
 };
 d3_chart2d.prototype.set_x1domain = function () {
     // set x1-domain of the plot
-    var x_data = this.data1xdata;
+    var x_data = this.data1keymap.xdata;
     var _this = this;
     this.x1scale.domain(d3.extent(_this.data1.listdatafiltered, function (d) { return d[x_data]; })).nice();
 };
 d3_chart2d.prototype.set_y1domain = function () {
     // set y1-domain of the plot
-    var y_data = this.data1ydata;
+    var y_data = this.data1keymap.ydata;
     var _this = this;
-    this.y1scale.domain(d3.extent(_this.data1.listdatafiltered, function (d) { return d[y_data]; })).nice();
+    var data1 = [];
+    // required to prevent error bars from being cutoff
+    if (this.data1keymap.ydatalb && this.data1keymap.ydataub){
+        _this.data1.listdatafiltered.forEach(function(d){
+            data1.push(d[y_data]);
+            data1.push(d[_this.data1keymap.ydatalb]);
+            data1.push(d[_this.data1keymap.ydatalb]);
+        })
+    } else{
+        _this.data1.listdatafiltered.forEach(function(d){
+            data1.push(d[y_data]);
+        })
+    };
+    //this.y1scale.domain(d3.extent(_this.data1.listdatafiltered, function (d) { return d[y_data]; })).nice();
+    this.y1scale.domain(d3.extent(data1)).nice();
 };
 d3_chart2d.prototype.set_x2domain = function () {
     // set x1-domain of the plot
-    var x_data = this.data2xdata;
+    var x_data = this.data2keymap.xdata;
     var _this = this;
     this.x2scale.domain(d3.extent(_this.data1.listdatafiltered, function (d) { return d[x_data]; })).nice();
 };
 d3_chart2d.prototype.set_y2domain = function () {
     // set y2-domain of the plot
-    var y_data = this.data2ydata;
+    var y_data = this.data2keymap.ydata;
     var _this = this;
-    this.x2scale.domain(d3.extent(_this.data2.listdatafiltered, function (d) { return d[y_data]; })).nice();
+    var data2 = [];
+    // required to prevent error bars from being cutoff
+    if (this.data2keymap.ydatalb && this.data2keymap.ydataub){
+        _this.data2.listdatafiltered.forEach(function(d){
+            data2.push(d[y_data]);
+            data2.push(d[_this.data2keymap.ydatalb]);
+            data2.push(d[_this.data2keymap.ydatalb]);
+        })
+    } else{
+        _this.data2.listdatafiltered.forEach(function(d){
+            data2.push(d[y_data]);
+        })
+    };
+    this.y2scale.domain(d3.extent(data2)).nice();
 };
-d3_chart2d.prototype.set_x1x2domain_barplot = function () {
-    // set x1-domain and x1-domain for a barplot
-    var series_label = this.series_label;
-    var nestdatafiltered = this.data1.nestdatafiltered;
-    this.x1scale.domain(_this.data1.nestdatafiltered.map(function (d) { return d.key; }));
-    var x1scale = this.x1scale;
+d3_chart2d.prototype.get_uniqueserieslabels = function (data_I,series_label_I){
+    // extract out unique series labels from listdatafiltered
+    var series_label = series_label_I;
     var series_labels_unique = d3.set();
-    this.data1.listdatafiltered.forEach(function(d){
+    data_I.forEach(function(d){
         series_labels_unique.add(d[series_label]);
         });
-    this.x2scale.domain(series_labels_unique.values()).rangeRoundBands([0,x1scale]);
+    return series_labels_unique.values();
+}
+d3_chart2d.prototype.set_x1x2domain_verticalbarsplot = function () {
+    // set x1-domain and x1-domain for a barplot
+    var series_label = this.data1keymap.serieslabel;
+    var nestdatafiltered = this.data1.nestdatafiltered;
+    var listdatafiltered = this.data1.listdatafiltered;
+    this.x1scale.domain(nestdatafiltered.map(function (d) { return d.key; }));
+    var x1scale = this.x1scale;
+    var series_labels_unique = this.get_uniqueserieslabels(listdatafiltered,series_label);
+//     var series_labels_unique = d3.set();
+//     this.data1.listdatafiltered.forEach(function(d){
+//         series_labels_unique.add(d[series_label]);
+//         });
+    this.x2scale.domain(series_labels_unique).rangeRoundBands([0,x1scale.rangeBand()]);
 };
 d3_chart2d.prototype.copy_x1scalestox2scales = function () {
     // copy x1 scale to x2scale
@@ -527,7 +640,7 @@ d3_chart2d.prototype.set_y2tickformat = function () {
 d3_chart2d.prototype.add_x1axisgridlines = function () {
     //x axis grid lines properties
     //TODO:
-    var y_data = this.data1ydata;
+    var y_data = this.data1keymap.ydata;
     var x1scale = this.x1scale;
     var listdatafiltered = this.data1.listdatafiltered;
 
@@ -549,7 +662,7 @@ d3_chart2d.prototype.add_x1axisgridlines = function () {
 d3_chart2d.prototype.add_y1axisgridlines = function () {
     //y axis grid lines properties
     //TODO:
-    var x_data = this.data1ydata;
+    var x_data = this.data1keymap.ydata;
     var y1scale = this.y1scale;
     var listdatafiltered = this.data1.listdatafiltered;
 
@@ -608,7 +721,7 @@ d3_chart2d.prototype.add_y2axislabel = function (y2axislabel) {
 };
 d3_chart2d.prototype.set_tooltip = function () {
     //set tooltip properties
-    var series_label = this.data1serieslabel;
+    var series_label = this.data1keymap.serieslabel;
 
     this.tooltip = d3.select("#" + this.tileid)
         .append("div")
@@ -648,12 +761,12 @@ d3_chart2d.prototype.add_legenddata1filter = function () {
     //filter the data on click
 
     //update data and graphic upon click
-    var series_label = this.data1serieslabel;
+    var series_label = this.data1keymap.serieslabel;
     var _this = this;
 
     this.legenddata1enter.on("click", function (d) {
         var filters = [];
-        _this.data1.filters[series_label].forEach(function (n) { if (n !== d.key) { filters.push(n);}; });
+        _this.data1.filters[series_label].forEach(function (n) { if (n !== d) { filters.push(n);}; });
         _this.data1.filters[series_label] = filters;
         _this.data1.filter_stringdata();
         if (_this.filterdata1and2){
@@ -667,15 +780,17 @@ d3_chart2d.prototype.add_legenddata1 = function () {
     //legend properties
     //legend location is predifined
 
-    var x_data = this.data1xdata;
-    var y_data = this.data1ydata;
-    var series_label = this.data1serieslabel;
+    var x_data = this.data1keymap.xdata;
+    var y_data = this.data1keymap.ydata;
+    var series_label = this.data1keymap.serieslabel;
     var colorscale = this.colorscale;
     var width = this.width;
     var id = this.id;
+    var listdatafiltered = this.data1.listdatafiltered;
+    var series_labels_unique = this.get_uniqueserieslabels(listdatafiltered,series_label);
 
     this.legenddata1 = this.svgg.selectAll('.legendelement')
-        .data(this.data1.nestdatafiltered);
+        .data(series_labels_unique);
 
     //var legendg = this.svgg.append('g')
     //    .attr('class', 'legend')
@@ -720,7 +835,7 @@ d3_chart2d.prototype.add_legenddata1 = function () {
         .transition()
         .attr('y', function (d, i) { return i * 20; })
         .style('fill', function (d) {
-            return colorscale(d.key);
+            return colorscale(d);
         });
 
     //annotate with text
@@ -737,7 +852,7 @@ d3_chart2d.prototype.add_legenddata1 = function () {
             return i * 20 + 9;
         })
         .text(function (d) {
-            return d.key;
+            return d;
         });
 
     this.legenddata1.exit()
@@ -754,8 +869,8 @@ d3_chart2d.prototype.render = function () {
 };
 d3_chart2d.prototype.set_linedata1 = function (interoplate_I) {
     // set the line generator properties
-    var x_data = this.data1xdata;
-    var y_data = this.data1ydata;
+    var x_data = this.data1keymap.xdata;
+    var y_data = this.data1keymap.ydata;
     var x1scale = this.x1scale;
     var y1scale = this.y1scale;
 
@@ -765,8 +880,8 @@ d3_chart2d.prototype.set_linedata1 = function (interoplate_I) {
         .y(function (d) { return y1scale(d[y_data]); });
 };
 d3_chart2d.prototype.set_linedata2 = function (interoplate_I) {
-    var x_data = this.data2xdata;
-    var y_data = this.data2ydata;
+    var x_data = this.data2keymap.xdata;
+    var y_data = this.data2keymap.ydata;
     var x2scale = this.x2scale;
     var y2scale = this.y2scale;
 
@@ -777,9 +892,9 @@ d3_chart2d.prototype.set_linedata2 = function (interoplate_I) {
 };
 d3_chart2d.prototype.add_linedata1 = function () {
     //add lines to chart
-    var x_data = this.data1xdata;
-    var y_data = this.data1ydata;
-    var series_label = this.data1serieslabel;
+    var x_data = this.data1keymap.xdata;
+    var y_data = this.data1keymap.ydata;
+    var series_label = this.data1keymap.serieslabel;
     var x1scale = this.x1scale;
     var y1scale = this.y1scale;
     var colorscale = this.colorscale;
@@ -828,9 +943,9 @@ d3_chart2d.prototype.add_linedata1 = function () {
 };
 d3_chart2d.prototype.add_linedata1tooltipandstroke = function () {
     // add tooltip and change in stroke color on mouseover
-    var x_data = this.data1xdata;
-    var y_data = this.data1ydata;
-    var series_label = this.data1serieslabel;
+    var x_data = this.data1keymap.xdata;
+    var y_data = this.data1keymap.ydata;
+    var series_label = this.data1keymap.serieslabel;
     var x1scale = this.x1scale;
     var y1scale = this.y1scale;
     var colorscale = this.colorscale;
@@ -854,9 +969,9 @@ d3_chart2d.prototype.add_linedata1tooltipandstroke = function () {
 };
 d3_chart2d.prototype.add_linedata1onstroke = function () {
     // add change in stroke color on mouseover
-    var x_data = this.data1xdata;
-    var y_data = this.data1ydata;
-    var series_label = this.data1serieslabel;
+    var x_data = this.data1keymap.xdata;
+    var y_data = this.data1keymap.ydata;
+    var series_label = this.data1keymap.serieslabel;
     var x1scale = this.x1scale;
     var y1scale = this.y1scale;
     var colorscale = this.colorscale;
@@ -871,9 +986,9 @@ d3_chart2d.prototype.add_linedata1onstroke = function () {
 };
 d3_chart2d.prototype.add_linedata1tooltip = function () {
     // add tooltip on mouseover
-    var x_data = this.data1xdata;
-    var y_data = this.data1ydata;
-    var series_label = this.data1serieslabel;
+    var x_data = this.data1keymap.xdata;
+    var y_data = this.data1keymap.ydata;
+    var series_label = this.data1keymap.serieslabel;
     var x1scale = this.x1scale;
     var y1scale = this.y1scale;
     var colorscale = this.colorscale;
@@ -911,9 +1026,9 @@ d3_chart2d.prototype.add_linedata1filter = function () {
 };
 d3_chart2d.prototype.add_linedata2 = function () {
     //add lines to chart
-    var x_data = this.data2xdata;
-    var y_data = this.data2ydata;
-    var series_label = this.data2serieslabel;
+    var x_data = this.data2keymap.xdata;
+    var y_data = this.data2keymap.ydata;
+    var series_label = this.data2keymap.serieslabel;
     var x2scale = this.x2scale;
     var y2scale = this.y2scale;
     var colorscale = this.colorscale;
@@ -962,9 +1077,9 @@ d3_chart2d.prototype.add_linedata2 = function () {
 };
 d3_chart2d.prototype.add_linedata2tooltipandstroke = function () {
     // add tooltip and change in stroke color on mouseover
-    var x_data = this.data2xdata;
-    var y_data = this.data2ydata;
-    var series_label = this.data2serieslabel;
+    var x_data = this.data2keymap.xdata;
+    var y_data = this.data2keymap.ydata;
+    var series_label = this.data2keymap.serieslabel;
     var x1scale = this.x1scale;
     var y1scale = this.y1scale;
     var colorscale = this.colorscale;
@@ -988,9 +1103,9 @@ d3_chart2d.prototype.add_linedata2tooltipandstroke = function () {
 };
 d3_chart2d.prototype.add_linedata2onstroke = function () {
     // add change in stroke color on mouseover
-    var x_data = this.data2xdata;
-    var y_data = this.data2ydata;
-    var series_label = this.data2serieslabel;
+    var x_data = this.data2keymap.xdata;
+    var y_data = this.data2keymap.ydata;
+    var series_label = this.data2keymap.serieslabel;
     var x1scale = this.x1scale;
     var y1scale = this.y1scale;
     var colorscale = this.colorscale;
@@ -1005,9 +1120,9 @@ d3_chart2d.prototype.add_linedata2onstroke = function () {
 };
 d3_chart2d.prototype.add_linedata2tooltip = function () {
     // add tooltip on mouseover
-    var x_data = this.data2xdata;
-    var y_data = this.data2ydata;
-    var series_label = this.data2serieslabel;
+    var x_data = this.data2keymap.xdata;
+    var y_data = this.data2keymap.ydata;
+    var series_label = this.data2keymap.serieslabel;
     var x1scale = this.x1scale;
     var y1scale = this.y1scale;
     var colorscale = this.colorscale;
@@ -1028,7 +1143,7 @@ d3_chart2d.prototype.add_linedata2tooltip = function () {
 };
 d3_chart2d.prototype.add_linedata2filter = function () {
     //filter data on click
-    var series_label = this.data2serieslabel;
+    var series_label = this.data2keymap.serieslabel;
     var _this = this;
 
     this.linedata2enter.on("click", function (d, i) {
@@ -1045,10 +1160,10 @@ d3_chart2d.prototype.add_linedata2filter = function () {
 };
 d3_chart2d.prototype.add_data1featureslabels = function () {
     //add a change in color upon moving the mouse over the point
-    var x_data = this.data1xdata;
-    var y_data = this.data1ydata;
+    var x_data = this.data1keymap.xdata;
+    var y_data = this.data1keymap.ydata;
     var colorscale = this.colorscale;
-    var features_label = this.data1featurelabel;
+    var features_label = this.data1keymap.featureslabel;
     var x1scale = this.x1scale;
     var y1scale = this.y1scale;
     var id = this.id;
@@ -1077,7 +1192,7 @@ d3_chart2d.prototype.add_data1featureslabels = function () {
 d3_chart2d.prototype.add_pointsdata1onfill = function () {
     //add a change in color upon moving the mouse over the point
     var colorscale = this.colorscale;
-    var series_label = this.data1serieslabel;
+    var series_label = this.data1keymap.serieslabel;
     var id = this.id;
 
     //change color upon mouseover/mouseout
@@ -1091,9 +1206,9 @@ d3_chart2d.prototype.add_pointsdata1onfill = function () {
 d3_chart2d.prototype.add_pointsdata1tooltip = function () {
     //add a tooltip upon moving the mouse over the point
     var colorscale = this.colorscale;
-    var series_label = this.data1serieslabel;
-    var x_data = this.data1xdata;
-    var y_data = this.data1ydata;
+    var series_label = this.data1keymap.serieslabel;
+    var x_data = this.data1keymap.xdata;
+    var y_data = this.data1keymap.ydata;
     var id = this.id;
 
     //show tooltip
@@ -1116,9 +1231,9 @@ d3_chart2d.prototype.add_pointsdata1tooltipandfill = function () {
     //add a change in color upon moving the mouse over the point
     //NOTE: both must be within the same "on" method
     var colorscale = this.colorscale;
-    var series_label = this.data1serieslabel;
-    var x_data = this.data1xdata;
-    var y_data = this.data1ydata;
+    var series_label = this.data1keymap.serieslabel;
+    var x_data = this.data1keymap.xdata;
+    var y_data = this.data1keymap.ydata;
     var id = this.id;
 
     //show tooltip
@@ -1141,7 +1256,7 @@ d3_chart2d.prototype.add_pointsdata1tooltipandfill = function () {
 };
 d3_chart2d.prototype.add_pointsdata1seriesfilter = function () {
     //filter series on click
-    var series_label = this.data1serieslabel;
+    var series_label = this.data1keymap.serieslabel;
     var _this = this;
     this.pointsdata1enter.on('click', function (d, i) {
         var filters = [];
@@ -1157,7 +1272,7 @@ d3_chart2d.prototype.add_pointsdata1seriesfilter = function () {
 };
 d3_chart2d.prototype.add_pointsdata1featurefilter = function () {
     //filter feature on click
-    var feature_label = this.data1featurelabel
+    var feature_label = this.data1keymap.featureslabel
     var _this = this;
     this.pointsdata1enter.on('click', function (d, i) {
         var filters = [];
@@ -1173,9 +1288,9 @@ d3_chart2d.prototype.add_pointsdata1featurefilter = function () {
 };
 d3_chart2d.prototype.add_pointsdata1 = function () {
     //points properties
-    var x_data = this.data1xdata;
-    var y_data = this.data1ydata;
-    var series_label = this.data1serieslabel;
+    var x_data = this.data1keymap.xdata;
+    var y_data = this.data1keymap.ydata;
+    var series_label = this.data1keymap.serieslabel;
     var x1scale = this.x1scale;
     var y1scale = this.y1scale;
     var colorscale = this.colorscale;
@@ -1221,12 +1336,12 @@ d3_chart2d.prototype.add_pointsdata1 = function () {
 d3_chart2d.prototype.add_pointsdata2 = function () {
     //points properties
 };
-d3_chart2d.prototype.add_verticalbars = function () {
+d3_chart2d.prototype.add_verticalbarsdata1 = function () {
     //add vertical bars to the plot
 
-    var x_data = this.data1xdata;
-    var y_data = this.data1ydata;
-    var series_label = this.data1serieslabel;
+    var x_data = this.data1keymap.xdata;
+    var y_data = this.data1keymap.ydata;
+    var series_label = this.data1keymap.serieslabel;
     var x1scale = this.x1scale;
     var x2scale = this.x2scale;
     var y1scale = this.y1scale;
@@ -1240,72 +1355,122 @@ d3_chart2d.prototype.add_verticalbars = function () {
         .attr("class", "labels")
         .attr("transform", function (d) { return "translate(" + x1scale(d.key) + ",0)"; });
 
-    this.barrect = this.barlabel.selectAll(".bars")
+    this.barsrect = this.barlabel.selectAll(".bars")
         .data(function (d) { return d.values; });
-      
-    this.barrectenter = this.barrect.enter()
-        .append("rect")
-        .attr("class", "bars")
+
+    this.barsrect.exit().remove();
+
+    this.barsrect.transition()
         .attr("width", x2scale.rangeBand())
         .attr("x", function (d) { return x2scale(d[series_label]); })
         .attr("y", function (d) { return y1scale(Math.max(d[y_data], 0)); })
-        .attr("height", function (d) { return Math.abs(y1scale(d[y_data]) - y(0)); })
+        .attr("height", function (d) { return Math.abs(y1scale(d[y_data]) - y1scale(0)); })
+        .style("fill", function (d) { return colorscale(d[series_label]); });
+      
+    this.barsrectenter = this.barsrect.enter()
+        .append("rect")
+        .attr("class", "bars");
+
+    this.barsrectenter.attr("width", x2scale.rangeBand())
+        .attr("x", function (d) { return x2scale(d[series_label]); })
+        .attr("y", function (d) { return y1scale(Math.max(d[y_data], 0)); })
+        .attr("height", function (d) { return Math.abs(y1scale(d[y_data]) - y1scale(0)); })
         .style("fill", function (d) { return colorscale(d[series_label]); });
 
-    this.barrectenter.on("mouseover", function (d) {
-            //change color of the bar
-            d3.select(this).style('fill', 'black');
-            //Update the tooltip position and value
-            d3.select("#tooltip")
-                .style("left", (d3.event.pageX + 10) + "px")
-                .style("top", (d3.event.pageY - 10) + "px")
-                    .select("#value")
-                    .text("Sample name: " + d.name + ', ' + "Met id: " + d.label + ', ' + "Value: " + d.value.toFixed(2) + ', ' + "95% CI: " + d.value_lb.toFixed(2) + "/" + d.value_ub.toFixed(2));
-            //Show the tooltip
-            d3.select("#tooltip").classed("hidden", false);
-        })
-        .on("mouseout", function (d) {
-            d3.select(this).style("fill", color(d.name));
-            d3.select("#tooltip").classed("hidden", true);
-        });
 };
-d3_chart2d.prototype.add_barsdata1tooltipandfill = function () {
+d3_chart2d.prototype.add_verticalbarsdata1tooltipandfill = function () {
     //add a tooltip upon moving the mouse over the bar
     //add a change in color upon moving the mouse over the bar
     //NOTE: both must be within the same "on" method
     var colorscale = this.colorscale;
-    var series_label = this.data1serieslabel;
-    var y_data = this.data1ydata;
+    var series_label = this.data1keymap.serieslabel;
+    var metid = this.data1keymap.featureslabel;
+    var y_data = this.data1keymap.ydata;
+    var y_data_lb = this.data1keymap.ydatalb;
+    var y_data_ub = this.data1keymap.ydataub;
     var id = this.id;
-    
-    this.barrectenter.on("mouseover", function (d) {
+
+    this.barsrectenter.on("mouseover", function (d) {
             //change color of the bar
             d3.select(this).style('fill', 'black');
             //Update the tooltip position and value
             d3.select("#" + id + "tooltip")
                 .style("left", (d3.event.pageX + 10) + "px")
                 .style("top", (d3.event.pageY - 10) + "px")
-                    .select("#value")
-                    .text("series_label: " + d.value[series_label] + ', ' + "Met id: " + d.key + ', ' + "Value: " + d.value[y_data].toFixed(2) + ', ' + "95% CI: " + d.value_lb.toFixed(2) + "/" + d.value_ub.toFixed(2));
+                .select("#" + id + "value")
+                //.text("series_label: " + d[series_label] + ', ' + "met_id: " + d[met_id] + ', ' + "Value: " + d[y_data].toFixed(2) + ', ' + "95% CI: " + d[y_data_lb].toFixed(2) + "/" + d[y_data_ub].toFixed(2));
+                .text(d[series_label] + ': ' + "value: " + d[y_data].toFixed(2) + ', ' + "95% ci: " + d[y_data_lb].toFixed(2) + "/" + d[y_data_ub].toFixed(2));
             //Show the tooltip
             d3.select("#" + id + "tooltip").classed("hidden", false);
         })
         .on("mouseout", function (d) {
-            d3.select(this).style("fill", colorscale[series_label]);
+            d3.select(this).style("fill", colorscale(d[series_label]));
             d3.select("#" + id + "tooltip").classed("hidden", true);
         });
 };
-d3_chart2d.prototype.add_verticalerrorbars = function () {
+d3_chart2d.prototype.add_verticalbarsdata1errorbars = function () {
     //add vertical error bars to the plot
+
+    var x_data = this.data1keymap.xdata;
+    var y_data = this.data1keymap.ydata;
+    var ydatalb = this.data1keymap.ydatalb;
+    var ydataub = this.data1keymap.ydataub;
+    var series_label = this.data1keymap.serieslabel;
+    var x1scale = this.x1scale;
+    var x2scale = this.x2scale;
+    var y1scale = this.y1scale;
+    var colorscale = this.colorscale;
+    var id = this.id;
+
+    this.barserrorbars = this.barlabel.selectAll(".errorbars")
+        .data(function(d){return d.values});
+    
+    this.barserrorbars.exit().remove();
+    
+    this.barserrorbars.transition()
+        .attr("points",function(d){ //use upper and lower 95% confidence intervals for error bars
+                return x2scale(d[series_label]) + ',' + y1scale(d[ydataub]) + ' ' +
+                    (x2scale(d[series_label]) + x2scale.rangeBand()) + ',' + y1scale(d[ydataub]) + ' ' +
+                    (x2scale(d[series_label]) + x2scale.rangeBand() * 0.5) + ',' + y1scale(d[ydataub]) + ' ' +
+                    (x2scale(d[series_label]) + x2scale.rangeBand() * 0.5) + ',' + y1scale(d[ydatalb]) + ' ' +
+                    x2scale(d[series_label]) + ',' + y1scale(d[ydatalb]) + ' ' +
+                    x2scale(d[series_label]) + ',' + y1scale(d[ydatalb]) + ' ' +
+                    (x2scale(d[series_label]) + x2scale.rangeBand()) + ',' + y1scale(d[ydatalb])
+        })
+        .style("fill", "none")
+        .style("stroke", "#000000")
+        .style("stroke-width", function (d) {
+            if (d[y_data] == 0.0) { return 0; 
+            } else { return 1; } 
+        });
+
+    this.barserrorbarsenter = this.barserrorbars.enter()
+        .append("polyline")
+        .attr("class","errorbars");
+
+     this.barserrorbarsenter
+        .attr("points",function(d){ //use upper and lower 95% confidence intervals for error bars
+                return x2scale(d[series_label]) + ',' + y1scale(d[ydataub]) + ' ' +
+                    (x2scale(d[series_label]) + x2scale.rangeBand()) + ',' + y1scale(d[ydataub]) + ' ' +
+                    (x2scale(d[series_label]) + x2scale.rangeBand() * 0.5) + ',' + y1scale(d[ydataub]) + ' ' +
+                    (x2scale(d[series_label]) + x2scale.rangeBand() * 0.5) + ',' + y1scale(d[ydatalb]) + ' ' +
+                    x2scale(d[series_label]) + ',' + y1scale(d[ydatalb]) + ' ' +
+                    x2scale(d[series_label]) + ',' + y1scale(d[ydatalb]) + ' ' +
+                    (x2scale(d[series_label]) + x2scale.rangeBand()) + ',' + y1scale(d[ydatalb])
+        })
+        .style("fill", "none")
+        .style("stroke", "#000000")
+        .style("stroke-width", function (d) {
+            if (d[y_data] == 0.0) { return 0; 
+            } else { return 1; } 
+        });
+
 };
 d3_chart2d.prototype.add_horizontalbars = function () {
     //add horizontal bars to the plot
 };
 d3_chart2d.prototype.add_horizontalerrorbars = function () {
     //add horizontal error bars to the plot
-};
-d3_chart2d.prototype.add_boxandwhiskers = function () {
-    //add box and whiskers to the plot
 };
 d3_chart2d.prototype.add_heatmap = function () {
     //add heatmap to the plot
@@ -1352,7 +1517,7 @@ d3_chart2d.prototype.set_d3css = function (selectionstyle_I) {
             .style(selectionstyle_I[i].style);
     };
 };
-d3_chart2d.prototype.set_x1andy1axessstyle = function () {
+d3_chart2d.prototype.set_x1andy1axesstyle = function () {
     // predefined css style for x1 and y1 axis
     var x1axisselector = '#' + this.id + 'x1axis' + ' path';
     var y1axisselector = '#' + this.id + 'y1axis' + ' path';
@@ -1365,7 +1530,23 @@ d3_chart2d.prototype.set_x1andy1axessstyle = function () {
                      { 'selection': y1axisselector, 'style': style }]
     this.set_svggcss(selectorstyle);
 };
-d3_chart2d.prototype.set_x1x2andy1y2axessstyle = function () {
+d3_chart2d.prototype.set_x1andy1axesstyle_verticalbarsplot = function () {
+    // predefined css style for x1 and y1 axis
+    var x1axisselector = '#' + this.id + 'x1axis' + ' path';
+    var y1axisselector = '#' + this.id + 'y1axis' + ' path';
+    var x1axisstyle = {
+        'fill': 'none', 'display':'none'
+    };
+    var y1axisstyle = {
+        'fill': 'none', 'stroke': '#000',
+        'shape-rendering': 'crispEdges',
+        'stroke-width': '1.5px'
+    };
+    var selectorstyle = [{ 'selection': x1axisselector, 'style': x1axisstyle },
+                     { 'selection': y1axisselector, 'style': y1axisstyle }]
+    this.set_svggcss(selectorstyle);
+};
+d3_chart2d.prototype.set_x1x2andy1y2axesstyle = function () {
     // predefined css style for x1 and y1 axis
     var x1axisselector = '#' + this.id + 'x1axis' + ' path';
     var y1axisselector = '#' + this.id + 'y1axis' + ' path';
@@ -1402,110 +1583,259 @@ d3_chart2d.prototype.set_pointsstyle = function () {
     var selectorstyle = [{ 'selection': pointsselector, 'style': pointsstyle }]
     this.set_svggcss(selectorstyle);
 };
-d3_chart2d.prototype.set_data1ids = function (data1xdata_I, data1ydata_I, data1serieslabel_I, data1featurelabel_I) {
-    //set the data1 column identifiers for x, y, series_label, and feature_label
-    this.data1xdata = data1xdata_I;
-    this.data1ydata = data1ydata_I;
-    this.data1serieslabel = data1serieslabel_I;
-    this.data1featurelabel = data1featurelabel_I;
+d3_chart2d.prototype.set_data1keymap = function (data1keymap_I) {
+    //set the data1 column identifiers for xdata, yudata, serieslabel, and featureslabel
+    this.data1keymap = data1keymap_I;
 };
-d3_chart2d.prototype.set_data2ids = function (data2xdata_I, data2ydata_I, data2serieslabel_I, data2featurelabel_I) {
-    //set the data2 column identifiers for x, y, series_label, and feature_label
-    this.data2xdata = data2xdata_I;
-    this.data2ydata = data2ydata_I;
-    this.data2serieslabel = data2serieslabel_I;
-    this.data2featureslabel = data2featurelabel_I;
+d3_chart2d.prototype.set_data2keymap = function (data2keymap_I) {
+    //set the data2 column identifiers for xdata, yudata, serieslabel, and featureslabel
+    this.data2keymap = data2keymap_I;
 };
-var d3_data = function () {
-    //data function
-    this.keys = []; // list of columns that can be applied as nest keys and filters
-    this.nestkey = ''; // key to apply to nest
-    this.filters = {}; // {key1:[string1,string2,...],...}
-    this.listdata = []; // data in database table form (must contain a column "_used");
-    this.listdatafiltered = []; // data in database table form
-    this.nestdatafiltered = []; // data in nested form
-};
-d3_data.prototype.convert_list2nestlist = function (data_I,key_I) {
-    // convert a list of objects to a d3 nest by a key
-    var nesteddata_O = d3.nest()
-        .key(function (d) { return d[key_I]; })
-        //.rollup()
-        .entries(data_I);
-    return nesteddata_O;
-};
-d3_data.prototype.convert_list2nestmap = function (data_I,key_I) {
-    // convert a list of objects to a d3 nest by a key
-    var nesteddata_O = d3.nest()
-        .key(function (d) { return d[key_I]; })
-        //.rollup()
-        .map(data_I);
-    return nesteddata_O;
-};
-d3_data.prototype.filter_stringdata = function () {
-    // apply filters to listdata
+d3_chart2d.prototype.add_boxandwhiskers = function () {
+    //add box and whiskers to the plot
+//     boxes: the main body of the boxplot showing the quartiles and the median’s confidence intervals if enabled.
+//     medians: horizonal lines at the median of each box.
+//     whiskers: the vertical lines extending to the most extreme, n-outlier data points.
+//     caps: the horizontal lines at the ends of the whiskers.
+//     fliers: points representing data that extend beyond the whiskers (outliers).
+//     means: points or lines representing the means.
 
-    var listdatacopy = this.listdata;
-    var listdatafiltered_O = [];
+    var y_data_mean = this.data1keymap.ydatamean;
+    var y_data_lb = this.data1keymap.ydatalb;
+    var y_data_ub = this.data1keymap.ydataub;
+    var y_data_median = this.data1keymap.ydatamedian;
+    var y_data_iq1 = this.data1keymap.ydataiq1;
+    var y_data_iq3 = this.data1keymap.ydataiq3;
+    var y_data_min = this.data1keymap.ydatamin;
+    var y_data_max = this.data1keymap.ydatamax;
+    var series_label = this.data1keymap.serieslabel;
+    var x1scale = this.x1scale;
+    var x2scale = this.x2scale;
+    var y1scale = this.y1scale;
+    var colorscale = this.colorscale;
+    var id = this.id;
+
+    //assign the positioning of the feature labels
+    this.boxandwhiskerslabel = this.svgg.selectAll(".labels")
+        .data(this.data1.nestdatafiltered)
+
+    this.boxandwhiskerslabelenter = this.boxandwhiskerslabel.enter().append("g")
+        .attr("class", "labels")
+        .attr("transform", function (d) { return "translate(" + x1scale(d.key) + ",0)"; });
+
+    //boxes: the main body of the boxplot showing the quartiles
+    this.boxandwhiskersboxes = this.boxandwhiskerslabel.selectAll(".boxes")
+        .data(function (d) { return d.values; });
+
+    this.boxandwhiskersboxes.exit().remove();
+
+    this.boxandwhiskersboxes.transition()
+        .attr("width", x2scale.rangeBand())
+        .attr("x", function (d) { return x2scale(d[series_label]); })
+        .attr("y", function (d) { return y1scale(d[y_data_iq3]); })
+        .attr("height", function (d) { return y1scale(d[y_data_iq1]); })
+        .style("stroke", function (d) { return colorscale(d[series_label]); });
+      
+    this.boxandwhiskersboxesenter = this.boxandwhiskersboxes.enter()
+        .append("rect")
+        .attr("class", "boxes");
+
+    this.boxandwhiskersboxesenter.attr("width", x2scale.rangeBand())
+        .attr("x", function (d) { return x2scale(d[series_label]); })
+        .attr("y", function (d) { return y1scale(d[y_data_iq3]); })
+        .attr("height", function (d) { return y1scale(d[y_data_iq1]); })
+        .style("stroke", function (d) { return colorscale(d[series_label]); });
+        
+    //medians: horizonal lines at the median of each box.
+    this.boxandwhiskersmedianlines = this.boxandwhiskerslabel.selectAll(".medianlines")
+        .data(function (d) { return d.values; });
+
+    this.boxandwhiskersmedianlines.exit().remove();
+
+    this.boxandwhiskersmedianlines.transition()
+        .attr("x1", function (d) { return x2scale(d[series_label]); })
+        .attr("x2", function (d) { return x2scale(d[series_label]) + x2scale.rangeBand(); })
+        .attr("y1", function (d) { return y1scale(d[y_data_median]); })
+        .attr("y2", function (d) { return y1scale(d[y_data_median]); })
+        .style("stroke", function (d) { return colorscale(d[series_label]); });
+      
+    this.boxandwhiskersmedianlinesenter = this.boxandwhiskersmedianlines.enter()
+        .append("line")
+        .attr("class", "medianlines");
+
+    this.boxandwhiskersmedianlinesenter
+        .attr("x1", function (d) { return x2scale(d[series_label]); })
+        .attr("x2", function (d) { return x2scale(d[series_label]) + x2scale.rangeBand(); })
+        .attr("y1", function (d) { return y1scale(d[y_data_median]); })
+        .attr("y2", function (d) { return y1scale(d[y_data_median]); })
+        .style("stroke", function (d) { return colorscale(d[series_label]); });
+        
+    //means: points or lines representing the means.
+    this.boxandwhiskersmeanlines = this.boxandwhiskerslabel.selectAll(".meanlines")
+        .data(function (d) { return d.values; });
+
+    this.boxandwhiskersmeanlines.exit().remove();
+
+    this.boxandwhiskersmeanlines.transition()
+        .attr("x1", function (d) { return x2scale(d[series_label]); })
+        .attr("x2", function (d) { return x2scale(d[series_label]) + x2scale.rangeBand(); })
+        .attr("y1", function (d) { return y1scale(d[y_data_mean]); })
+        .attr("y2", function (d) { return y1scale(d[y_data_mean]); })
+        .style("stroke", function (d) { return colorscale(d[series_label]); });
+      
+    this.boxandwhiskersmeanlinesenter = this.boxandwhiskersmeanlines.enter()
+        .append("line")
+        .attr("class", "meanlines");
+
+    this.boxandwhiskersmeanlinesenter
+        .attr("x1", function (d) { return x2scale(d[series_label]); })
+        .attr("x2", function (d) { return x2scale(d[series_label]) + x2scale.rangeBand(); })
+        .attr("y1", function (d) { return y1scale(d[y_data_mean]); })
+        .attr("y2", function (d) { return y1scale(d[y_data_mean]); })
+        .style("stroke", function (d) { return colorscale(d[series_label]); });
+
+    //caps (max): the horizontal lines at the ends of the whiskers.
+    this.boxandwhiskersmaxlines = this.boxandwhiskerslabel.selectAll(".maxlines")
+        .data(function (d) { return d.values; });
+
+    this.boxandwhiskersmaxlines.exit().remove();
+
+    this.boxandwhiskersmaxlines.transition()
+        .attr("x1", function (d) { return x2scale(d[series_label]); })
+        .attr("x2", function (d) { return x2scale(d[series_label]) + x2scale.rangeBand(); })
+        .attr("y1", function (d) { return y1scale(d[y_data_max]); })
+        .attr("y2", function (d) { return y1scale(d[y_data_max]); })
+        .style("stroke", function (d) { return colorscale(d[series_label]); });
+      
+    this.boxandwhiskersmaxlinesenter = this.boxandwhiskersmaxlines.enter()
+        .append("line")
+        .attr("class", "maxlines");
+
+    this.boxandwhiskersmaxlinesenter
+        .attr("x1", function (d) { return x2scale(d[series_label]); })
+        .attr("x2", function (d) { return x2scale(d[series_label]) + x2scale.rangeBand(); })
+        .attr("y1", function (d) { return y1scale(d[y_data_max]); })
+        .attr("y2", function (d) { return y1scale(d[y_data_max]); })
+        .style("stroke", function (d) { return colorscale(d[series_label]); });
+        
+    //caps (min): the horizontal lines at the ends of the whiskers.
+    this.boxandwhiskersminlines = this.boxandwhiskerslabel.selectAll(".minlines")
+        .data(function (d) { return d.values; });
+
+    this.boxandwhiskersminlines.exit().remove();
+
+    this.boxandwhiskersminlines.transition()
+        .attr("x1", function (d) { return x2scale(d[series_label]); })
+        .attr("x2", function (d) { return x2scale(d[series_label]) + x2scale.rangeBand(); })
+        .attr("y1", function (d) { return y1scale(d[y_data_min]); })
+        .attr("y2", function (d) { return y1scale(d[y_data_min]); })
+        .style("stroke", function (d) { return colorscale(d[series_label]); });
+      
+    this.boxandwhiskersminlinesenter = this.boxandwhiskersminlines.enter()
+        .append("line")
+        .attr("class", "minlines");
+
+    this.boxandwhiskersminlinesenter
+        .attr("x1", function (d) { return x2scale(d[series_label]); })
+        .attr("x2", function (d) { return x2scale(d[series_label]) + x2scale.rangeBand(); })
+        .attr("y1", function (d) { return y1scale(d[y_data_min]); })
+        .attr("y2", function (d) { return y1scale(d[y_data_min]); })
+        .style("stroke", function (d) { return colorscale(d[series_label]); });
+
+    //whiskers (min): the vertical lines extending from the qurtiles to the most extreme, n-outlier data points.
+    this.boxandwhiskerswhiskersminlines = this.boxandwhiskerslabel.selectAll(".whiskersminlines")
+        .data(function (d) { return d.values; });
+
+    this.boxandwhiskerswhiskersminlines.exit().remove();
+
+    this.boxandwhiskerswhiskersminlines.transition()
+        .attr("x1", function (d) { return (x2scale(d[series_label]) + x2scale.rangeBand())/2; })
+        .attr("x2", function (d) { return (x2scale(d[series_label]) + x2scale.rangeBand())/2; })
+        .attr("y1", function (d) { return y1scale(d[y_data_iq1]); })
+        .attr("y2", function (d) { return y1scale(d[y_data_min]); })
+        .style("stroke", function (d) { return colorscale(d[series_label]); });
+      
+    this.boxandwhiskerswhiskersminlinesenter = this.boxandwhiskerswhiskersminlines.enter()
+        .append("line")
+        .attr("class", "whiskersminlines");
+
+    this.boxandwhiskerswhiskersminlinesenter
+        .attr("x1", function (d) { return (x2scale(d[series_label]) + x2scale.rangeBand())/2; })
+        .attr("x2", function (d) { return (x2scale(d[series_label]) + x2scale.rangeBand())/2; })
+        .attr("y1", function (d) { return y1scale(d[y_data_iq1]); })
+        .attr("y2", function (d) { return y1scale(d[y_data_min]); })
+        .style("stroke", function (d) { return colorscale(d[series_label]); });
+
+    //whiskers (max): the vertical lines extending from the qurtiles to the most extreme, n-outlier data points.
+    this.boxandwhiskerswhiskersmaxlines = this.boxandwhiskerslabel.selectAll(".whiskersmaxlines")
+        .data(function (d) { return d.values; });
+
+    this.boxandwhiskerswhiskersmaxlines.exit().remove();
+
+    this.boxandwhiskerswhiskersmaxlines.transition()
+        .attr("x1", function (d) { return (x2scale(d[series_label]) + x2scale.rangeBand())/2; })
+        .attr("x2", function (d) { return (x2scale(d[series_label]) + x2scale.rangeBand())/2; })
+        .attr("y1", function (d) { return y1scale(d[y_data_iq3]); })
+        .attr("y2", function (d) { return y1scale(d[y_data_max]); })
+        .style("stroke", "black");
+      
+    this.boxandwhiskerswhiskersmaxlinesenter = this.boxandwhiskerswhiskersmaxlines.enter()
+        .append("line")
+        .attr("class", "whiskersmaxlines");
+
+    this.boxandwhiskerswhiskersmaxlinesenter
+        .attr("x1", function (d) { return (x2scale(d[series_label]) + x2scale.rangeBand())/2; })
+        .attr("x2", function (d) { return (x2scale(d[series_label]) + x2scale.rangeBand())/2; })
+        .attr("y1", function (d) { return y1scale(d[y_data_iq3]); })
+        .attr("y2", function (d) { return y1scale(d[y_data_max]); })
+        .style("stroke", "black");
+
+    //upperbounds: the horizontal lines representing the uppoer bounds of the confidence intervals.
+    this.boxandwhiskersublines = this.boxandwhiskerslabel.selectAll(".ublines")
+        .data(function (d) { return d.values; });
+
+    this.boxandwhiskersublines.exit().remove();
+
+    this.boxandwhiskersublines.transition()
+        .attr("x1", function (d) { return x2scale(d[series_label]); })
+        .attr("x2", function (d) { return x2scale(d[series_label]) + x2scale.rangeBand(); })
+        .attr("y1", function (d) { return y1scale(d[y_data_ub]); })
+        .attr("y2", function (d) { return y1scale(d[y_data_ub]); })
+        .style("stroke", function (d) { return colorscale(d[series_label]); });
+      
+    this.boxandwhiskersublinesenter = this.boxandwhiskersublines.enter()
+        .append("line")
+        .attr("class", "ublines");
+
+    this.boxandwhiskersublinesenter
+        .attr("x1", function (d) { return x2scale(d[series_label]); })
+        .attr("x2", function (d) { return x2scale(d[series_label]) + x2scale.rangeBand(); })
+        .attr("y1", function (d) { return y1scale(d[y_data_ub]); })
+        .attr("y2", function (d) { return y1scale(d[y_data_ub]); })
+        .style("stroke", function (d) { return colorscale(d[series_label]); });
+        
+    //lowerbound: the horizontal lines representing the lowerbound of the confidence intervals.
+    this.boxandwhiskerslblines = this.boxandwhiskerslabel.selectAll(".lblines")
+        .data(function (d) { return d.values; });
+
+    this.boxandwhiskerslblines.exit().remove();
+
+    this.boxandwhiskerslblines.transition()
+        .attr("x1", function (d) { return x2scale(d[series_label]); })
+        .attr("x2", function (d) { return x2scale(d[series_label]) + x2scale.rangeBand(); })
+        .attr("y1", function (d) { return y1scale(d[y_data_lb]); })
+        .attr("y2", function (d) { return y1scale(d[y_data_lb]); })
+        .style("stroke", function (d) { return colorscale(d[series_label]); });
+      
+    this.boxandwhiskerslblinesenter = this.boxandwhiskerslblines.enter()
+        .append("line")
+        .attr("class", "lblines");
+
+    this.boxandwhiskerslblinesenter
+        .attr("x1", function (d) { return x2scale(d[series_label]); })
+        .attr("x2", function (d) { return x2scale(d[series_label]) + x2scale.rangeBand(); })
+        .attr("y1", function (d) { return y1scale(d[y_data_lb]); })
+        .attr("y2", function (d) { return y1scale(d[y_data_lb]); })
+        .style("stroke", function (d) { return colorscale(d[series_label]); });
     
-    //set _used to false:
-    for (i = 0; i < listdatacopy.length; i++) {
-        listdatacopy[i]['used_'] = true;
-    };
-
-    //pass each row through the filter
-    for (i = 0; i < listdatacopy.length; i++) {
-        for (filter in this.filters) {
-            if (!listdatacopy[i][filter].match(this.filters[filter].join('|'))) {
-                listdatacopy[i]['used_'] = false;
-            };
-        };
-    };
-
-    // add in the filtered data
-    listdatacopy.forEach(function (d) {
-        if (d['used_']) {
-            listdatafiltered_O.push(d)
-        };
-    });
-
-    // re-make the nestdatafiltered
-    this.listdatafiltered = listdatafiltered_O;
-    this.nestdatafiltered = this.convert_list2nestlist(listdatafiltered_O,this.nestkey);
-};
-d3_data.prototype.set_listdata = function (listdata_I,nestkey_I) {
-    // set list data and initialize filtered data
-    this.nestkey = nestkey_I;
-    this.listdata = listdata_I;
-    this.listdatafiltered = listdata_I;
-    this.nestdatafiltered = this.convert_list2nestlist(listdata_I,this.nestkey);
-};
-d3_data.prototype.set_keys = function (keys_I) {
-    // add list data
-    this.keys = keys_I;
-};
-d3_data.prototype.reset_filters = function () {
-    // generate the initial filter
-
-    var filters = {};
-    for (key_cnt = 0; key_cnt < this.keys.length;key_cnt++) {
-        var colentries = d3.set();
-        for (i = 0; i < this.listdata.length; i++) {
-            colentries.add(this.listdata[i][this.keys[key_cnt]]);
-        };
-        filters[this.keys[key_cnt]] = colentries.values();
-    };
-    this.filters = filters;
-};
-d3_data.prototype.clear_data = function () {
-    // add list data
-    this.listdata = [];
-    this.listdatafiltered = [];
-    this.nestdatafiltered = [];
-};
-d3_data.prototype.change_filters = function (filter_I) {
-    // modify the filter according to the new filter
-    
-    for (key in filter_I) {
-        this.filters[key] = filter_I[key];
-    };
 };

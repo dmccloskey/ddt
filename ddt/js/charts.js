@@ -9,9 +9,9 @@ var make_scatterlineplot2d = function () {
     d3data2.reset_filters();
     var chart2d1 = new d3_chart2d();
     chart2d1.add_data1(d3data1);
-    chart2d1.set_data1ids('ale_time', 'rate', 'sample_name_abbreviation', '');
+    chart2d1.set_data1keymap({'xdata':'ale_time','ydata':'rate','serieslabel':'sample_name_abbreviation','featureslabel':''});
     chart2d1.add_data2(d3data2);
-    chart2d1.set_data2ids('ale_time', 'rate', 'sample_name_abbreviation', '');
+    chart2d1.set_data2keymap({'xdata':'ale_time','ydata':'rate','serieslabel':'sample_name_abbreviation','featureslabel':''});
     chart2d1.set_filterdata1and2(true); //filter data 1 and 2 together
     chart2d1.set_id('chart2d1');
     chart2d1.set_tileid('tile1');
@@ -39,7 +39,7 @@ var make_scatterlineplot2d = function () {
         this.add_legenddata1();
         this.add_legenddata1filter();
         this.add_pointsdata1tooltipandfill();
-        this.set_x1andy1axessstyle();
+        this.set_x1andy1axesstyle();
         this.set_pointsstyle();
         this.add_x1axislabel("time (days)");
         this.add_y1axislabel("growth rate (hr-1)");
@@ -59,7 +59,7 @@ var make_volcanoplot2d = function () {
     d3data1.reset_filters();
     var chart2d1 = new d3_chart2d();
     chart2d1.add_data1(d3data1);
-    chart2d1.set_data1ids('fold_change', 'p_value', 'sna1_sna2', 'component_group_name');
+    chart2d1.set_data1keymap({'xdata':'fold_change','ydata':'p_value','serieslabel':'sna1_sna2','featureslabel':'component_group_name'});
     chart2d1.set_id('chart2d1');
     chart2d1.set_tileid('tile1');
     chart2d1.set_margin({ top: 50, right: 50, bottom: 50, left: 50 });
@@ -83,7 +83,7 @@ var make_volcanoplot2d = function () {
         this.add_pointsdata1tooltipandfill();
         this.add_pointsdata1featurefilter();
         this.add_data1featureslabels();
-        this.set_x1x2andy1y2axessstyle();
+        this.set_x1x2andy1y2axesstyle();
         this.set_pointsstyle();
         this.add_x1axislabel("-log 2 fold change");
         this.add_y1axislabel("log 10 p-value");
@@ -101,7 +101,7 @@ var make_pcaplot2d = function () {
     d3data1.reset_filters();
     var scores2d1 = new d3_chart2d();
     scores2d1.add_data1(d3data1);
-    scores2d1.set_data1ids('score_1', 'score_2', 'sample_name_abbreviation', 'sample_name_short');
+    chart2d1.set_data1keymap({'xdata':'score_1','ydata':'score_2','serieslabel':'sample_name_abbreviation','featureslabel':'sample_name_short'});
     scores2d1.set_id('scores2d1');
     scores2d1.set_tileid('tile1');
     scores2d1.set_margin({ top: 50, right: 150, bottom: 50, left: 50 });
@@ -127,7 +127,7 @@ var make_pcaplot2d = function () {
         this.add_legenddata1();
         this.add_legenddata1filter();
         this.add_data1featureslabels();
-        this.set_x1x2andy1y2axessstyle();
+        this.set_x1x2andy1y2axesstyle();
         this.set_pointsstyle();
         this.add_x1axislabel("PC1 ["+ this.data1.listdatafiltered[0]["var_proportion_1"].toString() + "%]");
         this.add_y1axislabel("PC2 [" +this.data1.listdatafiltered[0]["var_proportion_2"].toString() + "%]");
@@ -151,7 +151,7 @@ var make_pcaplot2d = function () {
     d3data2.reset_filters();
     var loadings2d1 = new d3_chart2d();
     loadings2d1.add_data1(d3data2);
-    loadings2d1.set_data1ids('loadings_1', 'loadings_2', '', 'component_name');
+    chart2d1.set_data1keymap({'xdata':'loadings_1','ydata':'loadings_2','serieslabel':'','featureslabel':'component_name'});
     loadings2d1.set_id('loadings2d2');
     loadings2d1.set_tileid('tile2');
     loadings2d1.set_margin({ top: 50, right: 50, bottom: 50, left: 50 });
@@ -175,7 +175,7 @@ var make_pcaplot2d = function () {
         this.add_pointsdata1tooltipandfill();
         this.add_pointsdata1featurefilter();
         this.add_data1featureslabels();
-        this.set_x1x2andy1y2axessstyle();
+        this.set_x1x2andy1y2axesstyle();
         this.set_pointsstyle();
         this.add_x1axislabel("PC1");
         this.add_y1axislabel("PC2");
@@ -185,15 +185,17 @@ var make_pcaplot2d = function () {
     loadings2d1.data1.filter_stringdata();
     loadings2d1.render();
 };
-var make_barchart2d = function () {
+var make_varticalbarschart2d = function () {
     //uptake/secretion rates
     var d3data1 = new d3_data();
-    d3data1.set_keys(['sample_name_abbreviation','rate_units']);
-    d3data1.set_listdata(data1, 'sample_name_abbreviation','rate_units');
+    d3data1.set_keys(['sample_name_abbreviation','rate_units', 'met_id']);
+    d3data1.set_listdata(data1_barchart, 'met_id');
     d3data1.reset_filters();
     var chart2d1 = new d3_chart2d();
     chart2d1.add_data1(d3data1);
-    chart2d1.set_data1ids('rate_average', '', 'sample_name_abbreviation', '');
+    chart2d1.set_data1keymap({'xdata':'met_id','ydata':'rate_average',
+                'serieslabel':'sample_name_abbreviation','featureslabel':'met_id',
+                'ydatalb':'rate_lb','ydataub':'rate_ub'});
     chart2d1.set_id('chart2d1');
     chart2d1.set_tileid('tile1');
     chart2d1.set_margin({ top: 50, right: 150, bottom: 50, left: 50 });
@@ -208,7 +210,7 @@ var make_barchart2d = function () {
         this.set_x1range("ordinal-rangeRoundBands");
         this.set_x2range("ordinal");
         this.set_y1range("linear");
-        this.set_x1x2domain_barplot();
+        this.set_x1x2domain_verticalbarsplot();
         this.set_y1domain();
         this.set_x1axis();
         this.set_y1axis();
@@ -216,19 +218,115 @@ var make_barchart2d = function () {
         this.add_y1axis();
         this.add_legenddata1();
         this.add_legenddata1filter();
-        this.add_pointsdata1tooltipandfill();
-        this.set_x1andy1axessstyle();
-        this.add_y1axislabel("rate ('mmol*gDCW-1*hr-1')");
+        this.add_verticalbarsdata1();
+        this.add_verticalbarsdata1tooltipandfill();
+        this.add_verticalbarsdata1errorbars();
+        this.set_x1andy1axesstyle_verticalbarsplot();
+        this.add_y1axislabel("rate (mmol*gDCW-1*hr-1)");
         this.add_title("uptake/secretion rates");
     };
-    chart2d1.data1.change_filters({'rate_units':['mmol*gDCW-1*hr-1']});
+    chart2d1.data1.change_filters({'met_id':['glc-D','ac'],
+    'sample_name_abbreviation':["OxicEvo04pgiEcoliGlc","OxicEvo04pgiEvo01EPEcoliGlc","OxicEvo04pgiEvo02EPEcoliGlc","OxicEvo04pgiEvo03EPEcoliGlc","OxicEvo04pgiEvo04EPEcoliGlc","OxicEvo04pgiEvo05EPEcoliGlc","OxicEvo04pgiEvo06EPEcoliGlc","OxicEvo04pgiEvo07EPEcoliGlc","OxicEvo04pgiEvo08EPEcoliGlc"]});
     chart2d1.data1.filter_stringdata();
     chart2d1.render();
+    //make a new tile
+    var tile2 = new d3_tile();
+    tile2.set_tileid("tile2");
+    tile2.set_rowid("row2");
+    tile2.set_colid("col2");
+    tile2.set_rowclass("row");
+    tile2.set_colclass("col-sm-12");
+    tile2.add_tile2container();
     //uptake/secretion rates
-    var chart2d1 = new d3_chart2d();
+    var d3data2 = new d3_data();
+    d3data2.set_keys(['sample_name_abbreviation','rate_units', 'met_id']);
+    d3data2.set_listdata(data1_barchart, 'met_id');
+    d3data2.reset_filters();
+    var chart2d2 = new d3_chart2d();
+    chart2d2.add_data1(d3data2);
+    chart2d2.set_data1keymap({'xdata':'met_id','ydata':'rate_average',
+                'serieslabel':'sample_name_abbreviation','featureslabel':'met_id',
+                'ydatalb':'rate_lb','ydataub':'rate_ub'});
+    chart2d2.set_id('chart2d2');
+    chart2d2.set_tileid('tile2');
+    chart2d2.set_margin({ top: 50, right: 150, bottom: 50, left: 50 });
+    chart2d2.set_width(990);
+    chart2d2.set_height(500);
+    chart2d2.add_svgexportbutton2tile();
+    chart2d2.set_tooltip();
+    chart2d2.set_tooltipstyle();
+    chart2d2.set_colorscale(); //color for series_label will remain consistent
+    chart2d2.render = function () {
+        this.add_chart2d2tile();
+        this.set_x1range("ordinal-rangeRoundBands");
+        this.set_x2range("ordinal");
+        this.set_y1range("linear");
+        this.set_x1x2domain_verticalbarsplot();
+        this.set_y1domain();
+        this.set_x1axis();
+        this.set_y1axis();
+        this.add_x1axis();
+        this.add_y1axis();
+        this.add_legenddata1();
+        this.add_legenddata1filter();
+        this.add_verticalbarsdata1();
+        this.add_verticalbarsdata1tooltipandfill();
+        this.add_verticalbarsdata1errorbars();
+        this.set_x1andy1axesstyle_verticalbarsplot();
+        this.add_y1axislabel("rate (hr-1)");
+        this.add_title("growth rate");
+    };
+    chart2d2.data1.change_filters({'met_id':['biomass'],
+    'sample_name_abbreviation':["OxicEvo04pgiEcoliGlc","OxicEvo04pgiEvo01EPEcoliGlc","OxicEvo04pgiEvo02EPEcoliGlc","OxicEvo04pgiEvo03EPEcoliGlc","OxicEvo04pgiEvo04EPEcoliGlc","OxicEvo04pgiEvo05EPEcoliGlc","OxicEvo04pgiEvo06EPEcoliGlc","OxicEvo04pgiEvo07EPEcoliGlc","OxicEvo04pgiEvo08EPEcoliGlc"]});
+    chart2d2.data1.filter_stringdata();
+    chart2d2.render();
+};
+var make_boxandwhiskersplot = function(){
+    var data1keymap = {'xdata':'','ydatamean':'mean',
+                'serieslabel':'sample_name_abbreviation','featureslabel':'met_id',
+                'ydatalb':'rate_lb','ydataub':'rate_ub',
+                'ydatamedian':'median','ydataiq1':'iq_1','ydataiq3':'iq_3',
+                'ydatamin':'min','ydatamax':'max',
+                'ydataoutliers':'outliers'};
+    var keys = ['sample_name_abbreviation','calculated_concentration_units',
+                'component_name','component_group_name','experiment_id',
+                'time_point']
+    var d3data1 = new d3_data();
+    d3data1.set_keys();
+    d3data1.set_listdata(data1_boxandwhiskers, 'component_name');
     d3data1.reset_filters();
-    d3data1.change_filters({'rate_units':['hr-1']});
-    d3data1.filter_stringdata();
+    var chart2d1 = new d3_chart2d();
     chart2d1.add_data1(d3data1);
-    chart2d1.set_data1ids('rate_average', '', 'sample_name_abbreviation', '');
+    chart2d1.set_data1keymap(data1keymap);
+    chart2d1.set_id('chart2d1');
+    chart2d1.set_tileid('tile1');
+    chart2d1.set_margin({ top: 50, right: 150, bottom: 50, left: 50 });
+    chart2d1.set_width(990);
+    chart2d1.set_height(500);
+    chart2d1.add_svgexportbutton2tile();
+    chart2d1.set_tooltip();
+    chart2d1.set_tooltipstyle();
+    chart2d1.set_colorscale(); //color for series_label will remain consistent
+    chart2d1.render = function () {
+        this.add_chart2d2tile();
+        this.set_x1range("ordinal-rangeRoundBands");
+        this.set_x2range("ordinal");
+        this.set_y1range("linear");
+        this.set_x1x2domain_verticalbarsplot();
+        this.set_y1domain();
+        this.set_x1axis();
+        this.set_y1axis();
+        this.add_x1axis();
+        this.add_y1axis();
+        this.add_legenddata1();
+        this.add_legenddata1filter();
+        this.add_boxandwhiskersdata1();
+        //this.add_boxandwhiskersdata1tooltipandfill();
+        this.set_x1andy1axesstyle_verticalbarsplot();
+        this.add_y1axislabel("rate (mmol*gDCW-1*hr-1)");
+        this.add_title("uptake/secretion rates");
+    };
+    chart2d1.data1.change_filters({'calculated_concentration_units':['mM_glog_normalized']});
+    chart2d1.data1.filter_stringdata();
+    chart2d1.render();
 };
