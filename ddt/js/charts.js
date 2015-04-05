@@ -16,12 +16,13 @@ var make_scatterlineplot2d = function () {
     chart2d1.set_id('chart2d1');
     chart2d1.set_tileid('tile1');
     chart2d1.set_margin({ top: 50, right: 150, bottom: 50, left: 50 });
-    chart2d1.set_width(990);
-    chart2d1.set_height(500);
+    chart2d1.set_width(500);
+    chart2d1.set_height(350);
     chart2d1.add_svgexportbutton2tile();
     chart2d1.set_tooltip();
     chart2d1.set_tooltipstyle();
     chart2d1.set_colorscale(); //color for series_label will remain consistent
+    chart2d1.set_zoom();
     chart2d1.render = function () {
         this.add_chart2d2tile();
         this.set_x1range("linear");
@@ -32,6 +33,9 @@ var make_scatterlineplot2d = function () {
         this.set_y1axis();
         this.add_x1axis();
         this.add_y1axis();
+        this.set_x1axiszoom();
+        this.set_y1axiszoom();
+        this.add_zoom();
         this.copy_x1scalestox2scales();
         this.copy_y1scalestoy2scales();
         //this.set_colorscale(); //color for series_label will change each update
@@ -78,6 +82,8 @@ var make_volcanoplot2d = function () {
         this.set_y1y2axis();
         this.add_x1x2axis();
         this.add_y1y2axis();
+        this.add_x1axisgridlines();
+        this.add_y1axisgridlines();
         this.set_colorscale();
         this.add_pointsdata1();
         this.add_pointsdata1tooltipandfill();
@@ -282,9 +288,10 @@ var make_varticalbarschart2d = function () {
     chart2d2.render();
 };
 var make_boxandwhiskersplot = function(){
-    var data1keymap = {'xdata':'','ydatamean':'mean',
-                'serieslabel':'sample_name_abbreviation','featureslabel':'met_id',
-                'ydatalb':'rate_lb','ydataub':'rate_ub',
+    // sample_name_abbreviation grouped by component_name
+    var data1keymap = {'xdata':'','ydata':'mean',
+                'serieslabel':'sample_name_abbreviation','featureslabel':'component_name',
+                'ydatalb':'ci_lb','ydataub':'ci_ub',
                 'ydatamedian':'median','ydataiq1':'iq_1','ydataiq3':'iq_3',
                 'ydatamin':'min','ydatamax':'max',
                 'ydataoutliers':'outliers'};
@@ -292,23 +299,25 @@ var make_boxandwhiskersplot = function(){
                 'component_name','component_group_name','experiment_id',
                 'time_point']
     var d3data1 = new d3_data();
-    d3data1.set_keys();
-    d3data1.set_listdata(data1_boxandwhiskers, 'component_name');
+    d3data1.set_keys(keys);
+    d3data1.set_listdata(data1_boxandwhiskers, 'component_name'); // sample_name_abbreviation grouped by component_name
     d3data1.reset_filters();
     var chart2d1 = new d3_chart2d();
     chart2d1.add_data1(d3data1);
     chart2d1.set_data1keymap(data1keymap);
     chart2d1.set_id('chart2d1');
     chart2d1.set_tileid('tile1');
-    chart2d1.set_margin({ top: 50, right: 150, bottom: 50, left: 50 });
-    chart2d1.set_width(990);
-    chart2d1.set_height(500);
+    chart2d1.set_margin({ top: 50, right: 250, bottom: 50, left: 50 });
+    chart2d1.set_width(500);
+    chart2d1.set_height(250);
     chart2d1.add_svgexportbutton2tile();
     chart2d1.set_tooltip();
     chart2d1.set_tooltipstyle();
+    chart2d1.set_zoom();
     chart2d1.set_colorscale(); //color for series_label will remain consistent
     chart2d1.render = function () {
         this.add_chart2d2tile();
+        this.add_clippath();
         this.set_x1range("ordinal-rangeRoundBands");
         this.set_x2range("ordinal");
         this.set_y1range("linear");
@@ -318,15 +327,90 @@ var make_boxandwhiskersplot = function(){
         this.set_y1axis();
         this.add_x1axis();
         this.add_y1axis();
+        this.set_x1axiszoom();
+        this.add_zoom();
         this.add_legenddata1();
         this.add_legenddata1filter();
         this.add_boxandwhiskersdata1();
-        //this.add_boxandwhiskersdata1tooltipandfill();
+        this.add_boxandwhiskersdata1_box();
+        this.add_boxandwhiskersdata1_median();
+        this.add_boxandwhiskersdata1_caps();
+        this.add_boxandwhiskersdata1_whiskers();
+        this.add_boxandwhiskersdata1_lbub();
+        this.add_boxandwhiskersdata1_mean();
+        this.add_boxandwhiskersdata1tooltipandfill_box();
+        this.add_boxandwhiskersdata1tooltipandfill_mean();
         this.set_x1andy1axesstyle_verticalbarsplot();
-        this.add_y1axislabel("rate (mmol*gDCW-1*hr-1)");
-        this.add_title("uptake/secretion rates");
+        this.add_y1axislabel("concentration (mM_glog_normalized)");
+        this.add_title("metabolites");
     };
     chart2d1.data1.change_filters({'calculated_concentration_units':['mM_glog_normalized']});
+//     chart2d1.data1.change_filters({'calculated_concentration_units':['mM_glog_normalized'],
+//                'component_name':["g6p.g6p_1.Light","icit.icit_2.Light"]});
     chart2d1.data1.filter_stringdata();
     chart2d1.render();
+//     // add new tile
+//     var tile2 = new d3_tile();
+//     tile2.set_tileid("tile2");
+//     tile2.set_rowid("row2");
+//     tile2.set_colid("col2");
+//     tile2.set_rowclass("row");
+//     tile2.set_colclass("col-sm-12");
+//     tile2.add_tile2container();
+//     // component_name grouped by sample_name_abbreviation
+//     var data1keymap = {'xdata':'','ydata':'mean',
+//                 'serieslabel':'component_name','featureslabel':'sample_name_abbreviation',
+//                 'ydatalb':'ci_lb','ydataub':'ci_ub',
+//                 'ydatamedian':'median','ydataiq1':'iq_1','ydataiq3':'iq_3',
+//                 'ydatamin':'min','ydatamax':'max',
+//                 'ydataoutliers':'outliers'};
+//     var keys = ['sample_name_abbreviation','calculated_concentration_units',
+//                 'component_name','component_group_name','experiment_id',
+//                 'time_point']
+//     var d3data1 = new d3_data();
+//     d3data1.set_keys(keys);
+//     d3data1.set_listdata(data1_boxandwhiskers, 'sample_name_abbreviation'); // mcomponent_name grouped by sample_name_abbreviation
+//     d3data1.reset_filters();
+//     var chart2d2 = new d3_chart2d();
+//     chart2d2.add_data1(d3data1);
+//     chart2d2.set_data1keymap(data1keymap);
+//     chart2d2.set_id('chart2d2');
+//     chart2d2.set_tileid('tile2');
+//     chart2d2.set_margin({ top: 50, right: 250, bottom: 50, left: 50 });
+//     chart2d2.set_width(750);
+//     chart2d2.set_height(500);
+//     chart2d2.add_svgexportbutton2tile();
+//     chart2d2.set_tooltip();
+//     chart2d2.set_tooltipstyle();
+//     chart2d2.set_colorscale(); //color for series_label will remain consistent
+//     chart2d2.render = function () {
+//         this.add_chart2d2tile();
+//         this.set_x1range("ordinal-rangeRoundBands");
+//         this.set_x2range("ordinal");
+//         this.set_y1range("linear");
+//         this.set_x1x2domain_verticalbarsplot();
+//         this.set_y1domain();
+//         this.set_x1axis();
+//         this.set_y1axis();
+//         this.add_x1axis();
+//         this.add_y1axis();
+//         this.add_legenddata1();
+//         this.add_legenddata1filter();
+//         this.add_boxandwhiskersdata1();
+//         this.add_boxandwhiskersdata1_box();
+//         this.add_boxandwhiskersdata1_median();
+//         this.add_boxandwhiskersdata1_caps();
+//         this.add_boxandwhiskersdata1_whiskers();
+//         this.add_boxandwhiskersdata1_lbub();
+//         this.add_boxandwhiskersdata1_mean();
+//         this.add_boxandwhiskersdata1tooltipandfill_box();
+//         this.add_boxandwhiskersdata1tooltipandfill_mean();
+//         this.set_x1andy1axesstyle_verticalbarsplot();
+//         this.add_y1axislabel("concentration (mM_glog_normalized)");
+//         this.add_title("metabolites");
+//     };
+//     chart2d2.data1.change_filters({'calculated_concentration_units':['mM_glog_normalized'],
+//                'component_name':["g6p.g6p_1.Light","icit.icit_2.Light"]});
+//     chart2d2.data1.filter_stringdata();
+//     chart2d2.render();
 };

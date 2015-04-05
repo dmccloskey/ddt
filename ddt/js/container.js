@@ -373,18 +373,19 @@ d3_chart2d.prototype.add_title = function (title_I) {
     .text(title_I);
 };
 d3_chart2d.prototype.remove_title = function () {
-    // add chart title
+    // remove chart title
     this.title.remove();
     this.title = null;
 };
 d3_chart2d.prototype.add_clippath = function () {
     // add clippath to chart
-    this.clippath = this.svgg.append("clippath")
-          .attr("class", "clippath")
-          .attr("id", this.id + "clippath")
+    this.clippath = this.svgenter.append("clippath")
+        .attr("class", "clippath")
+        .attr("id", this.id + "clippath")
         .append("rect")
-          .attr("width", this.width)
-          .attr("height", this.height);
+        .attr("width", this.width)
+        .attr("height", this.height)
+        .style("pointer-events", "all");
 };
 d3_chart2d.prototype.remove_clippath = function () {
     // remove clippath from chart
@@ -443,7 +444,13 @@ d3_chart2d.prototype.set_y1domain = function () {
     var _this = this;
     var data1 = [];
     // required to prevent error bars from being cutoff
-    if (this.data1keymap.ydatalb && this.data1keymap.ydataub){
+    if (this.data1keymap.ydatamin && this.data1keymap.ydatamax){
+        _this.data1.listdatafiltered.forEach(function(d){
+            data1.push(d[y_data]);
+            data1.push(d[_this.data1keymap.ydatamin]);
+            data1.push(d[_this.data1keymap.ydatamax]);
+        })
+    } else if (this.data1keymap.ydatalb && this.data1keymap.ydataub){
         _this.data1.listdatafiltered.forEach(function(d){
             data1.push(d[y_data]);
             data1.push(d[_this.data1keymap.ydatalb]);
@@ -469,7 +476,13 @@ d3_chart2d.prototype.set_y2domain = function () {
     var _this = this;
     var data2 = [];
     // required to prevent error bars from being cutoff
-    if (this.data2keymap.ydatalb && this.data2keymap.ydataub){
+    if (this.data2keymap.ydatamin && this.data2keymap.ydatamax){
+        _this.data2.listdatafiltered.forEach(function(d){
+            data2.push(d[y_data]);
+            data2.push(d[_this.data2keymap.ydatamin]);
+            data2.push(d[_this.data2keymap.ydatamax]);
+        })
+    } else if (this.data2keymap.ydatalb && this.data2keymap.ydataub){
         _this.data2.listdatafiltered.forEach(function(d){
             data2.push(d[y_data]);
             data2.push(d[_this.data2keymap.ydatalb]);
@@ -644,10 +657,17 @@ d3_chart2d.prototype.add_x1axisgridlines = function () {
     var x1scale = this.x1scale;
     var listdatafiltered = this.data1.listdatafiltered;
 
-    this.x1axisgridlines = this.svgg.selectAll("line")
+    this.x1axisgridlines = this.svgg.selectAll(".xgridlines")
       .data(this.x1scale.ticks(10));
 
     this.x1axisgridlines.exit().remove();
+
+    this.x1axisgridlines.transition()
+      .attr("x1", x1scale)
+      .attr("x2", x1scale)
+      .attr("y1", d3.min(listdatafiltered, function (d) { return d[y_data]; }))
+      .attr("y2", d3.max(listdatafiltered, function (d) { return d[y_data]; }))
+      .style("stroke", "#ccc");
 
     this.x1axisgridlinesenter = this.x1axisgridlines.enter()
       .append("line")
@@ -670,6 +690,13 @@ d3_chart2d.prototype.add_y1axisgridlines = function () {
     .data(this.y1scale.ticks(10));
 
     this.y1axisgridlines.exit().remove();
+
+    this.y1axisgridlines.transition()
+        .attr("x1", d3.min(listdatafiltered, function (d) { return d[x_data]; }))
+        .attr("x2", d3.max(listdatafiltered, function (d) { return d[x_data]; }))
+        .attr("y1", y1scale)
+        .attr("y2", y1scale)
+        .style("stroke", "#ccc");
 
     this.y1axisgridlinesenter = this.y1axisgridlines.enter()
         .append("line")
@@ -1410,11 +1437,12 @@ d3_chart2d.prototype.add_verticalbarsdata1tooltipandfill = function () {
 };
 d3_chart2d.prototype.add_verticalbarsdata1errorbars = function () {
     //add vertical error bars to the plot
+    //TODO: change from poly line to 3 lines: lb,ub,and connector
 
     var x_data = this.data1keymap.xdata;
     var y_data = this.data1keymap.ydata;
-    var ydatalb = this.data1keymap.ydatalb;
-    var ydataub = this.data1keymap.ydataub;
+    var y_data_lb = this.data1keymap.ydatalb;
+    var y_data_ub = this.data1keymap.ydataub;
     var series_label = this.data1keymap.serieslabel;
     var x1scale = this.x1scale;
     var x2scale = this.x2scale;
@@ -1422,44 +1450,99 @@ d3_chart2d.prototype.add_verticalbarsdata1errorbars = function () {
     var colorscale = this.colorscale;
     var id = this.id;
 
-    this.barserrorbars = this.barlabel.selectAll(".errorbars")
-        .data(function(d){return d.values});
-    
-    this.barserrorbars.exit().remove();
-    
-    this.barserrorbars.transition()
-        .attr("points",function(d){ //use upper and lower 95% confidence intervals for error bars
-                return x2scale(d[series_label]) + ',' + y1scale(d[ydataub]) + ' ' +
-                    (x2scale(d[series_label]) + x2scale.rangeBand()) + ',' + y1scale(d[ydataub]) + ' ' +
-                    (x2scale(d[series_label]) + x2scale.rangeBand() * 0.5) + ',' + y1scale(d[ydataub]) + ' ' +
-                    (x2scale(d[series_label]) + x2scale.rangeBand() * 0.5) + ',' + y1scale(d[ydatalb]) + ' ' +
-                    x2scale(d[series_label]) + ',' + y1scale(d[ydatalb]) + ' ' +
-                    x2scale(d[series_label]) + ',' + y1scale(d[ydatalb]) + ' ' +
-                    (x2scale(d[series_label]) + x2scale.rangeBand()) + ',' + y1scale(d[ydatalb])
-        })
-        .style("fill", "none")
-        .style("stroke", "#000000")
+    //upperbounds: the horizontal lines representing the uppoer bounds of the confidence intervals.
+    this.barsublines = this.barlabel.selectAll(".ublines")
+        .data(function (d) { return d.values; });
+
+    this.barsublines.exit().remove();
+
+    this.barsublines.transition()
+        .attr("x1", function (d) { return x2scale(d[series_label]); })
+        .attr("x2", function (d) { return x2scale(d[series_label]) + x2scale.rangeBand(); })
+        .attr("y1", function (d) { return y1scale(d[y_data_ub]); })
+        .attr("y2", function (d) { return y1scale(d[y_data_ub]); })
+        //.style("stroke", function (d) { return colorscale(d[series_label]); });
+        .style("stroke","black");
+      
+    this.barsublinesenter = this.barsublines.enter()
+        .append("line")
+        .attr("class", "ublines");
+
+    this.barsublinesenter
+        .attr("x1", function (d) { return x2scale(d[series_label]); })
+        .attr("x2", function (d) { return x2scale(d[series_label]) + x2scale.rangeBand(); })
+        .attr("y1", function (d) { return y1scale(d[y_data_ub]); })
+        .attr("y2", function (d) { return y1scale(d[y_data_ub]); })
+        //.style("stroke", function (d) { return colorscale(d[series_label]); });
+        .style("stroke","black")
         .style("stroke-width", function (d) {
             if (d[y_data] == 0.0) { return 0; 
             } else { return 1; } 
         });
+        
+    //lowerbound: the horizontal lines representing the lowerbound of the confidence intervals.
+    this.barslblines = this.barlabel.selectAll(".lblines")
+        .data(function (d) { return d.values; });
 
-    this.barserrorbarsenter = this.barserrorbars.enter()
-        .append("polyline")
-        .attr("class","errorbars");
+    this.barslblines.exit().remove();
 
-     this.barserrorbarsenter
-        .attr("points",function(d){ //use upper and lower 95% confidence intervals for error bars
-                return x2scale(d[series_label]) + ',' + y1scale(d[ydataub]) + ' ' +
-                    (x2scale(d[series_label]) + x2scale.rangeBand()) + ',' + y1scale(d[ydataub]) + ' ' +
-                    (x2scale(d[series_label]) + x2scale.rangeBand() * 0.5) + ',' + y1scale(d[ydataub]) + ' ' +
-                    (x2scale(d[series_label]) + x2scale.rangeBand() * 0.5) + ',' + y1scale(d[ydatalb]) + ' ' +
-                    x2scale(d[series_label]) + ',' + y1scale(d[ydatalb]) + ' ' +
-                    x2scale(d[series_label]) + ',' + y1scale(d[ydatalb]) + ' ' +
-                    (x2scale(d[series_label]) + x2scale.rangeBand()) + ',' + y1scale(d[ydatalb])
-        })
-        .style("fill", "none")
-        .style("stroke", "#000000")
+    this.barslblines.transition()
+        .attr("x1", function (d) { return x2scale(d[series_label]); })
+        .attr("x2", function (d) { return x2scale(d[series_label]) + x2scale.rangeBand(); })
+        .attr("y1", function (d) { return y1scale(d[y_data_lb]); })
+        .attr("y2", function (d) { return y1scale(d[y_data_lb]); })
+        //.style("stroke", function (d) { return colorscale(d[series_label]); });
+        .style("stroke","black")
+        .style("stroke-width", function (d) {
+            if (d[y_data] == 0.0) { return 0; 
+            } else { return 1; } 
+        });
+      
+    this.barslblinesenter = this.barslblines.enter()
+        .append("line")
+        .attr("class", "lblines");
+
+    this.barslblinesenter
+        .attr("x1", function (d) { return x2scale(d[series_label]); })
+        .attr("x2", function (d) { return x2scale(d[series_label]) + x2scale.rangeBand(); })
+        .attr("y1", function (d) { return y1scale(d[y_data_lb]); })
+        .attr("y2", function (d) { return y1scale(d[y_data_lb]); })
+        //.style("stroke", function (d) { return colorscale(d[series_label]); });
+        .style("stroke","black")
+        .style("stroke-width", function (d) {
+            if (d[y_data] == 0.0) { return 0; 
+            } else { return 1; } 
+        });
+        
+    //connector: the vertical line connecting the confidence intervals.
+    this.barslbubconnector = this.barlabel.selectAll(".lbubconnector")
+        .data(function (d) { return d.values; });
+
+    this.barslbubconnector.exit().remove();
+
+    this.barslbubconnector.transition()
+        .attr("x1", function (d) { return x2scale(d[series_label]) + x2scale.rangeBand()*0.5; })
+        .attr("x2", function (d) { return x2scale(d[series_label]) + x2scale.rangeBand()*0.5; })
+        .attr("y1", function (d) { return y1scale(d[y_data_lb]); })
+        .attr("y2", function (d) { return y1scale(d[y_data_ub]); })
+        //.style("stroke", function (d) { return colorscale(d[series_label]); });
+        .style("stroke","black")
+        .style("stroke-width", function (d) {
+            if (d[y_data] == 0.0) { return 0; 
+            } else { return 1; } 
+        });
+      
+    this.barslbubconnectorenter = this.barslbubconnector.enter()
+        .append("line")
+        .attr("class", "lbubconnector");
+
+    this.barslbubconnectorenter
+        .attr("x1", function (d) { return x2scale(d[series_label]) + x2scale.rangeBand()*0.5; })
+        .attr("x2", function (d) { return x2scale(d[series_label]) + x2scale.rangeBand()*0.5; })
+        .attr("y1", function (d) { return y1scale(d[y_data_lb]); })
+        .attr("y2", function (d) { return y1scale(d[y_data_ub]); })
+        //.style("stroke", function (d) { return colorscale(d[series_label]); });
+        .style("stroke","black")
         .style("stroke-width", function (d) {
             if (d[y_data] == 0.0) { return 0; 
             } else { return 1; } 
@@ -1591,7 +1674,7 @@ d3_chart2d.prototype.set_data2keymap = function (data2keymap_I) {
     //set the data2 column identifiers for xdata, yudata, serieslabel, and featureslabel
     this.data2keymap = data2keymap_I;
 };
-d3_chart2d.prototype.add_boxandwhiskers = function () {
+d3_chart2d.prototype.add_boxandwhiskersdata1 = function () {
     //add box and whiskers to the plot
 //     boxes: the main body of the boxplot showing the quartiles and the median’s confidence intervals if enabled.
 //     medians: horizonal lines at the median of each box.
@@ -1600,7 +1683,40 @@ d3_chart2d.prototype.add_boxandwhiskers = function () {
 //     fliers: points representing data that extend beyond the whiskers (outliers).
 //     means: points or lines representing the means.
 
-    var y_data_mean = this.data1keymap.ydatamean;
+    var y_data_mean = this.data1keymap.ydata;
+    var y_data_lb = this.data1keymap.ydatalb;
+    var y_data_ub = this.data1keymap.ydataub;
+    var y_data_median = this.data1keymap.ydatamedian;
+    var y_data_iq1 = this.data1keymap.ydataiq1;
+    var y_data_iq3 = this.data1keymap.ydataiq3;
+    var y_data_min = this.data1keymap.ydatamin;
+    var y_data_max = this.data1keymap.ydatamax;
+    var series_label = this.data1keymap.serieslabel;
+    var x1scale = this.x1scale;
+    var x2scale = this.x2scale;
+    var y1scale = this.y1scale;
+    var colorscale = this.colorscale;
+    var id = this.id;
+    var zoom = this.zoom;
+
+    //assign the positioning of the feature labels
+    this.boxandwhiskerslabel = this.svgg.selectAll(".labels")
+        .data(this.data1.nestdatafiltered);
+
+    this.boxandwhiskerslabel.transition()
+        .attr("class", "labels")
+        .attr("transform", function (d) { return "translate(" + x1scale(d.key) + ",0)"; });
+
+    this.boxandwhiskerslabel.exit().remove();
+
+    this.boxandwhiskerslabelenter = this.boxandwhiskerslabel.enter().append("g")
+        .attr("class", "labels")
+        .attr("transform", function (d) { return "translate(" + x1scale(d.key) + ",0)"; });
+};
+d3_chart2d.prototype.add_boxandwhiskersdata1_box = function (){
+    // add box for the quartiles to box and whiskers plot
+
+    var y_data_mean = this.data1keymap.ydata;
     var y_data_lb = this.data1keymap.ydatalb;
     var y_data_ub = this.data1keymap.ydataub;
     var y_data_median = this.data1keymap.ydatamedian;
@@ -1615,14 +1731,6 @@ d3_chart2d.prototype.add_boxandwhiskers = function () {
     var colorscale = this.colorscale;
     var id = this.id;
 
-    //assign the positioning of the feature labels
-    this.boxandwhiskerslabel = this.svgg.selectAll(".labels")
-        .data(this.data1.nestdatafiltered)
-
-    this.boxandwhiskerslabelenter = this.boxandwhiskerslabel.enter().append("g")
-        .attr("class", "labels")
-        .attr("transform", function (d) { return "translate(" + x1scale(d.key) + ",0)"; });
-
     //boxes: the main body of the boxplot showing the quartiles
     this.boxandwhiskersboxes = this.boxandwhiskerslabel.selectAll(".boxes")
         .data(function (d) { return d.values; });
@@ -1633,8 +1741,9 @@ d3_chart2d.prototype.add_boxandwhiskers = function () {
         .attr("width", x2scale.rangeBand())
         .attr("x", function (d) { return x2scale(d[series_label]); })
         .attr("y", function (d) { return y1scale(d[y_data_iq3]); })
-        .attr("height", function (d) { return y1scale(d[y_data_iq1]); })
-        .style("stroke", function (d) { return colorscale(d[series_label]); });
+        .attr("height", function (d) { return Math.abs(y1scale(d[y_data_iq3])-y1scale(d[y_data_iq1])); })
+        .style("stroke", function (d) { return colorscale(d[series_label]); })
+        .style("fill", "none");
       
     this.boxandwhiskersboxesenter = this.boxandwhiskersboxes.enter()
         .append("rect")
@@ -1643,8 +1752,27 @@ d3_chart2d.prototype.add_boxandwhiskers = function () {
     this.boxandwhiskersboxesenter.attr("width", x2scale.rangeBand())
         .attr("x", function (d) { return x2scale(d[series_label]); })
         .attr("y", function (d) { return y1scale(d[y_data_iq3]); })
-        .attr("height", function (d) { return y1scale(d[y_data_iq1]); })
-        .style("stroke", function (d) { return colorscale(d[series_label]); });
+        .attr("height", function (d) { return Math.abs(y1scale(d[y_data_iq3])-y1scale(d[y_data_iq1])); })
+        .style("stroke", function (d) { return colorscale(d[series_label]); })
+        .style("fill", "none");
+};
+d3_chart2d.prototype.add_boxandwhiskersdata1_median = function (){
+    // add lines for the median to box and whiskers plot
+
+    var y_data_mean = this.data1keymap.ydata;
+    var y_data_lb = this.data1keymap.ydatalb;
+    var y_data_ub = this.data1keymap.ydataub;
+    var y_data_median = this.data1keymap.ydatamedian;
+    var y_data_iq1 = this.data1keymap.ydataiq1;
+    var y_data_iq3 = this.data1keymap.ydataiq3;
+    var y_data_min = this.data1keymap.ydatamin;
+    var y_data_max = this.data1keymap.ydatamax;
+    var series_label = this.data1keymap.serieslabel;
+    var x1scale = this.x1scale;
+    var x2scale = this.x2scale;
+    var y1scale = this.y1scale;
+    var colorscale = this.colorscale;
+    var id = this.id;
         
     //medians: horizonal lines at the median of each box.
     this.boxandwhiskersmedianlines = this.boxandwhiskerslabel.selectAll(".medianlines")
@@ -1657,6 +1785,7 @@ d3_chart2d.prototype.add_boxandwhiskers = function () {
         .attr("x2", function (d) { return x2scale(d[series_label]) + x2scale.rangeBand(); })
         .attr("y1", function (d) { return y1scale(d[y_data_median]); })
         .attr("y2", function (d) { return y1scale(d[y_data_median]); })
+        //.style("stroke", "black");
         .style("stroke", function (d) { return colorscale(d[series_label]); });
       
     this.boxandwhiskersmedianlinesenter = this.boxandwhiskersmedianlines.enter()
@@ -1668,31 +1797,91 @@ d3_chart2d.prototype.add_boxandwhiskers = function () {
         .attr("x2", function (d) { return x2scale(d[series_label]) + x2scale.rangeBand(); })
         .attr("y1", function (d) { return y1scale(d[y_data_median]); })
         .attr("y2", function (d) { return y1scale(d[y_data_median]); })
+        //.style("stroke", "black");
         .style("stroke", function (d) { return colorscale(d[series_label]); });
+};
+d3_chart2d.prototype.add_boxandwhiskersdata1_mean = function (){
+    // add lines for the mean to box and whiskers plot
+
+    var y_data_mean = this.data1keymap.ydata;
+    var y_data_lb = this.data1keymap.ydatalb;
+    var y_data_ub = this.data1keymap.ydataub;
+    var y_data_median = this.data1keymap.ydatamedian;
+    var y_data_iq1 = this.data1keymap.ydataiq1;
+    var y_data_iq3 = this.data1keymap.ydataiq3;
+    var y_data_min = this.data1keymap.ydatamin;
+    var y_data_max = this.data1keymap.ydatamax;
+    var series_label = this.data1keymap.serieslabel;
+    var x1scale = this.x1scale;
+    var x2scale = this.x2scale;
+    var y1scale = this.y1scale;
+    var colorscale = this.colorscale;
+    var id = this.id;
         
     //means: points or lines representing the means.
-    this.boxandwhiskersmeanlines = this.boxandwhiskerslabel.selectAll(".meanlines")
+//     this.boxandwhiskersmeanlines = this.boxandwhiskerslabel.selectAll(".meanlines")
+//         .data(function (d) { return d.values; });
+
+//     this.boxandwhiskersmeanlines.exit().remove();
+
+//     this.boxandwhiskersmeanlines.transition()
+//         .attr("x1", function (d) { return x2scale(d[series_label]); })
+//         .attr("x2", function (d) { return x2scale(d[series_label]) + x2scale.rangeBand(); })
+//         .attr("y1", function (d) { return y1scale(d[y_data_mean]); })
+//         .attr("y2", function (d) { return y1scale(d[y_data_mean]); })
+//         .style("stroke", function (d) { return colorscale(d[series_label]); });
+      
+//     this.boxandwhiskersmeanlinesenter = this.boxandwhiskersmeanlines.enter()
+//         .append("line")
+//         .attr("class", "meanlines");
+
+//     this.boxandwhiskersmeanlinesenter
+//         .attr("x1", function (d) { return x2scale(d[series_label]); })
+//         .attr("x2", function (d) { return x2scale(d[series_label]) + x2scale.rangeBand(); })
+//         .attr("y1", function (d) { return y1scale(d[y_data_mean]); })
+//         .attr("y2", function (d) { return y1scale(d[y_data_mean]); })
+//         .style("stroke", function (d) { return colorscale(d[series_label]); });
+
+    this.boxandwhiskersmeancircles = this.boxandwhiskerslabel.selectAll(".meancircles")
         .data(function (d) { return d.values; });
 
-    this.boxandwhiskersmeanlines.exit().remove();
+    this.boxandwhiskersmeancircles.exit().remove();
 
-    this.boxandwhiskersmeanlines.transition()
-        .attr("x1", function (d) { return x2scale(d[series_label]); })
-        .attr("x2", function (d) { return x2scale(d[series_label]) + x2scale.rangeBand(); })
-        .attr("y1", function (d) { return y1scale(d[y_data_mean]); })
-        .attr("y2", function (d) { return y1scale(d[y_data_mean]); })
-        .style("stroke", function (d) { return colorscale(d[series_label]); });
+    this.boxandwhiskersmeancircles.transition()
+        .attr("r", function (d) { return x2scale.rangeBand()*0.125;})
+        .attr("cx", function (d) { return x2scale(d[series_label]) + x2scale.rangeBand()*0.5; })
+        .attr("cy", function (d) { return y1scale(d[y_data_mean]); })
+        .style("stroke", "black")
+        .style("fill", function (d) { return colorscale(d[series_label]); });
       
-    this.boxandwhiskersmeanlinesenter = this.boxandwhiskersmeanlines.enter()
-        .append("line")
-        .attr("class", "meanlines");
+    this.boxandwhiskersmeancirclesenter = this.boxandwhiskersmeancircles.enter()
+        .append("circle")
+        .attr("class", "meancircles");
 
-    this.boxandwhiskersmeanlinesenter
-        .attr("x1", function (d) { return x2scale(d[series_label]); })
-        .attr("x2", function (d) { return x2scale(d[series_label]) + x2scale.rangeBand(); })
-        .attr("y1", function (d) { return y1scale(d[y_data_mean]); })
-        .attr("y2", function (d) { return y1scale(d[y_data_mean]); })
-        .style("stroke", function (d) { return colorscale(d[series_label]); });
+    this.boxandwhiskersmeancirclesenter
+        .attr("r", function (d) { return x2scale.rangeBand()*0.125;})
+        .attr("cx", function (d) { return x2scale(d[series_label]) + x2scale.rangeBand()*0.5; })
+        .attr("cy", function (d) { return y1scale(d[y_data_mean]); })
+        .style("stroke", "black")
+        .style("fill", function (d) { return colorscale(d[series_label]); });
+};
+d3_chart2d.prototype.add_boxandwhiskersdata1_caps = function (){
+    // add lines for caps to box and whiskers plot
+
+    var y_data_mean = this.data1keymap.ydata;
+    var y_data_lb = this.data1keymap.ydatalb;
+    var y_data_ub = this.data1keymap.ydataub;
+    var y_data_median = this.data1keymap.ydatamedian;
+    var y_data_iq1 = this.data1keymap.ydataiq1;
+    var y_data_iq3 = this.data1keymap.ydataiq3;
+    var y_data_min = this.data1keymap.ydatamin;
+    var y_data_max = this.data1keymap.ydatamax;
+    var series_label = this.data1keymap.serieslabel;
+    var x1scale = this.x1scale;
+    var x2scale = this.x2scale;
+    var y1scale = this.y1scale;
+    var colorscale = this.colorscale;
+    var id = this.id;
 
     //caps (max): the horizontal lines at the ends of the whiskers.
     this.boxandwhiskersmaxlines = this.boxandwhiskerslabel.selectAll(".maxlines")
@@ -1741,6 +1930,24 @@ d3_chart2d.prototype.add_boxandwhiskers = function () {
         .attr("y1", function (d) { return y1scale(d[y_data_min]); })
         .attr("y2", function (d) { return y1scale(d[y_data_min]); })
         .style("stroke", function (d) { return colorscale(d[series_label]); });
+};
+d3_chart2d.prototype.add_boxandwhiskersdata1_whiskers = function (){
+    // add lines for whiskers to box and whiskers plot
+
+    var y_data_mean = this.data1keymap.ydata;
+    var y_data_lb = this.data1keymap.ydatalb;
+    var y_data_ub = this.data1keymap.ydataub;
+    var y_data_median = this.data1keymap.ydatamedian;
+    var y_data_iq1 = this.data1keymap.ydataiq1;
+    var y_data_iq3 = this.data1keymap.ydataiq3;
+    var y_data_min = this.data1keymap.ydatamin;
+    var y_data_max = this.data1keymap.ydatamax;
+    var series_label = this.data1keymap.serieslabel;
+    var x1scale = this.x1scale;
+    var x2scale = this.x2scale;
+    var y1scale = this.y1scale;
+    var colorscale = this.colorscale;
+    var id = this.id;
 
     //whiskers (min): the vertical lines extending from the qurtiles to the most extreme, n-outlier data points.
     this.boxandwhiskerswhiskersminlines = this.boxandwhiskerslabel.selectAll(".whiskersminlines")
@@ -1749,8 +1956,8 @@ d3_chart2d.prototype.add_boxandwhiskers = function () {
     this.boxandwhiskerswhiskersminlines.exit().remove();
 
     this.boxandwhiskerswhiskersminlines.transition()
-        .attr("x1", function (d) { return (x2scale(d[series_label]) + x2scale.rangeBand())/2; })
-        .attr("x2", function (d) { return (x2scale(d[series_label]) + x2scale.rangeBand())/2; })
+        .attr("x1", function (d) { return x2scale(d[series_label]) + x2scale.rangeBand()*0.5; })
+        .attr("x2", function (d) { return x2scale(d[series_label]) + x2scale.rangeBand()*0.5; })
         .attr("y1", function (d) { return y1scale(d[y_data_iq1]); })
         .attr("y2", function (d) { return y1scale(d[y_data_min]); })
         .style("stroke", function (d) { return colorscale(d[series_label]); });
@@ -1760,8 +1967,8 @@ d3_chart2d.prototype.add_boxandwhiskers = function () {
         .attr("class", "whiskersminlines");
 
     this.boxandwhiskerswhiskersminlinesenter
-        .attr("x1", function (d) { return (x2scale(d[series_label]) + x2scale.rangeBand())/2; })
-        .attr("x2", function (d) { return (x2scale(d[series_label]) + x2scale.rangeBand())/2; })
+        .attr("x1", function (d) { return x2scale(d[series_label]) + x2scale.rangeBand()*0.5; })
+        .attr("x2", function (d) { return x2scale(d[series_label]) + x2scale.rangeBand()*0.5; })
         .attr("y1", function (d) { return y1scale(d[y_data_iq1]); })
         .attr("y2", function (d) { return y1scale(d[y_data_min]); })
         .style("stroke", function (d) { return colorscale(d[series_label]); });
@@ -1773,22 +1980,40 @@ d3_chart2d.prototype.add_boxandwhiskers = function () {
     this.boxandwhiskerswhiskersmaxlines.exit().remove();
 
     this.boxandwhiskerswhiskersmaxlines.transition()
-        .attr("x1", function (d) { return (x2scale(d[series_label]) + x2scale.rangeBand())/2; })
-        .attr("x2", function (d) { return (x2scale(d[series_label]) + x2scale.rangeBand())/2; })
+        .attr("x1", function (d) { return x2scale(d[series_label]) + x2scale.rangeBand()*0.5; })
+        .attr("x2", function (d) { return x2scale(d[series_label]) + x2scale.rangeBand()*0.5; })
         .attr("y1", function (d) { return y1scale(d[y_data_iq3]); })
         .attr("y2", function (d) { return y1scale(d[y_data_max]); })
-        .style("stroke", "black");
+        .style("stroke", function (d) { return colorscale(d[series_label]); });
       
     this.boxandwhiskerswhiskersmaxlinesenter = this.boxandwhiskerswhiskersmaxlines.enter()
         .append("line")
         .attr("class", "whiskersmaxlines");
 
     this.boxandwhiskerswhiskersmaxlinesenter
-        .attr("x1", function (d) { return (x2scale(d[series_label]) + x2scale.rangeBand())/2; })
-        .attr("x2", function (d) { return (x2scale(d[series_label]) + x2scale.rangeBand())/2; })
+        .attr("x1", function (d) { return x2scale(d[series_label]) + x2scale.rangeBand()*0.5; })
+        .attr("x2", function (d) { return x2scale(d[series_label]) + x2scale.rangeBand()*0.5; })
         .attr("y1", function (d) { return y1scale(d[y_data_iq3]); })
         .attr("y2", function (d) { return y1scale(d[y_data_max]); })
-        .style("stroke", "black");
+        .style("stroke", function (d) { return colorscale(d[series_label]); });
+};
+d3_chart2d.prototype.add_boxandwhiskersdata1_lbub = function (){
+    // add lines for lb and ub to box and whiskers plot
+
+    var y_data_mean = this.data1keymap.ydata;
+    var y_data_lb = this.data1keymap.ydatalb;
+    var y_data_ub = this.data1keymap.ydataub;
+    var y_data_median = this.data1keymap.ydatamedian;
+    var y_data_iq1 = this.data1keymap.ydataiq1;
+    var y_data_iq3 = this.data1keymap.ydataiq3;
+    var y_data_min = this.data1keymap.ydatamin;
+    var y_data_max = this.data1keymap.ydatamax;
+    var series_label = this.data1keymap.serieslabel;
+    var x1scale = this.x1scale;
+    var x2scale = this.x2scale;
+    var y1scale = this.y1scale;
+    var colorscale = this.colorscale;
+    var id = this.id;
 
     //upperbounds: the horizontal lines representing the uppoer bounds of the confidence intervals.
     this.boxandwhiskersublines = this.boxandwhiskerslabel.selectAll(".ublines")
@@ -1797,22 +2022,28 @@ d3_chart2d.prototype.add_boxandwhiskers = function () {
     this.boxandwhiskersublines.exit().remove();
 
     this.boxandwhiskersublines.transition()
-        .attr("x1", function (d) { return x2scale(d[series_label]); })
-        .attr("x2", function (d) { return x2scale(d[series_label]) + x2scale.rangeBand(); })
+        //.attr("x1", function (d) { return x2scale(d[series_label]); })
+        //.attr("x2", function (d) { return x2scale(d[series_label]) + x2scale.rangeBand(); })
+        .attr("x1", function (d) { return x2scale(d[series_label]) + x2scale.rangeBand()*0.25; })
+        .attr("x2", function (d) { return x2scale(d[series_label]) + x2scale.rangeBand()*0.75; })
         .attr("y1", function (d) { return y1scale(d[y_data_ub]); })
         .attr("y2", function (d) { return y1scale(d[y_data_ub]); })
-        .style("stroke", function (d) { return colorscale(d[series_label]); });
+        //.style("stroke", function (d) { return colorscale(d[series_label]); });
+        .style("stroke","black");
       
     this.boxandwhiskersublinesenter = this.boxandwhiskersublines.enter()
         .append("line")
         .attr("class", "ublines");
 
     this.boxandwhiskersublinesenter
-        .attr("x1", function (d) { return x2scale(d[series_label]); })
-        .attr("x2", function (d) { return x2scale(d[series_label]) + x2scale.rangeBand(); })
+        //.attr("x1", function (d) { return x2scale(d[series_label]); })
+        //.attr("x2", function (d) { return x2scale(d[series_label]) + x2scale.rangeBand(); })
+        .attr("x1", function (d) { return x2scale(d[series_label]) + x2scale.rangeBand()*0.25; })
+        .attr("x2", function (d) { return x2scale(d[series_label]) + x2scale.rangeBand()*0.75; })
         .attr("y1", function (d) { return y1scale(d[y_data_ub]); })
         .attr("y2", function (d) { return y1scale(d[y_data_ub]); })
-        .style("stroke", function (d) { return colorscale(d[series_label]); });
+        //.style("stroke", function (d) { return colorscale(d[series_label]); });
+        .style("stroke","black");
         
     //lowerbound: the horizontal lines representing the lowerbound of the confidence intervals.
     this.boxandwhiskerslblines = this.boxandwhiskerslabel.selectAll(".lblines")
@@ -1821,21 +2052,171 @@ d3_chart2d.prototype.add_boxandwhiskers = function () {
     this.boxandwhiskerslblines.exit().remove();
 
     this.boxandwhiskerslblines.transition()
-        .attr("x1", function (d) { return x2scale(d[series_label]); })
-        .attr("x2", function (d) { return x2scale(d[series_label]) + x2scale.rangeBand(); })
+        //.attr("x1", function (d) { return x2scale(d[series_label]); })
+        //.attr("x2", function (d) { return x2scale(d[series_label]) + x2scale.rangeBand(); })
+        .attr("x1", function (d) { return x2scale(d[series_label]) + x2scale.rangeBand()*0.25; })
+        .attr("x2", function (d) { return x2scale(d[series_label]) + x2scale.rangeBand()*0.75; })
         .attr("y1", function (d) { return y1scale(d[y_data_lb]); })
         .attr("y2", function (d) { return y1scale(d[y_data_lb]); })
-        .style("stroke", function (d) { return colorscale(d[series_label]); });
+        //.style("stroke", function (d) { return colorscale(d[series_label]); });
+        .style("stroke","black");
       
     this.boxandwhiskerslblinesenter = this.boxandwhiskerslblines.enter()
         .append("line")
         .attr("class", "lblines");
 
     this.boxandwhiskerslblinesenter
-        .attr("x1", function (d) { return x2scale(d[series_label]); })
-        .attr("x2", function (d) { return x2scale(d[series_label]) + x2scale.rangeBand(); })
+        //.attr("x1", function (d) { return x2scale(d[series_label]); })
+        //.attr("x2", function (d) { return x2scale(d[series_label]) + x2scale.rangeBand(); })
+        .attr("x1", function (d) { return x2scale(d[series_label]) + x2scale.rangeBand()*0.25; })
+        .attr("x2", function (d) { return x2scale(d[series_label]) + x2scale.rangeBand()*0.75; })
         .attr("y1", function (d) { return y1scale(d[y_data_lb]); })
         .attr("y2", function (d) { return y1scale(d[y_data_lb]); })
-        .style("stroke", function (d) { return colorscale(d[series_label]); });
-    
+        //.style("stroke", function (d) { return colorscale(d[series_label]); });
+        .style("stroke","black");
+        
+    //connector: the vertical line connecting the confidence intervals.
+    this.boxandwhiskerslbubconnector = this.boxandwhiskerslabel.selectAll(".lbubconnector")
+        .data(function (d) { return d.values; });
+
+    this.boxandwhiskerslbubconnector.exit().remove();
+
+    this.boxandwhiskerslbubconnector.transition()
+        .attr("x1", function (d) { return x2scale(d[series_label]) + x2scale.rangeBand()*0.5; })
+        .attr("x2", function (d) { return x2scale(d[series_label]) + x2scale.rangeBand()*0.5; })
+        .attr("y1", function (d) { return y1scale(d[y_data_lb]); })
+        .attr("y2", function (d) { return y1scale(d[y_data_ub]); })
+        //.style("stroke", function (d) { return colorscale(d[series_label]); });
+        .style("stroke","black");
+      
+    this.boxandwhiskerslbubconnectorenter = this.boxandwhiskerslbubconnector.enter()
+        .append("line")
+        .attr("class", "lbubconnector");
+
+    this.boxandwhiskerslbubconnectorenter
+        .attr("x1", function (d) { return x2scale(d[series_label]) + x2scale.rangeBand()*0.5; })
+        .attr("x2", function (d) { return x2scale(d[series_label]) + x2scale.rangeBand()*0.5; })
+        .attr("y1", function (d) { return y1scale(d[y_data_lb]); })
+        .attr("y2", function (d) { return y1scale(d[y_data_ub]); })
+        //.style("stroke", function (d) { return colorscale(d[series_label]); });
+        .style("stroke","black");
+};
+d3_chart2d.prototype.add_boxandwhiskersdata1tooltipandfill_box = function () {
+    //add a tooltip upon moving the mouse over the box
+    //add a change in color upon moving the mouse over the box
+    //NOTE: both must be within the same "on" method
+
+    var y_data_mean = this.data1keymap.ydata;
+    var y_data_lb = this.data1keymap.ydatalb;
+    var y_data_ub = this.data1keymap.ydataub;
+    var y_data_median = this.data1keymap.ydatamedian;
+    var y_data_iq1 = this.data1keymap.ydataiq1;
+    var y_data_iq3 = this.data1keymap.ydataiq3;
+    var y_data_min = this.data1keymap.ydatamin;
+    var y_data_max = this.data1keymap.ydatamax;
+    var series_label = this.data1keymap.serieslabel;
+    var x1scale = this.x1scale;
+    var x2scale = this.x2scale;
+    var y1scale = this.y1scale;
+    var colorscale = this.colorscale;
+    var id = this.id;
+
+    this.boxandwhiskersboxesenter.on("mouseover", function (d) {
+            //change color of the bar
+            d3.select(this).style('fill', 'black');
+            //Update the tooltip position and value
+            d3.select("#" + id + "tooltip")
+                .style("left", (d3.event.pageX + 10) + "px")
+                .style("top", (d3.event.pageY - 10) + "px")
+                .select("#" + id + "value")
+                .text(d[series_label] + ': ' + "median: " + d[y_data_median].toFixed(2) + ', ' + "iq1/3: " + d[y_data_iq1].toFixed(2) + "/" + d[y_data_iq3].toFixed(2) + ', ' + "min/max: " + d[y_data_min].toFixed(2) + "/" + d[y_data_max].toFixed(2));
+            //Show the tooltip
+            d3.select("#" + id + "tooltip").classed("hidden", false);
+        })
+        .on("mouseout", function (d) {
+            d3.select(this).style("fill", "none");
+            d3.select("#" + id + "tooltip").classed("hidden", true);
+        });
+};
+d3_chart2d.prototype.add_boxandwhiskersdata1tooltipandfill_mean = function () {
+    //add a tooltip upon moving the mouse over the box
+    //add a change in color upon moving the mouse over the box
+    //NOTE: both must be within the same "on" method
+
+    var y_data_mean = this.data1keymap.ydata;
+    var y_data_lb = this.data1keymap.ydatalb;
+    var y_data_ub = this.data1keymap.ydataub;
+    var y_data_median = this.data1keymap.ydatamedian;
+    var y_data_iq1 = this.data1keymap.ydataiq1;
+    var y_data_iq3 = this.data1keymap.ydataiq3;
+    var y_data_min = this.data1keymap.ydatamin;
+    var y_data_max = this.data1keymap.ydatamax;
+    var series_label = this.data1keymap.serieslabel;
+    var x1scale = this.x1scale;
+    var x2scale = this.x2scale;
+    var y1scale = this.y1scale;
+    var colorscale = this.colorscale;
+    var id = this.id;
+
+    this.boxandwhiskersmeancirclesenter.on("mouseover", function (d) {
+            //change color of the bar
+            d3.select(this).style('fill', 'black');
+            //Update the tooltip position and value
+            d3.select("#" + id + "tooltip")
+                .style("left", (d3.event.pageX + 10) + "px")
+                .style("top", (d3.event.pageY - 10) + "px")
+                .select("#" + id + "value")
+                .text(d[series_label] + ': ' + "mean: " + d[y_data_mean].toFixed(2) + ', ' + "ci 95%: " + d[y_data_lb].toFixed(2) + "/" + d[y_data_ub].toFixed(2));
+            //Show the tooltip
+            d3.select("#" + id + "tooltip").classed("hidden", false);
+        })
+        .on("mouseout", function (d) {
+            d3.select(this).style("fill", colorscale(d[series_label]));
+            d3.select("#" + id + "tooltip").classed("hidden", true);
+        });
+};
+d3_chart2d.prototype.set_zoom = function (){
+    //add zoom
+    var draw = this.draw;
+    this.zoom = d3.behavior.zoom()
+    .on("zoom", draw);
+};
+d3_chart2d.prototype.set_x1axiszoom = function(){
+    //set the x1axsis scale for the zoom
+    var x1scale = this.x1scale;
+    this.zoom.x(x1scale);
+};
+d3_chart2d.prototype.set_y1axiszoom = function(){
+    //set the x1axsis scale for the zoom
+    var y1scale = this.y1scale;
+    this.zoom.y(y1scale);
+};
+d3_chart2d.prototype.add_zoom = function(){
+    //add zoom to svg
+    var svgelement = this.svgelement;
+    var zoom = this.zoom;
+    this.svgelement.call(zoom);
+    //this.svgenter.call(zoom);
+    //this.zoom(svgelement);
+};
+d3_chart2d.prototype.draw = function(){
+    if (this.x1axis){
+        svgg.select('g.x1axis')
+            .call(this._x1axis);
+            };
+    if (this.x2axis){
+        svgg.select('g.x2axis')
+            .transition()
+            .call(this._x2axis);
+            };
+    if (this.y1axis){
+        svgg.select('g.y1axis')
+            .transition()
+            .call(this._x1axis);
+            };
+    if (this.y2axis){
+        svgg.select('g.y2axis')
+            .transition()
+            .call(this._y2axis);
+            };
 };
