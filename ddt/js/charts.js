@@ -414,3 +414,49 @@ var make_boxandwhiskersplot = function(){
 //     chart2d2.data1.filter_stringdata();
 //     chart2d2.render();
 };
+var make_heatmap = function(){
+    var data1keymap = {'xdata':'row_leaves','ydata':'col_leaves','zdata':'value',
+                'rowslabel':'row_label','columnslabel':'col_label',
+                'rowsindex':'row_index','columnsindex':'col_index',
+                'rowsleaves':'row_leaves','columnsleaves':'col_leaves'};
+    var keys = ['analysis_id','row_label','col_label','row_index','col_index','row_leaves','col_leaves',
+                'col_pdist_metric','row_pdist_metric','col_linkage_method','row_linkage_method',
+                'value_units']
+    var datalist = [{'value':'hclust','text':'by cluster'}, //values are predifined in heatmaporder function
+        {'value':'probecontrast','text':'by row and column'},
+        {'value':'probe','text':'by row'},
+        {'value':'contrast','text':'by column'},
+        {'value':'custom','text':'by value'}];
+    var d3data1 = new d3_data();
+    d3data1.set_keys(keys);
+    d3data1.set_listdata(data1_heatmap, 'analysis_id');
+    d3data1.reset_filters();
+    var chart2d1 = new d3_chart2d();
+    chart2d1.add_data1(d3data1);
+    chart2d1.set_data1keymap(data1keymap);
+    chart2d1.set_id('chart2d1');
+    chart2d1.set_tileid('tile1');
+    chart2d1.set_margin({ top: 200, right: 10, bottom: 150, left: 400 });
+    chart2d1.set_heatmapdata1(18); //must be done initially to set the height/width correctly
+    chart2d1.add_svgexportbutton2tile();
+    chart2d1.add_datalist2tile(datalist);
+    chart2d1.set_tooltip();
+    chart2d1.set_tooltipstyle();
+    chart2d1.set_zoom();
+    chart2d1.data1.change_filters({'value_units':['mM_glog_normalized']});
+    chart2d1.data1.filter_stringdata();
+    chart2d1.set_colorscale('quantile','colorbrewer','min,0,max','value');
+    chart2d1.render = function () {
+        this.add_chart2d2tile();
+        this.set_heatmapdata1(18); //update the heatmap properties
+        this.add_heatmapdata1();
+        this.add_heatmapdata1animation();
+        this.add_heatmapdata1rowlabels();
+        this.add_heatmapdata1columnlabels();
+        this.add_heatmapdata1legend();
+        this.add_heatmapdata1datalist();
+        this.add_heatmapdata1tooltipandfill();
+        this.set_heatmapdata1css();
+    };
+    chart2d1.render();
+};
