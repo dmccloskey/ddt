@@ -547,6 +547,14 @@ d3_chart2d.prototype.set_colorscale = function (colorscale_I,colorcategory_I,col
     //  colordomain_I = [] e.g., [0,1000],[-1000,1000],[-10,0,10],[0.0,0.5,1.0]
     //                           'min,0,max'
     //  colorcategory_I = category10, category20, category20a, category20b, category20c
+    //                    brewer, heatmap21, heatmap10
+
+
+    // custom colorscale
+    var heatmap21 = ["#081d58", "#162876", "#253494", "#23499E", "#2253A3", "#225ea8", "#1F77B4", "#1d91c0", "#2FA3C2", "#38ACC3", "#41b6c4", "#60C1BF", "#7fcdbb", "#91D4B9", "#A3DBB7", "#c7e9b4", "#DAF0B2", "#E3F4B1", "#edf8b1", "#F6FBC5", "#ffffd9"];
+    var heatmap10 = ["#081d58", "#253494", "#2253A3", "#1F77B4", "#2FA3C2", "#7fcdbb", "#A3DBB7", "#DAF0B2", "#edf8b1", "#ffffd9"]; //specific to resequencing data (domain 0.0-1.0)
+
+
     var listdatafiltered = this.data1.listdatafiltered;
     if (colorscale_I==='quantile' && colordomain_I==='min,0,max' && colordatalabel_I && colorcategory_I==='colorbrewer'){
             this.colorscale = d3.scale.quantile()
@@ -554,6 +562,18 @@ d3_chart2d.prototype.set_colorscale = function (colorscale_I,colorcategory_I,col
             0,
             d3.max(listdatafiltered, function (d) { return d[colordatalabel_I]; })])
             .range(colorbrewer.YlGnBu[9]);
+    }else if (colorscale_I==='quantile' && colordomain_I==='min,0,max' && colordatalabel_I && colorcategory_I==='heatmap21'){
+            this.colorscale = d3.scale.quantile()
+            .domain([d3.min(listdatafiltered, function (d) { return d[colordatalabel_I]; }),
+            0,
+            d3.max(listdatafiltered, function (d) { return d[colordatalabel_I]; })])
+            .range(heatmap21);
+    }else if (colorscale_I==='quantile' && colordomain_I==='min,0,max' && colordatalabel_I && colorcategory_I==='heatmap10'){
+            this.colorscale = d3.scale.quantile()
+            .domain([d3.min(listdatafiltered, function (d) { return d[colordatalabel_I]; }),
+            0,
+            d3.max(listdatafiltered, function (d) { return d[colordatalabel_I]; })])
+            .range(heatmap10);
     }else if (colorscale_I==='quantile' && colordomain_I && colorcategory_I==='colorbrewer'){
         this.colorscale = d3.scale.quantile().domain(colordomain_I).range(colorbrewer.YlGnBu[9]);
     }else if (colorscale_I==='quantile' && colordomain_I && colorcategory_I==='category10c'){
@@ -2380,7 +2400,7 @@ d3_chart2d.prototype.add_heatmapdata1columnlabels = function () {
     var tileid = this.tileid;
     var cellsize = this.cellsize;
     var columnleavesordered = this.columnleavesordered
-    var svgelement = this.svgelement;
+    var svgg = this.svgg;
 
     this.collabels = this.svgg.append("g").selectAll(".colLabelg")
         .data(uniquecollabels);
@@ -2397,13 +2417,13 @@ d3_chart2d.prototype.add_heatmapdata1columnlabels = function () {
             .on("mouseout" , function(d) {d3.select(this).classed("text-hover",false);})
             .on("click", function (d, i) {
                 colsortorder = !colsortorder;
-                sortbylabel("c", i, colsortorder,svgelement);
+                sortbylabel("c", i, colsortorder,svgg);
                 this.$('#'+tileid+'datalist').property("selectedIndex", 4).node().focus(); 
                 });
 
 };
-d3_chart2d.prototype.sortbylabel = function (rORc,i,sortOrder,cellsize_I,rowsindex_I,columnsindex_I,svgelement_I){
-    var t = svgelement_I.transition().duration(3000);
+d3_chart2d.prototype.sortbylabel = function (rORc,i,sortOrder,cellsize_I,rowsindex_I,columnsindex_I,svgg_I){
+    var t = svgg_I.transition().duration(3000);
     var log2r=[];
     var sorted; // sorted is zero-based index
     d3.selectAll(".c"+rORc+i)
@@ -2769,3 +2789,130 @@ d3_chart2d.prototype.set_heatmapdata1css = function () {
                      { 'selection': selector5, 'style': style5 }];
     this.set_svggcss(selectorstyle);
 };
+d3_chart2d.prototype.set_diameter(diameter_I){
+    // set uniform width and height
+    this.width = diameter_I;
+    this.height= diameter_I;
+}
+d3_chart2d.prototype.set_packlayout = function(padding_I){
+    //set pack layout
+    var margin = this.margin;
+    var width = this.width;
+    var height = this.height;
+
+    this.packlayout = d3.layout.pack()
+        .padding(padding_I),
+        .size([width - margin.left - margin.right, height - margin.top - margin.bottom])
+        .value(function(d) { return d.size; })
+};
+d3_chart2d.prototype.set_packlayoutfocusdata1 = function(packlayoutfocus_I){
+    //set pack layout focus
+    if (packlayoutfocus_I){this.packlayoutfocus = packlayoutfocus_I;}
+    else {this.packlayoutfocus=this.data1.nestdatafiltered};    
+};
+d3_chart2d.prototype.set_packlayoutnodesdata1 = function(){
+    //set pack layout nodes
+    this.packlayoutnodes = this.packlayout.nodes(this.data1.nestdatafiltered);
+};
+d3_chart2d.prototype.set_packlayoutviewdata1 = function(packlayoutview_I){
+    //set pack layout view
+    if (packlayoutview_I){this.packlayoutview = packlayoutview_I;}
+    else {this.packlayoutview=null}; 
+};
+d3_chart2d.prototype.add_packlayoutcirclesdata1 = function(){
+    // add circles to pack layout
+    var focus = this.focus;
+    var nodes = this.nodes;
+    var root = this.data1.nestdatafiltered;
+    var colorscale = this.colorscale;
+    var packlayoutzoom = this.packlayoutzoom;
+    
+    this.packlayoutcircle = this.svgg.selectAll("circle")
+        .data(nodes);
+
+    this.packlayoutcircle.exit().remove();
+
+    this.packlayoutcircle.transition()
+        .attr("class", function(d) { return d.parent ? d.children ? "node" : "node node--leaf" : "node node--root"; })
+        .style("fill", function(d) { return d.children ? colorscale(d.depth) : null; })
+        .on("click", function(d) { if (focus !== d) packlayoutzoom(d), d3.event.stopPropagation(); });
+
+    this.packlayoutcircleenter = this.packlayoutcircle.enter();
+        .append("circle")
+        .attr("class", function(d) { return d.parent ? d.children ? "node" : "node node--leaf" : "node node--root"; })
+        .style("fill", function(d) { return d.children ? colorscale(d.depth) : null; })
+        .on("click", function(d) { if (focus !== d) packlayoutzoom(d), d3.event.stopPropagation(); });
+
+};
+d3_chart2d.prototype.add_packlayouttextdata1 = function(){
+    // add text to pack layout
+    var focus = this.focus;
+    var nodes = this.nodes;
+    var root = this.data1.nestdatafiltered;
+    var colorscale = this.colorscale;
+    var packlayoutzoom = this.packlayoutzoom;
+    
+    this.packlayouttext = this.svgg.selectAll("text")
+        .data(nodes);
+
+    this.packlayouttext.exit().remove();
+
+    this.packlayouttext.transition()
+        .attr("class", "label")
+        .style("fill-opacity", function(d) { return d.parent === root ? 1 : 0; })
+        .style("display", function(d) { return d.parent === root ? null : "none"; })
+        .text(function(d) { return d.key; });
+
+    this.packlayouttextenter = this.packlayouttext.enter();
+        .append("text")
+        .attr("class", "label")
+        .style("fill-opacity", function(d) { return d.parent === root ? 1 : 0; })
+        .style("display", function(d) { return d.parent === root ? null : "none"; })
+        .text(function(d) { return d.key; });
+
+};
+d3_chart2d.prototype.zoom_packlayout(d){
+   // pack layout zoom function 
+    this.set_packlayoutfocusdata1(d);
+    var focus = this.focus;
+    var view = this.view;
+    var margin = this.margin.top;
+    var diameter = this.width;
+    var packlayoutzoomto = this.zoomto_packlayout;
+
+    var transition = d3.transition()
+        .duration(d3.event.altKey ? 7500 : 750)
+        .tween("zoom", function(d) {
+          var i = d3.interpolateZoom(view, [focus.x, focus.y, focus.r * 2 + margin]);
+          return function(t) { packlayoutzoomto(i(t),diameter); };
+        });
+
+    transition.selectAll("text")
+      .filter(function(d) { return d.parent === focus || this.style.display === "inline"; })
+        .style("fill-opacity", function(d) { return d.parent === focus ? 1 : 0; })
+        .each("start", function(d) { if (d.parent === focus) this.style.display = "inline"; })
+        .each("end", function(d) { if (d.parent !== focus) this.style.display = "none"; });
+};
+d3_chart2d.prototype.zoomto_packlayout = function(view_I,diameter_I){
+    // pack layout zoomto function
+    // INPUT: 
+    // view_I = [root.x, root.y, root.r * 2 + margin]
+    if (view_I && diameter_I){
+        var k = diameter_I / view_I[2]; 
+        this.set_packlayoutviewdata1(view_I);
+        var view = this.view;
+    } else {
+        var k = this.width / this.data1.nestdatafiltered.r + this.margin.top;
+        var view = this.view;
+    };
+;
+    node.attr("transform", function(d) { return "translate(" + (d.x - view_I[0]) * k + "," + (d.y - view_I[1]) * k + ")"; });
+    circle.attr("r", function(d) { return d.r * k; });
+};
+d3_chart2d.prototype.add_packlayoutdata1zoom(){
+    // add zoom to svg element of the packlayoutzoom
+    var packlayoutzoom = this.packlayoutzoom;
+    var id = this.id
+    var root = this.data1.nestdatafiltered;
+    d3.select("#"+this.id).on("click",function() { packlayoutzoom(root); });
+}

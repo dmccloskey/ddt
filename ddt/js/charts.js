@@ -445,7 +445,7 @@ var make_heatmap = function(){
     chart2d1.set_zoom();
     chart2d1.data1.change_filters({'value_units':['mM_glog_normalized']});
     chart2d1.data1.filter_stringdata();
-    chart2d1.set_colorscale('quantile','colorbrewer','min,0,max','value');
+    chart2d1.set_colorscale('quantile','heatmap21','min,0,max','value');
     chart2d1.render = function () {
         this.add_chart2d2tile();
         this.set_heatmapdata1(18); //update the heatmap properties
@@ -457,6 +457,41 @@ var make_heatmap = function(){
         this.add_heatmapdata1datalist();
         this.add_heatmapdata1tooltipandfill();
         this.set_heatmapdata1css();
+    };
+    chart2d1.render();
+};
+var make_circlepacklayout = function(){
+    var data1keymap = {'xdata':'row_leaves','ydata':'col_leaves','zdata':'value',
+                'rowslabel':'row_label','columnslabel':'col_label',
+                'rowsindex':'row_index','columnsindex':'col_index',
+                'rowsleaves':'row_leaves','columnsleaves':'col_leaves'};
+    var keys = ['analysis_id','row_label','col_label','row_index','col_index','row_leaves','col_leaves',
+                'col_pdist_metric','row_pdist_metric','col_linkage_method','row_linkage_method',
+                'value_units']
+    var d3data1 = new d3_data();
+    d3data1.set_keys(keys);
+    d3data1.set_listdata(data1_circlepacklayout, 'analysis_id');
+    d3data1.reset_filters();
+    var chart2d1 = new d3_chart2d();
+    chart2d1.add_data1(d3data1);
+    chart2d1.set_data1keymap(data1keymap);
+    chart2d1.set_id('chart2d1');
+    chart2d1.set_tileid('tile1');
+    chart2d1.set_margin({ top: 10, right: 10, bottom: 10, left: 10 });
+    chart2d1.set_diameter(500);
+    chart2d1.add_svgexportbutton2tile();
+    chart2d1.set_packlayout(2);
+    chart2d1.data1.change_filters({'value_units':['mM_glog_normalized']});
+    chart2d1.data1.filter_stringdata();
+    chart2d1.set_colorscale('quantile','colorbrewer');
+    chart2d1.render = function () {
+        this.set_packlayoutfocusdata1();
+        this.set_packlayoutnodesdata1();
+        this.set_packlayoutviewdata1();
+        this.add_packlayoutcirclesdata1();
+        this.add_packlayouttextdata1();
+        this.add_packlayoutdata1zoom();
+        this.zoomto_packlayout();
     };
     chart2d1.render();
 };
