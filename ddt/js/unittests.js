@@ -210,7 +210,7 @@ var check_add_legenddata1 = function () {
 var check_render = function () {
     var d3data1 = new d3_data();
     d3data1.set_keys(['sample_name_abbreviation', 'SNP_icd_1195528']);
-    d3data1.set_listdata(data1, 'sample_name_abbreviation');
+    d3data1.set_listdata(data1, ['sample_name_abbreviation']);
     d3data1.reset_filters();
     var chart2d1 = new d3_chart2d();
     chart2d1.render = function () {
@@ -247,7 +247,7 @@ var check_render = function () {
 var check_lengendupdate = function () {
     var d3data1 = new d3_data();
     d3data1.set_keys(['sample_name_abbreviation', 'SNP_icd_1195528']);
-    d3data1.set_listdata(data1, 'sample_name_abbreviation');
+    d3data1.set_listdata(data1, ['sample_name_abbreviation']);
     d3data1.reset_filters();
     var chart2d1 = new d3_chart2d();
     chart2d1.add_data1(d3data1);
@@ -299,7 +299,7 @@ var check_add_tooltip = function () {
 var check_convert_list2nestlist = function () {
     var d3data1 = new d3_data();
     d3data1.set_keys(['sample_name_abbreviation', 'SNP_icd_1195528']);
-    d3data1.set_listdata(data1, 'sample_name_abbreviation');
+    d3data1.set_listdata(data1, ['sample_name_abbreviation']);
 
     if (d3data1.nestdatafiltered > 1) {
         console.log("passed unit test convert_list2nestlist");
@@ -331,6 +331,22 @@ var check_filter_stringdata = function () {
             "OxicEvo04pgiEvo07EcoliGlc"],
         'SNP_icd_1195528':['false']
     });
+    d3data1.filter_stringdata();
+
+    if (d3data1.nestdatafiltered.length === 1) {
+        console.log("passed unit test filter_stringdata");
+    }
+    else {
+        console.log("failed unit test filter_stringdata")
+    };
+    return d3data1;
+
+};
+var check_list2nest = function () {
+    var d3data1 = new d3_data();
+    d3data1.set_keys(['sample_name', 'experimentor_id','id','exp_type_id']);
+    d3data1.set_listdata(nest_test, ['id','exp_type_id']);
+    d3data1.reset_filters();
     d3data1.filter_stringdata();
 
     if (d3data1.nestdatafiltered.length === 1) {

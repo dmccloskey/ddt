@@ -1,11 +1,11 @@
 var make_scatterlineplot2d = function () {
     var d3data1 = new d3_data();
     d3data1.set_keys(['sample_name_abbreviation', 'SNP_icd_1195528']);
-    d3data1.set_listdata(data1, 'sample_name_abbreviation');
+    d3data1.set_listdata(data1, ['sample_name_abbreviation']);
     d3data1.reset_filters();
 	var d3data2 = new d3_data();
     d3data2.set_keys(['sample_name_abbreviation', 'SNP_icd_1195528']);
-    d3data2.set_listdata(data2, 'sample_name_abbreviation');
+    d3data2.set_listdata(data2, ['sample_name_abbreviation']);
     d3data2.reset_filters();
     var chart2d1 = new d3_chart2d();
     chart2d1.add_data1(d3data1);
@@ -59,7 +59,7 @@ var make_scatterlineplot2d = function () {
 var make_volcanoplot2d = function () {
     var d3data1 = new d3_data();
     d3data1.set_keys(['component_group_name', 'concentration_units']);
-    d3data1.set_listdata(data1_scatterplot2d_volcanoplot, 'component_group_name');
+    d3data1.set_listdata(data1_scatterplot2d_volcanoplot, ['component_group_name']);
     d3data1.reset_filters();
     var chart2d1 = new d3_chart2d();
     chart2d1.add_data1(d3data1);
@@ -103,11 +103,11 @@ var make_pcaplot2d = function () {
     //Scores
     var d3data1 = new d3_data();
     d3data1.set_keys(['calculated_concentration_units','sample_name_short', 'sample_name_abbreviation']);
-    d3data1.set_listdata(data1_scatterplot2d_pcascores, 'sample_name_abbreviation');
+    d3data1.set_listdata(data1_scatterplot2d_pcascores, ['sample_name_abbreviation']);
     d3data1.reset_filters();
     var scores2d1 = new d3_chart2d();
     scores2d1.add_data1(d3data1);
-    chart2d1.set_data1keymap({'xdata':'score_1','ydata':'score_2','serieslabel':'sample_name_abbreviation','featureslabel':'sample_name_short'});
+    scores2d1.set_data1keymap({'xdata':'score_1','ydata':'score_2','serieslabel':'sample_name_abbreviation','featureslabel':'sample_name_short'});
     scores2d1.set_id('scores2d1');
     scores2d1.set_tileid('tile1');
     scores2d1.set_margin({ top: 50, right: 150, bottom: 50, left: 50 });
@@ -153,11 +153,11 @@ var make_pcaplot2d = function () {
     //Loadings
     var d3data2 = new d3_data();
     d3data2.set_keys(['component_group_name', 'calculated_concentration_units','component_name']);
-    d3data2.set_listdata(data1_scatterplot2d_pcaloadings, 'component_name');
+    d3data2.set_listdata(data1_scatterplot2d_pcaloadings, ['component_name']);
     d3data2.reset_filters();
     var loadings2d1 = new d3_chart2d();
     loadings2d1.add_data1(d3data2);
-    chart2d1.set_data1keymap({'xdata':'loadings_1','ydata':'loadings_2','serieslabel':'','featureslabel':'component_name'});
+    loadings2d1.set_data1keymap({'xdata':'loadings_1','ydata':'loadings_2','serieslabel':'','featureslabel':'component_name'});
     loadings2d1.set_id('loadings2d2');
     loadings2d1.set_tileid('tile2');
     loadings2d1.set_margin({ top: 50, right: 50, bottom: 50, left: 50 });
@@ -195,7 +195,7 @@ var make_varticalbarschart2d = function () {
     //uptake/secretion rates
     var d3data1 = new d3_data();
     d3data1.set_keys(['sample_name_abbreviation','rate_units', 'met_id']);
-    d3data1.set_listdata(data1_barchart, 'met_id');
+    d3data1.set_listdata(data1_barchart, ['met_id']);
     d3data1.reset_filters();
     var chart2d1 = new d3_chart2d();
     chart2d1.add_data1(d3data1);
@@ -246,7 +246,7 @@ var make_varticalbarschart2d = function () {
     //uptake/secretion rates
     var d3data2 = new d3_data();
     d3data2.set_keys(['sample_name_abbreviation','rate_units', 'met_id']);
-    d3data2.set_listdata(data1_barchart, 'met_id');
+    d3data2.set_listdata(data1_barchart, ['met_id']);
     d3data2.reset_filters();
     var chart2d2 = new d3_chart2d();
     chart2d2.add_data1(d3data2);
@@ -300,7 +300,7 @@ var make_boxandwhiskersplot = function(){
                 'time_point']
     var d3data1 = new d3_data();
     d3data1.set_keys(keys);
-    d3data1.set_listdata(data1_boxandwhiskers, 'component_name'); // sample_name_abbreviation grouped by component_name
+    d3data1.set_listdata(data1_boxandwhiskers, ['component_name']); // sample_name_abbreviation grouped by component_name
     d3data1.reset_filters();
     var chart2d1 = new d3_chart2d();
     chart2d1.add_data1(d3data1);
@@ -313,7 +313,6 @@ var make_boxandwhiskersplot = function(){
     chart2d1.add_svgexportbutton2tile();
     chart2d1.set_tooltip();
     chart2d1.set_tooltipstyle();
-    chart2d1.set_zoom();
     chart2d1.set_colorscale(); //color for series_label will remain consistent
     chart2d1.render = function () {
         this.add_chart2d2tile();
@@ -327,8 +326,6 @@ var make_boxandwhiskersplot = function(){
         this.set_y1axis();
         this.add_x1axis();
         this.add_y1axis();
-        this.set_x1axiszoom();
-        this.add_zoom();
         this.add_legenddata1();
         this.add_legenddata1filter();
         this.add_boxandwhiskersdata1();
@@ -343,6 +340,11 @@ var make_boxandwhiskersplot = function(){
         this.set_x1andy1axesstyle_verticalbarsplot();
         this.add_y1axislabel("concentration (mM_glog_normalized)");
         this.add_title("metabolites");
+        this.set_zoom();
+        this.set_x1axiszoom();
+        this.set_y1axiszoom();
+        this.add_zoom();
+        this.set_svgelementzoomcss();
     };
     chart2d1.data1.change_filters({'calculated_concentration_units':['mM_glog_normalized']});
 //     chart2d1.data1.change_filters({'calculated_concentration_units':['mM_glog_normalized'],
@@ -369,7 +371,7 @@ var make_boxandwhiskersplot = function(){
 //                 'time_point']
 //     var d3data1 = new d3_data();
 //     d3data1.set_keys(keys);
-//     d3data1.set_listdata(data1_boxandwhiskers, 'sample_name_abbreviation'); // mcomponent_name grouped by sample_name_abbreviation
+//     d3data1.set_listdata(data1_boxandwhiskers, ['sample_name_abbreviation']); // mcomponent_name grouped by sample_name_abbreviation
 //     d3data1.reset_filters();
 //     var chart2d2 = new d3_chart2d();
 //     chart2d2.add_data1(d3data1);
@@ -429,7 +431,7 @@ var make_heatmap = function(){
         {'value':'custom','text':'by value'}];
     var d3data1 = new d3_data();
     d3data1.set_keys(keys);
-    d3data1.set_listdata(data1_heatmap, 'analysis_id');
+    d3data1.set_listdata(data1_heatmap, ['analysis_id']);
     d3data1.reset_filters();
     var chart2d1 = new d3_chart2d();
     chart2d1.add_data1(d3data1);
@@ -461,37 +463,77 @@ var make_heatmap = function(){
     chart2d1.render();
 };
 var make_circlepacklayout = function(){
-    var data1keymap = {'xdata':'row_leaves','ydata':'col_leaves','zdata':'value',
-                'rowslabel':'row_label','columnslabel':'col_label',
-                'rowsindex':'row_index','columnsindex':'col_index',
-                'rowsleaves':'row_leaves','columnsleaves':'col_leaves'};
-    var keys = ['analysis_id','row_label','col_label','row_index','col_index','row_leaves','col_leaves',
-                'col_pdist_metric','row_pdist_metric','col_linkage_method','row_linkage_method',
-                'value_units']
-    var d3data1 = new d3_data();
-    d3data1.set_keys(keys);
-    d3data1.set_listdata(data1_circlepacklayout, 'analysis_id');
-    d3data1.reset_filters();
+    var data1keymap = {};
+//     var keys = ['sample_name', 'experimentor_id','id','exp_type_id']
+//     var d3data1 = new d3_data();
+//     d3data1.set_keys(keys);
+//     d3data1.set_listdata(data1_packlayoutcircle, ['id','exp_type_id']);
+//     d3data1.reset_filters();
     var chart2d1 = new d3_chart2d();
-    chart2d1.add_data1(d3data1);
+    //chart2d1.add_data1(d3data1);
+    chart2d1.data1 = {'nestdatafiltered':flare}; //test with flare
     chart2d1.set_data1keymap(data1keymap);
     chart2d1.set_id('chart2d1');
     chart2d1.set_tileid('tile1');
     chart2d1.set_margin({ top: 10, right: 10, bottom: 10, left: 10 });
-    chart2d1.set_diameter(500);
+    chart2d1.set_diameter(960);
     chart2d1.add_svgexportbutton2tile();
     chart2d1.set_packlayout(2);
-    chart2d1.data1.change_filters({'value_units':['mM_glog_normalized']});
-    chart2d1.data1.filter_stringdata();
-    chart2d1.set_colorscale('quantile','colorbrewer');
+    //chart2d1.data1.change_filters({});
+    //chart2d1.data1.filter_stringdata();
+    chart2d1.set_colorscale();
     chart2d1.render = function () {
+        this.add_chart2d2tile();
+        //this.add_chart2d2tile_packlayoutcircle();
         this.set_packlayoutfocusdata1();
         this.set_packlayoutnodesdata1();
         this.set_packlayoutviewdata1();
         this.add_packlayoutcirclesdata1();
         this.add_packlayouttextdata1();
+        this.set_packlayoutnode();
         this.add_packlayoutdata1zoom();
         this.zoomto_packlayout();
+    };
+    chart2d1.render();
+};
+var make_treelayout = function(){
+    var data1keymap = {};
+    var keys = ['sample_name', 'experimentor_id','id','exp_type_id']
+    var d3data1 = new d3_data();
+    d3data1.set_keys(keys);
+    d3data1.set_listdata(data1_treelayout, ['id','exp_type_id']);
+    d3data1.reset_filters();
+    //d3data1.nestdatafiltered = flare;  //test with flare
+    var chart2d1 = new d3_chart2d();
+    chart2d1.add_data1(d3data1);
+    chart2d1.data1.format_keyvalues2namechildren('sample_name');
+    chart2d1.set_data1keymap(data1keymap);
+    chart2d1.set_id('chart2d1');
+    chart2d1.set_tileid('tile1');
+    chart2d1.set_margin({ top: 100, right: 100, bottom: 100, left: 100 });
+    chart2d1.set_width(500);
+    chart2d1.set_height(1000);
+    chart2d1.set_duration(750);
+    chart2d1.add_svgexportbutton2tile();
+    chart2d1.add_svgelement2tile();
+    chart2d1.set_treelayoutdata1root();
+    chart2d1.set_treelayoutdata1nodeorigin(0);
+    chart2d1.set_treelayoutdata1tree();
+    chart2d1.set_treelayoutdata1diagonal();
+    chart2d1.collapse_treelayoutroot();
+    chart2d1.render = function (source_I) {
+        if (source_I){
+            var source = source_I;
+        } else {
+            var source = this.data1.nestdatafiltered[0];
+        };
+
+        this.set_treelayoutdata1nodes();
+        this.set_treelayoutdata1links();
+        this.add_treelayoutdata1node(source)
+        this.add_treelayoutdata1link(source)
+        this.save_treelayoutdata1positions();
+        this.set_treelayoutdata1css();
     };
     chart2d1.render();
 };
