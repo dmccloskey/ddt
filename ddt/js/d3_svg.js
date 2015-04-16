@@ -107,3 +107,45 @@ d3_svg.prototype.add_datalist2tile = function (datalist_valuetext_I) {
     };
 
 };
+d3_svg.prototype.add_data1filtermenusubmitbutton = function (tileid_I,submitbuttonid_I){
+    // add data list (menu) to tile for the heatmap
+    if (tileid_I){var tileid = tileid_I;}
+    else{var tileid = this.tileid;};
+    if (submitbuttonid_I){var submitbuttonid = submitbuttonid_I;}
+    else{var submitbuttonid = this.submitbuttonid;};
+
+    var this_ = this;
+
+    function submit(){
+        var filterstringmenu = [];
+        for (key in this_.data1.filters){
+            var filterkey = d3.select("#"+tileid+'textareacol'+key).text();
+            var filterstring = d3.select("#"+tileid+'textareacol'+key + " input").node().value;
+            filterstringmenu.push({"text":filterkey,"value":filterstring});
+        };
+        this_.data1.convert_stringmenuinput2filter(filterstringmenu);
+        this_.data1.filter_stringdata();
+        this_.render();
+    };
+
+    this.submitbutton = d3.select("#"+tileid+'submitbutton'+submitbuttonid)
+        .on("mousedown",submit);
+};
+d3_svg.prototype.add_data1filtermenuresetbutton = function (tileid_I,resetbuttonid_I){
+    // add data list (menu) to tile for the heatmap
+    if (tileid_I){var tileid = tileid_I;}
+    else{var tileid = this.tileid;};
+    if (resetbuttonid_I){var resetbuttonid = resetbuttonid_I;}
+    else{var resetbuttonid = this.resetbuttonid;};
+
+    var this_ = this;
+    
+    function reset(){
+        this_.data1.reset_filters();
+        this_.data1.filter_stringdata();
+        this_.render();
+    };
+
+    this.resetbutton = d3.select("#"+tileid+'submitbutton'+resetbuttonid)
+        .on("click",reset);
+};

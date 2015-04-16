@@ -47,8 +47,38 @@ d3_tile.prototype.set_height = function () {
 d3_tile.prototype.add_draganddrop = function () {
     // add file drag and drop for input
 };
-d3_tile.prototype.add_textarea = function () {
+d3_tile.prototype.add_textarea = function (textarea_valuetext_I,size_I) {
     // add text area for input
+    // INPUT:
+    //e.g. [{'value':'hclust','text':'by cluster'},...];
+    if (size_I){var size = size_I;}
+    else{var size = 20;}
+
+    var tileid = this.tileid;
+
+    var textarearow = d3.select('#'+tileid).append("div")
+        .attr("class","row")
+        .attr("id", tileid + 'textarearow');
+
+    for (i=0;i<textarea_valuetext_I.length;i++){
+        var textareacol = textarearow.append("div")
+            .attr("class","col-sm-12")
+            .attr("id", tileid + 'textareacol' + textarea_valuetext_I[i].text);
+        textareacol.append("form")
+            .attr("id", tileid + 'textarea'+ textarea_valuetext_I[i].text);
+        textareacol.text(textarea_valuetext_I[i].text).append("br");
+        textareacol.append("input")
+            .attr("value",textarea_valuetext_I[i].value)
+            .attr("size",size);
+    };
+};
+d3_tile.prototype.update_textarea = function(textarea_valuetext_I){
+    // update the text area
+    var tileid = this.tileid;
+
+    for (i=0;i<textarea_valuetext_I.length;i++){
+        d3.select("#"+tileid + 'textareacol'+ textarea_valuetext_I[i].text + " input").node().value=textarea_valuetext_I[i].value;
+    };
 };
 d3_tile.prototype.add_checkbox = function () {
     // add checkbox for input
@@ -59,8 +89,25 @@ d3_tile.prototype.add_color = function () {
 d3_tile.prototype.add_range = function () {
     // add range slider for input
 };
-d3_tile.prototype.add_submitbutton = function () {
+d3_tile.prototype.add_submitbutton = function (button_idtext_I) {
     // add submit button
+    // INPUT:
+    //e.g. {'id':'submit1','text':'submit'};
+    if (!button_idtext_I){var button_idtext = {'id':'submit1','text':'submit'};}
+    else{var button_idtext = button_idtext_I;}
+
+    var tileid = this.tileid;
+
+    var submitbuttonrow = d3.select('#'+tileid).append("div")
+        .attr("class","row");
+
+    var submitbutton = submitbuttonrow.append("div")
+        .attr("class","col-sm-3")
+        .append("button")
+        .attr("class","btn btn-default column-button")
+        .attr("id", tileid + 'submitbutton'+button_idtext.id)
+        .text(button_idtext.text);
+
 };
 d3_tile.prototype.add_table = function () {
     // add button for output
@@ -72,4 +119,36 @@ d3_tile.prototype.remove_tile = function(){
     // remove tile from the container
     d3.selectAll('#'+this.tileid).remove();
     this.tile = null;
+};
+d3_tile.prototype.add_datalist2tile = function (datalist_valuetext_I) {
+    // add datalist (menu) for input
+    // INPUT:
+    //e.g. [{'value':'hclust','text':'by cluster'},...];
+
+    var tileid = this.tileid;
+//TODO:
+//     var datalist = d3.select('#'+this.tileid).append("select")
+//         .attr("id", tileid + 'datalist');
+
+//     for (i=0;i<datalist_valuetext_I.length;i++){
+//         datalist.append("option")
+//             .attr("value",datalist_valuetext_I[i].value)
+//             .text(datalist_valuetext_I[i].text);
+//     };
+
+};
+d3_tile.prototype.add_title = function (title_I){
+    //add title to tileid
+
+    var tileid = this.tileid;
+
+    var title = d3.select('#'+tileid).append("div")
+        .attr("class","row")
+        .append("div")
+        .attr("class","col-sm-12")
+        .append("div")
+        .attr("id", tileid + 'title-box')
+        .append("h3")
+        .attr("id", tileid + 'title')
+        .text(title_I);
 };

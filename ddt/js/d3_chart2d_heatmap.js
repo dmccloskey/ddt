@@ -444,7 +444,7 @@ d3_chart2d.prototype.add_heatmapdata1legend = function(){
 
 };
 d3_chart2d.prototype.add_heatmapdata1datalist = function (){
-    // att data list (menu) to tile for the heatmap
+    // add data list (menu) to tile for the heatmap
     var tileid = this.tileid;
     var heatmaporder = this.heatmaporder;
     var svgg = this.svgg;

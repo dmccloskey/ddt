@@ -16,6 +16,53 @@ var check_add_tile2container = function () {
     };
     return tile1;
 };
+var check_add_textarea = function(){
+    tile1 = check_add_tile2container();
+    var tileid = tile1.tileid;
+    var textarearow = d3.select('#'+tileid).append("div")
+        .attr("class","row")
+        .attr("id", tileid + 'textarearow');
+    var textareacol = textarearow.append("div")
+            .attr("class","col-sm-3")
+            .attr("id", tileid + 'textareacol-sm-3');
+        textareacol.append("form")
+            .attr("id", tileid + 'textarea');
+        textareacol.text("option1").append("br");
+        textareacol.append("input")
+            .attr("value","text");
+    var textareacol = textarearow.append("div")
+            .attr("class","col-sm-3")
+            .attr("id", tileid + 'textareacol-sm-3');
+        textareacol.append("form")
+            .attr("id", tileid + 'textarea');
+        textareacol.text("option2").append("br");
+        textareacol.append("input")
+            .attr("value","text");
+    var button_idtext = {'id':'submit1','text':'submit'};
+    var submitbuttonrow = d3.select('#'+tileid).append("div")
+        .attr("class","row");
+    var submitbutton = submitbuttonrow.append("div")
+        .attr("class","col-sm-3")
+        .append("button")
+        .attr("class","btn btn-default column-button")
+        .attr("id", tileid + 'submitbutton'+button_idtext.id)
+        .text(button_idtext.text);
+
+};
+var check_add_title2tile = function(){
+    tile1 = check_add_tile2container();
+    var tileid = tile1.tileid;
+    var title = d3.select('#'+tileid).append("div")
+        .attr("class","row")
+        .append("div")
+        .attr("class","col-sm-12")
+        .append("div")
+        .attr("id", tileid + 'title-box')
+        .append("h3")
+        .attr("id", tileid + 'title')
+        .text("Title");
+
+};
 var check_add_svgelement2tile = function(){
     var svg1 = new d3_svg();
     svg1.set_id('svg1');

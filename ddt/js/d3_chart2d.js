@@ -763,8 +763,8 @@ d3_chart2d.prototype.set_zoom = function (){
     var render = this.render;
     this.zoom = d3.behavior.zoom()
         .scaleExtent([1,10])
-        .on("zoom", render);
-        //.on("zoom", draw);
+        //.on("zoom", render);
+        .on("zoom", draw);
 };
 d3_chart2d.prototype.set_x1axiszoom = function(){
     //set the x1axsis scale for the zoom
@@ -784,25 +784,33 @@ d3_chart2d.prototype.add_zoom = function(){
     //this.zoom(svgelement);
 };
 d3_chart2d.prototype.draw = function(){
-    if (this.x1axis){
-        svgg.select('g.x1axis')
-            .call(this._x1axis);
-            };
-    if (this.x2axis){
-        svgg.select('g.x2axis')
-            .transition()
-            .call(this._x2axis);
-            };
-    if (this.y1axis){
-        svgg.select('g.y1axis')
-            .transition()
-            .call(this._x1axis);
-            };
-    if (this.y2axis){
-        svgg.select('g.y2axis')
-            .transition()
-            .call(this._y2axis);
-            };
+    var svgg = this.svgg;
+    var _x1axis = this._x1axis;
+    var _x2axis = this._x2axis;
+    var _y1axis = this._y1axis;
+    var _y2axis = this._y2axis;
+
+    return function(){
+        if (this.x1axis){
+            svgg.select('g.x1axis')
+                .call(_x1axis);
+                };
+        if (this.x2axis){
+            svgg.select('g.x2axis')
+                .transition()
+                .call(_x2axis);
+                };
+        if (this.y1axis){
+            svgg.select('g.y1axis')
+                .transition()
+                .call(_x1axis);
+                };
+        if (this.y2axis){
+            svgg.select('g.y2axis')
+                .transition()
+                .call(_y2axis);
+                };
+    };
 };
 d3_chart2d.prototype.set_duration = function(duration_I){
     // set the transition duration

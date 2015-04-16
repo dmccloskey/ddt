@@ -64,6 +64,9 @@ d3_data.prototype.filter_stringdata = function () {
     // re-make the nestdatafiltered
     this.listdatafiltered = listdatafiltered_O;
     this.nestdatafiltered = this.convert_list2nestlist(listdatafiltered_O,this.nestkey);
+
+    // update the filters
+    this.update_filters();
 };
 d3_data.prototype.set_listdata = function (listdata_I,nestkey_I) {
     // set list data and initialize filtered data
@@ -84,6 +87,19 @@ d3_data.prototype.reset_filters = function () {
         var colentries = d3.set();
         for (i = 0; i < this.listdata.length; i++) {
             colentries.add(this.listdata[i][this.keys[key_cnt]]);
+        };
+        filters[this.keys[key_cnt]] = colentries.values();
+    };
+    this.filters = filters;
+};
+d3_data.prototype.update_filters = function () {
+    // update the filter based on the current filtered data
+
+    var filters = {};
+    for (key_cnt = 0; key_cnt < this.keys.length;key_cnt++) {
+        var colentries = d3.set();
+        for (i = 0; i < this.listdatafiltered.length; i++) {
+            colentries.add(this.listdatafiltered[i][this.keys[key_cnt]]);
         };
         filters[this.keys[key_cnt]] = colentries.values();
     };
@@ -121,4 +137,23 @@ d3_data.prototype.format_keyvalues2namechildren = function(lastchild_I){
         };
     };
     this.nestdatafiltered.forEach(rename)
+};
+d3_data.prototype.convert_filter2stringmenuinput = function(){
+    // convert filter list to filter string list
+    var filterstring = [];
+    for (key in this.filters){
+        filterstring.push({"text":key,"value":this.filters[key].toString()});
+        };
+    return filterstring;
+};
+d3_data.prototype.convert_stringmenuinput2filter = function(filterstring_I){
+    // convert filter list to filter string list
+    for (i=0;i<filterstring_I.length;i++){
+        this.filters[filterstring_I[i].text]=filterstring_I[i].value.split(",");};
+};
+d3_data.prototype.change_nestkeys = function(nestkey_I) {
+    // change the nest keys and update nestdatafiltered
+    this.nestkey = nestkey_I;
+    var listdatafiltered = this.listdatafiltered;
+    this.nestdatafiltered = this.convert_list2nestlist(listdatafiltered,nestkey_I);
 };

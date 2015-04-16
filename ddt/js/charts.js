@@ -287,7 +287,7 @@ var make_varticalbarschart2d = function () {
     chart2d2.data1.filter_stringdata();
     chart2d2.render();
 };
-var make_boxandwhiskersplot = function(){
+var make_boxandwhiskersplot = function(){ 
     // sample_name_abbreviation grouped by component_name
     var data1keymap = {'xdata':'','ydata':'mean',
                 'serieslabel':'sample_name_abbreviation','featureslabel':'component_name',
@@ -302,6 +302,31 @@ var make_boxandwhiskersplot = function(){
     d3data1.set_keys(keys);
     d3data1.set_listdata(data1_boxandwhiskers, ['component_name']); // sample_name_abbreviation grouped by component_name
     d3data1.reset_filters();
+    // add box and whiskers menu tile
+    d3.selectAll('#row3').remove();
+    var tile3 = new d3_tile();
+    tile3.set_tileid("tile3");
+    tile3.set_rowid("row3");
+    tile3.set_colid("col3");
+    tile3.set_rowclass("row");
+    tile3.set_colclass("col-sm-12");
+    tile3.add_tile2container();
+    // add the menu:
+    tile3.add_title("filter menu");
+    input = d3data1.convert_filter2stringmenuinput();
+    tile3.add_textarea(input,100);
+    tile3.add_submitbutton({'id':'submit1','text':'submit'});
+    tile3.add_submitbutton({'id':'reset1','text':'reset'}); 
+    // make the box and whiskers plot visualization  
+    d3.selectAll('#row1').remove();
+    var tile1 = new d3_tile();
+    tile1.set_tileid("tile1");
+    tile1.set_rowid("row1");
+    tile1.set_colid("col1");
+    tile1.set_rowclass("row");
+    tile1.set_colclass("col-sm-12");
+    tile1.add_tile2container();
+    tile1.add_title("custom box and whiskers plot");
     var chart2d1 = new d3_chart2d();
     chart2d1.add_data1(d3data1);
     chart2d1.set_data1keymap(data1keymap);
@@ -345,10 +370,13 @@ var make_boxandwhiskersplot = function(){
         this.set_y1axiszoom();
         this.add_zoom();
         this.set_svgelementzoomcss();
+        tile3.update_textarea(this.data1.convert_filter2stringmenuinput());
+        this.add_data1filtermenusubmitbutton('tile3','submit1');
+        this.add_data1filtermenuresetbutton('tile3','reset1');
     };
-    chart2d1.data1.change_filters({'calculated_concentration_units':['mM_glog_normalized']});
-//     chart2d1.data1.change_filters({'calculated_concentration_units':['mM_glog_normalized'],
-//                'component_name':["g6p.g6p_1.Light","icit.icit_2.Light"]});
+//     chart2d1.data1.change_filters({'calculated_concentration_units':['mM_glog_normalized']});
+    chart2d1.data1.change_filters({'calculated_concentration_units':['mM_glog_normalized'],
+               'component_name':["g6p.g6p_1.Light","icit.icit_2.Light"]});
     chart2d1.data1.filter_stringdata();
     chart2d1.render();
 //     // add new tile
@@ -359,6 +387,7 @@ var make_boxandwhiskersplot = function(){
 //     tile2.set_rowclass("row");
 //     tile2.set_colclass("col-sm-12");
 //     tile2.add_tile2container();
+//     tile2.add_title("custom box and whiskers plot");
 //     // component_name grouped by sample_name_abbreviation
 //     var data1keymap = {'xdata':'','ydata':'mean',
 //                 'serieslabel':'component_name','featureslabel':'sample_name_abbreviation',
@@ -366,15 +395,16 @@ var make_boxandwhiskersplot = function(){
 //                 'ydatamedian':'median','ydataiq1':'iq_1','ydataiq3':'iq_3',
 //                 'ydatamin':'min','ydatamax':'max',
 //                 'ydataoutliers':'outliers'};
-//     var keys = ['sample_name_abbreviation','calculated_concentration_units',
-//                 'component_name','component_group_name','experiment_id',
-//                 'time_point']
-//     var d3data1 = new d3_data();
-//     d3data1.set_keys(keys);
-//     d3data1.set_listdata(data1_boxandwhiskers, ['sample_name_abbreviation']); // mcomponent_name grouped by sample_name_abbreviation
-//     d3data1.reset_filters();
+// //     var keys = ['sample_name_abbreviation','calculated_concentration_units',
+// //                 'component_name','component_group_name','experiment_id',
+// //                 'time_point']
+// //     var d3data1 = new d3_data();
+// //     d3data1.set_keys(keys);
+// //     d3data1.set_listdata(data1_boxandwhiskers, ['sample_name_abbreviation']); // mcomponent_name grouped by sample_name_abbreviation
+// //     d3data1.reset_filters();
 //     var chart2d2 = new d3_chart2d();
 //     chart2d2.add_data1(d3data1);
+//     chart2d2.data1.change_nestkeys(['sample_name_abbreviation']);
 //     chart2d2.set_data1keymap(data1keymap);
 //     chart2d2.set_id('chart2d2');
 //     chart2d2.set_tileid('tile2');
@@ -410,10 +440,15 @@ var make_boxandwhiskersplot = function(){
 //         this.set_x1andy1axesstyle_verticalbarsplot();
 //         this.add_y1axislabel("concentration (mM_glog_normalized)");
 //         this.add_title("metabolites");
+//         this.set_zoom();
+//         this.set_x1axiszoom();
+//         this.set_y1axiszoom();
+//         this.add_zoom();
+//         this.set_svgelementzoomcss();
+//         tile3.update_textarea(this.data1.convert_filter2stringmenuinput());
+//         this.add_data1filtermenusubmitbutton('tile3','submit1');
+//         this.add_data1filtermenuresetbutton('tile3','reset1');
 //     };
-//     chart2d2.data1.change_filters({'calculated_concentration_units':['mM_glog_normalized'],
-//                'component_name':["g6p.g6p_1.Light","icit.icit_2.Light"]});
-//     chart2d2.data1.filter_stringdata();
 //     chart2d2.render();
 };
 var make_heatmap = function(){
