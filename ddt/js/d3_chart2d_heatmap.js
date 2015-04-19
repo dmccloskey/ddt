@@ -399,7 +399,7 @@ d3_chart2d.prototype.add_heatmapdata1legend = function(){
     var colorfactor = Math.ceil(colorscale.length / (maxvalue - minvalue));
     if (minvalue===0.0 && maxvalue ===1.0){
         this.legenddata1 = this.svgg.selectAll(".legend")
-          .data(d3.range(minval, maxval, (maxval - minval) / 10)); //specific to resequencing data (domain 0.0-1.0)
+          .data(d3.range(minvalue, maxvalue, (maxvalue - minvalue) / 10)); //specific to resequencing data (domain 0.0-1.0)
         this.legenddata1enter = this.legenddata1
           .enter().append("g")
           .attr("class", "legend");

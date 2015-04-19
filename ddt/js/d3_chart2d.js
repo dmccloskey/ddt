@@ -58,15 +58,22 @@ d3_chart2d.prototype.add_chart2d2tile_packlayoutcircle = function(){
 d3_chart2d.prototype.add_chart2d2tile = function(){
     // add char2d to tile
 
-    this.svgelement = d3.select('#' + this.tileid).selectAll("svg")
-        .data([this.data1.listdatafiltered]);
+    var width = this.width;
+    var height = this.height;
+    var margin = this.margin;
+    var tileid = this.tileid;
+    var id = this.id;
+    var data1listdatafiltered = this.data1.listdatafiltered;
+
+    this.svgelement = d3.select('#' + tileid).selectAll("svg")
+        .data([data1listdatafiltered]);
     this.svgenter = this.svgelement.enter()
         .append("svg")
-        .attr("id", this.id)
+        .attr("id", id)
         .append('g')
-        .attr("transform", "translate(" + this.margin.left + "," + this.margin.top + ")");
-    this.svgelement.attr("width", this.width + this.margin.left + this.margin.right)
-        .attr("height", this.height + this.margin.top + this.margin.bottom);
+        .attr("transform", "translate(" + margin.left + "," + margin.top + ")");
+    this.svgelement.attr("width", width + margin.left + margin.right)
+        .attr("height", height + margin.top + margin.bottom);
 
     this.svgg = this.svgelement.select('g');
 
@@ -225,7 +232,7 @@ d3_chart2d.prototype.set_colorscale = function (colorscale_I,colorcategory_I,col
     // set color scale
     // INPUT:
     //  colorscale_I = ordinal (default), quantile
-    //  colordomain_I = [] e.g., [0,1000],[-1000,1000],[-10,0,10],[0.0,0.5,1.0]
+    //  colordomain_I = [] e.g., [0,1],[0,1000],[-1000,1000],[-10,0,10],[0.0,0.5,1.0]
     //                           'min,0,max'
     //  colorcategory_I = category10, category20, category20a, category20b, category20c
     //                    brewer, heatmap21, heatmap10
@@ -267,6 +274,10 @@ d3_chart2d.prototype.set_colorscale = function (colorscale_I,colorcategory_I,col
         this.colorscale = d3.scale.quantile().domain(colordomain_I).category20b();
     }else if (colorscale_I==='quantile' && colordomain_I && colorcategory_I==='category20c'){
         this.colorscale = d3.scale.quantile().domain(colordomain_I).category20c();
+    }else if (colorscale_I==='quantile' && colordomain_I && colorcategory_I==='heatmap10'){
+        this.colorscale = d3.scale.quantile().domain(colordomain_I).range(heatmap10);
+    }else if (colorscale_I==='quantile' && colordomain_I && colorcategory_I==='heatmap21'){
+        this.colorscale = d3.scale.quantile().domain(colordomain_I).range(heatmap21);
     }else if (colorscale_I==='quantile' && colorcategory_I==='colorbrewer'){
         this.colorscale = d3.scale.quantile().range(colorbrewer.YlGnBu[10]);
     }else if (colorscale_I==='quantile' && colorcategory_I==='category10c'){

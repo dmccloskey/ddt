@@ -117,7 +117,8 @@ d3_tile.prototype.add_svg = function () {
 };
 d3_tile.prototype.remove_tile = function(){
     // remove tile from the container
-    d3.selectAll('#'+this.tileid).remove();
+    var tileid = this.tileid;
+    d3.selectAll('#'+tileid).remove();
     this.tile = null;
 };
 d3_tile.prototype.add_datalist2tile = function (datalist_valuetext_I) {
@@ -151,4 +152,27 @@ d3_tile.prototype.add_title = function (title_I){
         .append("h3")
         .attr("id", tileid + 'title')
         .text(title_I);
+};
+d3_tile.prototype.add_removebutton = function(){
+    // add button to remove tile from the container
+
+    var tileid = this.tileid;
+    var this_ = this;
+    var remove_tile = this.remove_tile;
+
+    function removetile(){
+        d3.selectAll('#'+tileid).remove();
+        this_.tile = null;
+    };
+
+    var removetbuttonrow = d3.select('#'+tileid).append("div")
+        .attr("class","row");
+
+    var removebutton = removetbuttonrow.append("div")
+        .attr("class","col-sm-3")
+        .append("button")
+        .attr("class","btn btn-default column-button")
+        .attr("id", tileid + 'removebutton')
+        .text("remove")
+        .on("click",removetile);
 };

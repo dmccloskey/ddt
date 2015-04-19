@@ -50,11 +50,19 @@ d3_chart2d.prototype.add_pointsdata1tooltipandfill = function () {
         //Change fill color
         d3.select(this).style('fill', 'red');
         //Update the tooltip position and value
-        d3.select("#" + id + "tooltip")
-            .style("left", (d3.event.pageX + 10) + "px")
-            .style("top", (d3.event.pageY - 10) + "px")
-            .select("#" + id + "value")
-            .text('x: ' + d[x_data].toFixed(2) + '; y: ' + d[y_data].toFixed(2));
+        if (typeof(d[x_data]) === 'string'){
+            d3.select("#" + id + "tooltip")
+                .style("left", (d3.event.pageX + 10) + "px")
+                .style("top", (d3.event.pageY - 10) + "px")
+                .select("#" + id + "value")
+                .text('x: ' + d[x_data] + '; y: ' + d[y_data].toFixed(2));
+        } else {
+            d3.select("#" + id + "tooltip")
+                .style("left", (d3.event.pageX + 10) + "px")
+                .style("top", (d3.event.pageY - 10) + "px")
+                .select("#" + id + "value")
+                .text('x: ' + d[x_data].toFixed(2) + '; y: ' + d[y_data].toFixed(2));
+                };
         //Show the tooltip
         d3.select("#" + id + "tooltip").classed("hidden", false);
     })
