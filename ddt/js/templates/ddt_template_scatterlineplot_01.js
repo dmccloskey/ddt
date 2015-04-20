@@ -1,4 +1,4 @@
-var ddt_template = function (data1_I,data1_keys_I,data1_nestkeys_I,data1_keymap_I,parameters_I) {
+var ddt_template_scatterlineplot_01 = function (data1_I,data1_keys_I,data1_nestkeys_I,data1_keymap_I,parameters_I) {
     //Input
     var data1 = data1_I;
     var data1_keys = data1_keys_I;
@@ -31,8 +31,10 @@ var ddt_template = function (data1_I,data1_keys_I,data1_nestkeys_I,data1_keymap_
     chart2d1.set_id('chart2d1');
     chart2d1.set_tileid('tile1');
     chart2d1.set_margin(parameters.chart1margin);
-    chart2d1.set_width(parameters.chart1width);
-    chart2d1.set_height(parameters.chart1height);
+    chart2d1.set_width('auto');
+    chart2d1.set_height('auto');
+//     chart2d1.set_width(parameters.chart1width);
+//     chart2d1.set_height(parameters.chart1height);
     chart2d1.add_svgexportbutton2tile();
     chart2d1.set_tooltip();
     chart2d1.set_tooltipstyle();

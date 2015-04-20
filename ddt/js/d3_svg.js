@@ -119,8 +119,8 @@ d3_svg.prototype.add_data1filtermenusubmitbutton = function (tileid_I,submitbutt
     function submit(){
         var filterstringmenu = [];
         for (key in this_.data1.filters){
-            var filterkey = d3.select("#"+tileid+'textareacol'+key).text();
-            var filterstring = d3.select("#"+tileid+'textareacol'+key + " input").node().value;
+            var filterkey = d3.select("#"+tileid+'formlabel'+key).text();
+            var filterstring = d3.select("#"+tileid+'forminput'+key).node().value;
             filterstringmenu.push({"text":filterkey,"value":filterstring});
         };
         this_.data1.convert_stringmenuinput2filter(filterstringmenu);

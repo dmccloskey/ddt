@@ -443,7 +443,7 @@ d3_chart2d.prototype.add_heatmapdata1legend = function(){
         .attr("y", height + (cellsize * 4));
 
 };
-d3_chart2d.prototype.add_heatmapdata1datalist = function (){
+d3_chart2d.prototype.add_heatmapdata1drowpdownmenu = function (tileid_I){
     // add data list (menu) to tile for the heatmap
     var tileid = this.tileid;
     var heatmaporder = this.heatmaporder;
@@ -455,7 +455,30 @@ d3_chart2d.prototype.add_heatmapdata1datalist = function (){
     var columnleavesordered = this.columnleavesordered;
     var rowleavesordered = this.rowleavesordered;
 
-    d3.select("#"+tileid+"datalist").on("change",function(){
+//     d3.select("#"+tileid_I + 'dropdownli').on("click",function(){
+//         heatmaporder(cellsize,this.value,
+//             rowsindex,columnsindex,
+//             rowleavesordered, columnleavesordered,svgg);
+//     });
+    d3.select("#"+tileid + 'dropdownul').on("change",function(){
+        heatmaporder(cellsize,this.value,
+            rowsindex,columnsindex,
+            rowleavesordered, columnleavesordered,svgg);
+    });
+};
+d3_chart2d.prototype.add_heatmapdata1datalist = function (tileid_I){
+    // add data list (menu) to tile for the heatmap
+    var tileid = this.tileid;
+    var heatmaporder = this.heatmaporder;
+    var svgg = this.svgg;
+   
+    var columnsindex = this.data1keymap.columnsindex;
+    var rowsindex = this.data1keymap.rowsindex;
+    var cellsize = this.cellsize;
+    var columnleavesordered = this.columnleavesordered;
+    var rowleavesordered = this.rowleavesordered;
+
+    d3.select("#"+tileid_I+"datalist").on("change",function(){
         heatmaporder(cellsize,this.value,
             rowsindex,columnsindex,
             rowleavesordered, columnleavesordered,svgg);

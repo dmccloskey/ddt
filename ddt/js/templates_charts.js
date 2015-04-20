@@ -383,32 +383,40 @@ var make_boxandwhiskersplot = function(data1_I,data1_keys_I,data1_nestkeys_I,dat
     d3data1.set_listdata(data1_boxandwhiskers, ['component_name']); // sample_name_abbreviation grouped by component_name
     d3data1.reset_filters();
     // add box and whiskers menu tile
-    d3.selectAll('#row3').remove();
     var tile3 = new d3_tile();
     tile3.set_tileid("tile3");
+    tile3.set_tileclass("panel panel-default");
     tile3.set_rowid("row3");
     tile3.set_colid("col3");
     tile3.set_rowclass("row");
-    tile3.set_colclass("col-sm-12");
+    tile3.set_colclass("col-sm-4");
     tile3.add_tile2container();
     // add the menu:
-    tile3.add_title("filter menu");
-    tile3.add_removebutton();
+    tile3.add_header2tile();
+    tile3.add_removebutton2header();
+    tile3.add_title2header("filter menu");
+    tile3.add_body2tile();
     input = d3data1.convert_filter2stringmenuinput();
-    tile3.add_textarea(input,100);
-    tile3.add_submitbutton({'id':'submit1','text':'submit'});
-    tile3.add_submitbutton({'id':'reset1','text':'reset'}); 
-    // make the box and whiskers plot visualization  
-    d3.selectAll('#row1').remove();
+    tile3.add_form2body(input);
+    tile3.add_submitbutton2form({'id':'submit1','text':'submit'});
+    tile3.add_submitbutton2form({'id':'reset1','text':'reset'}); 
+    //tile3.add_footer2tile();
+    //tile3.add_submitbutton2footer({'id':'submit1','text':'submit'});
+    //tile3.add_submitbutton2footer({'id':'reset1','text':'reset'}); 
+    // make the box and whiskers plot visualization 
     var tile1 = new d3_tile();
     tile1.set_tileid("tile1");
-    tile1.set_rowid("row1");
+    tile1.set_tileclass("panel panel-default");
+    tile1.set_rowid("row3");
     tile1.set_colid("col1");
     tile1.set_rowclass("row");
-    tile1.set_colclass("col-sm-12");
-    tile1.add_tile2container();
-    tile1.add_title("custom box and whiskers plot");
-    tile1.add_removebutton();
+    tile1.set_colclass("col-sm-8");
+    tile1.add_tile2row();
+    //tile1.add_tile2row();
+    //tile1.add_tile2container();
+    tile1.add_header2tile();
+    tile1.add_removebutton2header();
+    tile1.add_title2header("custom box and whiskers plot");
     var chart2d1 = new d3_chart2d();
     chart2d1.add_data1(d3data1);
     chart2d1.set_data1keymap(data1keymap);
@@ -416,11 +424,13 @@ var make_boxandwhiskersplot = function(data1_I,data1_keys_I,data1_nestkeys_I,dat
     chart2d1.set_tileid('tile1');
     chart2d1.set_margin({ top: 50, right: 250, bottom: 50, left: 50 });
     chart2d1.set_width(500);
-    chart2d1.set_height(250);
+    chart2d1.set_height(350);
     chart2d1.add_svgexportbutton2tile();
     chart2d1.set_tooltip();
     chart2d1.set_tooltipstyle();
     chart2d1.set_colorscale(); //color for series_label will remain consistent
+    chart2d1.add_data1filtermenusubmitbutton('tile3','submit1');
+    chart2d1.add_data1filtermenuresetbutton('tile3','reset1');
     chart2d1.render = function () {
         this.add_chart2d2tile();
         this.add_clippath();
@@ -452,9 +462,9 @@ var make_boxandwhiskersplot = function(data1_I,data1_keys_I,data1_nestkeys_I,dat
         this.set_y1axiszoom();
         this.add_zoom();
         this.set_svgelementzoomcss();
-        if(tile3.tile){tile3.update_textarea(this.data1.convert_filter2stringmenuinput());};
-        this.add_data1filtermenusubmitbutton('tile3','submit1');
-        this.add_data1filtermenuresetbutton('tile3','reset1');
+        if(tile3.tile){tile3.update_form(this.data1.convert_filter2stringmenuinput());};
+        //this.add_data1filtermenusubmitbutton('tile3','submit1');
+        //this.add_data1filtermenuresetbutton('tile3','reset1');
     };
 //     chart2d1.data1.change_filters({'calculated_concentration_units':['mM_glog_normalized']});
     chart2d1.data1.change_filters({'calculated_concentration_units':['mM_glog_normalized'],

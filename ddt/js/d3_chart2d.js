@@ -262,6 +262,21 @@ d3_chart2d.prototype.set_colorscale = function (colorscale_I,colorcategory_I,col
             0,
             d3.max(listdatafiltered, function (d) { return d[colordatalabel_I]; })])
             .range(heatmap10);
+    }else if (colorscale_I==='quantile' && colordomain_I==='min,max' && colordatalabel_I && colorcategory_I==='colorbrewer'){
+            this.colorscale = d3.scale.quantile()
+            .domain([d3.min(listdatafiltered, function (d) { return d[colordatalabel_I]; }),
+            d3.max(listdatafiltered, function (d) { return d[colordatalabel_I]; })])
+            .range(colorbrewer.YlGnBu[9]);
+    }else if (colorscale_I==='quantile' && colordomain_I==='min,max' && colordatalabel_I && colorcategory_I==='heatmap21'){
+            this.colorscale = d3.scale.quantile()
+            .domain([d3.min(listdatafiltered, function (d) { return d[colordatalabel_I]; }),
+            d3.max(listdatafiltered, function (d) { return d[colordatalabel_I]; })])
+            .range(heatmap21);
+    }else if (colorscale_I==='quantile' && colordomain_I==='min,max' && colordatalabel_I && colorcategory_I==='heatmap10'){
+            this.colorscale = d3.scale.quantile()
+            .domain([d3.min(listdatafiltered, function (d) { return d[colordatalabel_I]; }),
+            d3.max(listdatafiltered, function (d) { return d[colordatalabel_I]; })])
+            .range(heatmap10);
     }else if (colorscale_I==='quantile' && colordomain_I && colorcategory_I==='colorbrewer'){
         this.colorscale = d3.scale.quantile().domain(colordomain_I).range(colorbrewer.YlGnBu[9]);
     }else if (colorscale_I==='quantile' && colordomain_I && colorcategory_I==='category10c'){
@@ -582,14 +597,6 @@ d3_chart2d.prototype.add_legenddata1 = function () {
     this.legenddata1 = this.svgg.selectAll('.legendelement')
         .data(series_labels_unique);
 
-    //var legendg = this.svgg.append('g')
-    //    .attr('class', 'legend')
-    //    .attr('id', this.id + 'legend')
-    //    .attr('transform', "translate(" + width + "," + 0 + ")");
-
-    //this.legend = legendg.selectAll('legendelement')
-    //    .data(this.data1.nestdatafiltered);
-
     this.legenddata1enter = this.legenddata1.enter()
          //adding the grouping here "hides" the rect and text
         .append('g')
@@ -599,19 +606,10 @@ d3_chart2d.prototype.add_legenddata1 = function () {
             return "translate(" + width + "," + 0 + ")";
         });
 
-    //this.legendenterg = this.legendenter
-    //    // adding the grouping here adds ungroups the rect and text from each legend element
-    //    .append('g')
-    //    .attr('class', 'legendelement')
-    //    .attr('id', function (d, i) { return id + 'legendelement' + i.toString() })
-    //    .attr('transform', function (d, i) {
-    //        return "translate(" + width + "," + 0 + ")";
-    //    });
-
     //set the legend transition
     this.legenddata1.transition()
         .attr('transform', function (d, i) {
-            return "translate(" + (width + 10) + "," + 0 + ")";
+            return "translate(" + (width) + "," + 0 + ")";
         });
 
     //add filled rectangles
