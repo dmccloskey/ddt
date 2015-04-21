@@ -8,6 +8,11 @@ var check_add_tile2container = function () {
     tile1.set_rowclass("row");
     tile1.set_colclass("col-sm-12");
     tile1.add_tile2container();
+    tile1.add_header2tile();
+    tile1.add_removebutton2header();
+    tile1.add_title2header("Test");
+    tile1.add_body2tile();
+    tile1.add_footer2tile();
     if (tile1.tile.length === 1) {
         console.log("passed unit test add_tile2container");
     }

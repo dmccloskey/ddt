@@ -41,19 +41,31 @@ d3_tile.prototype.set_tileclass = function (tileclass_I) {
     this.tileclass = tileclass_I;
 };
 d3_tile.prototype.add_tile2container = function () {
+    // add tile to container
+    if (d3.select("#" + this.containerid).select("#" + this.rowid).select("#" + this.colid).select("#" + this.tileid).node()){
+        this.tile = d3.select("#" + this.containerid).select("#" + this.rowid).select("#" + this.colid).select("#" + this.tileid);
+    } else if (d3.select("#" + this.containerid).select("#" + this.rowid).select("#" + this.colid).node()){
+        this.append_tile2col();
+    } else if (d3.select("#" + this.containerid).select("#" + this.rowid).node()){
+        this.append_tile2row();
+    } else if (d3.select("#" + this.containerid).node()){
+        this.append_tile2container();
+    };
+};
+d3_tile.prototype.append_tile2container = function () {
     // set column id
     var row = d3.select("#" + this.containerid).append("div").attr("class", this.rowclass).attr("id", this.rowid);
     var col = row.append("div").attr("class", this.colclass).attr("id", this.colid);
     this.tile = col.append("div").attr("class", this.tileclass).attr("id", this.tileid);
 };
-d3_tile.prototype.add_tile2row = function () {
+d3_tile.prototype.append_tile2row = function () {
     // add tile as new column in an existing row
-    var col = d3.select("#" + this.rowid).append("div").attr("class", this.colclass).attr("id", this.colid);
+    var col = d3.select("#" + this.containerid).select("#" + this.rowid).append("div").attr("class", this.colclass).attr("id", this.colid);
     this.tile = col.append("div").attr("class", this.tileclass).attr("id", this.tileid);
 };
-d3_tile.prototype.add_tile2col = function () {
+d3_tile.prototype.append_tile2col = function () {
     // add tile to as a new row in an existing column
-    this.tile = d3.select("#" + this.colid).append("div").attr("class", this.tileclass).attr("id", this.tileid);
+    this.tile = d3.select("#" + this.containerid).select("#" + this.rowid).select("#" + this.colid).append("div").attr("class", this.tileclass).attr("id", this.tileid);
 };
 d3_tile.prototype.set_height = function () {
     // set d3_tile height
@@ -106,7 +118,8 @@ d3_tile.prototype.add_footer2tile = function () {
     var tileid = this.tileid;
 
     this.tilefooter = d3.select('#'+tileid).append("div")
-        .attr("class","panel-footer");
+        .attr("class","panel-footer")
+        .attr("id",tileid+"panel-footer");
 };
 d3_tile.prototype.add_submitbutton2form = function (button_idtext_I) {
     // add submit button
@@ -211,7 +224,8 @@ d3_tile.prototype.add_header2tile = function (title_I){
     var tileid = this.tileid;
 
     this.tileheader = d3.select('#'+tileid).append("div")
-        .attr("class","panel-heading");
+        .attr("class","panel-heading")
+        .attr("id",tileid+"panel-heading");
 };
 d3_tile.prototype.add_title2header = function (title_I){
     //add title to tileid
@@ -245,5 +259,6 @@ d3_tile.prototype.add_body2tile = function (title_I){
     var tileid = this.tileid;
 
     this.tilebody = d3.select('#'+tileid).append("div")
-        .attr("class","panel-body");
+        .attr("class","panel-body")
+        .attr("id",tileid+"panel-body")
 };

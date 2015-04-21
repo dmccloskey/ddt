@@ -37,18 +37,6 @@ ddt_tile.prototype.set_ddtsvg = function(ddtsvg_I){
     //
     this.ddtsvg = ddtsvg_I;
 };
-ddt_tile.prototype.add_tile2container = function(){
-    // add tile to container
-    this.tile.add_tile2container();
-};
-ddt_tile.prototype.add_tile2row = function(){
-    // add tile to row
-    this.tile.add_tile2row();
-};
-ddt_tile.prototype.add_tile2col = function(){
-    // add tile to row
-    this.tile.add_tile2col();
-};
 // make functions
 ddt_tile.prototype.make_tile = function(){
     // make the tile
@@ -67,6 +55,15 @@ ddt_tile_datalist.prototype = Object.create(ddt_tile.prototype);
 ddt_tile_datalist.prototype.constructor = ddt_tile_datalist;
 ddt_tile_datalist.prototype.make_tile = function(data_I,parameters_I){   
     // make the data list
+    // INPUT:
+    // parameters_I = e.g., {'tileheader':'filter menu','tiletype':'datalist','tileid':"tile1",'rowid':"row1",'colid':"col1",
+    //        'tileclass':"panel panel-default",'rowclass':"row",'colclass':"col-sm-4",
+    //        'tiledatalist': [{'value':'hclust','text':'by cluster'},
+    //                        {'value':'probecontrast','text':'by row and column'},
+    //                        {'value':'probe','text':'by row'},
+    //                        {'value':'contrast','text':'by column'},
+    //                        {'value':'custom','text':'by value'}]};
+            
     var header_I = parameters_I.tileheader;
     var datalist_I = parameters_I.tiledatalist;
 
@@ -74,6 +71,7 @@ ddt_tile_datalist.prototype.make_tile = function(data_I,parameters_I){
     this.set_tile();
     this.set_data(data_I);
 
+    this.tile.add_tile2container();
     this.tile.add_header2tile();
     this.tile.add_removebutton2header();
     this.tile.add_title2header(header_I);
@@ -94,6 +92,7 @@ ddt_tile_form.prototype.make_tile = function(data_I,parameters_I){
     this.set_tile();
     this.set_data(data_I);
 
+    this.tile.add_tile2container();
     this.tile.add_header2tile();
     this.tile.add_removebutton2header();
     this.tile.add_title2header(header_I);
@@ -125,33 +124,42 @@ ddt_tile_svg.prototype.make_tile = function(data_I,parameters_I){
     this.set_tile();
     this.set_data(data_I);
 
+    this.tile.add_tile2container();
     this.tile.add_header2tile();
     this.tile.add_removebutton2header();
     this.tile.add_title2header(header_I);
+    this.tile.add_body2tile();
+    this.tile.add_footer2tile();
 
     //svg
-    this.ddtsvg = this.get_ddtsvg(svgtype_I);
-    this.ddtsvg.make_ddtsvg(data_I,parameters_I)
+    this.ddtsvg = this.get_svg(svgtype_I);
+    this.ddtsvg.make_svg(data_I,parameters_I)
 
-    this.ddtsvg.render();
+    this.ddtsvg.ddtsvg.render();
 };
-ddt_tile_svg.prototype.update_tile = function(){
-    // update form
+ddt_tile_svg.prototype.update_tile = function(data_I){
+    // update tile
 
-    this.d3element.render();
+    //update the data filters...
+    this.ddtsvg.add_data(data_I);
+    this.ddtsvg.filter_data1and2stringdata();
+    //re-render the svg
+    this.ddtsvg.ddtsvg.render();
 };
 ddt_tile_svg.prototype.get_svg = function(svgtype_I){
     // return the appropriate tile object
-    if (svgtype_I=='heatmap2d'){
-        return new ddt_svg_heatmap();
-    } else if (svgtype_I=='scatterlineplot2d'){
-        return new ddt_svg_scatterlineplot2d();
-    } else if (svgtype_I=='verticalbarschart2d'){
-        return new ddt_svg_verticalbarschart2d();
-    } else if (svgtype_I=='boxandwhiskers2d'){
-        return new ddt_svg_boxandwhiskers2d();
-    } else if (svgtype_I=='scatterplot2d'){
-        return new ddt_svg_scatterplot2d();
+    if (svgtype_I=='heatmap2d_01'){
+        return new ddt_svg_heatmap_01();
+    } else if (svgtype_I=='scatterlineplot2d_01'){
+        return new ddt_svg_scatterlineplot2d_01();
+    } else if (svgtype_I=='scatterlineplot2d_02'){
+        return new ddt_svg_scatterlineplot2d_02();
+    } else if (svgtype_I=='scatterplot2d_01'){
+        return new ddt_svg_scatterplot2d_01();
+    } else if (svgtype_I=='verticalbarschart2d_01'){
+        return new ddt_svg_verticalbarschart2d_01();
+    } else if (svgtype_I=='boxandwhiskersplot2d_01'){
+        return new ddt_svg_boxandwhiskersplot2d_01();
     } else if (svgtype_I=='volcanoplot2d'){
         return new ddt_svg_volcanoplot2d();
     } else if (svgtype_I=='pcaplot2d_loadings'){
@@ -161,4 +169,4 @@ ddt_tile_svg.prototype.get_svg = function(svgtype_I){
     } else {
         return null;
     };
-}
+};

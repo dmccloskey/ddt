@@ -31,7 +31,7 @@ d3_svg.prototype.set_height = function (height_I) {
 d3_svg.prototype.add_svgelement2tile = function () {
     // add svg element to parent tile
 
-    this.svgelement = d3.select('#'+this.tileid)
+    this.svgelement = d3.select('#'+this.tileid+"panel-body")
         .append("svg").attr("id",this.id);
 
     this.svgelement.attr("width", this.width + this.margin.left + this.margin.right)
@@ -43,7 +43,7 @@ d3_svg.prototype.add_svgelement2tile = function () {
 };
 d3_svg.prototype.add_svgexportbutton2tile = function () {
     // add button to export the svg element
-    var svgexportbutton = d3.select('#'+this.tileid).append("form");
+    var svgexportbutton = d3.select('#'+this.tileid+"panel-footer").append("form");
 
     var svgexportbutton_label = svgexportbutton.append("label");
     svgexportbutton_label.text("Export as SVG");

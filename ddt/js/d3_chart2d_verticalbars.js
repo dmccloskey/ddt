@@ -1,5 +1,5 @@
-d3_chart2d.prototype.set_x1x2domain_verticalbarsplot = function () {
-    // set x1-domain and x1-domain for a barplot
+d3_chart2d.prototype.set_x1x2domain_verticalbarschart = function () {
+    // set x1-domain and x1-domain for a barchart
     var series_label = this.data1keymap.serieslabel;
     var nestdatafiltered = this.data1.nestdatafiltered;
     var listdatafiltered = this.data1.listdatafiltered;
@@ -9,7 +9,7 @@ d3_chart2d.prototype.set_x1x2domain_verticalbarsplot = function () {
     this.x2scale.domain(series_labels_unique).rangeRoundBands([0,x1scale.rangeBand()]);
 };
 d3_chart2d.prototype.add_verticalbarsdata1 = function () {
-    //add vertical bars to the plot
+    //add vertical bars to the chart
 
     var x_data = this.data1keymap.xdata;
     var y_data = this.data1keymap.ydata;
@@ -81,7 +81,7 @@ d3_chart2d.prototype.add_verticalbarsdata1tooltipandfill = function () {
         });
 };
 d3_chart2d.prototype.add_verticalbarsdata1errorbars = function () {
-    //add vertical error bars to the plot
+    //add vertical error bars to the chart
     //TODO: change from poly line to 3 lines: lb,ub,and connector
 
     var x_data = this.data1keymap.xdata;
@@ -194,7 +194,7 @@ d3_chart2d.prototype.add_verticalbarsdata1errorbars = function () {
         });
 
 };
-d3_chart2d.prototype.set_x1andy1axesstyle_verticalbarsplot = function () {
+d3_chart2d.prototype.set_x1andy1axesstyle_verticalbarschart = function () {
     // predefined css style for x1 and y1 axis
     var x1axisselector = '#' + this.id + 'x1axis' + ' path';
     var y1axisselector = '#' + this.id + 'y1axis' + ' path';

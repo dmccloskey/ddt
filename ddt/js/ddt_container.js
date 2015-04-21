@@ -4,6 +4,8 @@ var ddt_container = function (){
     this.tiles = [];
     this.data = [];
     this.tile2datamap = {};
+    this.containerid = 'container'
+    this.container=null;
 };
 ddt_container.prototype.set_parameters = function(parameters_I){
     // set parameters to container
@@ -39,10 +41,10 @@ ddt_container.prototype.add_data = function(data_I){
     // add data to container
     //INPUT:
     // data_I = [{data:[],datakeys:[],datanestkeys:[]},...]
-    for (i=0;i<data_I.length;i++){
+    for (cnt=0;cnt<data_I.length;cnt++){ //switched from i to cnt due to i changing within the loop
         var d3data = new d3_data();
-        d3data.set_keys(data_I[i].datakeys);
-        d3data.set_listdata(data_I[i].data,data_I[i].datanestkeys);
+        d3data.set_keys(data_I[cnt].datakeys);
+        d3data.set_listdata(data_I[cnt].data,data_I[cnt].datanestkeys);
         d3data.reset_filters();
         this.data.push(d3data);
     };
@@ -60,19 +62,35 @@ ddt_container.prototype.make_container = function(){
     // call all tile make functions
     var data = this.data;
     this.add_containertiles();
-    for (i=0;i<this.tiles.length;i++){
-        var tiledataindex = this.tile2datamap[this.parameters[i].tileid];
+    for (cnt=0;cnt<this.tiles.length;cnt++){ //switched from i to cnt due to i changing within the loop
+        var tiledataindex = this.tile2datamap[this.parameters[cnt].tileid];
         var tiledata = [];
         tiledataindex.forEach(function(d){tiledata.push(data[d]);});
-        this.tiles[i].make_tile(tiledata,this.parameters[i]);
+        this.tiles[cnt].make_tile(tiledata,this.parameters[cnt]);
     };
 };
 ddt_container.prototype.update_container = function(){
     // call all tile update functions
-    for (i=0;i<this.tiles.length;i++){
-        this.tiles[i].update_tile;
+    var data = this.data;
+    for (cnt=0;cnt<this.tiles.length;cnt++){ //switched from i to cnt due to i changing within the loop
+        var tiledataindex = this.tile2datamap[this.parameters[cnt].tileid];
+        var tiledata = [];
+        tiledataindex.forEach(function(d){tiledata.push(data[d]);});
+        this.tiles[cnt].update_tile(tiledata);
+    };     
+};
+ddt_container.prototype.reset_container = function(){
+    // reset data filters and call all tile update functions
+    for (cnt=0;cnt<this.data.length;cnt++){ //switched from i to cnt due to i changing within the loop
+        this.data[cnt].reset_filters();
     };
-        
+    var data = this.data;
+    for (cnt=0;cnt<this.tiles.length;cnt++){ //switched from i to cnt due to i changing within the loop
+        var tiledataindex = this.tile2datamap[this.parameters[cnt].tileid];
+        var tiledata = [];
+        tiledataindex.forEach(function(d){tiledata.push(data[d]);});
+        this.tiles[cnt].update_tile(tiledata);
+    };     
 };
 ddt_container.prototype.get_tile = function(tiletype_I){
     // return the appropriate tile object
@@ -86,3 +104,29 @@ ddt_container.prototype.get_tile = function(tiletype_I){
         return null;
     };
 };
+ddt_container.prototype.filter_containerdata = function(filter_I){
+    // apply a global filter to all container data
+    // INPUT:
+    // filter_I = {key:value,...}
+    for (cnt=0;cnt<this.data.length;cnt++){ //switched from i to cnt due to i changing within the loop
+        this.data[cnt].change_filters(filter_I);
+    };
+};
+ddt_container.prototype.sync_containerdata = function(){
+    // update all tiles on tile change
+    // TODO:
+    var data = this.data;
+    var tiles_ = this.tiles;
+    var parameters_ = this.parameters;
+    function update(){
+        for (cnt=0;cnt<tiles_.length;cnt++){ //switched from i to cnt due to i changing within the loop
+            var tiledataindex = tiles_tile2datamap[parameters_[cnt].tileid];
+            var tiledata = [];
+            tiledataindex.forEach(function(d){tiledata.push(data[d]);});
+            tiles_[cnt].update_tile(tiledata);
+        };     
+    };
+    for (cnt=0;cnt<this.tiles.length;cnt++){ //switched from i to cnt due to i changing within the loop
+        var synctiles = d3.select("#" + this.tiles[cnt].tileid + "panel-body").on("change",update);
+    };
+}

@@ -74,11 +74,12 @@ d3_chart2d.prototype.set_heatmapdata1 = function (cellsize_I) {
     this.colsortorder=false;
 
 };
-d3_chart2d.prototype.add_heatmapdata1rowlabels = function () {
+d3_chart2d.prototype.add_heatmapdata1rowlabels = function (tileid_I) {
     //add heatmap to the plot
     var uniquerowlabels = this.uniquerowlabels;
     var sortbylabel = this.sortbylabel;
     var rowsortorder = this.rowsortorder;
+    var tileid = tileid_I;
     var cellsize = this.cellsize;
     var rowleavesordered = this.rowleavesordered
 
@@ -98,16 +99,16 @@ d3_chart2d.prototype.add_heatmapdata1rowlabels = function () {
         .on("click", function(d,i) {
             rowsortorder=!rowsortorder; 
             sortbylabel("r",i,rowsortorder); 
-            this.$('#order').property("selectedIndex", 4).node().focus();
+            this.$('#'+tileid+'datalist').property("selectedIndex", 4).node().focus();
             });
 
 };
-d3_chart2d.prototype.add_heatmapdata1columnlabels = function () {
+d3_chart2d.prototype.add_heatmapdata1columnlabels = function (tileid_I) {
     //add heatmap to the plot
     var uniquecollabels = this.uniquecollabels;
     var sortbylabel = this.sortbylabel;
     var colsortorder = this.colsortorder;
-    var tileid = this.tileid;
+    var tileid = tileid_I;
     var cellsize = this.cellsize;
     var columnleavesordered = this.columnleavesordered
     var svgg = this.svgg;

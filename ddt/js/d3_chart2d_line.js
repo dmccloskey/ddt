@@ -222,7 +222,7 @@ d3_chart2d.prototype.add_linedata2tooltipandstroke = function () {
         d3.select("#" + id + "tooltip")
             .style("left", (d3.event.pageX + 10) + "px")
             .style("top", (d3.event.pageY - 10) + "px")
-            .select("#value")
+            .select("#" + id + "value")
             .text("series_label" + ": " + d.key);
         //Show the tooltip
         d3.select("#" + id + "tooltip").classed("hidden", false);

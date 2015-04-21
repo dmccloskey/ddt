@@ -30,7 +30,8 @@ d3_chart2d = function () {
     this.tooltip = null;
     this.render = null; // function defining the calls to make the chart
     this.filterdata1and2 = false;
-    this.keymap = {}; // mapping of keys to data element, chart elements, or other descriptor
+    this.data1keymap = {}; // mapping of keys to data element, chart elements, or other descriptor
+    this.data2keymap = {}; // mapping of keys to data element, chart elements, or other descriptor
 
 };
 d3_chart2d.prototype = Object.create(d3_svg.prototype);
@@ -42,7 +43,7 @@ d3_chart2d.prototype.set_filterdata1and2 = function(filterdata1and2_I){
 d3_chart2d.prototype.add_chart2d2tile_packlayoutcircle = function(){
     // add char2d to tile
 
-    this.svgelement = d3.select('#' + this.tileid).selectAll("svg")
+    this.svgelement = d3.select('#' + this.tileid+"panel-body").selectAll("svg")
         .data([this.data1.listdatafiltered]);
     this.svgenter = this.svgelement.enter()
         .append("svg")
@@ -65,7 +66,7 @@ d3_chart2d.prototype.add_chart2d2tile = function(){
     var id = this.id;
     var data1listdatafiltered = this.data1.listdatafiltered;
 
-    this.svgelement = d3.select('#' + tileid).selectAll("svg")
+    this.svgelement = d3.select('#' + tileid+"panel-body").selectAll("svg")
         .data([data1listdatafiltered]);
     this.svgenter = this.svgelement.enter()
         .append("svg")
@@ -131,7 +132,7 @@ d3_chart2d.prototype.set_x2range = function (scale_I) {
     } else if (scale_I === 'ordinal') {
         this.x2scale = d3.scale.ordinal();
     } else if (scale_I === 'ordinal-rangeRoundBands') {
-        this.x2scale = d3.scale.ordinal().rangeRoundBands([0, this.width], .1);;
+        this.x2scale = d3.scale.ordinal().rangeRoundBands([0, this.width], .1);
     };
 };
 d3_chart2d.prototype.set_y2range = function (scale_I) {
@@ -144,23 +145,23 @@ d3_chart2d.prototype.add_data = function(data_I){
     //add data n
     if (!data_I){
        console.warn("no data");
-    } else if (data_I.legth===1){
+    } else if (data_I.length===1){
         this.data1 = data_I[0];
-    } else if (data_I.legth===2){
+    } else if (data_I.length===2){
         this.data1 = data_I[0];
         this.data2 = data_I[1];
     } else {console.warn("more data found than what is currently supported");
     };
 };
-d3_chart2d.prototype.set_datakeymaps = function(datakeymaps_I){
+d3_chart2d.prototype.set_datakeymaps = function(keymaps_I){
     //add data n
-    if (!datakeymaps_I){
+    if (!keymaps_I){
        console.warn("no data");
-    } else if (datakeymaps_I.legth===1){
-        this.data1keymap = datakeymaps_I[0];
-    } else if (datakeymaps_I.legth===2){
-        this.data1keymap = datakeymaps_I[0];
-        this.data2keymap = datakeymaps_I[1];
+    } else if (keymaps_I.length===1){
+        this.data1keymap = keymaps_I[0];
+    } else if (keymaps_I.length===2){
+        this.data1keymap = keymaps_I[0];
+        this.data2keymap = keymaps_I[1];
     } else {console.warn("more data found than what is currently supported");
     };
 };
@@ -860,3 +861,9 @@ d3_chart2d.prototype.set_svgelementzoomcss = function(){
     this.set_d3css(selectorstyle);
     //this.set_svggcss(selectorstyle);
 };
+d3_chart2d.prototype.filter_data1and2stringdata = function(){
+    //filter all data
+    if (this.data1){this.data1.filter_stringdata();};
+    if (this.data2){this.data2.filter_stringdata();};
+    
+}
