@@ -1,3 +1,6 @@
+
+
+
 var ddt_template_heatmap_01 = function(data1_I,data1_keys_I,data1_nestkeys_I,data1_keymap_I,parameters_I){
     // parse the input
 	var data1 = data1_I;
@@ -30,7 +33,6 @@ var ddt_template_heatmap_01 = function(data1_I,data1_keys_I,data1_nestkeys_I,dat
     tile1.add_title2header("filter menu");
     tile1.add_body2tile();
     tile1.add_datalist2body(datalist);
-    //tile1.add_dropdown2body(datalist);
     //Tile definition
     var tile2 = new d3_tile();
     tile2.set_tileclass("panel panel-default");

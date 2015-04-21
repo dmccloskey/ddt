@@ -140,6 +140,30 @@ d3_chart2d.prototype.set_y2range = function (scale_I) {
         this.y2scale = d3.scale.linear().range([this.height, 0])
     }
 };
+d3_chart2d.prototype.add_data = function(data_I){
+    //add data n
+    if (!data_I){
+       console.warn("no data");
+    } else if (data_I.legth===1){
+        this.data1 = data_I[0];
+    } else if (data_I.legth===2){
+        this.data1 = data_I[0];
+        this.data2 = data_I[1];
+    } else {console.warn("more data found than what is currently supported");
+    };
+};
+d3_chart2d.prototype.set_datakeymaps = function(datakeymaps_I){
+    //add data n
+    if (!datakeymaps_I){
+       console.warn("no data");
+    } else if (datakeymaps_I.legth===1){
+        this.data1keymap = datakeymaps_I[0];
+    } else if (datakeymaps_I.legth===2){
+        this.data1keymap = datakeymaps_I[0];
+        this.data2keymap = datakeymaps_I[1];
+    } else {console.warn("more data found than what is currently supported");
+    };
+};
 d3_chart2d.prototype.add_data1 = function (data1_I) {
     //add data1
     this.data1 = data1_I;

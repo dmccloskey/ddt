@@ -278,6 +278,14 @@ var make_varticalbarschart2d = function (data1_I,data1_keys_I,data1_nestkeys_I,d
                   "chart1filters":{'met_id':['glc-D','ac'],'sample_name_abbreviation':["OxicEvo04pgiEcoliGlc","OxicEvo04pgiEvo01EPEcoliGlc","OxicEvo04pgiEvo02EPEcoliGlc","OxicEvo04pgiEvo03EPEcoliGlc","OxicEvo04pgiEvo04EPEcoliGlc","OxicEvo04pgiEvo05EPEcoliGlc","OxicEvo04pgiEvo06EPEcoliGlc","OxicEvo04pgiEvo07EPEcoliGlc","OxicEvo04pgiEvo08EPEcoliGlc"]},
                   "chart2filters":{'met_id':['biomass'],'sample_name_abbreviation':["OxicEvo04pgiEcoliGlc","OxicEvo04pgiEvo01EPEcoliGlc","OxicEvo04pgiEvo02EPEcoliGlc","OxicEvo04pgiEvo03EPEcoliGlc","OxicEvo04pgiEvo04EPEcoliGlc","OxicEvo04pgiEvo05EPEcoliGlc","OxicEvo04pgiEvo06EPEcoliGlc","OxicEvo04pgiEvo07EPEcoliGlc","OxicEvo04pgiEvo08EPEcoliGlc"]}
     };
+    //make a new tile
+    var tile1 = new d3_tile();
+    tile1.set_tileid("tile1");
+    tile1.set_rowid("row1");
+    tile1.set_colid("col1");
+    tile1.set_rowclass("row");
+    tile1.set_colclass("col-sm-12");
+    tile1.add_tile2container();
     //uptake/secretion rates
     var d3data1 = new d3_data();
     d3data1.set_keys(data1_keys);
@@ -321,11 +329,11 @@ var make_varticalbarschart2d = function (data1_I,data1_keys_I,data1_nestkeys_I,d
     //make a new tile
     var tile2 = new d3_tile();
     tile2.set_tileid("tile2");
-    tile2.set_rowid("row2");
-    tile2.set_colid("col2");
+    tile2.set_rowid("row1");
+    tile2.set_colid("col1");
     tile2.set_rowclass("row");
     tile2.set_colclass("col-sm-12");
-    tile2.add_tile2container();
+    tile2.add_tile2col();
     //growth rate
     var d3data2 = new d3_data();
     d3data2.set_keys(data1_keys);
