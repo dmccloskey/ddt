@@ -149,8 +149,12 @@ d3_data.prototype.convert_filter2stringmenuinput = function(){
 };
 d3_data.prototype.convert_stringmenuinput2filter = function(filterstring_I){
     // convert filter list to filter string list
+    var filtermap = {};
     for (i=0;i<filterstring_I.length;i++){
-        this.filters[filterstring_I[i].text]=filterstring_I[i].value.split(",");};
+        //this.filters[filterstring_I[i].text]=filterstring_I[i].value.split(",");
+        filtermap[filterstring_I[i].text]=filterstring_I[i].value.split(",");
+    };
+    this.change_filters(filtermap)
 };
 d3_data.prototype.change_nestkeys = function(nestkey_I) {
     // change the nest keys and update nestdatafiltered

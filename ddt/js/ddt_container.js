@@ -79,7 +79,7 @@ ddt_container.prototype.update_container = function(){
         this.tiles[cnt].update_tile(tiledata);
     };     
 };
-ddt_container.prototype.reset_container = function(){
+ddt_container.prototype.reset_containerdata = function(){
     // reset data filters and call all tile update functions
     for (cnt=0;cnt<this.data.length;cnt++){ //switched from i to cnt due to i changing within the loop
         this.data[cnt].reset_filters();
@@ -100,7 +100,9 @@ ddt_container.prototype.get_tile = function(tiletype_I){
         return new ddt_tile_datalist();
     } else if (tiletype_I=='svg'){
         return new ddt_tile_svg();
-    }  else {
+    } else if (tiletype_I=='table'){
+        return new ddt_tile_table();
+    } else {
         return null;
     };
 };
@@ -114,19 +116,104 @@ ddt_container.prototype.filter_containerdata = function(filter_I){
 };
 ddt_container.prototype.sync_containerdata = function(){
     // update all tiles on tile change
-    // TODO:
+    // TODO: 1. pass target syncs as parameters
+    //       2. implement "onchange"
     var data = this.data;
     var tiles_ = this.tiles;
     var parameters_ = this.parameters;
+    var tile2datamap_ = this.tile2datamap;
     function update(){
         for (cnt=0;cnt<tiles_.length;cnt++){ //switched from i to cnt due to i changing within the loop
-            var tiledataindex = tiles_tile2datamap[parameters_[cnt].tileid];
+            var tiledataindex = tile2datamap_[parameters_[cnt].tileid];
             var tiledata = [];
             tiledataindex.forEach(function(d){tiledata.push(data[d]);});
             tiles_[cnt].update_tile(tiledata);
         };     
     };
     for (cnt=0;cnt<this.tiles.length;cnt++){ //switched from i to cnt due to i changing within the loop
-        var synctiles = d3.select("#" + this.tiles[cnt].tileid + "panel-body").on("change",update);
+        // sync svg
+        if (this.tiles[cnt].parameters.svgid){
+            //var synctiles = d3.select("#" + this.tiles[cnt].parameters.svgid + " g").on("haschange",update);
+            var synctiles = d3.select("#" + this.tiles[cnt].parameters.tileid + "panel-body").on("click",update);
+        };
+        // sync table elements
+        if (this.tiles[cnt].parameters.tableid){
+            //var synctiles = d3.select("#" + this.tiles[cnt].parameters.tileid + " tbody").on("haschange",update);
+            var synctiles = d3.select("#" + this.tiles[cnt].parameters.tileid + "panel-body").on("click",update);
+        };
     };
-}
+};
+ddt_container.prototype.add_datafiltermenusubmitbutton = function (tileid_I,submitbuttonid_I){
+    // add filter menu submit button listener to tile
+    if (tileid_I){var tileid = tileid_I;}
+    else{var tileid = this.tiles[0].parameters.tileid;};
+    if (submitbuttonid_I){var submitbuttonid = submitbuttonid_I;}
+    else{var submitbuttonid = 'submit1';};
+    
+    var data = this.data;
+    var tiles_ = this.tiles;
+    var parameters_ = this.parameters;
+    var tile2datamap_ = this.tile2datamap;
+
+//     function update(){
+//         for (cnt=0;cnt<tiles_.length;cnt++){ //switched from i to cnt due to i changing within the loop
+//             var tiledataindex = tile2datamap_[parameters_[cnt].tileid];
+//             var tiledata = [];
+//             tiledataindex.forEach(function(d){tiledata.push(data[d]);});
+//             tiles_[cnt].update_tile(tiledata);
+//         };     
+//     };
+
+    function submit(){
+        var filterstringmenu = [];
+        var tileindex = 0;
+        tiles_.forEach(function(d,i){
+            if (d.parameters.tileid === tileid){
+                tileindex=i;
+            };
+        })
+        for (key in tiles_[tileindex].data[0].filters){
+            var filterkey = d3.select("#"+tileid+'formlabel'+key).text();
+            var filterstring = d3.select("#"+tileid+'forminput'+key).node().value;
+            filterstringmenu.push({"text":filterkey,"value":filterstring});
+        };
+        for (cnt=0;cnt<data.length;cnt++){ //switched from i to cnt due to i changing within the loop
+            data[cnt].convert_stringmenuinput2filter(filterstringmenu);
+            data[cnt].filter_stringdata();
+        };
+//         tiles_[tileindex].data[0].convert_stringmenuinput2filter(filterstringmenu);
+//         tiles_[tileindex].data[0].filter_stringdata();
+        update();
+    };
+
+    this.submitbutton = d3.select("#"+tileid+'submitbutton'+submitbuttonid)
+        .on("mousedown",submit);
+};
+ddt_container.prototype.add_datafiltermenuresetbutton = function (tileid_I,resetbuttonid_I){
+    // add filter menu reset button listener to tile
+    if (tileid_I){var tileid = tileid_I;}
+    else{var tileid = this.tiles[0].parameters.tileid;};
+    if (resetbuttonid_I){var resetbuttonid = resetbuttonid_I;}
+    else{var resetbuttonid = 'reset1';};
+    
+    var data = this.data;
+    var tiles_ = this.tiles;
+    var parameters_ = this.parameters;
+    var tile2datamap_ = this.tile2datamap;
+    
+    function reset(){
+        // reset data filters and call all tile update functions
+        for (cnt=0;cnt<data.length;cnt++){ //switched from i to cnt due to i changing within the loop
+            data[cnt].reset_filters();
+        };
+        for (cnt=0;cnt<tiles_.length;cnt++){ //switched from i to cnt due to i changing within the loop
+            var tiledataindex = tile2datamap_[parameters_[cnt].tileid];
+            var tiledata = [];
+            tiledataindex.forEach(function(d){tiledata.push(data[d]);});
+            tiles_[cnt].update_tile(tiledata);
+        };     
+    };
+
+    this.resetbutton = d3.select("#"+tileid+'submitbutton'+resetbuttonid)
+        .on("click",reset);
+};

@@ -29,6 +29,7 @@ ddt_svg_scatterlot2d_01.prototype.make_svg = function(data_I,parameters_I){
     this.ddtsvg.set_zoom();
     this.ddtsvg.render = function () {
         this.add_chart2d2tile();
+        this.set_svgstyle();
         this.set_x1range("linear");
         this.set_y1range("linear");
         this.set_x1domain();
@@ -45,8 +46,10 @@ ddt_svg_scatterlot2d_01.prototype.make_svg = function(data_I,parameters_I){
         this.add_legenddata1filter();
         this.add_pointsdata1tooltipandfill();
         this.set_x1andy1axesstyle();
+        this.set_x1andy1axestickstyle();
         this.set_pointsstyle();
         this.add_x1axislabel(parameters_I.svgx1axislabel);
         this.add_y1axislabel(parameters_I.svgy1axislabel);
+        this.set_x1andy1axeslabelstyle();
     };
 };

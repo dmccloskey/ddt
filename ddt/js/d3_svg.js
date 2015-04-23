@@ -7,10 +7,20 @@ d3_svg = function () {
     this.margin = {};
     this.width = 1;
     this.height = 1;
+    this.updatecontainer = false;
 };
 d3_svg.prototype.set_tileid = function (tileid_I) {
     // set svg tile id
     this.tileid = tileid_I;
+};
+d3_svg.prototype.set_updatecontainer = function (updatecontainer_I) {
+    // set container update status
+    // INPUT:
+    // boolean, if true, all function calls that re-render
+    //          the svg image will trigger an update call
+    //          to the container object, which will
+    //          propagate out to all other container tiles
+    this.containerupdate = containerupdate_I;
 };
 d3_svg.prototype.set_id = function (id_I) {
     // set svg id
@@ -45,12 +55,12 @@ d3_svg.prototype.add_svgexportbutton2tile = function () {
     // add button to export the svg element
     var svgexportbutton = d3.select('#'+this.tileid+"panel-footer").append("form");
 
-    var svgexportbutton_label = svgexportbutton.append("label");
-    svgexportbutton_label.text("Export as SVG");
+//     var svgexportbutton_label = svgexportbutton.append("label");
+//     svgexportbutton_label.text("Export as SVG");
 
     var svgexportbutton_input = svgexportbutton.append("input");
     svgexportbutton_input.attr("type", "button")
-        .attr("value", "Download");
+        .attr("value", "Download SVG");
     svgexportbutton_input.on("click", this.export_svgelement);
 
 };
@@ -131,6 +141,48 @@ d3_svg.prototype.add_data1filtermenusubmitbutton = function (tileid_I,submitbutt
     this.submitbutton = d3.select("#"+tileid+'submitbutton'+submitbuttonid)
         .on("mousedown",submit);
 };
+d3_svg.prototype.add_data2filtermenusubmitbutton = function (tileid_I,submitbuttonid_I){
+    // add data list (menu) to tile for the heatmap
+    if (tileid_I){var tileid = tileid_I;}
+    else{var tileid = this.tileid;};
+    if (submitbuttonid_I){var submitbuttonid = submitbuttonid_I;}
+    else{var submitbuttonid = this.submitbuttonid;};
+
+    var this_ = this;
+
+    function submit(){
+        var filterstringmenu = [];
+        for (key in this_.data2.filters){
+            var filterkey = d3.select("#"+tileid+'formlabel'+key).text();
+            var filterstring = d3.select("#"+tileid+'forminput'+key).node().value;
+            filterstringmenu.push({"text":filterkey,"value":filterstring});
+        };
+        this_.data2.convert_stringmenuinput2filter(filterstringmenu);
+        this_.data2.filter_stringdata();
+        this_.render();
+    };
+
+    this.submitbutton = d3.select("#"+tileid+'submitbutton'+submitbuttonid)
+        .on("mousedown",submit);
+};
+d3_svg.prototype.add_data2filtermenuresetbutton = function (tileid_I,resetbuttonid_I){
+    // add data list (menu) to tile for the heatmap
+    if (tileid_I){var tileid = tileid_I;}
+    else{var tileid = this.tileid;};
+    if (resetbuttonid_I){var resetbuttonid = resetbuttonid_I;}
+    else{var resetbuttonid = this.resetbuttonid;};
+
+    var this_ = this;
+    
+    function reset(){
+        this_.data2.reset_filters();
+        this_.data2.filter_stringdata();
+        this_.render();
+    };
+
+    this.resetbutton = d3.select("#"+tileid+'submitbutton'+resetbuttonid)
+        .on("click",reset);
+};
 d3_svg.prototype.add_data1filtermenuresetbutton = function (tileid_I,resetbuttonid_I){
     // add data list (menu) to tile for the heatmap
     if (tileid_I){var tileid = tileid_I;}
@@ -148,4 +200,19 @@ d3_svg.prototype.add_data1filtermenuresetbutton = function (tileid_I,resetbutton
 
     this.resetbutton = d3.select("#"+tileid+'submitbutton'+resetbuttonid)
         .on("click",reset);
+};
+d3_svg.prototype.set_svgstyle = function () {
+    // predefined css style for svg
+    var selector = "#" + this.id;
+    var style = {
+        'width': '100%',
+        'margin-bottom': '15px',
+        'overflow-y': 'hidden',
+        'overflow-x': 'scroll',
+        '-ms-overflow-style': '-ms-autohiding-scrollbar',
+        //'border': '1px solid #ddd',
+        '-webkit-overflow-scrolling': 'touch'
+    };
+    var selectorstyle = [{ 'selection': selector, 'style': style }]
+    this.set_d3css(selectorstyle);
 };

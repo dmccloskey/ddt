@@ -766,6 +766,30 @@ d3_chart2d.prototype.set_x1andy1axesstyle = function () {
                      { 'selection': y1axisselector, 'style': style }]
     this.set_svggcss(selectorstyle);
 };
+d3_chart2d.prototype.set_x1andy1axestickstyle = function () {
+    // predefined css style for x1 and y1 axis
+    var x1axisselector = '#' + this.id + 'x1axis' + ' g.tick text';
+    var y1axisselector = '#' + this.id + 'y1axis' + ' g.tick text';
+    var style = {
+        'font-size': '12px'
+    };
+    var selectorstyle = [{ 'selection': x1axisselector, 'style': style },
+                     { 'selection': y1axisselector, 'style': style }]
+    this.set_svggcss(selectorstyle);
+};
+d3_chart2d.prototype.set_x1andy1axeslabelstyle = function () {
+    // predefined css style for x1 and y1 axis
+    var x1axisselector = '#' + this.id + 'x1axis' + ' text.label';
+    var y1axisselector = '#' + this.id + 'y1axis' + ' text.label';
+    var style = {
+        'font-size': '14px',
+        'font-style': 'normal',
+        'font-family': 'arial'
+    };
+    var selectorstyle = [{ 'selection': x1axisselector, 'style': style },
+                     { 'selection': y1axisselector, 'style': style }]
+    this.set_svggcss(selectorstyle);
+};
 d3_chart2d.prototype.set_x1x2andy1y2axesstyle = function () {
     // predefined css style for x1 and y1 axis
     var x1axisselector = '#' + this.id + 'x1axis' + ' path';
@@ -864,6 +888,14 @@ d3_chart2d.prototype.set_svgelementzoomcss = function(){
 d3_chart2d.prototype.filter_data1and2stringdata = function(){
     //filter all data
     if (this.data1){this.data1.filter_stringdata();};
-    if (this.data2){this.data2.filter_stringdata();};
-    
-}
+    if (this.data2){this.data2.filter_stringdata();}; 
+};
+d3_chart2d.prototype.set_legendstyle = function () {
+    // predefined css style for legend
+    var selector = '.legendelement text';
+    var style = {
+        'font-size': '10px'
+    };
+    var selectorstyle = [{ 'selection': selector, 'style': style }]
+    this.set_svggcss(selectorstyle);
+};

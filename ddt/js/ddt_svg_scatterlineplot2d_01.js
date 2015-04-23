@@ -9,7 +9,8 @@ ddt_svg_scatterlineplot2d_01 = function () {
     //                        'svgid':'svg1',
     //                        "svgmargin":{ 'top': 50, 'right': 150, 'bottom': 50, 'left': 50 },
     //                        "svgwidth":500,"svgheight":350,
-    //                        "svgx1axislabel":"jump_time_point","svgy1axislabel":"frequency"};
+    //                        "svgx1axislabel":"jump_time_point","svgy1axislabel":"frequency",
+    //						  'svgformtileid':'tile1','svgresetbuttonid':'reset1','svgsubmitbuttonid':'submit1'};
     //                where data1_keymap = {'xdata':'time_point',
     //                    'ydata':'mutation_frequency',
     //                    'serieslabel':'mutation_id',
@@ -36,11 +37,16 @@ ddt_svg_scatterlineplot2d_01.prototype.make_svg = function(data_I,parameters_I){
     this.ddtsvg.set_height(parameters_I.svgheight);
     this.ddtsvg.set_colorscale(); //color for series_label will remain consistent
     this.ddtsvg.add_svgexportbutton2tile();
+//     this.ddtsvg.add_data1filtermenuresetbutton(parameters_I.svgformtileid,parameters_I.svgresetbuttonid)
+//     this.ddtsvg.add_data2filtermenuresetbutton(parameters_I.svgformtileid,parameters_I.svgresetbuttonid)
+//     this.ddtsvg.add_data1filtermenusubmitbutton(parameters_I.svgformtileid,parameters_I.svgsubmitbuttonid)
+//     this.ddtsvg.add_data2filtermenusubmitbutton(parameters_I.svgformtileid,parameters_I.svgsubmitbuttonid)
     this.ddtsvg.set_tooltip();
     this.ddtsvg.set_tooltipstyle();
     this.ddtsvg.set_zoom();
     this.ddtsvg.render = function () {
         this.add_chart2d2tile();
+        this.set_svgstyle();
         //this.add_title(parameters.svgtitle);
         this.set_x1range("linear");
         this.set_y1range("linear");
@@ -61,11 +67,14 @@ ddt_svg_scatterlineplot2d_01.prototype.make_svg = function(data_I,parameters_I){
         this.add_pointsdata1();
         this.add_legenddata1();
         this.add_legenddata1filter();
+        this.set_legendstyle();
         this.add_pointsdata1tooltipandfill();
         this.set_x1andy1axesstyle();
+        this.set_x1andy1axestickstyle();
         this.set_pointsstyle();
         this.add_x1axislabel(parameters_I.svgx1axislabel);
         this.add_y1axislabel(parameters_I.svgy1axislabel);
+        this.set_x1andy1axeslabelstyle();
         // add line
 		this.set_linedata2("linear");
 		this.add_linedata2();

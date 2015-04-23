@@ -44,6 +44,7 @@ ddt_svg_verticalbarschart2d_01.prototype.make_svg = function(data_I,parameters_I
 			this.data1.filter_stringdata();
     	};
         this.add_chart2d2tile();
+        this.set_svgstyle();
         this.set_x1range("ordinal-rangeRoundBands");
         this.set_x2range("ordinal");
         this.set_y1range("linear");

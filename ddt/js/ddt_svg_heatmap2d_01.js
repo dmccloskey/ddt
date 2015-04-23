@@ -44,6 +44,7 @@ ddt_svg_heatmap_01.prototype.make_svg = function(data_I,parameters_I){
 								parameters_I.svgcolordatalabel);
     this.ddtsvg.render = function () {
         this.add_chart2d2tile();
+        this.set_svgstyle();
         this.set_heatmapdata1(18); //update the heatmap properties
         this.add_heatmapdata1();
         this.add_heatmapdata1animation();

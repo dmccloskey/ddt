@@ -31,12 +31,6 @@ ddt_tile.prototype.set_data = function(data_I){
     // set data
     this.data = data_I;
 };
-ddt_tile.prototype.set_ddtsvg = function(ddtsvg_I){
-    // set data
-    //TODO:
-    //
-    this.ddtsvg = ddtsvg_I;
-};
 // make functions
 ddt_tile.prototype.make_tile = function(){
     // make the tile
@@ -100,12 +94,12 @@ ddt_tile_form.prototype.make_tile = function(data_I,parameters_I){
 
     input = this.data[0].convert_filter2stringmenuinput();
     this.tile.add_form2body(input);
-    this.tile.add_submitbutton2form({'id':'submit1','text':'submit'});
-    this.tile.add_submitbutton2form({'id':'reset1','text':'reset'});
+    this.tile.add_submitbutton2form(parameters_I.formsubmitbuttonidtext);
+    this.tile.add_submitbutton2form(parameters_I.formresetbuttonidtext);
 };
 ddt_tile_form.prototype.update_tile = function(data_I){
     // update form
-    input = this.data1.convert_filter2stringmenuinput();
+    input = this.data[0].convert_filter2stringmenuinput();
     this.tile.update_form(input);
 };
 ddt_tile_svg = function () {
@@ -142,13 +136,13 @@ ddt_tile_svg.prototype.update_tile = function(data_I){
 
     //update the data filters...
     this.ddtsvg.add_data(data_I);
-    this.ddtsvg.filter_data1and2stringdata();
+    //this.ddtsvg.filter_data1and2stringdata();
     //re-render the svg
     this.ddtsvg.ddtsvg.render();
 };
 ddt_tile_svg.prototype.get_svg = function(svgtype_I){
     // return the appropriate tile object
-    if (svgtype_I=='heatmap2d_01'){
+    if (svgtype_I=='responsivetable_01'){
         return new ddt_svg_heatmap_01();
     } else if (svgtype_I=='scatterlineplot2d_01'){
         return new ddt_svg_scatterlineplot2d_01();
@@ -166,6 +160,52 @@ ddt_tile_svg.prototype.get_svg = function(svgtype_I){
         return new ddt_svg_pcaplot2d_loadings();
     } else if (svgtype_I=='pcaplot2d_scores'){
         return new ddt_svg_pcaplot2d_scores();
+    } else {
+        return null;
+    };
+};
+ddt_tile_table = function () {
+    // table tile
+    ddt_tile.call(this);
+    this.ddttable = null;
+};
+ddt_tile_table.prototype = Object.create(ddt_tile.prototype);
+ddt_tile_table.prototype.constructor = ddt_tile_table;
+ddt_tile_table.prototype.make_tile = function(data_I,parameters_I){
+    // make table tile
+    var header_I = parameters_I.tileheader;
+    var tabletype_I = parameters_I.tabletype;
+
+    this.set_parameters(parameters_I);
+    this.set_tile();
+    this.set_data(data_I);
+
+    this.tile.add_tile2container();
+    this.tile.add_header2tile();
+    this.tile.add_removebutton2header();
+    this.tile.add_title2header(header_I);
+    this.tile.add_body2tile();
+    this.tile.add_footer2tile();
+
+    //table
+    this.ddttable = this.get_table(tabletype_I);
+    this.ddttable.make_table(data_I,parameters_I)
+
+    this.ddttable.ddttable.render();
+};
+ddt_tile_table.prototype.update_tile = function(data_I){
+    // update tile
+
+    //update the data filters...
+    this.ddttable.add_data(data_I);
+    //this.ddttable.ddttable.data.filter_stringdata();
+    //re-render the table
+    this.ddttable.ddttable.render();
+};
+ddt_tile_table.prototype.get_table = function(tabletype_I){
+    // return the appropriate tile object
+    if (tabletype_I=='responsivetable_01'){
+        return new ddt_table_responsivetable_01();
     } else {
         return null;
     };

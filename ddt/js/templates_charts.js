@@ -437,7 +437,7 @@ var make_boxandwhiskersplot = function(data1_I,data1_keys_I,data1_nestkeys_I,dat
     chart2d1.set_tooltip();
     chart2d1.set_tooltipstyle();
     chart2d1.set_colorscale(); //color for series_label will remain consistent
-    chart2d1.add_data1filtermenusubmitbutton('tile3','submit1');
+    chart2d1.add_data1filtermenusubmitbutton('tile3','submit1'); //parameters_I.tableformtileid
     chart2d1.add_data1filtermenuresetbutton('tile3','reset1');
     chart2d1.render = function () {
         this.add_chart2d2tile();

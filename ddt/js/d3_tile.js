@@ -80,7 +80,7 @@ d3_tile.prototype.add_form2body = function (textarea_valuetext_I) {
 
     var tileid = this.tileid;
 
-    this.tileform = this.tilebody.append("form")
+    this.tileform = this.tilebody.append("div")
         .attr("class","form-group")
         .attr("id", tileid + 'form');
 
@@ -92,6 +92,7 @@ d3_tile.prototype.add_form2body = function (textarea_valuetext_I) {
             .attr("class","form-control")
             .attr("type","text")
             .attr("placeholder",textarea_valuetext_I[i].value)
+            .attr("value",textarea_valuetext_I[i].value)
             .attr("id", tileid + 'forminput'+ textarea_valuetext_I[i].text);
     };
 };

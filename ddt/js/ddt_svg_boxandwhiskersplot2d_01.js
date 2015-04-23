@@ -36,5 +36,6 @@ ddt_svg_boxandwhiskersplot2d_01.prototype.make_svg = function(data_I,parameters_
     this.ddtsvg.set_zoom();
     this.ddtsvg.render = function () {
         this.add_chart2d2tile();
+        this.set_svgstyle();
     };
 };
