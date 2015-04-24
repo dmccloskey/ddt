@@ -1,7 +1,6 @@
 var ddt_tile = function(){
     this.parameters = {};
     this.tile = null;
-    this.data = [];
 };
 ddt_tile.prototype.set_parameters = function(parameters_I){
     // set input tile parameters
@@ -27,10 +26,10 @@ ddt_tile.prototype.set_tile = function(){
     this.tile.set_rowclass(rowclass);
     this.tile.set_colclass(colclass);
 };
-ddt_tile.prototype.set_data = function(data_I){
-    // set data
-    this.data = data_I;
-};
+// ddt_tile.prototype.set_data = function(data_I){
+//     // set data
+//     this.data = data_I;
+// };
 // make functions
 ddt_tile.prototype.make_tile = function(){
     // make the tile
@@ -63,7 +62,6 @@ ddt_tile_datalist.prototype.make_tile = function(data_I,parameters_I){
 
     this.set_parameters(parameters_I);
     this.set_tile();
-    this.set_data(data_I);
 
     this.tile.add_tile2container();
     this.tile.add_header2tile();
@@ -84,7 +82,6 @@ ddt_tile_form.prototype.make_tile = function(data_I,parameters_I){
 
     this.set_parameters(parameters_I);
     this.set_tile();
-    this.set_data(data_I);
 
     this.tile.add_tile2container();
     this.tile.add_header2tile();
@@ -92,14 +89,15 @@ ddt_tile_form.prototype.make_tile = function(data_I,parameters_I){
     this.tile.add_title2header(header_I);
     this.tile.add_body2tile();
 
-    input = this.data[0].convert_filter2stringmenuinput();
+    input = data_I[0].convert_filter2stringmenuinput();
     this.tile.add_form2body(input);
     this.tile.add_submitbutton2form(parameters_I.formsubmitbuttonidtext);
     this.tile.add_submitbutton2form(parameters_I.formresetbuttonidtext);
+    this.tile.add_submitbutton2form(parameters_I.formupdatebuttonidtext);
 };
 ddt_tile_form.prototype.update_tile = function(data_I){
     // update form
-    input = this.data[0].convert_filter2stringmenuinput();
+    input = data_I[0].convert_filter2stringmenuinput();
     this.tile.update_form(input);
 };
 ddt_tile_svg = function () {
@@ -116,7 +114,6 @@ ddt_tile_svg.prototype.make_tile = function(data_I,parameters_I){
 
     this.set_parameters(parameters_I);
     this.set_tile();
-    this.set_data(data_I);
 
     this.tile.add_tile2container();
     this.tile.add_header2tile();
@@ -142,7 +139,7 @@ ddt_tile_svg.prototype.update_tile = function(data_I){
 };
 ddt_tile_svg.prototype.get_svg = function(svgtype_I){
     // return the appropriate tile object
-    if (svgtype_I=='responsivetable_01'){
+    if (svgtype_I=='heatmap2d_01'){
         return new ddt_svg_heatmap_01();
     } else if (svgtype_I=='scatterlineplot2d_01'){
         return new ddt_svg_scatterlineplot2d_01();
@@ -178,7 +175,6 @@ ddt_tile_table.prototype.make_tile = function(data_I,parameters_I){
 
     this.set_parameters(parameters_I);
     this.set_tile();
-    this.set_data(data_I);
 
     this.tile.add_tile2container();
     this.tile.add_header2tile();

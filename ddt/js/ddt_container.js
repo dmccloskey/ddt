@@ -149,41 +149,31 @@ ddt_container.prototype.add_datafiltermenusubmitbutton = function (tileid_I,subm
     else{var tileid = this.tiles[0].parameters.tileid;};
     if (submitbuttonid_I){var submitbuttonid = submitbuttonid_I;}
     else{var submitbuttonid = 'submit1';};
-    
-    var data = this.data;
-    var tiles_ = this.tiles;
-    var parameters_ = this.parameters;
-    var tile2datamap_ = this.tile2datamap;
 
-//     function update(){
-//         for (cnt=0;cnt<tiles_.length;cnt++){ //switched from i to cnt due to i changing within the loop
-//             var tiledataindex = tile2datamap_[parameters_[cnt].tileid];
-//             var tiledata = [];
-//             tiledataindex.forEach(function(d){tiledata.push(data[d]);});
-//             tiles_[cnt].update_tile(tiledata);
-//         };     
-//     };
+    var this_ = this;
 
     function submit(){
         var filterstringmenu = [];
         var tileindex = 0;
-        tiles_.forEach(function(d,i){
+        var tiledataindex = 0;
+        this_.tiles.forEach(function(d,i){
             if (d.parameters.tileid === tileid){
                 tileindex=i;
+                tiledataindex = this_.tile2datamap[d.parameters.tileid];
             };
         })
-        for (key in tiles_[tileindex].data[0].filters){
+        for (key in this_.data[tiledataindex[0]].filters){
             var filterkey = d3.select("#"+tileid+'formlabel'+key).text();
             var filterstring = d3.select("#"+tileid+'forminput'+key).node().value;
             filterstringmenu.push({"text":filterkey,"value":filterstring});
         };
-        for (cnt=0;cnt<data.length;cnt++){ //switched from i to cnt due to i changing within the loop
-            data[cnt].convert_stringmenuinput2filter(filterstringmenu);
-            data[cnt].filter_stringdata();
+        for (cnt=0;cnt<this_.data.length;cnt++){ //switched from i to cnt due to i changing within the loop
+            this_.data[cnt].convert_stringmenuinput2filter(filterstringmenu);
+            this_.data[cnt].filter_stringdata();
         };
-//         tiles_[tileindex].data[0].convert_stringmenuinput2filter(filterstringmenu);
-//         tiles_[tileindex].data[0].filter_stringdata();
-        update();
+//         this_.tiles[tileindex].data[0].convert_stringmenuinput2filter(filterstringmenu);
+//         this_.tiles[tileindex].data[0].filter_stringdata();
+        this_.update_container();  
     };
 
     this.submitbutton = d3.select("#"+tileid+'submitbutton'+submitbuttonid)
@@ -196,24 +186,33 @@ ddt_container.prototype.add_datafiltermenuresetbutton = function (tileid_I,reset
     if (resetbuttonid_I){var resetbuttonid = resetbuttonid_I;}
     else{var resetbuttonid = 'reset1';};
     
-    var data = this.data;
-    var tiles_ = this.tiles;
-    var parameters_ = this.parameters;
-    var tile2datamap_ = this.tile2datamap;
+    var this_ = this;
     
     function reset(){
         // reset data filters and call all tile update functions
-        for (cnt=0;cnt<data.length;cnt++){ //switched from i to cnt due to i changing within the loop
-            data[cnt].reset_filters();
+        for (cnt=0;cnt<this_.data.length;cnt++){ //switched from i to cnt due to i changing within the loop
+            this_.data[cnt].reset_filters();
+            this_.data[cnt].filter_stringdata();
         };
-        for (cnt=0;cnt<tiles_.length;cnt++){ //switched from i to cnt due to i changing within the loop
-            var tiledataindex = tile2datamap_[parameters_[cnt].tileid];
-            var tiledata = [];
-            tiledataindex.forEach(function(d){tiledata.push(data[d]);});
-            tiles_[cnt].update_tile(tiledata);
-        };     
+        this_.update_container();    
     };
 
     this.resetbutton = d3.select("#"+tileid+'submitbutton'+resetbuttonid)
         .on("click",reset);
+};
+ddt_container.prototype.add_datafiltermenuupdatebutton = function (tileid_I,updatebuttonid_I){
+    // add filter menu reset button listener to tile
+    if (tileid_I){var tileid = tileid_I;}
+    else{var tileid = this.tiles[0].parameters.tileid;};
+    if (updatebuttonid_I){var updatebuttonid = updatebuttonid_I;}
+    else{var updatebuttonid = 'update1';};
+    
+    var this_ = this;
+    
+    function update(){
+        this_.update_container();    
+    };
+
+    this.resetbutton = d3.select("#"+tileid+'submitbutton'+updatebuttonid)
+        .on("click",update);
 };

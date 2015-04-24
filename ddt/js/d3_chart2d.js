@@ -66,14 +66,18 @@ d3_chart2d.prototype.add_chart2d2tile = function(){
     var id = this.id;
     var data1listdatafiltered = this.data1.listdatafiltered;
 
-    this.svgelement = d3.select('#' + tileid+"panel-body").selectAll("svg")
+    this.svgelement = d3.select('#' + tileid+"panel-body").selectAll(".svg-responsive")
         .data([data1listdatafiltered]);
-    this.svgenter = this.svgelement.enter()
+    
+    this.svgenter = this.svgelement.enter()    
+        .append("div")
+        .attr("class",'svg-responsive')
         .append("svg")
         .attr("id", id)
         .append('g')
         .attr("transform", "translate(" + margin.left + "," + margin.top + ")");
-    this.svgelement.attr("width", width + margin.left + margin.right)
+    this.svgelement.selectAll("svg")
+        .attr("width", width + margin.left + margin.right)
         .attr("height", height + margin.top + margin.bottom);
 
     this.svgg = this.svgelement.select('g');
@@ -836,7 +840,6 @@ d3_chart2d.prototype.set_y1axiszoom = function(){
 };
 d3_chart2d.prototype.add_zoom = function(){
     //add zoom to svg
-    var svgelement = this.svgelement;
     var zoom = this.zoom;
     this.svgg.call(zoom);
     //this.zoom(svgelement);

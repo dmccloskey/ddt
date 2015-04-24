@@ -57,8 +57,8 @@ d3_chart2d.prototype.set_heatmapdata1 = function (cellsize_I) {
     this.columnleavesordered=columnleavesordered;
     this.rowleavesordered=rowleavesordered;
 
-//     this.colnumber = this.uniquecollabels.length;
-//     this.rownumber = this.uniquerowlabels.length;
+    this.colnumber = this.uniquecollabels.length;
+    this.rownumber = this.uniquerowlabels.length;
 
     //define the width and height
     this.width = cellsize_I*this.uniquecollabels.length;
@@ -77,7 +77,7 @@ d3_chart2d.prototype.set_heatmapdata1 = function (cellsize_I) {
 d3_chart2d.prototype.add_heatmapdata1rowlabels = function (tileid_I) {
     //add heatmap to the plot
     var uniquerowlabels = this.uniquerowlabels;
-    var sortbylabel = this.sortbylabel;
+    var this_ = this;
     var rowsortorder = this.rowsortorder;
     var tileid = tileid_I;
     var cellsize = this.cellsize;
@@ -88,30 +88,31 @@ d3_chart2d.prototype.add_heatmapdata1rowlabels = function (tileid_I) {
 
     this.rowlabelsenter = this.rowlabels.enter()
         .append("text")
-        .text(function (d) { return d; })
+        .text(function (d) { 
+            return d; })
         .attr("x", 0)
-        .attr("y", function (d, i) { return rowleavesordered.indexOf(i) * cellsize; })
+        .attr("y", function (d, i) { 
+            return rowleavesordered.indexOf(i) * cellsize; })
         .style("text-anchor", "end")
-        .attr("transform", "translate(-25," + cellsize / 1.5 + ")")
+        .attr("transform", "translate(" + (-cellsize) + "," + cellsize / 1.5 + ")")
         .attr("class", function (d,i) { return "rowLabel mono r"+i;} )
         .on("mouseover", function(d) {d3.select(this).classed("text-hover",true);})
         .on("mouseout" , function(d) {d3.select(this).classed("text-hover",false);})
         .on("click", function(d,i) {
             rowsortorder=!rowsortorder; 
-            sortbylabel("r",i,rowsortorder); 
-            this.$('#'+tileid+'datalist').property("selectedIndex", 4).node().focus();
+            this_.sortbylabel("r",i,rowsortorder); 
+            d3.select('#'+tileid+'datalist').property("selectedIndex", 4).node().focus();
             });
 
 };
 d3_chart2d.prototype.add_heatmapdata1columnlabels = function (tileid_I) {
     //add heatmap to the plot
     var uniquecollabels = this.uniquecollabels;
-    var sortbylabel = this.sortbylabel;
+    var this_ = this;
     var colsortorder = this.colsortorder;
     var tileid = tileid_I;
     var cellsize = this.cellsize;
     var columnleavesordered = this.columnleavesordered
-    var svgg = this.svgg;
 
     this.collabels = this.svgg.append("g").selectAll(".colLabelg")
         .data(uniquecollabels);
@@ -122,19 +123,25 @@ d3_chart2d.prototype.add_heatmapdata1columnlabels = function (tileid_I) {
         .attr("x", 0)
         .attr("y", function (d, i) { return columnleavesordered.indexOf(i) * cellsize; })
             .style("text-anchor", "left")
-            .attr("transform", "translate("+cellsize/2 + ",-25) rotate (-90)")
+            .attr("transform", "translate("+cellsize/2 + "," + (-cellsize) + ") rotate (-90)")
             .attr("class",  function (d,i) { return "colLabel mono c"+i;} )
             .on("mouseover", function(d) {d3.select(this).classed("text-hover",true);})
             .on("mouseout" , function(d) {d3.select(this).classed("text-hover",false);})
             .on("click", function (d, i) {
                 colsortorder = !colsortorder;
-                sortbylabel("c", i, colsortorder,svgg);
-                this.$('#'+tileid+'datalist').property("selectedIndex", 4).node().focus(); 
+                this_.sortbylabel("c", i, colsortorder);
+                //d3.select('#'+tileid+'datalist').property("selectedIndex", 4).node().focus(); 
                 });
 
 };
-d3_chart2d.prototype.sortbylabel = function (rORc,i,sortOrder,cellsize_I,rowsindex_I,columnsindex_I,svgg_I){
-    var t = svgg_I.transition().duration(3000); //todo: broken
+d3_chart2d.prototype.sortbylabel = function (rORc,i,sortOrder){
+    var columnsindex_I = this.data1keymap.columnsindex;
+    var rowsindex_I = this.data1keymap.rowsindex;
+    var cellsize_I = this.cellsize;
+    var col_number = this.colnumber;
+    var row_number = this.rownumber;
+
+    var t = this.svgg.transition().duration(3000); //todo: broken
     var log2r=[];
     var sorted; // sorted is zero-based index
     d3.selectAll(".c"+rORc+i)
@@ -153,10 +160,12 @@ d3_chart2d.prototype.sortbylabel = function (rORc,i,sortOrder,cellsize_I,rowsind
     }else{ // sort log2ratio of a contrast
      sorted=d3.range(row_number).sort(function(a,b){if(sortOrder){ return log2r[b]-log2r[a];}else{ return log2r[a]-log2r[b];}});
      t.selectAll(".cell")
-       .attr("y", function(d) { return sorted.indexOf(d[rowsindex_I]) * cellsize_I; })
+       .attr("y", function(d) { 
+        return sorted.indexOf(d[rowsindex_I]) * cellsize_I; })
        ;
      t.selectAll(".rowLabel")
-      .attr("y", function (d, i) { return sorted.indexOf(i) * cellsize_I; });
+      .attr("y", function (d, i) { 
+      return sorted.indexOf(i) * cellsize_I; });
     };
 };
 d3_chart2d.prototype.heatmaporder = function (cellsize_I,value_I,
@@ -397,20 +406,21 @@ d3_chart2d.prototype.add_heatmapdata1legend = function(){
     var height = this.height;
     var width = this.width;
 
-    var colorfactor = Math.ceil(colorscale.length / (maxvalue - minvalue));
+    //var colorfactor = Math.ceil(colorscale.length / (maxvalue - minvalue));
     if (minvalue===0.0 && maxvalue ===1.0){
         this.legenddata1 = this.svgg.selectAll(".legend")
-          .data(d3.range(minvalue, maxvalue, (maxvalue - minvalue) / 10)); //specific to resequencing data (domain 0.0-1.0)
+          .data(d3.range(minvalue, maxvalue + (maxvalue - minvalue) / 10, (maxvalue - minvalue) / 10)); //specific to resequencing data (domain 0.0-1.0)
         this.legenddata1enter = this.legenddata1
           .enter().append("g")
           .attr("class", "legend");
-        colorfactor = 1.0;
+        var colorfactor = 0.1;
     } else{
         this.legenddata1 = this.svgg.selectAll(".legend")
           .data(d3.range(Math.floor(minvalue), Math.ceil(maxvalue))); //use for expression data (domain -10.0-10.0)
         this.legenddata1enter = this.legenddata1
           .enter().append("g")
           .attr("class", "legend");
+        var colorfactor = Math.ceil(21.0 / (maxvalue - minvalue));
           };
     
     this.legenddata1.exit().remove();
@@ -420,27 +430,30 @@ d3_chart2d.prototype.add_heatmapdata1legend = function(){
         .attr("y", height + (cellsize * 2))
         .attr("width", legendelementwidth)
         .attr("height", cellsize)
-        .style("fill", function (d, i) { return colorscale[i * colorfactor]; });
+        .style("fill", function (d, i) { return colorscale(i * colorfactor); });
 
     this.legenddata1enter.append("rect")
         .attr("x", function (d, i) { return legendelementwidth * i; })
         .attr("y", height + (cellsize * 2))
         .attr("width", legendelementwidth)
         .attr("height", cellsize)
-        .style("fill", function (d, i) { return colorscale[i * colorfactor]; });
+        .style("fill", function (d, i) { return colorscale(i * colorfactor); });
 
     this.legenddata1.select("text").transition()
         .attr("class", "mono")
-        .text(function (d) { return d; })
+        .text(function (d) { 
+                return d; })
         .attr("width", legendelementwidth)
         .attr("x", function (d, i) { return legendelementwidth * i; })
         .attr("y", height + (cellsize * 4));
 
     this.legenddata1enter.append("text")
         .attr("class", "mono")
-        .text(function (d) { return d; })
+        .text(function (d) { 
+            return d; })
         .attr("width", legendelementwidth)
-        .attr("x", function (d, i) { return legendelementwidth * i; })
+        .attr("x", function (d, i) { 
+            return legendelementwidth * i; })
         .attr("y", height + (cellsize * 4));
 
 };

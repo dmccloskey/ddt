@@ -41,27 +41,51 @@ d3_svg.prototype.set_height = function (height_I) {
 d3_svg.prototype.add_svgelement2tile = function () {
     // add svg element to parent tile
 
-    this.svgelement = d3.select('#'+this.tileid+"panel-body")
-        .append("svg").attr("id",this.id);
+    var width = this.width;
+    var height = this.height;
+    var margin = this.margin;
+    var tileid = this.tileid;
+    var id = this.id;
 
-    this.svgelement.attr("width", this.width + this.margin.left + this.margin.right)
-        .attr("height", this.height + this.margin.top + this.margin.bottom);
+//     this.svgelement = d3.select('#'+this.tileid+"panel-body")
+//         .append("svg").attr("id",this.id);
 
-    this.svgg = this.svgelement
-        .append('g').attr("transform", "translate(" + this.margin.left + "," + this.margin.top + ")");
+//     this.svgelement.attr("width", this.width + this.margin.left + this.margin.right)
+//         .attr("height", this.height + this.margin.top + this.margin.bottom);
+
+//     this.svgg = this.svgelement
+//         .append('g').attr("transform", "translate(" + this.margin.left + "," + this.margin.top + ")");
+
+    this.svgelement = d3.select('#' + tileid+"panel-body").selectAll(".svg-responsive")
+        .data([0]);
+    
+    this.svgenter = this.svgelement.enter()    
+        .append("div")
+        .attr("class",'svg-responsive')
+        .append("svg")
+        .attr("id", id)
+        .append('g')
+        .attr("transform", "translate(" + margin.left + "," + margin.top + ")");
+    this.svgelement.selectAll("svg")
+        .attr("width", width + margin.left + margin.right)
+        .attr("height", height + margin.top + margin.bottom);
+
+    this.svgg = this.svgelement.select('g');
 
 };
 d3_svg.prototype.add_svgexportbutton2tile = function () {
     // add button to export the svg element
+    var this_ = this;
     var svgexportbutton = d3.select('#'+this.tileid+"panel-footer").append("form");
 
-//     var svgexportbutton_label = svgexportbutton.append("label");
-//     svgexportbutton_label.text("Export as SVG");
+    function exportsvgelement(){
+        this_.export_svgelement(); //necessary to pass svg as "this"
+    };
 
     var svgexportbutton_input = svgexportbutton.append("input");
     svgexportbutton_input.attr("type", "button")
         .attr("value", "Download SVG");
-    svgexportbutton_input.on("click", this.export_svgelement);
+    svgexportbutton_input.on("click", exportsvgelement);
 
 };
 d3_svg.prototype.export_svgelement = function () {
@@ -72,20 +96,10 @@ d3_svg.prototype.export_svgelement = function () {
 
     var do_beautify_I = true;
     var a = document.createElement('a'), xml, ev;
-    var id = this.id;
+    var svg_sel = "#" + this.id;
     a.download = 'figure' + '.svg'; // file name
     // convert node to xml string
-    //xml = (new XMLSerializer()).serializeToString(d3.select(svg_sel).node()); //div element interferes with reading the svg file in illustrator/pdf/inkscape
-    //xml = (new XMLSerializer()).serializeToString(this.svgelement[0][0]);
-    var form = d3.select(this.parentNode);
-    var tile = form.node().parentNode;
-    // find the index of the svg element
-    var svgid = null;
-    for (i = 0; i < tile.children.length; i++) {
-        if (tile.children[i].nodeName === 'svg') {
-            svgid = i;};
-    };
-    xml = (new XMLSerializer()).serializeToString(tile.children[svgid]);
+    xml = (new XMLSerializer()).serializeToString(d3.select(svg_sel).node()); //div element interferes with reading the svg file in illustrator/pdf/inkscape
     if (do_beautify_I) xml = vkbeautify.xml(xml);
     xml = '<?xml version="1.0" encoding="utf-8"?>\n \
             <!DOCTYPE svg PUBLIC "-//W3C//DTD SVG 1.1//EN"\n \
@@ -203,8 +217,9 @@ d3_svg.prototype.add_data1filtermenuresetbutton = function (tileid_I,resetbutton
 };
 d3_svg.prototype.set_svgstyle = function () {
     // predefined css style for svg
-    var selector = "#" + this.id;
-    var style = {
+    //var selector1 = "#" + this.id;
+    var selector1 = "#" + this.tileid + ' .svg-responsive';
+    var style1 = {
         'width': '100%',
         'margin-bottom': '15px',
         'overflow-y': 'hidden',
@@ -213,6 +228,6 @@ d3_svg.prototype.set_svgstyle = function () {
         //'border': '1px solid #ddd',
         '-webkit-overflow-scrolling': 'touch'
     };
-    var selectorstyle = [{ 'selection': selector, 'style': style }]
+    var selectorstyle = [{ 'selection': selector1, 'style': style1 }]
     this.set_d3css(selectorstyle);
 };

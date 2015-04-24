@@ -121,26 +121,26 @@ d3_table.prototype.add_tablebody = function(){
     this.tablerows = this.tbody.selectAll("tr")
         .data(datalistdatafiltered);
 
+    this.tablerows.exit().remove();
+
     this.tablerowsenter = this.tablerows.enter()
         .append("tr");
 
-    this.tablecells = this.tablerowsenter.selectAll("td")
+    //this.tablecells = this.tablerowsenter.selectAll("td")
+    this.tablecells = this.tablerows.selectAll("td")
         .data(function(row) {
             return tableheaders.map(function(column) {
                 return {column: column, value: row[column]};
             });
         });
 
+    this.tablecells.exit().remove();
+
     this.tablecellsenter = this.tablecells.enter();
     this.tablecellsenter.append("td")
         .html(function(d) { return d.value; });
 
-//     this.tablerows.transition().selectAll("td")
-//         .html(function(d) { return d.value; });
-
-    this.tablecells.exit().remove();
-
-    this.tablerows.exit().remove();
+    this.tablecells.html(function(d) { return d.value; });
 
 };
 d3_table.prototype.set_id = function(tableid_I){
