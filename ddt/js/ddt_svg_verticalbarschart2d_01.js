@@ -56,11 +56,14 @@ ddt_svg_verticalbarschart2d_01.prototype.make_svg = function(data_I,parameters_I
         this.add_y1axis();
         this.add_legenddata1();
         this.add_legenddata1filter();
+        this.set_legendstyle();
         // add vertical bars
         this.add_verticalbarsdata1();
         this.add_verticalbarsdata1tooltipandfill();
         this.add_verticalbarsdata1errorbars();
         this.set_x1andy1axesstyle_verticalbarschart();
+        this.set_x1andy1axestickstyle();
         this.add_y1axislabel(parameters_I.svgy1axislabel);
+        this.set_x1andy1axeslabelstyle();
     };
 };
