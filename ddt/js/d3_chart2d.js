@@ -199,7 +199,7 @@ d3_chart2d.prototype.set_y1domain = function () {
         _this.data1.listdatafiltered.forEach(function(d){
             data1.push(d[y_data]);
             data1.push(d[_this.data1keymap.ydatalb]);
-            data1.push(d[_this.data1keymap.ydatalb]);
+            data1.push(d[_this.data1keymap.ydataub]);
         })
     } else{
         _this.data1.listdatafiltered.forEach(function(d){
