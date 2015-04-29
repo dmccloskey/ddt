@@ -21,7 +21,7 @@ ddt_html_datalist_01.prototype.make_html = function(data_I,parameters_I){
 	this.set_parameters(parameters_I);
 	this.set_ddthtml()
     this.add_data(data_I[0]);
-    this.set_datakeymaps(parameters_I.htmlkeymap);
+    this.set_datakeymap(parameters_I.htmlkeymap);
 
 	// html specific properties
 	this.ddthtml.add_html2tile();

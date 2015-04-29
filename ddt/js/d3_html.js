@@ -81,32 +81,99 @@ d3_html.prototype.add_color = function () {
 d3_html.prototype.add_range = function () {
     // add range slider for input
 };
-d3_html.prototype.add_form = function (textarea_valuetext_I) {
+d3_html.prototype.add_form = function(){
+    // add form to tile
+    var id = this.id;
+    var listdatafiltered = this.data.listdatafiltered;
+
+    this.htmlform = this.html.selectAll("form")
+        .data([listdatafiltered]);
+
+    this.htmlformenter = this.htmlform.enter()
+        .append("form")
+        .attr("id", id + 'form');
+
+    this.htmlform.exit().remove();
+
+}
+d3_html.prototype.add_input2form = function () {
     // add text area for input
     // INPUT:
     //e.g. [{'value':'hclust','text':'by cluster'},...];
-    if (texarea_valuetext_I){var textarea_valuetext = texarea_valuetext_I;}
-    else{var textarea_valuetext = this.data.convert_filter2stringmenuinput();};
+//     if (texarea_valuetext_I){var textarea_valuetext = texarea_valuetext_I;}
+//     else{var textarea_valuetext = this.data.convert_filter2stringmenuinput();};
 
     var id = this.id;
+    var textarea_valuetext = this.data.convert_filter2stringmenuinput();
 
-    this.htmlform = this.html.append("div")
+//     this.htmlform = this.html.append("div")
+//         .attr("class","form-group")
+//         .attr("id", id + 'form');
+
+//     for (i=0;i<textarea_valuetext.length;i++){
+//         var formlabel = this.htmlform.append("label")
+//             .text(textarea_valuetext[i].text)
+//             .attr("id", id + 'formlabel' + textarea_valuetext[i].text);
+//         var forminput = this.htmlform.append("input")
+//             .attr("class","form-control")
+//             .attr("type","text")
+//             .attr("placeholder",textarea_valuetext[i].value)
+//             .attr("value",textarea_valuetext[i].value)
+//             .attr("id", id + 'forminput'+ textarea_valuetext[i].text);
+//     };
+
+    this.htmlformgroup = this.htmlform.selectAll(".form-group")
+        .data(textarea_valuetext);
+
+    this.htmlformgroupenter = this.htmlformgroup.enter()
+        .append("div")
         .attr("class","form-group")
-        .attr("id", id + 'form');
+        .attr("id", id + 'form-group');
 
-    for (i=0;i<textarea_valuetext.length;i++){
-        var formlabel = this.htmlform.append("label")
-            .text(textarea_valuetext_I[i].text)
-            .attr("id", id + 'formlabel' + textarea_valuetext[i].text);
-        var forminput = this.htmlform.append("input")
-            .attr("class","form-control")
-            .attr("type","text")
-            .attr("placeholder",textarea_valuetext[i].value)
-            .attr("value",textarea_valuetext[i].value)
-            .attr("id", id + 'forminput'+ textarea_valuetext[i].text);
-    };
+    this.htmlformgroup.exit().remove();
+
+    this.htmlformlabel = this.htmlformgroup.selectAll("label")
+        .data(function(row){
+            var textvalue = [];
+            textvalue.push({text:row.text,value:row.value});
+            return textvalue;
+        });
+
+    this.htmlformlabelenter = this.htmlformlabel.enter()
+        .append("label")
+        .attr("id", function(d){return id + 'formlabel' + d.text;})
+        .text(function(d){return d.text;});
+
+    this.htmlformlabel.transition()
+        .attr("id", function(d){return id + 'formlabel' + d.text;})
+        .text(function(d){return d.text;});
+
+    this.htmlformlabel.exit().remove();
+
+    this.htmlforminput = this.htmlformgroup.selectAll("input")
+        .data(function(row){
+            var textvalue = [];
+            textvalue.push({text:row.text,value:row.value});
+            return textvalue;
+        });
+
+    this.htmlforminput.exit().remove();
+
+    this.htmlforminput.transition()
+        .attr("class","form-control")
+        .attr("type","text")
+        .attr("value",function(d){return d.value;})
+        .attr("id", function(d){return id + 'forminput' + d.text;});
+
+    this.htmlforminputenter = this.htmlforminput.enter()
+        .append("input")
+        .attr("class","form-control")
+        .attr("type","text")
+        //.attr("placeholder",textarea_valuetext[i].value)
+        .attr("value",function(d){return d.value;})
+        .attr("id", function(d){return id + 'forminput' + d.text;});
 };
-d3_html.prototype.update_form = function(textarea_valuetext_I){
+d3_html.prototype.update_forminput = function(textarea_valuetext_I){
     // update the form
     var id = this.id;
     if (texarea_valuetext_I){var textarea_valuetext = texarea_valuetext_I;}
@@ -124,102 +191,59 @@ d3_html.prototype.add_submitbutton2form = function (button_idtext_I) {
     else{var button_idtext = button_idtext_I;}
 
     var id = this.id;
+    var tileid = this.tileid;
 
-    var submitbutton = this.htmlform.append("button")
-        .attr("class","btn btn-default")
-        .attr("type","submit")
-        .attr("id", id + 'submitbutton'+button_idtext.id)
-        .text(button_idtext.text);
-};
-d3_html.prototype.add_dropdown = function (datalist_valuetext_I) {
-    // add datalist (menu) for input
-    // TODO: ...
-    // INPUT:
-    //e.g. [{'value':'hclust','text':'by cluster'},...];
+    // note: chaining submitbuttongroup to htmlformenter instead of htmlform
+    // reason:      ensures that buttons will be added only once after a listener event
+    //              has been added to the property of the button.
+    this.submitbuttongroup = this.htmlformenter.selectAll(".btn-group")
+        .data(button_idtext)
 
-    var id = this.id;
+    this.submitbuttongroup.exit().remove();
 
-    var htmldropdown = this.html.append("div")
-        .attr("class","dropdown")
-    var htmldropdownbutton = htmldropdown
-        .append("button")
-        .attr("class","btn btn-default dropdown-toggle")
-        .attr("type","button")
-        .attr("id",id + 'dropdownbutton')
-        .attr("data-toggle","dropdown")
-        .attr("aria-expanded","true")
-        .text("sort")
-        .append("span")
-        .attr("class","caret");    
+    this.submitbuttongroupenter = this.submitbuttongroup.enter()
+        .append("div")
+        .attr("class","btn-group")
+        .attr("id", id + "submitbtn-group");
 
-    var htmldropdownul = htmldropdown
-        .append("ul")
-        .attr("class","dropdown-menu")
-        .attr("role","menu")
-        .attr("id",id + 'dropdownul')
-        .attr("aria-labelledby",id + 'dropdownbuttonul');
-
-    for (i=0;i<datalist_valuetext_I.length;i++){
-        var htmldropdownli = htmldropdownul.append("li")
-            .attr("role","presentation")
-            .append("a")
-            .attr("role","menuitem")
-            .attr("tabindex","-1")
-            .attr("value",datalist_valuetext_I[i].value)
-            .attr("id",id + 'dropdownli'+datalist_valuetext_I[i].value)
-            .text(datalist_valuetext_I[i].text);
-    };
-
-
-};
-d3_html.prototype.convert_nestdatafiltered2buttonlitext = function(buttonparameter_I,liparameter_I){
-    // parse nestlistdatafiltered and return btntext_litext input object
-    if (buttonparameter_I){var buttonparameter = buttonparameter_I;}
-    else{var buttonparameter = this.buttonparameter;};
-    if (liparameter_I){var liparameter = liparameter_I;}
-    else{var liparameter = this.liparameter;};
-    input = [];
-    this.data.nestdatafiltered.forEach(function(d){
-        var row = {};
-        //row[parameters_I.dropdownbuttongroupkeymap.buttontext]=d.key;
-        //row[parameters_I.dropdownbuttongroupkeymap.litext]=d.values[parameters_I.liparameter];
-        row["buttontext"]=d.key;
-        var litext = [];
-        d.values.forEach(function(e){
-            litext.push(e[liparameter])
+    this.submitbutton = this.submitbuttongroup.selectAll(".btn btn-default")
+        .data(function(row){
+            var idtext = [];
+            idtext.push({id:row.id,text:row.text});
+            return idtext;
         });
-        row["litext"]=litext;
-        row["liparameter"]=liparameter;
-        row["buttonparameter"]=buttonparameter;
-        input.push(row);
-    });
-    return input;
+
+    this.submitbutton.exit().remove();
+
+    this.submitbutton.transition()
+        .attr("type","submit")
+        .attr("class", "btn btn-default")
+        .attr("id", function(d){return id + 'submitbutton' + d.id;})
+        .text(function(d){return d.text;});
+
+    this.submitbuttonenter = this.submitbutton.enter()
+        .append("button")
+        .attr("type","submit")
+        .attr("class", "btn btn-default")
+        .attr("id", function(d){return id + 'submitbutton' + d.id;})
+        .text(function(d){return d.text;});
 };
-d3_html.prototype.add_dropdownbuttongroup_href = function (btntext_litext_I,url_I) {
+d3_html.prototype.add_dropdownbuttongroup_href = function () {
     // add dropdown button group to the body of the html
     // each list element will have an href of the form:
     //      url_I?buttonparametername=buttontext&lliparametername=litextoption1
-    // INPUT:
-    // btntext_litext_I
-    // e.g. [{'buttontext':'dataStage01Resequencing',
-    //          'buttonparameter':'data_export_id',
-    //          'litext':['option1','option2',...]],
-    //          'liparamater':'analysis_id'},...];
-    // url_I
-    // e.g. project.html
-    if (btntext_litext_I){var btntext_litext = btntext_litext_I;}
-    else{var btntext_litext = this.convert_nestdatafiltered2buttonlitext();};
-    if (url_I){var url = url_I;}
-    else{var url = this.url;};
 
     var listdatafiltered = this.data.listdatafiltered;
     var nestdatafiltered = this.data.nestdatafiltered;
     var buttonparameter = this.buttonparameter;
     var liparameter = this.liparameter;
-    var url = this.url;
+    var litext = this.datakeymap.litext;
+    var hrefurl = this.url;
 
     var id = this.id;
+    var tileid = this.tileid;
 
+    //v1:
 //     this.buttongroup = this.html.append("div")
 //         .attr("class","btn-group")
 //         .attr("id", id + "btn-group");
@@ -248,8 +272,83 @@ d3_html.prototype.add_dropdownbuttongroup_href = function (btntext_litext_I,url_
 //         };
 //     };
 
+    //v2:
+//     this.buttongroup = this.html.selectAll(".btn-group")
+//         .data([nestdatafiltered])
+
+//     this.buttongroupenter = this.buttongroup.enter()
+//         .append("div")
+//         .attr("class","btn-group")
+//         .attr("id", id + "btn-group");
+
+//     this.buttongroup.exit().remove();
+
+//     this.button = this.buttongroup.selectAll(".btn btn-default dropdown-toggle")
+//         .data(nestdatafiltered);
+
+//     this.buttonenter = this.button.enter()
+//         .append("button")
+//         .attr("class", "btn btn-default dropdown-toggle" )
+//         .attr("data-toggle", "dropdown")
+//         .attr("aria-expanded", "false")
+//         .text(function(d){return d.key;})
+//         .append("span")
+//         .attr("class","caret");
+
+//     this.button
+//         .attr("class", "btn btn-default dropdown-toggle" )
+//         .attr("data-toggle", "dropdown")
+//         .attr("aria-expanded", "false")
+//         .text(function(d){return d.key;})
+//         .append("span")
+//         .attr("class","caret");
+
+//     this.button.exit().remove();
+
+//     this.ul = this.buttongroup.selectAll(".dropdown-menu")
+//         .data(nestdatafiltered);
+
+//     this.ulenter = this.ul.enter()
+//         .append("ul")
+//         .attr("class","dropdown-menu")
+//         .attr("id",function(d){return id + "dropdown-menu"+ d.key;})
+//         .attr("role","menu");
+
+//     this.ul.exit().remove();
+
+//     this.li = this.ul.selectAll("li")
+//         .data(function(row){
+//             var buttonlitext = [];
+//             var key = row.key;
+//             row.values.forEach(function(d){
+//                 buttonlitext.push({buttontext:key, litext:d[litext],buttonparameter:buttonparameter,liparameter:liparameter});
+//                 });
+//             return buttonlitext;
+//             });
+    
+//     this.lienter = this.li.enter()
+//         .append("li").append("a")
+//         .attr("href",function(d,i){
+//             var url = hrefurl+"?";
+//             url += d.buttonparameter + "=" +d.buttontext+"&";
+//             url += d.liparameter + "=" + d.litext;
+//             return url;
+//             })
+//         .text(function(d,i){return d.litext;});
+
+//     this.li.select("a")
+//         .attr("href",function(d,i){
+//             var url = hrefurl+"?";
+//             url += d.buttonparameter + "=" +d.buttontext+"&";
+//             url += d.liparameter + "=" + d.litext;
+//             return url;
+//             })
+//         .text(function(d,i){return d.litext;});
+
+//     this.li.exit().remove();
+
     this.buttongroup = this.html.selectAll(".btn-group")
-        .data([nestdatafiltered])
+        .data(nestdatafiltered)
 
     this.buttongroupenter = this.buttongroup.enter()
         .append("div")
@@ -258,12 +357,16 @@ d3_html.prototype.add_dropdownbuttongroup_href = function (btntext_litext_I,url_
 
     this.buttongroup.exit().remove();
 
-    this.button = this.buttongroup.selectAll(".btn btn-default btn-lg dropdown-toggle")
-        .data(nestdatafiltered);
+    this.button = this.buttongroup.selectAll(".btn btn-default dropdown-toggle")
+        .data(function(row){
+            var keys = [];
+            keys.push({key:row.key});
+            return keys;
+        });
 
     this.buttonenter = this.button.enter()
         .append("button")
-        .attr("class", "btn btn-default btn-lg dropdown-toggle" )
+        .attr("class", "btn btn-default dropdown-toggle" )
         .attr("data-toggle", "dropdown")
         .attr("aria-expanded", "false")
         .text(function(d){return d.key;})
@@ -271,7 +374,7 @@ d3_html.prototype.add_dropdownbuttongroup_href = function (btntext_litext_I,url_
         .attr("class","caret");
 
     this.button
-        .attr("class", "btn btn-default btn-lg dropdown-toggle" )
+        .attr("class", "btn btn-default dropdown-toggle" )
         .attr("data-toggle", "dropdown")
         .attr("aria-expanded", "false")
         .text(function(d){return d.key;})
@@ -281,7 +384,11 @@ d3_html.prototype.add_dropdownbuttongroup_href = function (btntext_litext_I,url_
     this.button.exit().remove();
 
     this.ul = this.buttongroup.selectAll(".dropdown-menu")
-        .data(nestdatafiltered);
+        .data(function(row){
+            var keyvalues = [];
+            keyvalues.push({key:row.key,values:row.values});
+            return keyvalues;
+            });
 
     this.ulenter = this.ul.enter()
         .append("ul")
@@ -292,26 +399,33 @@ d3_html.prototype.add_dropdownbuttongroup_href = function (btntext_litext_I,url_
     this.ul.exit().remove();
 
     this.li = this.ul.selectAll("li")
-        .data(function(row,i){
-            return {values:row.values,buttonparameter:buttonparameter,liparameter:liparameter};
+        .data(function(row){
+            var buttonlitext = [];
+            var key = row.key;
+            row.values.forEach(function(d){
+                buttonlitext.push({buttontext:key, litext:d[litext],buttonparameter:buttonparameter,liparameter:liparameter});
+                });
+            return buttonlitext;
             });
     
     this.lienter = this.li.enter()
         .append("li").append("a")
         .attr("href",function(d,i){
-            var url = url_I+"?";
+            var url = hrefurl+"?";
             url += d.buttonparameter + "=" +d.buttontext+"&";
-            url += d.liparameter + "=" + d.values[i];
+            url += d.liparameter + "=" + d.litext;
+            return url;
             })
-        .text(function(d,i){return d.values[i];});
+        .text(function(d,i){return d.litext;});
 
-    this.li
+    this.li.select("a")
         .attr("href",function(d,i){
-            var url = url_I+"?";
+            var url = hrefurl+"?";
             url += d.buttonparameter + "=" +d.buttontext+"&";
-            url += d.liparameter + "=" + d.values[i];
+            url += d.liparameter + "=" + d.litext;
+            return url;
             })
-        .text(function(d,i){return d.values[i];});
+        .text(function(d,i){return d.litext;});
 
     this.li.exit().remove();
 };

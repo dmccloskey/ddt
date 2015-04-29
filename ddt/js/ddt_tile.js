@@ -86,12 +86,12 @@ ddt_tile_svg.prototype.get_svg = function(svgtype_I){
         return new ddt_svg_verticalbarschart2d_01();
     } else if (svgtype_I=='boxandwhiskersplot2d_01'){
         return new ddt_svg_boxandwhiskersplot2d_01();
-    } else if (svgtype_I=='volcanoplot2d'){
-        return new ddt_svg_volcanoplot2d();
-    } else if (svgtype_I=='pcaplot2d_loadings'){
-        return new ddt_svg_pcaplot2d_loadings();
-    } else if (svgtype_I=='pcaplot2d_scores'){
-        return new ddt_svg_pcaplot2d_scores();
+    } else if (svgtype_I=='volcanoplot2d_01'){
+        return new ddt_svg_volcanoplot2d_01();
+    //} else if (svgtype_I=='pcaplot2d_loadings_01'){
+    //    return new ddt_svg_pcaplot2d_loadings_01();
+    } else if (svgtype_I=='pcaplot2d_scores_01'){
+        return new ddt_svg_pcaplot2d_scores_01();
     } else {
         return null;
     };
