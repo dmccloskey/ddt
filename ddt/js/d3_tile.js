@@ -67,52 +67,6 @@ d3_tile.prototype.append_tile2col = function () {
     // add tile to as a new row in an existing column
     this.tile = d3.select("#" + this.containerid).select("#" + this.rowid).select("#" + this.colid).append("div").attr("class", this.tileclass).attr("id", this.tileid);
 };
-d3_tile.prototype.set_height = function () {
-    // set d3_tile height
-};
-d3_tile.prototype.add_draganddrop = function () {
-    // add file drag and drop for input
-};
-d3_tile.prototype.add_form2body = function (textarea_valuetext_I) {
-    // add text area for input
-    // INPUT:
-    //e.g. [{'value':'hclust','text':'by cluster'},...];
-
-    var tileid = this.tileid;
-
-    this.tileform = this.tilebody.append("div")
-        .attr("class","form-group")
-        .attr("id", tileid + 'form');
-
-    for (i=0;i<textarea_valuetext_I.length;i++){
-        var formlabel = this.tileform.append("label")
-            .text(textarea_valuetext_I[i].text)
-            .attr("id", tileid + 'formlabel' + textarea_valuetext_I[i].text);
-        var forminput = this.tileform.append("input")
-            .attr("class","form-control")
-            .attr("type","text")
-            .attr("placeholder",textarea_valuetext_I[i].value)
-            .attr("value",textarea_valuetext_I[i].value)
-            .attr("id", tileid + 'forminput'+ textarea_valuetext_I[i].text);
-    };
-};
-d3_tile.prototype.update_form = function(textarea_valuetext_I){
-    // update the form
-    var tileid = this.tileid;
-
-    for (i=0;i<textarea_valuetext_I.length;i++){
-        d3.select("#"+tileid + 'forminput'+ textarea_valuetext_I[i].text).node().value=textarea_valuetext_I[i].value;
-    };
-};
-d3_tile.prototype.add_checkbox = function () {
-    // add checkbox for input
-};
-d3_tile.prototype.add_color = function () {
-    // add color pallet for input
-};
-d3_tile.prototype.add_range = function () {
-    // add range slider for input
-};
 d3_tile.prototype.add_footer2tile = function () {
     // add footer to tile
 
@@ -121,21 +75,6 @@ d3_tile.prototype.add_footer2tile = function () {
     this.tilefooter = d3.select('#'+tileid).append("div")
         .attr("class","panel-footer")
         .attr("id",tileid+"panel-footer");
-};
-d3_tile.prototype.add_submitbutton2form = function (button_idtext_I) {
-    // add submit button
-    // INPUT:
-    //e.g. {'id':'submit1','text':'submit'};
-    if (!button_idtext_I){var button_idtext = {'id':'submit1','text':'submit'};}
-    else{var button_idtext = button_idtext_I;}
-
-    var tileid = this.tileid;
-
-    var submitbutton = this.tileform.append("button")
-        .attr("class","btn btn-default")
-        .attr("type","submit")
-        .attr("id", tileid + 'submitbutton'+button_idtext.id)
-        .text(button_idtext.text);
 };
 d3_tile.prototype.add_submitbutton2footer = function (button_idtext_I) {
     // add submit button
@@ -150,12 +89,6 @@ d3_tile.prototype.add_submitbutton2footer = function (button_idtext_I) {
         .attr("class","btn btn-default column-button")
         .attr("id", tileid + 'submitbutton'+button_idtext.id)
         .text(button_idtext.text);
-};
-d3_tile.prototype.add_table = function () {
-    // add button for output
-};
-d3_tile.prototype.add_svg = function () {
-    // add svg for interaction
 };
 d3_tile.prototype.remove_tile = function(){
     // remove tile from the container
@@ -178,46 +111,6 @@ d3_tile.prototype.add_datalist2body = function (datalist_valuetext_I) {
             .attr("value",datalist_valuetext_I[i].value)
             .text(datalist_valuetext_I[i].text);
     };  
-};
-d3_tile.prototype.add_dropdown2body = function (datalist_valuetext_I) {
-    // add datalist (menu) for input
-    // INPUT:
-    //e.g. [{'value':'hclust','text':'by cluster'},...];
-
-    var tileid = this.tileid;
-
-    var tiledropdown = this.tilebody.append("div")
-        .attr("class","dropdown")
-    var tiledropdownbutton = tiledropdown
-        .append("button")
-        .attr("class","btn btn-default dropdown-toggle")
-        .attr("type","button")
-        .attr("id",tileid + 'dropdownbutton')
-        .attr("data-toggle","dropdown")
-        .attr("aria-expanded","true")
-        .text("sort")
-        .append("span")
-        .attr("class","caret");    
-
-    var tiledropdownul = tiledropdown
-        .append("ul")
-        .attr("class","dropdown-menu")
-        .attr("role","menu")
-        .attr("id",tileid + 'dropdownul')
-        .attr("aria-labelledby",tileid + 'dropdownbuttonul');
-
-    for (i=0;i<datalist_valuetext_I.length;i++){
-        var tiledropdownli = tiledropdownul.append("li")
-            .attr("role","presentation")
-            .append("a")
-            .attr("role","menuitem")
-            .attr("tabindex","-1")
-            .attr("value",datalist_valuetext_I[i].value)
-            .attr("id",tileid + 'dropdownli'+datalist_valuetext_I[i].value)
-            .text(datalist_valuetext_I[i].text);
-    };
-
-
 };
 d3_tile.prototype.add_header2tile = function (title_I){
     //add title to tileid

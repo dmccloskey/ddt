@@ -94,10 +94,8 @@ ddt_container.prototype.reset_containerdata = function(){
 };
 ddt_container.prototype.get_tile = function(tiletype_I){
     // return the appropriate tile object
-    if (tiletype_I=='form'){
-        return new ddt_tile_form();
-    } else if (tiletype_I=='datalist'){
-        return new ddt_tile_datalist();
+    if (tiletype_I=='html'){
+        return new ddt_tile_html();
     } else if (tiletype_I=='svg'){
         return new ddt_tile_svg();
     } else if (tiletype_I=='table'){

@@ -21,6 +21,12 @@ var check_add_tile2container = function () {
     };
     return tile1;
 };
+var check_add_dropdownbuttongroup2body_href = function(){
+    var tile1 = check_add_tile2container();
+    var btntext_litext_I = [{"buttontext":"button1","litext":["option1","option2","option3"]}];
+    var url_I = "project.html";
+    tile1.add_dropdownbuttongroup2body_href(btntext_litext_I,url_I);
+};
 var check_add_textarea = function(){
     tile1 = check_add_tile2container();
     var tileid = tile1.tileid;

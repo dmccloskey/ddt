@@ -1,5 +1,5 @@
 d3_svg = function () {
-    // generic chart
+    // generic svg element
     this.id = '';
     this.tileid = '';
     this.svgelement = null;
