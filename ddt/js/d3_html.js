@@ -1,4 +1,6 @@
-d3_html = function () {
+"use strict";
+//var d3_html = function () {
+function d3_html() {
     // generic html element
     this.id = '';
     this.tileid = '';
@@ -12,11 +14,12 @@ d3_html.prototype.add_html2tile = function(){
     var id = this.id;
     var tileid = this.tileid;
     var htmlclass = this.htmlclass;
-    var listdatafiltered = this.data.listdatafiltered;
+    //var listdatafiltered = this.data.listdatafiltered;
     var htmlheaders = this.htmlheaders;
 
     this.html = d3.select('#'+tileid+"panel-body").selectAll(".html-responsive")
-        .data([listdatafiltered]);
+        //.data([listdatafiltered]);
+        .data([0]);
 
     this.htmlenter = this.html.enter()
         .append("div")
@@ -49,7 +52,8 @@ d3_html.prototype.set_htmlstyle = function () {
         //'html-layout': 'fixed',
         'width': '100%',
         'margin-bottom': '15px',
-        'overflow-y': 'hidden',
+        'overflow-y': 'scroll',
+        //'overflow-y': 'hidden',
         'overflow-x': 'scroll',
         '-ms-overflow-style': '-ms-autohiding-scrollbar',
         //'border': '1px solid #ddd',
@@ -64,7 +68,7 @@ d3_html.prototype.set_d3css = function (selectionstyle_I) {
     // selectionstyle_I = [{selection: string e.g., '.axis line, .axis path'
     //                      style: key:value strings e.g., {'fill': 'none', 'stroke': '#000',
     //                                                      'shape-rendering': 'crispEdges'}}]
-    for (i = 0; i < selectionstyle_I.length; i++) {
+    for (var i = 0; i < selectionstyle_I.length; i++) {
         d3.selectAll(selectionstyle_I[i].selection)
             .style(selectionstyle_I[i].style);
     };
@@ -81,13 +85,14 @@ d3_html.prototype.add_color = function () {
 d3_html.prototype.add_range = function () {
     // add range slider for input
 };
-d3_html.prototype.add_form = function(){
+d3_html.prototype.add_form = function(textarea_valuetext_I){
     // add form to tile
+    if (typeof texarea_valuetext_I !== "undefined"){var textarea_valuetext = textarea_valuetext_I;}
+    else{var textarea_valuetext = this.data.listdatafiltered;}
     var id = this.id;
-    var listdatafiltered = this.data.listdatafiltered;
 
     this.htmlform = this.html.selectAll("form")
-        .data([listdatafiltered]);
+        .data([textarea_valuetext]);
 
     this.htmlformenter = this.htmlform.enter()
         .append("form")
@@ -96,15 +101,13 @@ d3_html.prototype.add_form = function(){
     this.htmlform.exit().remove();
 
 }
-d3_html.prototype.add_input2form = function () {
+d3_html.prototype.add_input2form = function (textarea_valuetext_I) {
     // add text area for input
     // INPUT:
-    //e.g. [{'value':'hclust','text':'by cluster'},...];
-//     if (texarea_valuetext_I){var textarea_valuetext = texarea_valuetext_I;}
-//     else{var textarea_valuetext = this.data.convert_filter2stringmenuinput();};
+    if (typeof texarea_valuetext_I !== "undefined"){var textarea_valuetext = textarea_valuetext_I;}
+    else{var textarea_valuetext = this.data.convert_filter2stringmenuinput();};
 
     var id = this.id;
-    var textarea_valuetext = this.data.convert_filter2stringmenuinput();
 
 //     this.htmlform = this.html.append("div")
 //         .attr("class","form-group")
@@ -175,11 +178,11 @@ d3_html.prototype.add_input2form = function () {
 };
 d3_html.prototype.update_forminput = function(textarea_valuetext_I){
     // update the form
-    var id = this.id;
-    if (texarea_valuetext_I){var textarea_valuetext = texarea_valuetext_I;}
+    if (typeof texarea_valuetext_I !== "undefined"){var textarea_valuetext = textarea_valuetext_I;}
     else{var textarea_valuetext = this.data.convert_filter2stringmenuinput();};
+    var id = this.id;
 
-    for (i=0;i<textarea_valuetext_I.length;i++){
+    for (i=0;i<textarea_valuetext.length;i++){
         d3.select("#"+id + 'forminput'+ textarea_valuetext[i].text).node().value=textarea_valuetext[i].value;
     };
 };
@@ -357,7 +360,7 @@ d3_html.prototype.add_dropdownbuttongroup_href = function () {
 
     this.buttongroup.exit().remove();
 
-    this.button = this.buttongroup.selectAll(".btn btn-default dropdown-toggle")
+    this.button = this.buttongroup.selectAll(".btn btn-group-sm btn-default dropdown-toggle")
         .data(function(row){
             var keys = [];
             keys.push({key:row.key});
@@ -366,17 +369,20 @@ d3_html.prototype.add_dropdownbuttongroup_href = function () {
 
     this.buttonenter = this.button.enter()
         .append("button")
-        .attr("class", "btn btn-default dropdown-toggle" )
+        .attr("class", "btn btn-group-sm btn-default dropdown-toggle" )
         .attr("data-toggle", "dropdown")
-        .attr("aria-expanded", "false")
+        .attr("aria-expanded", "true")
+        .attr("id", function(d){return id + "button" + d.key;})
+        //.attr("aria-expanded", "false")
         .text(function(d){return d.key;})
         .append("span")
         .attr("class","caret");
 
     this.button
-        .attr("class", "btn btn-default dropdown-toggle" )
+        .attr("class", "btn btn-group-sm btn-default dropdown-toggle" )
         .attr("data-toggle", "dropdown")
-        .attr("aria-expanded", "false")
+        .attr("aria-expanded", "true")
+        .attr("id", function(d){return id + "button" + d.key;})
         .text(function(d){return d.key;})
         .append("span")
         .attr("class","caret");
@@ -393,6 +399,7 @@ d3_html.prototype.add_dropdownbuttongroup_href = function () {
     this.ulenter = this.ul.enter()
         .append("ul")
         .attr("class","dropdown-menu")
+        .attr("aria-labelledby", function(d){return id + "button" + d.key;})
         .attr("id",function(d){return id + "dropdown-menu"+ d.key;})
         .attr("role","menu");
 
@@ -440,4 +447,154 @@ d3_html.prototype.set_buttonliparameters = function(buttonparameter_I,liparamete
     // set button parameter and li parameters
     this.buttonparameter = buttonparameter_I;
     this.liparameter = liparameter_I;
+};
+d3_html.prototype.add_datalist = function (datalist_valuetext_I) {
+    // add datalist (menu) for input
+    // INPUT:
+    //e.g. [{'value':'hclust','text':'by cluster'},...];
+
+    var tileid = this.tileid;  
+
+    var datalist = this.html.append("select")
+        .attr("id", tileid + 'datalist');
+
+    for (var i=0;i<datalist_valuetext_I.length;i++){
+        datalist.append("option")
+            .attr("value",datalist_valuetext_I[i].value)
+            .text(datalist_valuetext_I[i].text);
+    };  
+};
+d3_html.prototype.add_paragraphs = function(paragraph_I){
+    // add paragraphs to tile body
+    // INPUT:
+    // paragraph_I = [{pclass:"text-left",ptext:""},...]
+
+    this.paragraph = this.html.selectAll("p")
+        .data(paragraph_I);
+
+    this.paragraphenter = this.paragraph.enter()
+        .append("p")
+        .attr("class",function(d){return d.pclass;})
+        .text(function(d){return d.ptext;})
+        .append("br");
+
+    this.paragraph
+        .attr("class",function(d){return d.pclass;})
+        .text(function(d){return d.ptext;})
+        .append("br");
+
+    this.paragraph.exit().remove();
+    
+};
+d3_html.prototype.add_headerandlistgroups_href = function(){
+    // add list groups with individual headers to the tile body
+    // each list element will have an href of the form:
+    //      url_I?buttonparametername=buttontext&lliparametername=litextoption1
+
+    var listdatafiltered = this.data.listdatafiltered;
+    var nestdatafiltered = this.data.nestdatafiltered;
+    var buttonparameter = this.buttonparameter;
+    var liparameter = this.liparameter;
+    var litext = this.datakeymap.litext;
+    var hrefurl = this.url;
+
+    var id = this.id;
+    var tileid = this.tileid;
+
+    this.headergroup = this.html.selectAll("#" + id + "header-group")
+        .data(nestdatafiltered)
+
+    this.headergroupenter = this.headergroup.enter()
+        .append("div")
+        .attr("class","list-group")
+        .attr("id", id + "header-group");
+
+    this.headergroup.exit().remove();
+
+    this.header = this.headergroup.selectAll("#" + id + "header")
+        .data(function(row){
+            var keys = [];
+            keys.push({key:row.key});
+            return keys;
+        });
+
+    this.headerenter = this.header.enter()
+        .append("div")
+        .attr("class","list-group-item")
+        .attr("id",id + "header")
+        .append("h4")
+        .attr("class","list-group-item-heading")
+        .attr("id", function(d){return id + "h4" + d.key;})
+        //.attr("aria-expanded", "false")
+        .text(function(d){return d.key;});
+
+    this.header.selectAll("h4")
+        .attr("class","list-group-item-heading")
+        .attr("id", function(d){return id + "h4" + d.key;})
+        .text(function(d){return d.key;});
+
+    this.header.exit().remove();
+
+//     this.ul = this.headergroup.selectAll(".list-group")
+//         .data(function(row){
+//             var keyvalues = [];
+//             keyvalues.push({key:row.key,values:row.values});
+//             return keyvalues;
+//             });
+
+//     this.ulenter = this.ul.enter()
+//         .append("div")
+//         .attr("class","list-group")
+//         .attr("id",function(d){return id + "list-group"+ d.key;});
+
+//     this.ul.exit().remove();
+
+    //this.li = this.ul.selectAll("list-group-item")
+    this.li = this.headergroup.selectAll("#" + id + "li")
+        .data(function(row){
+            var buttonlitext = [];
+            var key = row.key;
+            row.values.forEach(function(d){
+                buttonlitext.push({buttontext:key, litext:d[litext],buttonparameter:buttonparameter,liparameter:liparameter});
+                });
+            return buttonlitext;
+            });
+    
+    this.lienter = this.li.enter()
+        .append("a")
+        .attr("class","list-group-item")
+        .attr("id",id + "li")
+        .attr("href",function(d,i){
+            var url = hrefurl+"?";
+            url += d.buttonparameter + "=" +d.buttontext+"&";
+            url += d.liparameter + "=" + d.litext;
+            return url;
+            })
+        .text(function(d,i){return d.litext;});
+
+    this.li.select("a")
+        .attr("href",function(d,i){
+            var url = hrefurl+"?";
+            url += d.buttonparameter + "=" +d.buttontext+"&";
+            url += d.liparameter + "=" + d.litext;
+            return url;
+            })
+        .text(function(d,i){return d.litext;});
+
+    this.li.exit().remove();
+}
+d3_html.prototype.add_media = function(media_I){
+    // add media to the tile body
+    //TODO:
+//     <div class="media">
+//       <div class="media-left media-middle">
+//         <a href="#">
+//           <img class="media-object" src="..." alt="...">
+//         </a>
+//       </div>
+//       <div class="media-body">
+//         <h4 class="media-heading">Middle aligned media</h4>
+//         ...
+//       </div>
+//     </div>
 }

@@ -1,4 +1,6 @@
-ddt_html_datalist_01 = function () {
+"use strict";
+//var ddt_html_datalist_01 = function () {
+function ddt_html_datalist_01() {
     // data list tile
     ddt_html.call(this);
 };

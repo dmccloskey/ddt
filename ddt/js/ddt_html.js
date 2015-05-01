@@ -1,4 +1,6 @@
-var ddt_html = function(){
+"use strict";
+//var ddt_html = function(){
+function ddt_html(){
     // ddt_html template class
     this.parameters = {};
     this.ddthtml = null;
@@ -17,7 +19,7 @@ ddt_html.prototype.set_ddthtml = function(){
 };
 ddt_html.prototype.add_data = function(data_I){
     // add data to ddthtml
-    this.ddthtml.add_data(data_I);
+    this.ddthtml.add_data(data_I[0]);
 };
 ddt_html.prototype.set_datakeymap = function(datakeymap_I){
     // add data to ddthtml

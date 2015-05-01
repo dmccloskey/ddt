@@ -1,4 +1,6 @@
-ddt_svg_scatterlot2d_01 = function () {
+"use strict";
+//var ddt_svg_scatterlot2d_01 = function () {
+function ddt_svg_scatterlot2d_01() {
     // scatterplot
     // description:
     // generic scatter plot

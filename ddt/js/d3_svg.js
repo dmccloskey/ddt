@@ -1,4 +1,6 @@
-d3_svg = function () {
+"use strict";
+//var d3_svg = function () {
+function d3_svg() {
     // generic svg element
     this.id = '';
     this.tileid = '';

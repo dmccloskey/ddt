@@ -1,4 +1,6 @@
-d3_tile = function () {
+"use strict";
+//var d3_tile = function () {
+function d3_tile() {
     // generic d3_tile element
     // based on the bootstrap panel model
     // panel panel-default

@@ -1,4 +1,6 @@
-ddt_svg_volcanoplot2d_01 = function () {
+"use strict";
+//var ddt_svg_volcanoplot2d_01 = function () {
+function ddt_svg_volcanoplot2d_01() {
     // scatterplot2d with 1 data set and filled x1x2/y1y2 axis
     // utilized for a volcano plot or pca loadings plot
     // description:

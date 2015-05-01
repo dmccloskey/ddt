@@ -1,4 +1,6 @@
-ddt_svg_pcaplot2d_scores_01 = function () {
+"use strict";
+function ddt_svg_pcaplot2d_scores_01() {
+//var ddt_svg_pcaplot2d_scores_01 = function () {
     // pcaplot2d_scores
     // description:
     // 

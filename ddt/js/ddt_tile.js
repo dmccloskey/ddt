@@ -1,4 +1,6 @@
-var ddt_tile = function(){
+"use strict";
+//var ddt_tile = function(){
+function ddt_tile(){
     this.parameters = {};
     this.tile = null;
 };
@@ -35,7 +37,8 @@ ddt_tile.prototype.update_tile = function(){
     // update the tile
     // define tile update function call sequence here...
 };
-ddt_tile_svg = function () {
+//var ddt_tile_svg = function () {
+function ddt_tile_svg() {
     // form tile
     ddt_tile.call(this);
     this.ddtsvg = null;
@@ -67,7 +70,7 @@ ddt_tile_svg.prototype.update_tile = function(data_I){
     // update tile
 
     //update the data filters...
-    this.ddtsvg.add_data(data_I);
+    //this.ddtsvg.add_data(data_I);
     //this.ddtsvg.filter_data1and2stringdata();
     //re-render the svg
     this.ddtsvg.ddtsvg.render();
@@ -96,7 +99,8 @@ ddt_tile_svg.prototype.get_svg = function(svgtype_I){
         return null;
     };
 };
-ddt_tile_table = function () {
+//var ddt_tile_table = function () {
+function ddt_tile_table() {
     // table tile
     ddt_tile.call(this);
     this.ddttable = null;
@@ -120,15 +124,17 @@ ddt_tile_table.prototype.make_tile = function(data_I,parameters_I){
 
     //table
     this.ddttable = this.get_table(tabletype_I);
-    this.ddttable.make_table(data_I,parameters_I)
+    this.ddttable.make_table(data_I,parameters_I);
+    //this.ddttable.make_table(parameters_I);
 
     this.ddttable.ddttable.render();
+    //this.ddttable.ddttable.render(data_I[0]);
 };
 ddt_tile_table.prototype.update_tile = function(data_I){
     // update tile
 
     //update the data filters...
-    this.ddttable.add_data(data_I);
+    //this.ddttable.add_data(data_I);
     //this.ddttable.ddttable.data.filter_stringdata();
     //re-render the table
     this.ddttable.ddttable.render();
@@ -141,7 +147,8 @@ ddt_tile_table.prototype.get_table = function(tabletype_I){
         return null;
     };
 };
-ddt_tile_html = function () {
+//var ddt_tile_html = function () {
+function ddt_tile_html() {
     // html tile
     ddt_tile.call(this);
     this.ddthtml = null;
@@ -162,20 +169,32 @@ ddt_tile_html.prototype.make_tile = function(data_I,parameters_I){
     this.tile.add_title2header(header_I);
     this.tile.add_body2tile();
     this.tile.add_footer2tile();
+    if (parameters_I.formsubmitbuttonidtext){
+        this.tile.add_submitbutton2footer(parameters_I.formsubmitbuttonidtext);
+        };
+    if (parameters_I.formresetbuttonidtext){
+        this.tile.add_submitbutton2footer(parameters_I.formresetbuttonidtext);
+        };
+    if (parameters_I.formupdatebuttonidtext){
+        this.tile.add_submitbutton2footer(parameters_I.formupdatebuttonidtext);
+        };
 
     //html
     this.ddthtml = this.get_html(htmltype_I);
-    this.ddthtml.make_html(data_I,parameters_I)
+    this.ddthtml.make_html(data_I,parameters_I);
+    //this.ddthtml.make_html(parameters_I);
 
     this.ddthtml.ddthtml.render();
+    //this.ddthtml.ddthtml.render(data_I[0]);
 };
 ddt_tile_html.prototype.update_tile = function(data_I){
     // update tile
 
     //update the data filters...
-    this.ddthtml.add_data(data_I[0]);
+    //this.ddthtml.add_data(data_I);
     //re-render the html
     this.ddthtml.ddthtml.render();
+    //this.ddthtml.update_html(data_I);
 };
 ddt_tile_html.prototype.get_html = function(htmltype_I){
     // return the appropriate tile object

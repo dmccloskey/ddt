@@ -1,4 +1,6 @@
-ddt_html_dropdownbuttongrouphref_01 = function () {
+"use strict";
+//var ddt_html_dropdownbuttongrouphref_01 = function () {
+function ddt_html_dropdownbuttongrouphref_01() {
     // dropdown button group with href tile
     ddt_html.call(this);
 };
@@ -12,7 +14,7 @@ ddt_html_dropdownbuttongrouphref_01.prototype.make_html = function(data_I,parame
 	// general html properties
 	this.set_parameters(parameters_I);
 	this.set_ddthtml()
-    this.add_data(data_I[0]);
+    this.add_data(data_I);
     this.set_datakeymap(parameters_I.htmlkeymap);
 
 	// html specific properties
@@ -20,12 +22,14 @@ ddt_html_dropdownbuttongrouphref_01.prototype.make_html = function(data_I,parame
 	this.ddthtml.set_buttonliparameters(parameters_I.buttonparameter,parameters_I.liparameter);
     this.ddthtml.render = function(){
     	// permanent filter on the data
-    	if (parameters_I.htmlfilters){
+    	if (typeof parameters_I.htmlfilters != "undefined"){
 			this.data.change_filters(parameters_I.htmlfilters);
 			this.data.filter_stringdata();
     	};
         this.add_html2tile();
 		this.set_htmlstyle();
-        this.add_dropdownbuttongroup_href();
+        //this.add_dropdownbuttongroup_href();
+        this.add_headerandlistgroups_href();
+        //if(typeof parameters_I.htmlparagraph != "undefined"){this.add_paragraphs(parameters_I.htmlparagraph);};
     };
 };
