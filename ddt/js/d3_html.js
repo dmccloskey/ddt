@@ -425,12 +425,14 @@ d3_html.prototype.add_headerandlistgroup_href = function(){
         .attr("class","list-group-item-heading")
         .attr("id", function(d){return id + "h4" + d.key;})
         //.attr("aria-expanded", "false")
-        .text(function(d){return d.key;});
+        //specific text replace for sbaas:
+        .text(function(d){return d.key.replace("export_data","").replace("_js","");});
 
     this.header.selectAll("h4")
         .attr("class","list-group-item-heading")
         .attr("id", function(d){return id + "h4" + d.key;})
-        .text(function(d){return d.key;});
+        //specific text replace for sbaas:
+        .text(function(d){return d.key.replace("export_data","").replace("_js","");});
 
     this.header.exit().remove();
 
@@ -630,19 +632,61 @@ d3_html.prototype.add_iphrame = function(){
     var iphrameclass = this.datakeymap.htmliphrameclass;
     var iphramehref = this.datakeymap.htmliphramehref;
 };
-d3_html.prototype.add_escher = function(){
+d3_html.prototype.add_escher = function(escherdataindex_I,escherembeddedcss_I,escheroptions_I){
     // add escher map to tile body
     var id = this.id;
-    var metdata = this.data[0].listdatafiltered;
-    var rxndata = this.data[1].listdatafiltered;
-    var genedata = this.data[2].listdatafiltered;
-    var mapdata = this.eschermapdata;
-    var options = this.escheroptions;
+    var metaboliteid = this.datakeymap.metaboliteid;
+    var metabolitevalues = this.datakeymap.metabolitevalues;
+    var reactionid = this.datakeymap.reactionid;
+    var reactionvalues = this.datakeymap.reactionvalues;
+    var geneid = this.datakeymap.geneid;
+    var genevalues = this.datakeymap.genevalues;
 
-    // reformat the data
-    var eschermetdata = null;
-    var escherrxndata = null;
-    var eschergenedata = null;
+    if (typeof escherdataindex_I === "undefined" && this.eschermetabolitedata){
+        var metdata = this.data[this.eschermetabolitedata].convert_listdatafiltered2escherobjectlist();
+    } else if (typeof escherdataindex_I !== "undefined" && typeof escherdataindex_I.metabolitedata !== "undefined"){
+        var metdata = this.data[escherdataindex_I.metabolitedata].nestdatafiltered[0].values;
+    } else{ 
+        var metdata = null;
+    };
+    if (typeof escherdataindex_I === "undefined" && this.escherreactiondata){
+        var rxndata = this.data[this.escherreactiondata].nestdatafiltered[0].values;
+    } else if (typeof escherdataindex_I !== "undefined" && typeof escherdataindex_I.reactiondata !== "undefined"){
+        var rxndata = this.data[escherdataindex_I.reactiondata].nestdatafiltered[0].values;
+    }else{ 
+        var rxndata = null;
+    };
+    if (typeof escherdataindex_I === "undefined" &&  this.eschergenedata){
+        var genedata = this.data[this.eschergenedata].nestdatafiltered[0].values;
+    } else if (typeof escherdataindex_I !== "undefined" && typeof escherdataindex_I.genedata !== "undefined"){
+        var genedata = this.data[escherdataindex_I.genedata].nestdatafiltered[0].values;
+    }else{ 
+        var genedata = null;
+    };
+    if (typeof escherdataindex_I === "undefined" && this.eschermapdata){
+        var mapdata = this.data[this.eschermapdata].listdatafiltered[0].eschermap_json;
+    } else if (typeof escherdataindex_I !== "undefined" && typeof escherdataindex_I.mapdata !== "undefined") {
+        var mapdata = this.data[escherdataindex_I.mapdata].listdatafiltered[0].eschermap_json;
+    }else{ 
+        var mapdata = null;
+    };
+    if (typeof escherdataindex_I === "undefined" && this.eschermodeldata){
+        var modeldata = this.data[this.eschermodeldata];
+    } else if (typeof escherdataindex_I !== "undefined" && typeof escherdataindex_I.modeldata !== "undefined"){
+        var modeldata = this.data[escherdataindex_I.modeldata];
+    }else{ 
+        var modeldata = null;
+    };
+    if (typeof escherembeddedcss_I === "undefined"){
+        var embeddedcss = this.escherembeddedcss;
+    } else {
+        var embeddedcss = escherembeddedcss_I;
+    };
+    if (typeof escheroptions_I === "undefined"){
+        var options = this.escheroptions;
+    } else {
+        var options = escheroptions_I;
+    };
 
     this.html.select("#"+id+"escher").remove();
 
@@ -652,9 +696,50 @@ d3_html.prototype.add_escher = function(){
         .attr("id",id + "escher");
 
     // make the escher object
-    this.escher = escher.Builder(mapdata,null,null,"#"+id+"escher",options);
-    if (eschermetdata){this.escher.set_reaction_data(eschermetdata);};
-    if (escherrxndata){this.escher.set_metabolite_data(escherrxndata);};
-    if (eschergenedata){this.escher.set_gene_data(eschergenedata);};
+    var embeddedcss = "#"+id+"escher.div";
+    var options = {unique_map_id:'escher01'};
+    this.escherbuilder = escher.Builder(mapdata,modeldata,embeddedcss,this.htmlescher,options);
+    if (metdata){this.escherbuilder.set_metabolite_data(metdata);};
+    if (rxndata){this.escherbuilder.set_reaction_data(rxndata);};
+    if (genedata){this.escherbuilder.set_gene_data(genedata);};
+
+};
+d3_html.prototype.set_escher = function(escherdataindex_I,escherembeddedcss_I,escheroptions_I){
+    // set escher parameters
+    if (typeof escherdataindex_I.metabolitedata !== "undefined"){
+        this.eschermetabolitedata = escherdataindex_I.metabolitedata;
+    } else {
+        this.eschermetabolitedata = null;
+    };
+    if (typeof escherdataindex_I.reactiondata !== "undefined"){
+        this.escherreactiondata = escherdataindex_I.reactiondata;
+    } else {
+        this.escherreactiondata = null;
+    };
+    if (typeof escherdataindex_I.genedata !== "undefined"){
+        this.eschergenedata = escherdataindex_I.genedata;
+    } else {
+        this.eschergenedata = null;
+    };
+    if (typeof escherdataindex_I.mapdata !== "undefined"){
+        this.eschermapdata = escherdataindex_I.mapdata;
+    } else {
+        this.eschermetdata = null;
+    };
+    if (typeof escherdataindex_I.modeldata !== "undefined"){
+        this.eschermodeldata = escherdataindex_I.modeldata;
+    } else {
+        this.eschermodeldata = null;
+    };
+    if (typeof escherembeddedcss_I !== "undefined"){
+        this.escherembeddedcss = escherembeddedcss_I;
+    } else {
+        this.escherembeddedcss = null;
+    };
+    if (typeof escheroptions_I !== "undefined"){
+        this.escheroptions = escheroptions_I;
+    } else {
+        this.escheroptions = null;
+    };
 
 }
