@@ -70,6 +70,23 @@ d3_html.prototype.set_htmlstyle = function () {
     var selectorstyle = [{ 'selection': htmlselector, 'style': htmlstyle }]
     this.set_d3css(selectorstyle);
 };
+d3_html.prototype.set_htmlescherstyle = function () {
+    // predefined css style for html header rows
+    var htmlselector = "#" + this.tileid + " .html-responsive";
+    var htmlstyle = {
+        //'html-layout': 'fixed',
+        'width': '100%',
+        'height':'500px',
+        'margin-bottom': '15px',
+        'overflow-y': 'hidden',
+        'overflow-x': 'scroll',
+        '-ms-overflow-style': '-ms-autohiding-scrollbar',
+        //'border': '1px solid #ddd',
+        '-webkit-overflow-scrolling': 'touch'
+    };
+    var selectorstyle = [{ 'selection': htmlselector, 'style': htmlstyle }]
+    this.set_d3css(selectorstyle);
+};
 d3_html.prototype.set_d3css = function (selectionstyle_I) {
     //set custom css style to d3
     //Input:
@@ -635,42 +652,49 @@ d3_html.prototype.add_iphrame = function(){
 d3_html.prototype.add_escher = function(escherdataindex_I,escherembeddedcss_I,escheroptions_I){
     // add escher map to tile body
     var id = this.id;
-    var metaboliteid = this.datakeymap.metaboliteid;
-    var metabolitevalues = this.datakeymap.metabolitevalues;
-    var reactionid = this.datakeymap.reactionid;
-    var reactionvalues = this.datakeymap.reactionvalues;
-    var geneid = this.datakeymap.geneid;
-    var genevalues = this.datakeymap.genevalues;
+    if (this.eschermetabolitedata!==null){
+        var metaboliteid = this.datakeymap[this.eschermetabolitedata].key;
+        var metabolitevalues = this.datakeymap[this.eschermetabolitedata].values;
+        };
+    if (this.escherreactiondata!==null){
+        var reactionid = this.datakeymap[this.escherreactiondata].key;
+        var reactionvalues = this.datakeymap[this.escherreactiondata].values;
+        };
+    if (this.eschergenedata!==null){
+        var geneid = this.datakeymap[this.eschergenedata].key;
+        var genevalues = this.datakeymap[this.eschergenedata].values;
+        };
 
-    if (typeof escherdataindex_I === "undefined" && this.eschermetabolitedata){
-        var metdata = this.data[this.eschermetabolitedata].convert_listdatafiltered2escherobjectlist();
+
+    if (typeof escherdataindex_I === "undefined" && this.eschermetabolitedata!==null){
+        var metdata = this.data[this.eschermetabolitedata].convert_listdatafiltered2escherobjectlist(metaboliteid,metabolitevalues);
     } else if (typeof escherdataindex_I !== "undefined" && typeof escherdataindex_I.metabolitedata !== "undefined"){
         var metdata = this.data[escherdataindex_I.metabolitedata].nestdatafiltered[0].values;
     } else{ 
         var metdata = null;
     };
-    if (typeof escherdataindex_I === "undefined" && this.escherreactiondata){
-        var rxndata = this.data[this.escherreactiondata].nestdatafiltered[0].values;
+    if (typeof escherdataindex_I === "undefined" && this.escherreactiondata!==null){
+        var rxndata = this.data[this.escherreactiondata].convert_listdatafiltered2escherobjectlist(reactionid,reactionvalues);
     } else if (typeof escherdataindex_I !== "undefined" && typeof escherdataindex_I.reactiondata !== "undefined"){
         var rxndata = this.data[escherdataindex_I.reactiondata].nestdatafiltered[0].values;
     }else{ 
         var rxndata = null;
     };
-    if (typeof escherdataindex_I === "undefined" &&  this.eschergenedata){
-        var genedata = this.data[this.eschergenedata].nestdatafiltered[0].values;
+    if (typeof escherdataindex_I === "undefined" &&  this.eschergenedata!==null){
+        var genedata = this.data[this.eschergenedata].convert_listdatafiltered2escherobjectlist(geneid,genevalues);;
     } else if (typeof escherdataindex_I !== "undefined" && typeof escherdataindex_I.genedata !== "undefined"){
         var genedata = this.data[escherdataindex_I.genedata].nestdatafiltered[0].values;
     }else{ 
         var genedata = null;
     };
-    if (typeof escherdataindex_I === "undefined" && this.eschermapdata){
+    if (typeof escherdataindex_I === "undefined" && this.eschermapdata!==null){
         var mapdata = this.data[this.eschermapdata].listdatafiltered[0].eschermap_json;
     } else if (typeof escherdataindex_I !== "undefined" && typeof escherdataindex_I.mapdata !== "undefined") {
         var mapdata = this.data[escherdataindex_I.mapdata].listdatafiltered[0].eschermap_json;
     }else{ 
         var mapdata = null;
     };
-    if (typeof escherdataindex_I === "undefined" && this.eschermodeldata){
+    if (typeof escherdataindex_I === "undefined" && this.eschermodeldata!==null){
         var modeldata = this.data[this.eschermodeldata];
     } else if (typeof escherdataindex_I !== "undefined" && typeof escherdataindex_I.modeldata !== "undefined"){
         var modeldata = this.data[escherdataindex_I.modeldata];
@@ -690,18 +714,26 @@ d3_html.prototype.add_escher = function(escherdataindex_I,escherembeddedcss_I,es
 
     this.html.select("#"+id+"escher").remove();
 
-    this.htmlescher = this.html
+    var htmlescher = this.html
         .append("div")
-        .attr("class","escher")
-        .attr("id",id + "escher");
+        //.attr("class","")
+        .attr("id",id + "escher")
+        .style("height","100%")
+        .style("width","100%");
 
     // make the escher object
-    var embeddedcss = "#"+id+"escher.div";
-    var options = {unique_map_id:'escher01'};
-    this.escherbuilder = escher.Builder(mapdata,modeldata,embeddedcss,this.htmlescher,options);
-    if (metdata){this.escherbuilder.set_metabolite_data(metdata);};
-    if (rxndata){this.escherbuilder.set_reaction_data(rxndata);};
-    if (genedata){this.escherbuilder.set_gene_data(genedata);};
+    d3.text('lib/builder-embed-1.0.0.css', function(e, css) {
+        if (e) console.warn(e);
+        var embeddedcss = "#"+id+"escher.div";
+        var options = {unique_map_id:'escher01'};
+        //var escherbuilder = escher.Builder(mapdata,modeldata,css,htmlescher,options);
+        var escherbuilder = escher.Builder(null,null,css,htmlescher,options);
+        if (mapdata){escherbuilder.load_map(mapdata,false);};
+        if (modeldata){escherbuilder.load_model(modeldata,false);};
+        if (metdata){escherbuilder.set_metabolite_data(metdata);};
+        if (rxndata){escherbuilder.set_reaction_data(rxndata);};
+        if (genedata){escherbuilder.set_gene_data(genedata);};
+    });
 
 };
 d3_html.prototype.set_escher = function(escherdataindex_I,escherembeddedcss_I,escheroptions_I){

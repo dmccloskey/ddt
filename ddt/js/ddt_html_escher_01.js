@@ -26,7 +26,7 @@ ddt_html_escher_01.prototype.make_html = function(data_I,parameters_I){
 			this.data.filter_stringdata();
     	};
         this.add_html2tile();
-		this.set_htmlstyle();
+		this.set_htmlescherstyle();
         this.add_escher();
     };
 };
