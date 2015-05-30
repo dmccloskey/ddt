@@ -256,7 +256,7 @@ d3_table.prototype.export_tableelementjson = function () {
     a.download = name + '.json'; // file name
     var j = JSON.stringify(json);
     a.setAttribute("href-lang", "application/json");
-    a.href = 'data:application/json,' + j;
+    a.href = 'data:application/json,' + utf8_to_b64(j);
     // <a> constructed, simulate mouse click on it
     var ev = document.createEvent("MouseEvents");
     ev.initMouseEvent("click", true, false, self, 0, 0, 0, 0, 0, false, false, false, false, 0, null);
