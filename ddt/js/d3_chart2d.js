@@ -85,6 +85,15 @@ d3_chart2d.prototype.add_chart2d2tile = function(){
     this.svgg = this.svgelement.select('g');
 
 };
+d3_chart2d.prototype.remove_chart2d = function(){
+    // remove chart2d from tileid
+    if (this.svgelement){
+        this.svgelement.remove();
+        this.svgelement = null;
+        this.svgenter = null;
+        this.svgg = null;
+    };
+};
 d3_chart2d.prototype.add_title = function (title_I) {
     // add chart title
     this.title = this.svgg.append("text")
