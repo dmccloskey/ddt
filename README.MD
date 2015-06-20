@@ -1,7 +1,7 @@
 DDT: Data-driven tiles
 ============
 A d3-based javascript library for constructing dynamic webpages arranged in tile format
-============
+
 Douglas McCloskey
 -----------------
 
