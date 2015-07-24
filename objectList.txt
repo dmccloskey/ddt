@@ -1,0 +1,88 @@
+ddt_container
+description: class to sync and render individual tiles that make up the container
+
+ddt_tile
+description: a generic data driven tile
+	ddt_tile_svg
+	description: data driven svg tile
+	1. defines the lookup table (get_svg) to instantiate the svg template object based on input
+	2. defines the make_tile function that adds the svg template object to the tile and renders the object
+	3. defines the update_tile function that updates the svg template object when the associated data is changed
+	ddt_tile_table:
+	description: data driven table tile
+	ddt_tile_html:
+	description: data driven html tile
+	TODO: ddt_tile_form
+	TODO: description: data driven form tile
+	
+ddt_html
+description: data driven tile html template class to handle the html object and parameters; each child class defines a specific template that can be called and rendered by the user
+	ddt_html_datalist_01
+	description: class to define the datalist make function from data and parameters
+	ddt_html_escher_01
+	description: class to define the escher make and render functions from data and parameters
+	ddt_html_href_01
+	description: class to define the href make and render functions from data and parameters
+	ddt_html_href_02
+	description: class to define the href make and render functions from data and parameters
+	ddt_html_media_01
+	description: class to define the media make function from data and parameters
+ddt_svg
+description: data driven tile svg template class to handle the svg object and parameters; each child class defines a specific template that can be called and rendered by the user
+	ddt_svg_boxandwhiskersplot2d_01
+	description: class to define the box and whiskers plot2d make and render functions from data and parameters
+	ddt_svg_heatmap2d_01
+	description: class to define the heatmap make and render functions from data and parameters
+	ddt_svg_scatterlineplot2d_01
+	description: class to define the scatter-line plot2d make and render functions from data and parameters
+	ddt_svg_scatterplot2d_01
+	description: class to define the scatter plot2d make and render functions from data and parameters
+	ddt_svg_verticalbarschart2d_01
+	description: class to define the vertical bars chart2d make and render functions from data and parameters
+	ddt_svg_volcanoplot2d_01
+	description: class to define the volcano plot2d make and render functions from data and parameters
+ddt_table
+description: data driven tile table template class to handle the table object and parameters; each child class defines a specific template that can be called and rendered by the user
+	ddt_table_responsivetable_01
+	description: class to define the responsive table make and render functions from data and parameters
+
+d3_data
+description: the data object class to handle the filtering and manipulation of listed key-value paired data (e.g., from a database)
+
+d3_tile
+description: a generic data-driven tile element based on the bootstrap panel model
+
+d3_html:
+description: class to define the properties and methods of a data-driven html object
+
+d3_table
+description: class to define the properties and methods of a data-driven table element
+
+d3_form
+description: class to define the properties and methods of a data-driven form element
+
+d3_svg
+description: class to define the properties and methods of a data-driven svg element
+	d3_chart2d
+	description: child-class of d3_svg to define the properties and methods of 2d chart elements
+		d3_chart2d_boxandwhiskers
+		description: box and whisker chart2d specific properties and methods
+		d3_chart2d_heatmap
+		description: heatmap chart2d specific properties and methods
+		d3_chart2d_horizontalbars
+		description: horizontalbars chart2d specific properties and methods
+		d3_chart2d_line
+		description: line chart2d specific properties and methods
+		d3_chart2d_points
+		description: points chart2d specific properties and methods
+		d3_chart2d_verticalbars
+		description: verticalbars chart2d specific properties and methods
+		d3_chart2d_treelayout
+		description: treelayout chart2d specific properties and methods
+		d3_chart2d_packlayout
+		description: packlayout chart2d specific properties and methods
+		TODO: piechart
+	d3_graph2d
+	description: child-class of d3_svg to define the properties and methods of 2d graph elements
+	d3_map2d
+	description: child-class of d3_svg to define the properties and methods of 2d map elements
