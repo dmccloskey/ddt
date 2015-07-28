@@ -92,6 +92,8 @@ ddt_tile_svg.prototype.get_svg = function(svgtype_I){
         return new ddt_svg_scatterplot2d_01();
     } else if (svgtype_I=='verticalbarschart2d_01'){
         return new ddt_svg_verticalbarschart2d_01();
+    } else if (svgtype_I=='horizontalbarschart2d_01'){
+        return new ddt_svg_horizontalbarschart2d_01();
     } else if (svgtype_I=='boxandwhiskersplot2d_01'){
         return new ddt_svg_boxandwhiskersplot2d_01();
     } else if (svgtype_I=='volcanoplot2d_01'){

@@ -131,13 +131,17 @@ d3_chart2d.prototype.set_x1range = function (scale_I) {
     } else if (scale_I === 'ordinal') {
         this.x1scale = d3.scale.ordinal();
     } else if (scale_I === 'ordinal-rangeRoundBands') {
-        this.x1scale = d3.scale.ordinal().rangeRoundBands([0, this.width], .1);;
+        this.x1scale = d3.scale.ordinal().rangeRoundBands([0, this.width], .1);
     };
 };
 d3_chart2d.prototype.set_y1range = function (scale_I) {
     // set y1-range of the plot
     if (scale_I === 'linear') {
         this.y1scale = d3.scale.linear().range([this.height, 0])
+    } else if (scale_I === 'ordinal') {
+        this.y1scale = d3.scale.ordinal();
+    } else if (scale_I === 'ordinal-rangeRoundBands') {
+        this.y1scale = d3.scale.ordinal().rangeRoundBands([this.height, 0], .1);
     };
 };
 d3_chart2d.prototype.set_x2range = function (scale_I) {
@@ -154,7 +158,12 @@ d3_chart2d.prototype.set_y2range = function (scale_I) {
     // set y1-range of the plot
     if (scale_I === 'linear') {
         this.y2scale = d3.scale.linear().range([this.height, 0])
-    }
+    } else if (scale_I === 'ordinal') {
+        this.y2scale = d3.scale.ordinal();
+    } else if (scale_I === 'ordinal-rangeRoundBands') {
+        //this.y2scale = d3.scale.ordinal().rangeRoundBands([this.height, 0], .1);
+        this.y2scale = d3.scale.ordinal().rangeRoundBands([0,this.height], .1);
+    };
 };
 d3_chart2d.prototype.add_data = function(data_I){
     //add data n
