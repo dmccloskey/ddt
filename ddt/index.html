@@ -67,13 +67,9 @@
 	<!-- ddt unit tests -->
     <script src="js/unittests.js"></script>
     <script src="data/data_unittests.js"></script>
-
-    <!-- ddt charts -->
-<!--     <script src="js/templates_charts.js"></script> -->
-<!-- 	<script src="data/data_boxandwhiskers.js"></script>	 -->
-<!-- 	<script src="data/data_barchart.js"></script>	 -->
-<!--     <script src="js/templates/ddt_template_heatmap_01.js"></script> -->
-    <script src="data/ddt_data.js"></script>	
+    	
+	<!-- ddt -->
+    <script src="data/ddt_data.js"></script>
 
     <meta charset="utf-8"/>
     <meta name="viewport" content="width=device-width, height=device-height,
@@ -96,6 +92,16 @@
 		</div>
 	</main>
 
+	<script type="text/javascript">
+		//ddt data and template
+		ddt_test = new ddt_container();
+		ddt_test.set_parameters(parameters);
+		ddt_test.add_data(data);
+		ddt_test.set_tile2datamap(tile2datamap);
+		ddt_test.make_container();
+		if (typeof filtermenu !== "undefined") { ddt_test.add_datafiltermenubuttons(filtermenu); }
+		else { ddt_test.add_datafiltermenubuttons(); };
+	</script>
 
     <script>
      // temporary fixes for mobile browsers (currently iOS)
