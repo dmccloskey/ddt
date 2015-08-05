@@ -19,3 +19,7 @@ dmccloskey-sbrg/
 ####################
 *.pyc
 *.py
+
+# private data #
+################
+data_private/
