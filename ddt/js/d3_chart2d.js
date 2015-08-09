@@ -246,6 +246,16 @@ d3_chart2d.prototype.set_y1domain = function () {
         })
     };
     //this.y1scale.domain(d3.extent(_this.data1.listdatafiltered, function (d) { return d[y_data]; })).nice();
+    // check for unique values
+    var unique = data1.filter( onlyUnique );
+    // add in 0.0 if there is only 1 unique value to solve issue#1
+    // Problem: This is caused by an auto-adjustment of the y-axis from min_value(data array) to max_value(data array). When only one or a constant y-value is supplied, the min/max of the y-axis are set to the same value.
+    // Correction: ensure a minimum y-axis value of 0.0.
+    //
+    if (unique.length === 1){
+        data1.push(0.0);
+        };
+    //define the y1 scale
     this.y1scale.domain(d3.extent(data1)).nice();
 };
 d3_chart2d.prototype.set_x2domain = function () {
@@ -277,6 +287,15 @@ d3_chart2d.prototype.set_y2domain = function () {
             data2.push(d[y_data]);
         })
     };
+    // check for unique values
+    var unique = data1.filter( onlyUnique );
+    // add in 0.0 if there is only 1 unique value to solve issue#1
+    // Problem: This is caused by an auto-adjustment of the y-axis from min_value(data array) to max_value(data array). When only one or a constant y-value is supplied, the min/max of the y-axis are set to the same value.
+    // Correction: ensure a minimum y-axis value of 0.0.
+    //
+    if (unique.length === 1){
+        data1.push(0.0);
+        };
     this.y2scale.domain(d3.extent(data2)).nice();
 };
 d3_chart2d.prototype.get_uniquelabels = function (data_I,label_I){
@@ -1071,4 +1090,9 @@ d3_chart2d.prototype.set_y1axisticktextattr = function (y1axistickattr_I) {
         var selectorattr = [{ 'selection': y1axisselector, 'attr': y1axistickattr }]
         this.set_svggattr(selectorattr);
         };
+};
+
+// utility functions
+function onlyUnique(value, index, self) { 
+    return self.indexOf(value) === index;
 };
