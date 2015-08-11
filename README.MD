@@ -12,6 +12,8 @@ To install, please follow the [instructions](INSTALL.md).
 
 3. Interactive, dynamic, and customizable menus, graphics, plots, and tables powered by d3
 
+4. The ability to sync and filter data across multiple tiles
+
 ##Examples:
 Barchart with tabulated data
 
