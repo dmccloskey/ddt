@@ -77,7 +77,9 @@ d3_data.prototype.filter_stringdata = function () {
     this.nestdatafiltered = this.convert_list2nestlist(listdatafiltered_O,this.nestkey);
 
     // update the filters
-    this.update_filters();
+    if (this.listdatafiltered.length!==0){
+        this.update_filters();
+        };
 };
 d3_data.prototype.set_listdata = function (listdata_I,nestkey_I) {
     // set list data and initialize filtered data
