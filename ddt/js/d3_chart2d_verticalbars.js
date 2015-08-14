@@ -24,18 +24,31 @@ d3_chart2d.prototype.add_verticalbarsdata1 = function () {
     this.barlabel = this.svgg.selectAll(".labels")
         .data(this.data1.nestdatafiltered)
 
+    this.barlabel.exit().remove();
+
+    this.barlabel.transition()
+        .attr("transform", function (d) { 
+            return "translate(" + x1scale(d.key) + ",0)"; 
+            });
+
     this.barlabelenter = this.barlabel.enter().append("g")
         .attr("class", "labels")
-        .attr("transform", function (d) { return "translate(" + x1scale(d.key) + ",0)"; });
+        .attr("transform", function (d) { 
+            return "translate(" + x1scale(d.key) + ",0)"; 
+            });
 
     this.barsrect = this.barlabel.selectAll(".bars")
-        .data(function (d) { return d.values; });
+        .data(function (d) { 
+            return d.values; }
+            );
 
     this.barsrect.exit().remove();
 
     this.barsrect.transition()
         .attr("width", x2scale.rangeBand())
-        .attr("x", function (d) { return x2scale(d[series_label]); })
+        .attr("x", function (d) { 
+            return x2scale(d[series_label]); 
+            })
         .attr("y", function (d) { return y1scale(Math.max(d[y_data], 0)); })
         .attr("height", function (d) { return Math.abs(y1scale(d[y_data]) - y1scale(0)); })
         .style("fill", function (d) { return colorscale(d[series_label]); });
@@ -66,7 +79,12 @@ d3_chart2d.prototype.add_verticalbarsdata1tooltipandfill = function () {
     // set the tooltip
     this.tooltip = d3.tip().attr('class', 'd3-tip')
         .html(function(d){
-            return (d[series_label] + ': ' + "value: " + d[y_data].toFixed(2) + ', ' + "95% ci: " + d[y_data_lb].toFixed(2) + "/" + d[y_data_ub].toFixed(2));
+            if(typeof(y_data_lb)==="undefined" || typeof(y_data_ub)==="undefined"){
+                return (d[series_label] + ': ' + "value: " + d[y_data].toFixed(2));
+            }
+            else{
+                return (d[series_label] + ': ' + "value: " + d[y_data].toFixed(2) + ', ' + "95% ci: " + d[y_data_lb].toFixed(2) + "/" + d[y_data_ub].toFixed(2));
+            };
             })
         .style({
            'line-height': '1',
@@ -107,8 +125,10 @@ d3_chart2d.prototype.add_verticalbarsdata1errorbars = function () {
 
     var x_data = this.data1keymap.xdata;
     var y_data = this.data1keymap.ydata;
-    var y_data_lb = this.data1keymap.ydatalb;
-    var y_data_ub = this.data1keymap.ydataub;
+    if (typeof(this.data1keymap.ydatalb)!=="undefined"){var y_data_lb = this.data1keymap.ydatalb;}
+    else{return;}
+    if (typeof(this.data1keymap.ydataub)!=="undefined"){var y_data_ub = this.data1keymap.ydataub;}
+    else{return;}
     var series_label = this.data1keymap.serieslabel;
     var x1scale = this.x1scale;
     var x2scale = this.x2scale;
