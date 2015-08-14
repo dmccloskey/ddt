@@ -21,9 +21,10 @@ d3_chart2d.prototype.add_verticalbarsdata1 = function () {
     var colorscale = this.colorscale;
     var id = this.id;
 
-    if (this.data1.nestdatafiltered.length===0){
-        return;
-        };
+//    // Not needed
+//     if (this.data1.nestdatafiltered.length===0){
+//         return;
+//         };
 
     this.barlabel = this.svgg.selectAll(".labels")
         .data(this.data1.nestdatafiltered)
