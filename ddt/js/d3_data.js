@@ -188,3 +188,7 @@ d3_data.prototype.convert_listdatafiltered2escherobjectlist = function(key_I,val
     //return escherobjectlist_O;
     return escherobject;
 };
+//addtional functions
+function escapeRegExp(string){
+  return string.replace(/[.*+?^${}()|[\]\\]/g, "\\$&");
+};
