@@ -404,3 +404,12 @@ d3_table.prototype.add_datafiltermenuresetbutton = function (tileid_I,resetbutto
     this.resetbutton = d3.select("#"+tileid+'submitbutton'+resetbuttonid)
         .on("click",reset);
 };
+d3_table.prototype.add_tablesort = function(sort_settings_I){
+    // add table sort using jquery
+    var id = this.id;
+    $(document).ready(function() 
+        { 
+            $("#"+id+"table").tablesorter(); 
+        } 
+    );  
+};

@@ -506,7 +506,15 @@ d3_chart2d.prototype.add_boxandwhiskersdata1tooltipandfill_mean = function () {
     // set the tooltip
     this.tooltip = d3.tip().attr('class', 'd3-tip')
         .html(function(d){
-            return (d[series_label] + ': ' + "mean: " + d[y_data_mean].toFixed(2) + ', ' + "ci 95%: " + d[y_data_lb].toFixed(2) + "/" + d[y_data_ub].toFixed(2));
+            if (typeof(d[y_data_lb])!=="undefined" && typeof(d[y_data_mean])!=="undefined"){
+                return (d[series_label] + ': ' + "mean: " + d[y_data_mean].toFixed(2) + ', ' + "ci 95%: " + d[y_data_lb].toFixed(2) + "/" + d[y_data_ub].toFixed(2));
+            } else if (typeof(d[y_data_lb])==="undefined"){
+                return (d[series_label] + ': ' + "mean: " + d[y_data_mean].toFixed(2));
+            } else if (typeof(d[y_data_mean])==="undefined"){
+                return (d[series_label] + ': ' + "ci 95%: " + d[y_data_lb].toFixed(2) + "/" + d[y_data_ub].toFixed(2));
+            } else {
+                return d[series_label];
+            };
             })
         .style({
            'line-height': '1',

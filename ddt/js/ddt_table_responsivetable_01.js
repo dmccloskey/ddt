@@ -44,5 +44,6 @@ ddt_table_responsivetable_01.prototype.make_table = function(data_I,parameters_I
 		this.set_tablestyle();
 		this.set_headerstyle();
 		this.set_cellstyle();
+		this.add_tablesort(parameters_I.tablesort);
     };
 }
