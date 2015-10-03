@@ -84,7 +84,7 @@ d3_chart2d.prototype.add_verticalbarsdata1tooltipandfill = function () {
     // set the tooltip
     this.tooltip = d3.tip().attr('class', 'd3-tip')
         .html(function(d){
-            if(typeof(y_data_lb)==="undefined" || typeof(y_data_ub)==="undefined"){
+            if(typeof(y_data_lb)==="undefined" || typeof(y_data_ub)==="undefined" || y_data_lb===null || y_data_ub===null){
                 return (d[series_label] + ': ' + "value: " + d[y_data].toFixed(2));
             }
             else{
@@ -130,9 +130,9 @@ d3_chart2d.prototype.add_verticalbarsdata1errorbars = function () {
 
     var x_data = this.data1keymap.xdata;
     var y_data = this.data1keymap.ydata;
-    if (typeof(this.data1keymap.ydatalb)!=="undefined"){var y_data_lb = this.data1keymap.ydatalb;}
+    if (typeof(this.data1keymap.ydatalb)!=="undefined" && this.data1keymap.ydatalb!==null){var y_data_lb = this.data1keymap.ydatalb;}
     else{return;}
-    if (typeof(this.data1keymap.ydataub)!=="undefined"){var y_data_ub = this.data1keymap.ydataub;}
+    if (typeof(this.data1keymap.ydataub)!=="undefined" && this.data1keymap.ydataub!==null){var y_data_ub = this.data1keymap.ydataub;}
     else{return;}
     var series_label = this.data1keymap.serieslabel;
     var x1scale = this.x1scale;
