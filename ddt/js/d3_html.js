@@ -207,7 +207,7 @@ d3_html.prototype.update_forminput = function(textarea_valuetext_I){
     else{var textarea_valuetext = this.data.convert_filter2stringmenuinput();};
     var id = this.id;
 
-    for (i=0;i<textarea_valuetext.length;i++){
+    for (var i=0;i<textarea_valuetext.length;i++){
         d3.select("#"+id + 'forminput'+ textarea_valuetext[i].text).node().value=textarea_valuetext[i].value;
     };
 };
@@ -908,4 +908,78 @@ d3_html.prototype.set_formsubmitbuttonidtext = function(button_idtext_I) {
     //e.g. {'id':'submit1','text':'submit'};
     if (!button_idtext_I){this.button_idtext = {'id':'submit1','text':'submit'};}
     else{this.button_idtext = button_idtext_I;}
+};
+d3_html.prototype.add_jsonimportandexportbutton2tile = function () {
+    // add button to export the table element
+    // http://www.html5rocks.com/en/tutorials/file/dndfiles/
+    var this_ = this;
+
+    function importfiltermenujson(){
+        var file1 = this.files[0];
+        var reader = new FileReader();
+
+        // Closure to capture the file information.
+        reader.onload = (function(theFile) {
+            return function(e) {
+                // Get the data file
+                var result = e.target.result;
+                var filtermenu = JSON.parse(result);
+                this_.data.filters = filtermenu;
+                this_.data.filter_stringdata();
+                this_.render();
+            };
+        })(file1);
+        
+//         // Closure to remove the file information.
+//         reader.onloadend = (function(theFile) {
+//             return function(e) {
+//                 // Get the data file
+//                 var result = e.target.result;
+//                 var filtermenu = JSON.parse(result);
+//                 this_.data.filters = filtermenu;
+//                 this_.data.filter_stringdata();
+//                 this_.render();
+//             };
+//         })(file1);
+
+        reader.readAsText(file1);
+//         var filtermenu = reader.result;
+//         this_.import_filtermenujson(filtermenu); //necessary to pass svg as "this"
+    };
+
+    function exportfiltermenujson(){
+        this_.export_filtermenujson(); //necessary to pass svg as "this"
+    };
+    var jsonimportandexportbutton = d3.select('#'+this.tileid+"panel-footer").append("form");
+
+    var jsonexportbutton_input = jsonimportandexportbutton.append("input");
+    jsonexportbutton_input.attr("type", "button")
+        .attr("value", "save filter");
+    jsonexportbutton_input.on("click", exportfiltermenujson);
+
+    var jsonimportbutton_input = jsonimportandexportbutton.append("input");
+    jsonimportbutton_input.attr("type", "file")
+        //.attr("class","file-input")
+        .attr("value", "import filter");
+    jsonimportbutton_input.on("change", importfiltermenujson);
+
+};
+d3_html.prototype.export_filtermenujson = function () {
+    // export the filter as json
+
+    var a = document.createElement('a');
+    a.download ="filter" + '.json'; // file name
+    var j = JSON.stringify(this.data.filters);
+    a.setAttribute("href-lang", "application/json");
+    a.href = 'data:application/json;charset=utf-8,' + j;
+    // <a> constructed, simulate mouse click on it
+    var ev = document.createEvent("MouseEvents");
+    ev.initMouseEvent("click", true, false, self, 0, 0, 0, 0, 0, false, false, false, false, 0, null);
+    a.dispatchEvent(ev);
+};
+
+d3_html.prototype.import_filtermenujson = function(){
+    // import the filter from json
+    // TODO...
+    var filtermenu = null;
 };

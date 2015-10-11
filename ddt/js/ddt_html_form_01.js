@@ -17,12 +17,14 @@ ddt_html_form_01.prototype.make_html = function(data_I,parameters_I){
 	this.set_ddthtml()
     this.add_data(data_I);
     if (parameters_I.htmlkeymap){this.set_datakeymap(parameters_I.htmlkeymap);}
+	this.ddthtml.add_jsonimportandexportbutton2tile();
 
 	// html specific properties
     this.ddthtml.render = function(){
         this.add_html2tile();
         this.add_form();
         this.add_input2form();
+        this.update_forminput()
         // The below code causes the application to crash
         // reason: unknown
         // hypothesis: binding of "onclick" event generates an infinite loop
@@ -34,6 +36,7 @@ ddt_html_form_01.prototype.make_html = function(data_I,parameters_I){
 };
 ddt_html_form_01.prototype.update_html = function(data_I){
     // update form
-    var input = data_I[0].convert_filter2stringmenuinput();
-    this.ddthtml.update_forminput(input);
+    this.ddthmtl.render();
+//     var input = data_I[0].convert_filter2stringmenuinput();
+//     this.ddthtml.update_forminput(input);
 };
