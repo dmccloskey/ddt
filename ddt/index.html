@@ -63,9 +63,9 @@
     <script src="js/ddt_tile.js"></script>
     <script src="js/ddt_container.js"></script>
 	
-	<!-- ddt unit tests -->
-    <script src="js/unittests.js"></script>
-    <script src="data/data_unittests.js"></script>
+ 	<!-- ddt unit tests -->
+<!--     <script src="js/unittests.js"></script>
+    <script src="data/data_unittests.js"></script> -->
     	
 	<!-- ddt -->
     <script src="data/ddt_data.js"></script>
@@ -97,8 +97,13 @@
 		ddt_test.set_parameters(parameters);
 		ddt_test.add_data(data);
 		ddt_test.set_tile2datamap(tile2datamap);
+		//container manipuation features
+		ddt_test.add_header2container();
 		ddt_test.add_jsonexportbutton2container();
+		ddt_test.add_jsonimportbutton2container();
+		//make the container
 		ddt_test.make_container();
+		//add the container filter buttons
 		if (typeof(filtermenu) !== "undefined") { ddt_test.add_datafiltermenubuttons(filtermenu); }
 		else { ddt_test.add_datafiltermenubuttons(); };
 	</script>

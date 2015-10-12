@@ -56,7 +56,15 @@ d3_data.prototype.filter_stringdata = function () {
             if (typeof listdatacopy[i][filter] !== "undefined"){
                 if (listdatacopy[i][filter]){
                     var str_compare = listdatacopy[i][filter].toString(); //ensure that the value is a string
-                    var str_filter = this.filters[filter].join('|');  //breaks for 'mmol*gDCW*hr-1' because * is a regular expression
+                    var lst_filters = [];
+                    this.filters[filter].forEach(function(d){
+                        var str_d = '^';
+                        str_d += escapeRegExp(d);
+                        str_d += '$';
+                        lst_filters.push(str_d);
+                    });
+                    var str_filter = lst_filters.join('|');
+                    //var str_filter = this.filters[filter].join('|');  //breaks for 'mmol*gDCW*hr-1' because * is a regular expression
                     if (!str_compare.match(str_filter)) {
                         listdatacopy[i]['used_'] = false;
                     };
@@ -188,7 +196,7 @@ d3_data.prototype.convert_listdatafiltered2escherobjectlist = function(key_I,val
     //return escherobjectlist_O;
     return escherobject;
 };
-//addtional functions
+//additional functions
 function escapeRegExp(string){
-  return string.replace(/[.*+?^${}()|[\]\\]/g, "\\$&");
+    return string.replace(/[.*+?^${}()|[\]\\]/g, "\\$&");
 };

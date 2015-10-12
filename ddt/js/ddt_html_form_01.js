@@ -17,8 +17,7 @@ ddt_html_form_01.prototype.make_html = function(data_I,parameters_I){
 	this.set_ddthtml()
     this.add_data(data_I);
     if (parameters_I.htmlkeymap){this.set_datakeymap(parameters_I.htmlkeymap);}
-	this.ddthtml.add_jsonimportbutton2tile();
-	this.ddthtml.add_jsonexportbutton2tile();
+	this.ddthtml.add_jsonimportandexportbutton2tile();
 
 	// html specific properties
     this.ddthtml.render = function(){

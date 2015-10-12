@@ -917,7 +917,7 @@ d3_html.prototype.export_filtermenujson = function () {
     a.download ="filter" + '.json'; // file name
     var j = JSON.stringify(this.data.filters);
     a.setAttribute("href-lang", "application/json");
-    a.href = 'data:application/json;charset=utf-8,' + j;
+    a.href = 'data:text/json;charset=utf-8,' + j;
     // <a> constructed, simulate mouse click on it
     var ev = document.createEvent("MouseEvents");
     ev.initMouseEvent("click", true, false, self, 0, 0, 0, 0, 0, false, false, false, false, 0, null);
@@ -988,7 +988,7 @@ d3_html.prototype.add_jsonexportbutton2tile = function () {
         this_.export_filtermenujson(); //necessary to pass svg as "this"
     };
 
-    var jsonexportbutton = d3.select('#'+this.tileid+"panel-footer")
+    var jsonexportbutton = this.htmlfooter
         .append("div")
         //.attr("class","glyphicon glyphicon-download pull-right")
         .attr("class","glyphicon glyphicon-save pull-right")
@@ -998,7 +998,21 @@ d3_html.prototype.add_jsonexportbutton2tile = function () {
         .attr("title","save filter");
     jsonexportbutton.on("click", exportfiltermenujson);
 };
+d3_html.prototype.add_jsonimportandexportbutton2tile = function () {
+    // add import and export buttons to tileid
+    var tileid = this.tileid;
 
+    // necessary to encapsolate import/export functions
+    this.htmlfooter = d3.select('#'+this.tileid+"panel-footer")
+        .append("div")
+        .attr("class","row")
+        .attr("id",tileid + 'footer')
+        .append("div")
+        .attr("class","col-lg-12");
+    
+    this.add_jsonexportbutton2tile();
+    this.add_jsonimportbutton2tile();
+};
 d3_html.prototype.add_jsonimportbutton2tile = function () {
     // add button to export the table element
     // http://www.html5rocks.com/en/tutorials/file/dndfiles/
@@ -1037,7 +1051,7 @@ d3_html.prototype.add_jsonimportbutton2tile = function () {
 //         this_.import_filtermenujson(filtermenu); //necessary to pass svg as "this"
     };
 
-    var jsonimportbutton = d3.select('#'+this.tileid+"panel-footer")
+    var jsonimportbutton = this.htmlfooter
         .append("div")
         //.attr("class","glyphicon glyphicon-upload pull-right")
         .attr("class","glyphicon glyphicon-open pull-right")

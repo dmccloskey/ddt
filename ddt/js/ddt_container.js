@@ -242,10 +242,17 @@ ddt_container.prototype.add_datafiltermenubuttons = function(datafiltermenu_I){
 ddt_container.prototype.__main__ = function(parameters,data,tile2datamap,filtermenu){
     //run
     //ddt_test = new ddt_container();
+		//ddt data and template
     this.set_parameters(parameters);
     this.add_data(data);
     this.set_tile2datamap(tile2datamap);
+    //container manipuation features
+    this.add_header2container();
+    this.add_jsonexportbutton2container();
+    this.add_jsonimportbutton2container();
+    //make the container
     this.make_container();
+    //add the container filter buttons
     if (typeof filtermenu !== "undefined") { ddt_test.add_datafiltermenubuttons(filtermenu); }
     else { ddt_test.add_datafiltermenubuttons(); };
 };
@@ -292,10 +299,10 @@ ddt_container.prototype.get_alldata_string = function(){
     var tile2datamap_str = this.get_data_string();
     var filtermenu_str = this.get_data_string();
     var alldata_O = '';
-    if (parameters_str){alldata_O = 'var parameters = ' + parameters_str + ';'};
-    if (data_str){alldata_O = 'var data = ' + data_str + ';'};
-    if (tile2datamap_str){alldata_O = 'var tile2datamap = ' + tile2datamap_str + ';'};
-    if (filtermenu_str){alldata_O = 'var filtermenu = ' + filtermenu_str + ';'};
+    if (parameters_str){alldata_O += 'var parameters = ' + parameters_str + ';'};
+    if (data_str){alldata_O += 'var data = ' + data_str + ';'};
+    if (tile2datamap_str){alldata_O += 'var tile2datamap = ' + tile2datamap_str + ';'};
+    if (filtermenu_str){alldata_O += 'var filtermenu = ' + filtermenu_str + ';'};
     return alldata_O;
 };
 ddt_container.prototype.export_alldatajson = function () {
@@ -312,6 +319,18 @@ ddt_container.prototype.export_alldatajson = function () {
     ev.initMouseEvent("click", true, false, self, 0, 0, 0, 0, 0, false, false, false, false, 0, null);
     a.dispatchEvent(ev);
 };
+ddt_container.prototype.add_header2container = function(){
+    // add a header row to the container
+    var containerid = this.containerid;
+
+    this.containerheader = d3.select('#'+this.containerid)
+        .append("div")
+        .attr("class","row")
+        .attr("id",containerid + 'header')
+        .append("div")
+        .attr("class","col-lg-12");
+
+}
 ddt_container.prototype.add_jsonexportbutton2container = function (){
     // add button to export all json data from the container to file
     var this_ = this;
@@ -321,11 +340,7 @@ ddt_container.prototype.add_jsonexportbutton2container = function (){
         this_.export_alldatajson(); //necessary to pass svg as "this"
     };
 
-    var jsonexportbutton = d3.select('#'+this.containerid)
-        .append("div")
-        .attr("class","row")
-        .append("div")
-        .attr("class","col-sm-3")
+    var jsonexportbutton = this.containerheader
         .append("div")
         //.attr("class","glyphicon glyphicon-download pull-right")
         .attr("class","glyphicon glyphicon-floppy-save pull-left")
@@ -334,4 +349,37 @@ ddt_container.prototype.add_jsonexportbutton2container = function (){
         .attr("data-toggle","tooltip")
         .attr("title","save container");
     jsonexportbutton.on("click", exportalldatajson);
+};
+ddt_container.prototype.add_jsonimportbutton2container = function (){
+    // add button to import all a new container from a json data file
+    var this_ = this;
+    var containerid = this.containerid;
+
+    function importalldatajson(){
+        var file1 = this.files[0];
+        var reader = new FileReader();
+
+        // Closure to capture the file information.
+        reader.onload = (function(theFile) {
+            return function(e) {
+                // Get the data file
+                var result = e.target.result;
+                var ddt_data = JSON.parse(result);
+                //todo parse the data
+                this_.__main__(parameters,data,tile2datamap,filtermenu);
+            };
+        })(file1);
+
+        reader.readAsText(file1);
+    };
+
+    var jsonimportbutton = this.containerheader
+        .append("div")
+        //.attr("class","glyphicon glyphicon-download pull-right")
+        .attr("class","glyphicon glyphicon-floppy-open pull-left")
+        .attr("id", containerid + 'jsonexportbutton')
+        .style({"cursor":"pointer"})
+        .attr("data-toggle","tooltip")
+        .attr("title","open container");
+    jsonimportbutton.on("click", importalldatajson);
 };
