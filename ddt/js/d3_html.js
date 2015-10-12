@@ -208,7 +208,8 @@ d3_html.prototype.update_forminput = function(textarea_valuetext_I){
     var id = this.id;
 
     for (var i=0;i<textarea_valuetext.length;i++){
-        d3.select("#"+id + 'forminput'+ textarea_valuetext[i].text).node().value=textarea_valuetext[i].value;
+        var node = d3.select("#"+id + 'forminput'+ textarea_valuetext[i].text).node();
+        if (node){node.value=textarea_valuetext[i].value;};
     };
 };
 d3_html.prototype.add_submitbutton2form = function (button_idtext_I) {

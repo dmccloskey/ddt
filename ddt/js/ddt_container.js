@@ -248,8 +248,8 @@ ddt_container.prototype.__main__ = function(parameters,data,tile2datamap,filterm
     this.set_tile2datamap(tile2datamap);
     //container manipuation features
     this.add_header2container();
-    this.add_jsonexportbutton2container();
     this.add_jsonimportbutton2container();
+    this.add_jsonexportbutton2container();
     //make the container
     this.make_container();
     //add the container filter buttons
@@ -364,8 +364,17 @@ ddt_container.prototype.add_jsonimportbutton2container = function (){
             return function(e) {
                 // Get the data file
                 var result = e.target.result;
-                var ddt_data = JSON.parse(result);
-                //todo parse the data
+                //TODO: validate the input
+//                 var parameters = undefined;
+//                 var data = undefined;
+//                 var tile2datamap = undefined;
+//                 var filtermenu = undefined;
+                eval(result);
+                if (typeof filtermenu === "undefined") { var filtermenu = undefined; };
+                // delete the existing container
+                this_.remove_tiles();
+                this_.remove_containerheader();
+                // make a new container with the new data
                 this_.__main__(parameters,data,tile2datamap,filtermenu);
             };
         })(file1);
@@ -381,5 +390,39 @@ ddt_container.prototype.add_jsonimportbutton2container = function (){
         .style({"cursor":"pointer"})
         .attr("data-toggle","tooltip")
         .attr("title","open container");
-    jsonimportbutton.on("click", importalldatajson);
+
+    var jsonimportbutton_input = jsonimportbutton
+        .append("input")
+        .attr("type", "file")
+        .style({
+            "position": "absolute",
+            "top": "0",
+            "right": "0",
+            "min-width": "100%",
+            "min-height": "100%",
+            "font-size": "100px",
+            "text-align": "right",
+            "filter": "alpha(opacity=0)",
+            "opacity":"0",
+            "outline": "none",
+            "background": "white",
+            "cursor": "inherit",
+            "display": 'block',
+        });
+    jsonimportbutton_input.on("change", importalldatajson);
+};
+ddt_container.prototype.remove_tiles = function(){
+    // remove all tiles in the container
+
+    this.tiles.forEach(function(d){
+        d.tile.remove_tile();
+    });
+};
+ddt_container.prototype.remove_containerheader = function(){
+    // remove the container header
+    var containerid = this.containerid;
+
+    this.containerheader = d3.selectAll('#'+this.containerid)
+        .remove();
+    this.containerid = null;
 };

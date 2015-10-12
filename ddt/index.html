@@ -97,10 +97,10 @@
 		ddt_test.set_parameters(parameters);
 		ddt_test.add_data(data);
 		ddt_test.set_tile2datamap(tile2datamap);
-		//container manipuation features
+		//container manipuation features (order matters)
 		ddt_test.add_header2container();
-		ddt_test.add_jsonexportbutton2container();
 		ddt_test.add_jsonimportbutton2container();
+		ddt_test.add_jsonexportbutton2container();
 		//make the container
 		ddt_test.make_container();
 		//add the container filter buttons
