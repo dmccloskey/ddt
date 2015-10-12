@@ -97,6 +97,7 @@
 		ddt_test.set_parameters(parameters);
 		ddt_test.add_data(data);
 		ddt_test.set_tile2datamap(tile2datamap);
+		ddt_test.add_jsonexportbutton2container();
 		ddt_test.make_container();
 		if (typeof(filtermenu) !== "undefined") { ddt_test.add_datafiltermenubuttons(filtermenu); }
 		else { ddt_test.add_datafiltermenubuttons(); };

@@ -909,10 +909,101 @@ d3_html.prototype.set_formsubmitbuttonidtext = function(button_idtext_I) {
     if (!button_idtext_I){this.button_idtext = {'id':'submit1','text':'submit'};}
     else{this.button_idtext = button_idtext_I;}
 };
-d3_html.prototype.add_jsonimportandexportbutton2tile = function () {
+
+d3_html.prototype.export_filtermenujson = function () {
+    // export the filter as json
+
+    var a = document.createElement('a');
+    a.download ="filter" + '.json'; // file name
+    var j = JSON.stringify(this.data.filters);
+    a.setAttribute("href-lang", "application/json");
+    a.href = 'data:application/json;charset=utf-8,' + j;
+    // <a> constructed, simulate mouse click on it
+    var ev = document.createEvent("MouseEvents");
+    ev.initMouseEvent("click", true, false, self, 0, 0, 0, 0, 0, false, false, false, false, 0, null);
+    a.dispatchEvent(ev);
+};
+
+//TODO: convert import closure to seperate function
+d3_html.prototype.import_filtermenujson = function(){
+    // import the filter from json
+    // TODO...
+    var filtermenu = null;
+};
+
+//TODO: convert add_jsonimportandexportbutton2tile
+// d3_html.prototype.add_submitbutton2form = function (button_idtext_I) {
+//     // add submit button
+//     // INPUT:
+//     //e.g. {'id':'submit1','text':'submit'};
+//     if (!button_idtext_I){var button_idtext = {'id':'submit1','text':'submit'};}
+//     else{var button_idtext = button_idtext_I;}
+
+//     var id = this.id;
+//     var tileid = this.tileid;
+
+//     // note: chaining submitbuttongroup to htmlformenter instead of htmlform
+//     // reason:      ensures that buttons will be added only once after a listener event
+//     //              has been added to the property of the button.
+//     this.submitbuttongroup = this.htmlformenter.selectAll(".btn-group")
+//         .data(button_idtext)
+
+//     this.submitbuttongroup.exit().remove();
+
+//     this.submitbuttongroupenter = this.submitbuttongroup.enter()
+//         .append("div")
+//         .attr("class","btn-group")
+//         .attr("id", id + "submitbtn-group");
+
+//     this.submitbutton = this.submitbuttongroup.selectAll(".btn btn-default")
+//         .data(function(row){
+//             var idtext = [];
+//             idtext.push({id:row.id,text:row.text});
+//             return idtext;
+//         });
+
+//     this.submitbutton.exit().remove();
+
+//     this.submitbutton.transition()
+//         .attr("type","submit")
+//         .attr("class", "btn btn-default")
+//         .attr("id", function(d){return id + 'submitbutton' + d.id;})
+//         .text(function(d){return d.text;});
+
+//     this.submitbuttonenter = this.submitbutton.enter()
+//         .append("button")
+//         .attr("type","submit")
+//         .attr("class", "btn btn-default")
+//         .attr("id", function(d){return id + 'submitbutton' + d.id;})
+//         .text(function(d){return d.text;});
+// };
+
+d3_html.prototype.add_jsonexportbutton2tile = function () {
     // add button to export the table element
     // http://www.html5rocks.com/en/tutorials/file/dndfiles/
     var this_ = this;
+    var tileid = this.tileid;
+
+    function exportfiltermenujson(){
+        this_.export_filtermenujson(); //necessary to pass svg as "this"
+    };
+
+    var jsonexportbutton = d3.select('#'+this.tileid+"panel-footer")
+        .append("div")
+        //.attr("class","glyphicon glyphicon-download pull-right")
+        .attr("class","glyphicon glyphicon-save pull-right")
+        .attr("id", tileid + 'jsonexportbutton')
+        .style({"cursor":"pointer"})
+        .attr("data-toggle","tooltip")
+        .attr("title","save filter");
+    jsonexportbutton.on("click", exportfiltermenujson);
+};
+
+d3_html.prototype.add_jsonimportbutton2tile = function () {
+    // add button to export the table element
+    // http://www.html5rocks.com/en/tutorials/file/dndfiles/
+    var this_ = this;
+    var tileid = this.tileid;
 
     function importfiltermenujson(){
         var file1 = this.files[0];
@@ -943,31 +1034,19 @@ d3_html.prototype.add_jsonimportandexportbutton2tile = function () {
 //         })(file1);
 
         reader.readAsText(file1);
-//         var filtermenu = reader.result;
 //         this_.import_filtermenujson(filtermenu); //necessary to pass svg as "this"
     };
 
-    var inputgroup = d3.select('#'+this.tileid+"panel-footer")
+    var jsonimportbutton = d3.select('#'+this.tileid+"panel-footer")
         .append("div")
-        .attr("class","row")
-        .append("div")
-        .attr("class","col-lg-6");
-//         .append("div")
-//         .attr("class","input-group");
+        //.attr("class","glyphicon glyphicon-upload pull-right")
+        .attr("class","glyphicon glyphicon-open pull-right")
+        .attr("id", tileid + 'jsonimportbutton')
+        .style({"cursor":"pointer"})
+        .attr("data-toggle","tooltip")
+        .attr("title","import filter");
 
-    var jsonexportbutton_span = inputgroup.append("button")
-        .attr("class","btn btn-default")
-        .text("save filter")
-        .attr("type", "button");
-    jsonexportbutton_span.on("click", exportfiltermenujson);
-
-    var jsonimportbutton_span = inputgroup.append("span")
-        .attr("class","input-group-btn")
-        .append("span")
-        .attr("class","file-input btn btn-default btn-file")
-        .text("import filter");
-
-    var jsonimportbutton_input = jsonimportbutton_span
+    var jsonimportbutton_input = jsonimportbutton
         .append("input")
         .attr("type", "file")
         .style({
@@ -986,24 +1065,4 @@ d3_html.prototype.add_jsonimportandexportbutton2tile = function () {
             "display": 'block',
         });
     jsonimportbutton_input.on("change", importfiltermenujson);
-
-};
-d3_html.prototype.export_filtermenujson = function () {
-    // export the filter as json
-
-    var a = document.createElement('a');
-    a.download ="filter" + '.json'; // file name
-    var j = JSON.stringify(this.data.filters);
-    a.setAttribute("href-lang", "application/json");
-    a.href = 'data:application/json;charset=utf-8,' + j;
-    // <a> constructed, simulate mouse click on it
-    var ev = document.createEvent("MouseEvents");
-    ev.initMouseEvent("click", true, false, self, 0, 0, 0, 0, 0, false, false, false, false, 0, null);
-    a.dispatchEvent(ev);
-};
-
-d3_html.prototype.import_filtermenujson = function(){
-    // import the filter from json
-    // TODO...
-    var filtermenu = null;
 };

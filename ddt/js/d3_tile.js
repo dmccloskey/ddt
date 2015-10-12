@@ -142,12 +142,32 @@ d3_tile.prototype.add_removebutton2header = function(){
         d3.selectAll('#'+tileid).remove();
         this_.tile = null;
     };
+    
+    //Split #1
+//     var removebutton = this.tileheader.append("a")
+//         .attr("class","pull-right")
+//         .attr("id", tileid + 'removebutton')
+//         .text("remove")
+//         .on("click",removetile);
 
-    var removebutton = this.tileheader.append("a")
-        .attr("class","pull-right")
+    //Split #2
+//     var removebutton = this.tileheader.append("button")
+//         .attr("class","btn btn-danger pull-right")
+//         .attr("id", tileid + 'removebutton')
+//         .attr("type", 'button')
+//         .append("span")
+//         .attr("class","glyphicon glyphicon-trash");
+//         //.text("remove")
+//     removebutton.on("click",removetile);
+
+    //Split #3
+    var removebutton = this.tileheader.append("div")
+        .attr("class","glyphicon glyphicon-trash pull-right")
         .attr("id", tileid + 'removebutton')
-        .text("remove")
-        .on("click",removetile);
+        .style({"cursor":"pointer"})
+        .attr("data-toggle","tooltip")
+        .attr("title","remove");
+    removebutton.on("click",removetile);
 };
 d3_tile.prototype.add_body2tile = function (title_I){
     //add title to tileid

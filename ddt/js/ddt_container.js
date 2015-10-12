@@ -248,4 +248,90 @@ ddt_container.prototype.__main__ = function(parameters,data,tile2datamap,filterm
     this.make_container();
     if (typeof filtermenu !== "undefined") { ddt_test.add_datafiltermenubuttons(filtermenu); }
     else { ddt_test.add_datafiltermenubuttons(); };
-}
+};
+ddt_container.prototype.get_parameters_string = function(){
+    //return the parameters object in string format
+    if (typeof this.parameters !== "undefined"){
+        var parameters_O = JSON.stringify(this.parameters);
+    } else {
+        var parameters_O = null;
+    };
+    return parameters_O
+};
+ddt_container.prototype.get_data_string = function(){
+    //return the data object in string format
+    if (typeof this.data !== "undefined"){
+        var data_O = JSON.stringify(this.data);
+    } else {
+        var data_O = null;
+    };
+    return data_O
+};
+ddt_container.prototype.get_tile2datamap_string = function(){
+    //return the tile2datamap object in string format
+    if (typeof this.tile2datamap !== "undefined"){
+        var tile2datamap_O = JSON.stringify(this.tile2datamap);
+    } else {
+        var tile2datamap_O = null;
+    };
+    return tile2datamap_O
+};
+ddt_container.prototype.get_filtermenu_string = function(){
+    //return the filtermenu object in string format
+    if (typeof this.filtermenu !== "undefined"){
+        var filtermenu_O = JSON.stringify(this.filtermenu);
+    } else {
+        var filtermenu_O = null;
+    };
+    return filtermenu_O
+};
+ddt_container.prototype.get_alldata_string = function(){
+    //return all container data in string format
+    var parameters_str = this.get_data_string();
+    var data_str = this.get_data_string();
+    var tile2datamap_str = this.get_data_string();
+    var filtermenu_str = this.get_data_string();
+    var alldata_O = '';
+    if (parameters_str){alldata_O = 'var parameters = ' + parameters_str + ';'};
+    if (data_str){alldata_O = 'var data = ' + data_str + ';'};
+    if (tile2datamap_str){alldata_O = 'var tile2datamap = ' + tile2datamap_str + ';'};
+    if (filtermenu_str){alldata_O = 'var filtermenu = ' + filtermenu_str + ';'};
+    return alldata_O;
+};
+ddt_container.prototype.export_alldatajson = function () {
+    // export all container data as json
+
+    var a = document.createElement('a');
+    a.download ="container" + '.json'; // file name
+    var j = this.get_alldata_string();
+    a.setAttribute("href-lang", "application/json");
+    // test/json instead of application/json preserves white spaces!
+    a.href = 'data:text/json;charset=utf-8,' + j;
+    // <a> constructed, simulate mouse click on it
+    var ev = document.createEvent("MouseEvents");
+    ev.initMouseEvent("click", true, false, self, 0, 0, 0, 0, 0, false, false, false, false, 0, null);
+    a.dispatchEvent(ev);
+};
+ddt_container.prototype.add_jsonexportbutton2container = function (){
+    // add button to export all json data from the container to file
+    var this_ = this;
+    var containerid = this.containerid;
+
+    function exportalldatajson(){
+        this_.export_alldatajson(); //necessary to pass svg as "this"
+    };
+
+    var jsonexportbutton = d3.select('#'+this.containerid)
+        .append("div")
+        .attr("class","row")
+        .append("div")
+        .attr("class","col-sm-3")
+        .append("div")
+        //.attr("class","glyphicon glyphicon-download pull-right")
+        .attr("class","glyphicon glyphicon-floppy-save pull-left")
+        .attr("id", containerid + 'jsonexportbutton')
+        .style({"cursor":"pointer"})
+        .attr("data-toggle","tooltip")
+        .attr("title","save container");
+    jsonexportbutton.on("click", exportalldatajson);
+};
