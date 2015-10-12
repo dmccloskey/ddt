@@ -929,7 +929,7 @@ d3_html.prototype.add_jsonimportandexportbutton2tile = function () {
                 this_.render();
             };
         })(file1);
-        
+
 //         // Closure to remove the file information.
 //         reader.onloadend = (function(theFile) {
 //             return function(e) {
@@ -947,20 +947,44 @@ d3_html.prototype.add_jsonimportandexportbutton2tile = function () {
 //         this_.import_filtermenujson(filtermenu); //necessary to pass svg as "this"
     };
 
-    function exportfiltermenujson(){
-        this_.export_filtermenujson(); //necessary to pass svg as "this"
-    };
-    var jsonimportandexportbutton = d3.select('#'+this.tileid+"panel-footer").append("form");
+    var inputgroup = d3.select('#'+this.tileid+"panel-footer")
+        .append("div")
+        .attr("class","row")
+        .append("div")
+        .attr("class","col-lg-6");
+//         .append("div")
+//         .attr("class","input-group");
 
-    var jsonexportbutton_input = jsonimportandexportbutton.append("input");
-    jsonexportbutton_input.attr("type", "button")
-        .attr("value", "save filter");
-    jsonexportbutton_input.on("click", exportfiltermenujson);
+    var jsonexportbutton_span = inputgroup.append("button")
+        .attr("class","btn btn-default")
+        .text("save filter")
+        .attr("type", "button");
+    jsonexportbutton_span.on("click", exportfiltermenujson);
 
-    var jsonimportbutton_input = jsonimportandexportbutton.append("input");
-    jsonimportbutton_input.attr("type", "file")
-        //.attr("class","file-input")
-        .attr("value", "import filter");
+    var jsonimportbutton_span = inputgroup.append("span")
+        .attr("class","input-group-btn")
+        .append("span")
+        .attr("class","file-input btn btn-default btn-file")
+        .text("import filter");
+
+    var jsonimportbutton_input = jsonimportbutton_span
+        .append("input")
+        .attr("type", "file")
+        .style({
+            "position": "absolute",
+            "top": "0",
+            "right": "0",
+            "min-width": "100%",
+            "min-height": "100%",
+            "font-size": "100px",
+            "text-align": "right",
+            "filter": "alpha(opacity=0)",
+            "opacity":"0",
+            "outline": "none",
+            "background": "white",
+            "cursor": "inherit",
+            "display": 'block',
+        });
     jsonimportbutton_input.on("change", importfiltermenujson);
 
 };
