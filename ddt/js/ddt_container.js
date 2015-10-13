@@ -242,82 +242,19 @@ ddt_container.prototype.add_datafiltermenubuttons = function(datafiltermenu_I){
 ddt_container.prototype.__main__ = function(parameters,data,tile2datamap,filtermenu){
     //run
     //ddt_test = new ddt_container();
-		//ddt data and template
-    this.set_parameters(parameters);
-    this.add_data(data);
-    this.set_tile2datamap(tile2datamap);
     //container manipuation features
     this.add_header2container();
     this.add_jsonimportbutton2container();
     this.add_jsonexportbutton2container();
+    //ddt data and template
+    this.set_parameters(parameters);
+    this.add_data(data);
+    this.set_tile2datamap(tile2datamap);
     //make the container
     this.make_container();
     //add the container filter buttons
     if (typeof filtermenu !== "undefined") { ddt_test.add_datafiltermenubuttons(filtermenu); }
     else { ddt_test.add_datafiltermenubuttons(); };
-};
-ddt_container.prototype.get_parameters_string = function(){
-    //return the parameters object in string format
-    if (typeof this.parameters !== "undefined"){
-        var parameters_O = JSON.stringify(this.parameters);
-    } else {
-        var parameters_O = null;
-    };
-    return parameters_O
-};
-ddt_container.prototype.get_data_string = function(){
-    //return the data object in string format
-    if (typeof this.data !== "undefined"){
-        var data_O = JSON.stringify(this.data);
-    } else {
-        var data_O = null;
-    };
-    return data_O
-};
-ddt_container.prototype.get_tile2datamap_string = function(){
-    //return the tile2datamap object in string format
-    if (typeof this.tile2datamap !== "undefined"){
-        var tile2datamap_O = JSON.stringify(this.tile2datamap);
-    } else {
-        var tile2datamap_O = null;
-    };
-    return tile2datamap_O
-};
-ddt_container.prototype.get_filtermenu_string = function(){
-    //return the filtermenu object in string format
-    if (typeof this.filtermenu !== "undefined"){
-        var filtermenu_O = JSON.stringify(this.filtermenu);
-    } else {
-        var filtermenu_O = null;
-    };
-    return filtermenu_O
-};
-ddt_container.prototype.get_alldata_string = function(){
-    //return all container data in string format
-    var parameters_str = this.get_data_string();
-    var data_str = this.get_data_string();
-    var tile2datamap_str = this.get_data_string();
-    var filtermenu_str = this.get_data_string();
-    var alldata_O = '';
-    if (parameters_str){alldata_O += 'var parameters = ' + parameters_str + ';'};
-    if (data_str){alldata_O += 'var data = ' + data_str + ';'};
-    if (tile2datamap_str){alldata_O += 'var tile2datamap = ' + tile2datamap_str + ';'};
-    if (filtermenu_str){alldata_O += 'var filtermenu = ' + filtermenu_str + ';'};
-    return alldata_O;
-};
-ddt_container.prototype.export_alldatajson = function () {
-    // export all container data as json
-
-    var a = document.createElement('a');
-    a.download ="container" + '.json'; // file name
-    var j = this.get_alldata_string();
-    a.setAttribute("href-lang", "application/json");
-    // test/json instead of application/json preserves white spaces!
-    a.href = 'data:text/json;charset=utf-8,' + j;
-    // <a> constructed, simulate mouse click on it
-    var ev = document.createEvent("MouseEvents");
-    ev.initMouseEvent("click", true, false, self, 0, 0, 0, 0, 0, false, false, false, false, 0, null);
-    a.dispatchEvent(ev);
 };
 ddt_container.prototype.add_header2container = function(){
     // add a header row to the container
@@ -370,17 +307,14 @@ ddt_container.prototype.add_jsonimportbutton2container = function (){
                 return function(e) {
                     // Get the data file
                     var result = e.target.result;
-                    //TODO: validate the input
-    //                 var parameters = undefined;
-    //                 var data = undefined;
-    //                 var tile2datamap = undefined;
-    //                 var filtermenu = undefined;
-                    eval(result);
-                    if (typeof filtermenu === "undefined") { var filtermenu = undefined; };
+                    // validate the input
+                    var ddtinput = new ddt_input();
+                    var ddtinputjson = JSON.parse(result);
+                    ddtinput.set_ddtdatajson(ddtinputjson);
                     // delete the existing container
                     this_.remove_container();
                     // make a new container with the new data
-                    this_.__main__(parameters,data,tile2datamap,filtermenu);
+                    this_.__main__(ddtinput.parameters,ddtinput.data,ddtinput.tile2datamap,ddtinput.filtermenu);
                 };
             })(file1);
 
@@ -441,4 +375,159 @@ ddt_container.prototype.remove_container = function(){
     this.tiles = [];
     this.data = [];
     this.tile2datamap = {};
-}
+};
+ddt_container.prototype.get_parameters_string = function(){
+    //return the parameters object in string format
+    if (typeof this.parameters !== "undefined"){
+        var parameters_O = JSON.stringify(this.parameters);
+    } else {
+        var parameters_O = null;
+    };
+    return parameters_O
+};
+ddt_container.prototype.get_data_string = function(filtereddataonly_I){
+    //return the data object in string format
+    //need to update to return the only keys, nestkeys, and data
+
+    if (typeof filtereddataonly_I === "undefined"){
+        var filtereddataonly = false;
+    } else {
+        var filtereddataonly = filtereddataonly_I;
+    };
+
+    if (typeof this.data !== "undefined" && filtereddataonly){
+        this.data.forEach(function(d){
+            d.remove_filtereddata();
+        });
+        var data_O = JSON.stringify(this.data);
+    } else if (typeof this.data !== "undefined" && !filtereddataonly){
+        var data_O = JSON.stringify(this.data);
+    } else {
+        var data_O = null;
+    };
+
+    return data_O
+};
+ddt_container.prototype.get_tile2datamap_string = function(){
+    //return the tile2datamap object in string format
+    if (typeof this.tile2datamap !== "undefined"){
+        var tile2datamap_O = JSON.stringify(this.tile2datamap);
+    } else {
+        var tile2datamap_O = null;
+    };
+    return tile2datamap_O
+};
+ddt_container.prototype.get_filtermenu_string = function(){
+    //return the filtermenu object in string format
+    if (typeof this.filtermenu !== "undefined"){
+        var filtermenu_O = JSON.stringify(this.filtermenu);
+    } else {
+        var filtermenu_O = null;
+    };
+    return filtermenu_O
+};
+ddt_container.prototype.get_alldata_string = function(){
+    //return all container data in string format
+    var parameters_str = this.get_parameters_string();
+    var data_str = this.get_data_string(true);
+    var tile2datamap_str = this.get_tile2datamap_string();
+    var filtermenu_str = this.get_filtermenu_string();
+    var alldata_O = '';
+    if (parameters_str){alldata_O += 'var parameters = ' + parameters_str + ';'};
+    if (data_str){alldata_O += 'var data = ' + data_str + ';'};
+    if (tile2datamap_str){alldata_O += 'var tile2datamap = ' + tile2datamap_str + ';'};
+    if (filtermenu_str){alldata_O += 'var filtermenu = ' + filtermenu_str + ';'};
+    return alldata_O;
+};
+ddt_container.prototype.export_alldatajson_string = function () {
+    // export all container data as json
+
+    var a = document.createElement('a');
+    a.download ="container" + '.json'; // file name
+    var j = this.get_alldata_string();
+    a.setAttribute("href-lang", "application/json");
+    // test/json instead of application/json preserves white spaces!
+    a.href = 'data:text/json;charset=utf-8,' + j;
+    // <a> constructed, simulate mouse click on it
+    var ev = document.createEvent("MouseEvents");
+    ev.initMouseEvent("click", true, false, self, 0, 0, 0, 0, 0, false, false, false, false, 0, null);
+    a.dispatchEvent(ev);
+};
+
+
+
+
+ddt_container.prototype.get_parameters = function(){
+    //return the parameters object in string format
+    if (typeof this.parameters !== "undefined"){
+        var parameters_O = this.parameters;
+    } else {
+        var parameters_O = null;
+    };
+    return parameters_O
+};
+ddt_container.prototype.get_data = function(filtereddataonly_I){
+    //return the data object in string format
+
+    if (typeof filtereddataonly_I === "undefined"){
+        var filtereddataonly = false;
+    } else {
+        var filtereddataonly = filtereddataonly_I;
+    };
+    
+    var data_O = [];
+    if (typeof this.data !== "undefined"){
+        this.data.forEach(function(d){
+            data_O.push(d.get_datajson(filtereddataonly));
+        });
+    } else {
+        var data_O = null;
+    };
+
+    return data_O
+};
+ddt_container.prototype.get_tile2datamap = function(){
+    //return the tile2datamap object in string format
+    if (typeof this.tile2datamap !== "undefined"){
+        var tile2datamap_O = this.tile2datamap;
+    } else {
+        var tile2datamap_O = null;
+    };
+    return tile2datamap_O
+};
+ddt_container.prototype.get_filtermenu = function(){
+    //return the filtermenu object in string format
+    if (typeof this.filtermenu !== "undefined"){
+        var filtermenu_O = this.filtermenu;
+    } else {
+        var filtermenu_O = null;
+    };
+    return filtermenu_O
+};
+ddt_container.prototype.get_alldata = function(){
+    //return all container data in string format
+    var parameters_json = this.get_parameters();
+    var data_json = this.get_data(true);
+    var tile2datamap_json = this.get_tile2datamap();
+    var filtermenu_json = this.get_filtermenu();
+    var alldata_O = {};
+    if (parameters_json){alldata_O['parameters'] = parameters_json;};
+    if (data_json){alldata_O['data'] = data_json;};
+    if (tile2datamap_json){alldata_O['tile2datamap'] = tile2datamap_json;};
+    if (filtermenu_json){alldata_O['filtermenu'] = filtermenu_json;};
+    return alldata_O;
+};
+ddt_container.prototype.export_alldatajson = function () {
+    // export all container data as json
+
+    var a = document.createElement('a');
+    a.download ="container" + '.json'; // file name
+    var j = JSON.stringify(this.get_alldata());
+    a.setAttribute("href-lang", "application/json");
+    // test/json instead of application/json preserves white spaces!
+    a.href = 'data:text/json;charset=utf-8,' + j;
+    // <a> constructed, simulate mouse click on it
+    var ev = document.createEvent("MouseEvents");
+    ev.initMouseEvent("click", true, false, self, 0, 0, 0, 0, 0, false, false, false, false, 0, null);
+    a.dispatchEvent(ev);
+};

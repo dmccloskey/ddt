@@ -196,6 +196,34 @@ d3_data.prototype.convert_listdatafiltered2escherobjectlist = function(key_I,val
     //return escherobjectlist_O;
     return escherobject;
 };
+d3_data.prototype.remove_filtereddata = function(){
+    // remove unfiltered data
+    this.listdata = this.listdatafiltered;
+};
+d3_data.prototype.get_datajson = function(filtereddataonly_I){
+    // get the data in json format for re-input
+
+    if (typeof filtereddataonly_I === "undefined"){
+        var filtereddataonly = false;
+    } else {
+        var filtereddataonly = filtereddataonly_I;
+    };
+
+    var keys_O = this.keys;
+    var nestkeys_O = this.nestkey;
+
+    if (filtereddataonly){
+        var data_O = this.listdatafiltered;
+    } else {
+        var data_O = this.listdata;
+    }
+
+    var datajson_O = {'datakeys':keys_O,
+                    'datanestkeys':nestkeys_O,
+                    'data':data_O};
+
+    return datajson_O;
+};
 //additional functions
 function escapeRegExp(string){
     return string.replace(/[.*+?^${}()|[\]\\]/g, "\\$&");

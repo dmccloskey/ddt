@@ -62,6 +62,7 @@
     <script src="js/ddt_html_escher_01.js"></script>
     <script src="js/ddt_tile.js"></script>
     <script src="js/ddt_container.js"></script>
+    <script src="js/ddt_input.js"></script>
 	
  	<!-- ddt unit tests -->
 <!--     <script src="js/unittests.js"></script>
@@ -92,15 +93,15 @@
 	</main>
 
 	<script type="text/javascript">
-		//ddt data and template
 		ddt_test = new ddt_container();
-		ddt_test.set_parameters(parameters);
-		ddt_test.add_data(data);
-		ddt_test.set_tile2datamap(tile2datamap);
 		//container manipuation features (order matters)
 		ddt_test.add_header2container();
 		ddt_test.add_jsonimportbutton2container();
 		ddt_test.add_jsonexportbutton2container();
+		//ddt data and template
+		ddt_test.set_parameters(parameters);
+		ddt_test.add_data(data);
+		ddt_test.set_tile2datamap(tile2datamap);
 		//make the container
 		ddt_test.make_container();
 		//add the container filter buttons
