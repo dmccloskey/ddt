@@ -395,13 +395,12 @@ ddt_container.prototype.get_data_string = function(filtereddataonly_I){
         var filtereddataonly = filtereddataonly_I;
     };
 
-    if (typeof this.data !== "undefined" && filtereddataonly){
+    if (typeof this.data !== "undefined"){
+        var data_tmp = [];
         this.data.forEach(function(d){
-            d.remove_filtereddata();
+            data_tmp.push(d.get_datajson(filtereddataonly));
         });
-        var data_O = JSON.stringify(this.data);
-    } else if (typeof this.data !== "undefined" && !filtereddataonly){
-        var data_O = JSON.stringify(this.data);
+        var data_O = JSON.stringify(data_tmp);
     } else {
         var data_O = null;
     };
