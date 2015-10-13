@@ -330,7 +330,7 @@ ddt_container.prototype.add_header2container = function(){
         .append("div")
         .attr("class","col-lg-12");
 
-}
+};
 ddt_container.prototype.add_jsonexportbutton2container = function (){
     // add button to export all json data from the container to file
     var this_ = this;
@@ -357,29 +357,35 @@ ddt_container.prototype.add_jsonimportbutton2container = function (){
 
     function importalldatajson(){
         var file1 = this.files[0];
-        var reader = new FileReader();
 
-        // Closure to capture the file information.
-        reader.onload = (function(theFile) {
-            return function(e) {
-                // Get the data file
-                var result = e.target.result;
-                //TODO: validate the input
-//                 var parameters = undefined;
-//                 var data = undefined;
-//                 var tile2datamap = undefined;
-//                 var filtermenu = undefined;
-                eval(result);
-                if (typeof filtermenu === "undefined") { var filtermenu = undefined; };
-                // delete the existing container
-                this_.remove_tiles();
-                this_.remove_containerheader();
-                // make a new container with the new data
-                this_.__main__(parameters,data,tile2datamap,filtermenu);
-            };
-        })(file1);
+        if (!file1) {
+            alert("Failed to load file");
+        } else if (!file1.type.match('')) {
+            alert(file1.name + " is not a valid text file.");
+        } else {
+            var reader = new FileReader();
 
-        reader.readAsText(file1);
+            // Closure to capture the file information.
+            reader.onload = (function(theFile) {
+                return function(e) {
+                    // Get the data file
+                    var result = e.target.result;
+                    //TODO: validate the input
+    //                 var parameters = undefined;
+    //                 var data = undefined;
+    //                 var tile2datamap = undefined;
+    //                 var filtermenu = undefined;
+                    eval(result);
+                    if (typeof filtermenu === "undefined") { var filtermenu = undefined; };
+                    // delete the existing container
+                    this_.remove_container();
+                    // make a new container with the new data
+                    this_.__main__(parameters,data,tile2datamap,filtermenu);
+                };
+            })(file1);
+
+            reader.readAsText(file1);
+        };
     };
 
     var jsonimportbutton = this.containerheader
@@ -418,11 +424,21 @@ ddt_container.prototype.remove_tiles = function(){
         d.tile.remove_tile();
     });
 };
-ddt_container.prototype.remove_containerheader = function(){
-    // remove the container header
+ddt_container.prototype.remove_containerheaderandrows = function(){
+    // remove the container header and rows
+    
     var containerid = this.containerid;
 
-    this.containerheader = d3.selectAll('#'+this.containerid)
-        .remove();
-    this.containerid = null;
+    this.containerheader.remove();
+
+    d3.selectAll('#'+containerid + ' .row').remove();
 };
+ddt_container.prototype.remove_container = function(){
+    // remove the container
+    this.remove_tiles();
+    this.remove_containerheaderandrows();
+    this.parameters = [];
+    this.tiles = [];
+    this.data = [];
+    this.tile2datamap = {};
+}

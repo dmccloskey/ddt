@@ -1022,34 +1022,41 @@ d3_html.prototype.add_jsonimportbutton2tile = function () {
 
     function importfiltermenujson(){
         var file1 = this.files[0];
-        var reader = new FileReader();
 
-        // Closure to capture the file information.
-        reader.onload = (function(theFile) {
-            return function(e) {
-                // Get the data file
-                var result = e.target.result;
-                var filtermenu = JSON.parse(result);
-                this_.data.filters = filtermenu;
-                this_.data.filter_stringdata();
-                this_.render();
-            };
-        })(file1);
+        if (!file1) {
+            alert("Failed to load file");
+        } else if (!file1.type.match('')) {
+            alert(file1.name + " is not a valid text file.");
+        } else {
+            var reader = new FileReader();
 
-//         // Closure to remove the file information.
-//         reader.onloadend = (function(theFile) {
-//             return function(e) {
-//                 // Get the data file
-//                 var result = e.target.result;
-//                 var filtermenu = JSON.parse(result);
-//                 this_.data.filters = filtermenu;
-//                 this_.data.filter_stringdata();
-//                 this_.render();
-//             };
-//         })(file1);
+            // Closure to capture the file information.
+            reader.onload = (function(theFile) {
+                return function(e) {
+                    // Get the data file
+                    var result = e.target.result;
+                    var filtermenu = JSON.parse(result);
+                    this_.data.filters = filtermenu;
+                    this_.data.filter_stringdata();
+                    this_.render();
+                };
+            })(file1);
 
-        reader.readAsText(file1);
-//         this_.import_filtermenujson(filtermenu); //necessary to pass svg as "this"
+    //         // Closure to remove the file information.
+    //         reader.onloadend = (function(theFile) {
+    //             return function(e) {
+    //                 // Get the data file
+    //                 var result = e.target.result;
+    //                 var filtermenu = JSON.parse(result);
+    //                 this_.data.filters = filtermenu;
+    //                 this_.data.filter_stringdata();
+    //                 this_.render();
+    //             };
+    //         })(file1);
+
+            reader.readAsText(file1);
+    //         this_.import_filtermenujson(filtermenu); //necessary to pass svg as "this"
+        };
     };
 
     var jsonimportbutton = this.htmlfooter
