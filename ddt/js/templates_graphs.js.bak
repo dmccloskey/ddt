@@ -37,8 +37,7 @@ var make_circlepacklayout = function(){
 var make_treelayout = function(){
     var d3tile = new d3_tile();
     var parameters = {tileid:"tile1",rowid:"row1",colid:"col1",
-        tileclass:"panel panel-default",rowclass:"row",colclass:"col-sm-12",
-        svgduration:750,};
+        tileclass:"panel panel-default",rowclass:"row",colclass:"col-sm-12"};
     d3tile.set_tileid(parameters.tileid);
     d3tile.set_rowid(parameters.rowid);
     d3tile.set_colid(parameters.colid);
@@ -69,15 +68,25 @@ var make_treelayout = function(){
     chart2d1.set_height(1000);
     chart2d1.set_duration(750);
     chart2d1.add_svgexportbutton2tile();
+    chart2d1.add_svgelement2tile();
+    chart2d1.set_treelayoutdata1root();
     chart2d1.set_treelayoutdata1nodeorigin(0);
     chart2d1.set_treelayoutdata1tree();
     chart2d1.set_treelayoutdata1diagonal();
-    chart2d1.render = function () {
-        this.add_chart2d2tile();
-        this.set_svgstyle();
-        this.set_treelayoutdata1root();
-        this.collapse_treelayoutroot();
-        this.update_treelayout();
+    chart2d1.collapse_treelayoutroot();
+    chart2d1.render = function (source_I) {
+        if (source_I){
+            var source = source_I;
+        } else {
+            var source = this.data1.nestdatafiltered[0];
+        };
+
+        this.set_treelayoutdata1nodes();
+        this.set_treelayoutdata1links();
+        this.add_treelayoutdata1node(source)
+        this.add_treelayoutdata1link(source)
+        this.save_treelayoutdata1positions();
+        this.set_treelayoutdata1css();
     };
     chart2d1.render();
 };

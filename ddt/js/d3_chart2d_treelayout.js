@@ -156,7 +156,8 @@ d3_chart2d.prototype.togglechildren_treelayout = function(_this_I){
             d.children = d._children;
             d._children = null;
         };
-       _this_I.render(d);
+       //_this_I.render(d);
+       _this_I.update_treelayout(d);
     };
 };
 d3_chart2d.prototype.set_treelayoutdata1css = function () {
@@ -187,4 +188,19 @@ d3_chart2d.prototype.set_treelayoutdata1css = function () {
                      { 'selection': selector3, 'style': style3 },
                      { 'selection': selector4, 'style': style4 }];
     this.set_svggcss(selectorstyle);
+};
+d3_chart2d.prototype.update_treelayout = function (source_I) {
+    // update tree layout
+    if (source_I){
+        var source = source_I;
+    } else {
+        var source = this.data1.nestdatafiltered[0];
+    };
+
+    this.set_treelayoutdata1nodes();
+    this.set_treelayoutdata1links();
+    this.add_treelayoutdata1node(source)
+    this.add_treelayoutdata1link(source)
+    this.save_treelayoutdata1positions();
+    this.set_treelayoutdata1css();
 };
