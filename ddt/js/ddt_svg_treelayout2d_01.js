@@ -3,15 +3,18 @@
 function ddt_svg_treelayout2d_01() {
     // treelayout
     // description:
-    // generic scatter plot
+    // generic treelayout
+    // NOTES:
+    // 1. data_I.datanestkeys = [] of multiple keys in order
+    // 2. data_I.datalastchild = string describing the final child element
     ddt_svg.call(this);
 };
 ddt_svg_treelayout2d_01.prototype = Object.create(ddt_svg.prototype);
 ddt_svg_treelayout2d_01.prototype.constructor = ddt_svg_treelayout2d_01;
 ddt_svg_treelayout2d_01.prototype.make_svg = function(data_I,parameters_I){
-	// scatterlineplot definition
+	// treelayout definition
 
-	this.ddtsvg = new d3_chart2d();
+	this.ddtsvg = new d3_graph2d();
 	
 	// general svg properties
 	this.set_parameters(parameters_I);
@@ -20,46 +23,27 @@ ddt_svg_treelayout2d_01.prototype.make_svg = function(data_I,parameters_I){
     this.set_datakeymaps(parameters_I.svgkeymap);
 
 	// svg specific properties
-	set_treelayoutdata1root
-	set_treelayoutdata1nodeorigin
-	set_treelayoutdata1tree
-	set_treelayoutdata1diagonal
     this.ddtsvg.set_margin(parameters_I.svgmargin);
     this.ddtsvg.set_filterdata1and2(true); //filter data 1 and 2 together
     this.ddtsvg.set_width(parameters_I.svgwidth);
     this.ddtsvg.set_height(parameters_I.svgheight);
+    this.ddtsvg.set_duration(parameters_I.svgduration); //new!
     this.ddtsvg.set_colorscale(); //color for series_label will remain consistent
     this.ddtsvg.add_svgexportbutton2tile();
     //this.ddtsvg.set_tooltip();
     //this.ddtsvg.set_tooltipstyle();
     this.ddtsvg.set_zoom();
+    this.ddtsvg.data1.format_keyvalues2namechildren(data_I.datalastchild); //new!
+    this.ddtsvg.set_treelayoutdata1nodeorigin(0);
+    this.ddtsvg.set_treelayoutdata1tree();
+    this.ddtsvg.set_treelayoutdata1diagonal()
     this.ddtsvg.render = function () {
+        this.add_graph2d2tile();
+        this.set_svgstyle();
         this.add_chart2d2tile();
         this.set_svgstyle();
-        this.set_x1range("linear");
-        this.set_y1range("linear");
-        this.set_x1domain();
-        this.set_y1domain();
-        this.set_x1axis();
-        this.set_x1axistickformat(parameters_I.svgx1axistickformat);
-        this.set_y1axis();
-        this.add_x1axis();
-        this.add_y1axis();
-        this.set_x1axisticktextattr(parameters_I.svgx1axisticktextattr)
-        this.set_x1axisticktextstyle(parameters_I.svgx1axisticktextstyle)
-
-		
-        this.set_treelayoutdata1nodes;
-
-        this.add_pointsdata1();
-        this.add_legenddata1();
-        this.add_legenddata1filter();
-        this.add_pointsdata1tooltipandfill();
-        this.set_x1andy1axesstyle();
-        this.set_x1andy1axestickstyle();
-        this.set_pointsstyle();
-        this.add_x1axislabel(parameters_I.svgx1axislabel);
-        this.add_y1axislabel(parameters_I.svgy1axislabel);
-        this.set_x1andy1axeslabelstyle();
+        this.set_treelayoutdata1root();
+        this.collapse_treelayoutroot();
+        this.update_treelayout();
     };
 };

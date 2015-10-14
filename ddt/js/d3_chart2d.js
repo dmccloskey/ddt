@@ -2,7 +2,7 @@
 //var d3_chart2d = function () {
 function d3_chart2d() {
     // generic chart
-    d3_svg.call(this);
+    d3_svg_data.call(this);
     //this.svgdata = null;
     //this.svgenter = null;
     //this.svgsvg = null;
@@ -20,9 +20,6 @@ function d3_chart2d() {
     this.x2axis = null;
     this.y1axis = null;
     this.y2axis = null;
-    this.colorscale = null;
-    this.data1 = null; //d3_data
-    this.data2 = null; //d3_data
     this.clippath = null;
     this.title = null;
     this.x1axisgridlines = null;
@@ -30,34 +27,10 @@ function d3_chart2d() {
     this.x1axisgridlinesenter = null;
     this.y1axisgridlinesenter = null;
     this.tooltip = null;
-    this.render = null; // function defining the calls to make the chart
-    this.filterdata1and2 = false;
-    this.data1keymap = {}; // mapping of keys to data element, chart elements, or other descriptor
-    this.data2keymap = {}; // mapping of keys to data element, chart elements, or other descriptor
 
 };
-d3_chart2d.prototype = Object.create(d3_svg.prototype);
+d3_chart2d.prototype = Object.create(d3_svg_data.prototype);
 d3_chart2d.prototype.constructor = d3_chart2d;
-d3_chart2d.prototype.set_filterdata1and2 = function(filterdata1and2_I){
-    // filter data 1 and 2 together based on the same series label
-    this.filterdata1and2 = filterdata1and2_I;
-};
-d3_chart2d.prototype.add_chart2d2tile_packlayoutcircle = function(){
-    // add char2d to tile
-
-    this.svgelement = d3.select('#' + this.tileid+"panel-body").selectAll("svg")
-        .data([this.data1.listdatafiltered]);
-    this.svgenter = this.svgelement.enter()
-        .append("svg")
-        .attr("id", this.id)
-        .append('g')
-        .attr("transform", "translate(" + this.width/2 + "," + this.width/2 + ")");
-    this.svgelement.attr("width", this.width)
-        .attr("height", this.height);
-
-    this.svgg = this.svgelement.select('g');
-
-};
 d3_chart2d.prototype.add_chart2d2tile = function(){
     // add char2d to tile
 
@@ -184,38 +157,6 @@ d3_chart2d.prototype.set_y2range = function (scale_I,invert_I) {
         };
     };
 };
-d3_chart2d.prototype.add_data = function(data_I){
-    //add data n
-    if (!data_I){
-       console.warn("no data");
-    } else if (data_I.length===1){
-        this.data1 = data_I[0];
-    } else if (data_I.length===2){
-        this.data1 = data_I[0];
-        this.data2 = data_I[1];
-    } else {console.warn("more data found than what is currently supported");
-    };
-};
-d3_chart2d.prototype.set_datakeymaps = function(keymaps_I){
-    //add data n
-    if (!keymaps_I){
-       console.warn("no data");
-    } else if (keymaps_I.length===1){
-        this.data1keymap = keymaps_I[0];
-    } else if (keymaps_I.length===2){
-        this.data1keymap = keymaps_I[0];
-        this.data2keymap = keymaps_I[1];
-    } else {console.warn("more data found than what is currently supported");
-    };
-};
-d3_chart2d.prototype.add_data1 = function (data1_I) {
-    //add data1
-    this.data1 = data1_I;
-};
-d3_chart2d.prototype.add_data2 = function (data2_I) {
-    //add data2 element export
-    this.data2 = data2_I;
-};
 d3_chart2d.prototype.set_x1domain = function () {
     // set x1-domain of the plot
     var x_data = this.data1keymap.xdata;
@@ -314,87 +255,6 @@ d3_chart2d.prototype.copy_x1scalestox2scales = function () {
 d3_chart2d.prototype.copy_y1scalestoy2scales = function () {
     // copy y1 scale to y2scale
     this.y2scale = this.y1scale;
-};
-d3_chart2d.prototype.set_colorscale = function (colorscale_I,colorcategory_I,colordomain_I,colordatalabel_I) {
-    // set color scale
-    // INPUT:
-    //  colorscale_I = ordinal (default), quantile
-    //  colordomain_I = [] e.g., [0,1],[0,1000],[-1000,1000],[-10,0,10],[0.0,0.5,1.0]
-    //                           'min,0,max'
-    //  colorcategory_I = category10, category20, category20a, category20b, category20c
-    //                    brewer, heatmap21, heatmap10
-
-
-    // custom colorscale
-    var heatmap21 = ["#081d58", "#162876", "#253494", "#23499E", "#2253A3", "#225ea8", "#1F77B4", "#1d91c0", "#2FA3C2", "#38ACC3", "#41b6c4", "#60C1BF", "#7fcdbb", "#91D4B9", "#A3DBB7", "#c7e9b4", "#DAF0B2", "#E3F4B1", "#edf8b1", "#F6FBC5", "#ffffd9"];
-    var heatmap10 = ["#081d58", "#253494", "#2253A3", "#1F77B4", "#2FA3C2", "#7fcdbb", "#A3DBB7", "#DAF0B2", "#edf8b1", "#ffffd9"]; //specific to resequencing data (domain 0.0-1.0)
-
-
-    var listdatafiltered = this.data1.listdatafiltered;
-    if (colorscale_I==='quantile' && colordomain_I==='min,0,max' && colordatalabel_I && colorcategory_I==='colorbrewer'){
-            this.colorscale = d3.scale.quantile()
-            .domain([d3.min(listdatafiltered, function (d) { return d[colordatalabel_I]; }),
-            0,
-            d3.max(listdatafiltered, function (d) { return d[colordatalabel_I]; })])
-            .range(colorbrewer.YlGnBu[9]);
-    }else if (colorscale_I==='quantile' && colordomain_I==='min,0,max' && colordatalabel_I && colorcategory_I==='heatmap21'){
-            this.colorscale = d3.scale.quantile()
-            .domain([d3.min(listdatafiltered, function (d) { return d[colordatalabel_I]; }),
-            0,
-            d3.max(listdatafiltered, function (d) { return d[colordatalabel_I]; })])
-            .range(heatmap21);
-    }else if (colorscale_I==='quantile' && colordomain_I==='min,0,max' && colordatalabel_I && colorcategory_I==='heatmap10'){
-            this.colorscale = d3.scale.quantile()
-            .domain([d3.min(listdatafiltered, function (d) { return d[colordatalabel_I]; }),
-            0,
-            d3.max(listdatafiltered, function (d) { return d[colordatalabel_I]; })])
-            .range(heatmap10);
-    }else if (colorscale_I==='quantile' && colordomain_I==='min,max' && colordatalabel_I && colorcategory_I==='colorbrewer'){
-            this.colorscale = d3.scale.quantile()
-            .domain([d3.min(listdatafiltered, function (d) { return d[colordatalabel_I]; }),
-            d3.max(listdatafiltered, function (d) { return d[colordatalabel_I]; })])
-            .range(colorbrewer.YlGnBu[9]);
-    }else if (colorscale_I==='quantile' && colordomain_I==='min,max' && colordatalabel_I && colorcategory_I==='heatmap21'){
-            this.colorscale = d3.scale.quantile()
-            .domain([d3.min(listdatafiltered, function (d) { return d[colordatalabel_I]; }),
-            d3.max(listdatafiltered, function (d) { return d[colordatalabel_I]; })])
-            .range(heatmap21);
-    }else if (colorscale_I==='quantile' && colordomain_I==='min,max' && colordatalabel_I && colorcategory_I==='heatmap10'){
-            this.colorscale = d3.scale.quantile()
-            .domain([d3.min(listdatafiltered, function (d) { return d[colordatalabel_I]; }),
-            d3.max(listdatafiltered, function (d) { return d[colordatalabel_I]; })])
-            .range(heatmap10);
-    }else if (colorscale_I==='quantile' && colordomain_I && colorcategory_I==='colorbrewer'){
-        this.colorscale = d3.scale.quantile().domain(colordomain_I).range(colorbrewer.YlGnBu[9]);
-    }else if (colorscale_I==='quantile' && colordomain_I && colorcategory_I==='category10c'){
-        this.colorscale = d3.scale.quantile().domain(colordomain_I).category10c();
-    }else if (colorscale_I==='quantile' && colordomain_I && colorcategory_I==='category20'){
-        this.colorscale = d3.scale.quantile().domain(colordomain_I).category20();
-    }else if (colorscale_I==='quantile' && colordomain_I && colorcategory_I==='category20a'){
-        this.colorscale = d3.scale.quantile().domain(colordomain_I).category20a();
-    }else if (colorscale_I==='quantile' && colordomain_I && colorcategory_I==='category20b'){
-        this.colorscale = d3.scale.quantile().domain(colordomain_I).category20b();
-    }else if (colorscale_I==='quantile' && colordomain_I && colorcategory_I==='category20c'){
-        this.colorscale = d3.scale.quantile().domain(colordomain_I).category20c();
-    }else if (colorscale_I==='quantile' && colordomain_I && colorcategory_I==='heatmap10'){
-        this.colorscale = d3.scale.quantile().domain(colordomain_I).range(heatmap10);
-    }else if (colorscale_I==='quantile' && colordomain_I && colorcategory_I==='heatmap21'){
-        this.colorscale = d3.scale.quantile().domain(colordomain_I).range(heatmap21);
-    }else if (colorscale_I==='quantile' && colorcategory_I==='colorbrewer'){
-        this.colorscale = d3.scale.quantile().range(colorbrewer.YlGnBu[10]);
-    }else if (colorscale_I==='quantile' && colorcategory_I==='category10c'){
-        this.colorscale = d3.scale.quantile().category10c();
-    }else if (colorscale_I==='quantile' && colorcategory_I==='category20'){
-        this.colorscale = d3.scale.quantile().category20();
-    }else if (colorscale_I==='quantile' && colorcategory_I==='category20a'){
-        this.colorscale = d3.scale.quantile().category20a();
-    }else if (colorscale_I==='quantile' && colorcategory_I==='category20b'){
-        this.colorscale = d3.scale.quantile().domain(colordomain_I).category20b();
-    }else if (colorscale_I==='quantile' &&  colorcategory_I==='category20c'){
-        this.colorscale = d3.scale.quantile().category20c();
-    }else{
-        this.colorscale = d3.scale.category20c();
-    };
 };
 d3_chart2d.prototype.set_x1axis = function () {
     //x1 axis properties
@@ -799,11 +659,6 @@ d3_chart2d.prototype.add_legenddata1 = function () {
         })
         .remove();
 };
-d3_chart2d.prototype.render = function () {
-    //render the chart
-
-    //your code here...
-};
 d3_chart2d.prototype.add_data1featureslabels = function () {
     //add a change in color upon moving the mouse over the point
     var x_data = this.data1keymap.xdata;
@@ -854,28 +709,6 @@ d3_chart2d.prototype.remove_y2axis = function () {
     //remove y2 axis
     d3.selectAll('#' + this.id + 'y2axis').remove();
     this.y2axis = null;
-};
-d3_chart2d.prototype.set_svggcss = function (selectionstyle_I) {
-    //set custom css style to svgg
-    //Input:
-    // selectionstyle_I = [{selection: string e.g., '.axis line, .axis path'
-    //                      style: key:value strings e.g., {'fill': 'none', 'stroke': '#000',
-    //                                                      'shape-rendering': 'crispEdges'}}]
-    for (var i = 0; i < selectionstyle_I.length; i++) {
-        this.svgg.selectAll(selectionstyle_I[i].selection)
-            .style(selectionstyle_I[i].style);
-    };
-};
-d3_chart2d.prototype.set_d3css = function (selectionstyle_I) {
-    //set custom css style to d3
-    //Input:
-    // selectionstyle_I = [{selection: string e.g., '.axis line, .axis path'
-    //                      style: key:value strings e.g., {'fill': 'none', 'stroke': '#000',
-    //                                                      'shape-rendering': 'crispEdges'}}]
-    for (var i = 0; i < selectionstyle_I.length; i++) {
-        d3.selectAll(selectionstyle_I[i].selection)
-            .style(selectionstyle_I[i].style);
-    };
 };
 d3_chart2d.prototype.set_x1andy1axesstyle = function () {
     // predefined css style for x1 and y1 axis
@@ -948,23 +781,6 @@ d3_chart2d.prototype.set_x1x2andy1y2axesstyle = function () {
                      { 'selection': y2axisselector, 'style': style }]
     this.set_svggcss(selectorstyle);
 };
-d3_chart2d.prototype.set_data1keymap = function (data1keymap_I) {
-    //set the data1 column identifiers for xdata, yudata, serieslabel, and featureslabel
-    this.data1keymap = data1keymap_I;
-};
-d3_chart2d.prototype.set_data2keymap = function (data2keymap_I) {
-    //set the data2 column identifiers for xdata, yudata, serieslabel, and featureslabel
-    this.data2keymap = data2keymap_I;
-};
-d3_chart2d.prototype.set_zoom = function (){
-    //add zoom
-    var draw = this.draw;
-    var render = this.render;
-    this.zoom = d3.behavior.zoom()
-        .scaleExtent([1,10])
-        //.on("zoom", render);
-        .on("zoom", draw);
-};
 d3_chart2d.prototype.set_x1axiszoom = function(){
     //set the x1axsis scale for the zoom
     var x1scale = this.x1scale;
@@ -974,12 +790,6 @@ d3_chart2d.prototype.set_y1axiszoom = function(){
     //set the x1axsis scale for the zoom
     var y1scale = this.y1scale;
     this.zoom.y(y1scale);
-};
-d3_chart2d.prototype.add_zoom = function(){
-    //add zoom to svg
-    var zoom = this.zoom;
-    this.svgg.call(zoom);
-    //this.zoom(svgelement);
 };
 d3_chart2d.prototype.draw = function(){
     var svgg = this.svgg;
@@ -1010,10 +820,6 @@ d3_chart2d.prototype.draw = function(){
                 };
     };
 };
-d3_chart2d.prototype.set_duration = function(duration_I){
-    // set the transition duration
-    this.duration = duration_I;
-};
 d3_chart2d.prototype.set_svgelementzoomcss = function(){
     // set cursor style and pointer events on svgelement for zoom
     var selector1 = '#' + this.id;
@@ -1024,11 +830,6 @@ d3_chart2d.prototype.set_svgelementzoomcss = function(){
     var selectorstyle = [{ 'selection': selector1, 'style': style1 }]
     this.set_d3css(selectorstyle);
     //this.set_svggcss(selectorstyle);
-};
-d3_chart2d.prototype.filter_data1and2stringdata = function(){
-    //filter all data
-    if (this.data1){this.data1.filter_stringdata();};
-    if (this.data2){this.data2.filter_stringdata();}; 
 };
 d3_chart2d.prototype.set_legendstyle = function () {
     // predefined css style for legend

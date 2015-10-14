@@ -1,28 +1,28 @@
 "use strict";
-d3_chart2d.prototype.set_treelayoutdata1root = function(treelayoutroot_I){
+d3_graph2d.prototype.set_treelayoutdata1root = function(treelayoutroot_I){
     //set tree layout root
     if (treelayoutroot_I){this.treelayoutroot = treelayoutroot_I;}
     else {this.treelayoutroot=this.data1.nestdatafiltered[0]};  
     this.treelayoutroot.x0 = this.height/2;
     this.treelayoutroot.y0 = 0;  
 };
-d3_chart2d.prototype.set_treelayoutdata1nodeorigin = function(nodeorigin_I){
+d3_graph2d.prototype.set_treelayoutdata1nodeorigin = function(nodeorigin_I){
     //set tree layout nodes
     this.treelayoutnodeorigin = nodeorigin_I;
 };
-d3_chart2d.prototype.set_treelayoutdata1tree = function(){
+d3_graph2d.prototype.set_treelayoutdata1tree = function(){
     // set the layout tree
     var height = this.height;
     var width = this.width;
     this.treelayouttree = d3.layout.tree()
         .size([height,width]);
 };
-d3_chart2d.prototype.set_treelayoutdata1diagonal = function(){
+d3_graph2d.prototype.set_treelayoutdata1diagonal = function(){
     // set the layout diagonal
     this.treelayoutdiagonal = d3.svg.diagonal()
         .projection(function(d) { return [d.y, d.x]; });
 };
-d3_chart2d.prototype.collapse_treelayoutroot = function(){
+d3_graph2d.prototype.collapse_treelayoutroot = function(){
     // initialize with a collapse root
     // collapse function
     function collapse(d){
@@ -35,7 +35,7 @@ d3_chart2d.prototype.collapse_treelayoutroot = function(){
     this.treelayoutroot.children.forEach(collapse);
 };
 // update
-d3_chart2d.prototype.set_treelayoutdata1nodes = function(){
+d3_graph2d.prototype.set_treelayoutdata1nodes = function(){
     // compute treelayout nodes
     var root = this.treelayoutroot
     this.treelayoutnodes = this.treelayouttree.nodes(root).reverse();
@@ -43,12 +43,12 @@ d3_chart2d.prototype.set_treelayoutdata1nodes = function(){
     //normalize for fixed depth
     this.treelayoutnodes.forEach(function(d) { d.y = d.depth * 180; });
 };
-d3_chart2d.prototype.set_treelayoutdata1links = function(){
+d3_graph2d.prototype.set_treelayoutdata1links = function(){
     // compute treelayout links
     var nodes = this.treelayoutnodes
     this.treelayoutlinks = this.treelayouttree.links(nodes);
 };
-d3_chart2d.prototype.add_treelayoutdata1node = function(source_I){
+d3_graph2d.prototype.add_treelayoutdata1node = function(source_I){
     // add tree layout nodes
     var i = this.treelayoutnodeorigin;
     var nodes = this.treelayoutnodes;
@@ -104,7 +104,7 @@ d3_chart2d.prototype.add_treelayoutdata1node = function(source_I){
     this.treelayoutnodeexit.select("text")
         .style("fill-opacity", 1e-6);
 };
-d3_chart2d.prototype.add_treelayoutdata1link = function(source_I){
+d3_graph2d.prototype.add_treelayoutdata1link = function(source_I){
     // add tree layout links
     var i = this.treelayoutnodeorigin;
     var nodes = this.treelayoutnodes;
@@ -139,14 +139,14 @@ d3_chart2d.prototype.add_treelayoutdata1link = function(source_I){
         })
         .remove();
 };
-d3_chart2d.prototype.save_treelayoutdata1positions = function(){
+d3_graph2d.prototype.save_treelayoutdata1positions = function(){
     // Stash the old positions for transition.
     this.treelayoutnodes.forEach(function(d) {
         d.x0 = d.x;
         d.y0 = d.y;
         });
 };
-d3_chart2d.prototype.togglechildren_treelayout = function(_this_I){
+d3_graph2d.prototype.togglechildren_treelayout = function(_this_I){
     // toggle children on click
     return function(d){
         if (d.children) {
@@ -160,7 +160,7 @@ d3_chart2d.prototype.togglechildren_treelayout = function(_this_I){
        _this_I.update_treelayout(d);
     };
 };
-d3_chart2d.prototype.set_treelayoutdata1css = function () {
+d3_graph2d.prototype.set_treelayoutdata1css = function () {
     //set predefined treelayout style
 
     var selector1 = '#' + this.id + ' .node';
@@ -189,7 +189,7 @@ d3_chart2d.prototype.set_treelayoutdata1css = function () {
                      { 'selection': selector4, 'style': style4 }];
     this.set_svggcss(selectorstyle);
 };
-d3_chart2d.prototype.update_treelayout = function (source_I) {
+d3_graph2d.prototype.update_treelayout = function (source_I) {
     // update tree layout
     if (source_I){
         var source = source_I;

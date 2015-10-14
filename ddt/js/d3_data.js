@@ -150,6 +150,8 @@ d3_data.prototype.format_keyvalues2namechildren = function(lastchild_I){
             for(var key in d){delete d[key];}; //remove all object properties
                                            //needed for proper rendering of data for d3 layouts
             d['name']=lastchild;
+            //test
+            d['size']=1;
         };
         if (d.values){
             d['children'] = d.values;

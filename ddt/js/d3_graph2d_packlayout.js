@@ -1,42 +1,64 @@
 "use strict";
+d3_graph2d.prototype.add_graph2d2tile_packlayoutcircle = function(){
+    // add char2d to tile
+
+    this.svgelement = d3.select('#' + this.tileid+"panel-body").selectAll("svg")
+        .data([this.data1.listdatafiltered]);
+    this.svgenter = this.svgelement.enter()
+        .append("svg")
+        .attr("id", this.id)
+        .append('g')
+        .attr("transform", "translate(" + this.width/2 + "," + this.width/2 + ")");
+    this.svgelement.attr("width", this.width)
+        .attr("height", this.height);
+
+    this.svgg = this.svgelement.select('g');
+
+};
 //TODO:
-d3_chart2d.prototype.set_diameter = function(diameter_I){
+d3_graph2d.prototype.set_diameter = function(diameter_I){
     // set uniform width and height
     this.width = diameter_I;
     this.height= diameter_I;
 };
-d3_chart2d.prototype.set_packlayout = function(padding_I){
+d3_graph2d.prototype.set_packlayout = function(padding_I){
     //set pack layout
     var margin = this.margin;
     var width = this.width;
     var height = this.height;
+    if (typeof this.data1keymap.xdata !== "undefined"){
+        var size = this.data1keymap.xdata;
+    } else {
+        var size = 'size';
+    };
 
     this.packlayout = d3.layout.pack()
         .padding(padding_I)
         .size([width - margin.left - margin.right, height - margin.top - margin.bottom])
-        .value(function(d) { return d.size; })
+        .value(function(d) { return d[size]; })
 };
-d3_chart2d.prototype.set_packlayoutfocusdata1 = function(packlayoutfocus_I){
+d3_graph2d.prototype.set_packlayoutfocusdata1 = function(packlayoutfocus_I){
     //set pack layout focus
     if (packlayoutfocus_I){this.packlayoutfocus = packlayoutfocus_I;}
     else {this.packlayoutfocus=this.data1.nestdatafiltered[0]};    
 };
-d3_chart2d.prototype.set_packlayoutnodesdata1 = function(){
+d3_graph2d.prototype.set_packlayoutnodesdata1 = function(){
     //set pack layout nodes
     this.packlayoutnodes = this.packlayout.nodes(this.data1.nestdatafiltered[0]);
 };
-d3_chart2d.prototype.set_packlayoutviewdata1 = function(packlayoutview_I){
+d3_graph2d.prototype.set_packlayoutviewdata1 = function(packlayoutview_I){
     //set pack layout view
     if (packlayoutview_I){this.packlayoutview = packlayoutview_I;}
     else {this.packlayoutview=null}; 
 };
-d3_chart2d.prototype.add_packlayoutcirclesdata1 = function(){
+d3_graph2d.prototype.add_packlayoutcirclesdata1 = function(){
     // add circles to pack layout
     var focus = this.packlayoutfocus;
     var nodes = this.packlayoutnodes;
     var root = this.data1.nestdatafiltered[0];
     var colorscale = this.colorscale;
     var zoom_packlayout = this.zoom_packlayout;
+    var _this = this;
     
     this.packlayoutcircle = this.svgg.selectAll("circle")
         .data(nodes);
@@ -52,10 +74,10 @@ d3_chart2d.prototype.add_packlayoutcirclesdata1 = function(){
         .append("circle")
         .attr("class", function(d) { return d.parent ? d.children ? "node" : "node node--leaf" : "node node--root"; })
         .style("fill", function(d) { return d.children ? colorscale(d.depth) : null; })
-        .on("click", function(d) { if (focus !== d){ zoom_packlayout(d), d3.event.stopPropagation(); };});
+        .on("click", function(d) { if (focus !== d){ zoom_packlayout(d,_this), d3.event.stopPropagation(); };});
 
 };
-d3_chart2d.prototype.add_packlayouttextdata1 = function(){
+d3_graph2d.prototype.add_packlayouttextdata1 = function(){
     // add text to pack layout
     var focus = this.packlayoutfocus;
     var nodes = this.packlayoutnodes;
@@ -82,18 +104,18 @@ d3_chart2d.prototype.add_packlayouttextdata1 = function(){
         .text(function(d) { return d.key; });
 
 };
-d3_chart2d.prototype.set_packlayoutnode = function(d){
+d3_graph2d.prototype.set_packlayoutnode = function(d){
     // set the node selection for the packlayoutzoom
     this.node = this.svgg.selectAll("circle,text");
 }
-d3_chart2d.prototype.zoom_packlayout = function(d){
+d3_graph2d.prototype.zoom_packlayout = function(d,_this){
    // pack layout zoom function 
-    this.set_packlayoutfocusdata1(d);
-    var focus = this.packlayoutfocus;
-    var view = this.packlayoutview;
-    var margin = this.margin.top;
-    var diameter = this.width;
-    var packlayoutzoomto = this.zoomto_packlayout;
+    _this.set_packlayoutfocusdata1(d);
+    var focus = _this.packlayoutfocus;
+    var view = _this.packlayoutview;
+    var margin = _this.margin.top;
+    var diameter = _this.width;
+    var packlayoutzoomto = _this.zoomto_packlayout;
 
     var transition = d3.transition()
         .duration(d3.event.altKey ? 7500 : 750)
@@ -108,10 +130,12 @@ d3_chart2d.prototype.zoom_packlayout = function(d){
         .each("start", function(d) { if (d.parent === focus) this.style.display = "inline"; })
         .each("end", function(d) { if (d.parent !== focus) this.style.display = "none"; });
 };
-d3_chart2d.prototype.zoomto_packlayout = function(view_I,diameter_I){
+d3_graph2d.prototype.zoomto_packlayout = function(view_I,diameter_I){
     // pack layout zoomto function
     // INPUT: 
     // view_I = [root.x, root.y, root.r * 2 + margin]
+    // TODO:
+    // where are the .r, .x, and .y properties coming from?
     if (view_I && diameter_I){
         var k = diameter_I / view_I[2]; 
         this.set_packlayoutviewdata1(view_I);
@@ -123,9 +147,10 @@ d3_chart2d.prototype.zoomto_packlayout = function(view_I,diameter_I){
     this.node.attr("transform", function(d) { return "translate(" + (d.x - view[0]) * k + "," + (d.y - view[1]) * k + ")"; });
     this.packlayoutcircle.attr("r", function(d) { return d.r * k; });
 };
-d3_chart2d.prototype.add_packlayoutdata1zoom = function(){
+d3_graph2d.prototype.add_packlayoutdata1zoom = function(){
     // add zoom to svg element of the packlayoutzoom
-    var packlayoutzoom = this.packlayoutzoom;
+    var packlayoutzoom = this.zoomto_packlayout;
+    //var packlayoutzoom = this.packlayoutzoom;
     var id = this.id
     var root = this.data1.nestdatafiltered[0];
     d3.select("#"+this.id).on("click",function() { packlayoutzoom(root); });

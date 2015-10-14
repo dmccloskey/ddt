@@ -9,7 +9,7 @@ function d3_svg() {
     this.margin = {};
     this.width = 1;
     this.height = 1;
-    this.updatecontainer = false;
+    this.render = null; // function defining the calls to make the svg element
 };
 d3_svg.prototype.set_tileid = function (tileid_I) {
     // set svg tile id
@@ -124,90 +124,6 @@ d3_svg.prototype.add_datalist2tile = function (datalist_valuetext_I) {
     };
 
 };
-d3_svg.prototype.add_data1filtermenusubmitbutton = function (tileid_I,submitbuttonid_I){
-    // add data list (menu) to tile for the heatmap
-    if (tileid_I){var tileid = tileid_I;}
-    else{var tileid = this.tileid;};
-    if (submitbuttonid_I){var submitbuttonid = submitbuttonid_I;}
-    else{var submitbuttonid = this.submitbuttonid;};
-
-    var this_ = this;
-
-    function submit(){
-        var filterstringmenu = [];
-        for (key in this_.data1.filters){
-            var filterkey = d3.select("#"+tileid+'formlabel'+key).text();
-            var filterstring = d3.select("#"+tileid+'forminput'+key).node().value;
-            filterstringmenu.push({"text":filterkey,"value":filterstring});
-        };
-        this_.data1.convert_stringmenuinput2filter(filterstringmenu);
-        this_.data1.filter_stringdata();
-        this_.render();
-    };
-
-    this.submitbutton = d3.select("#"+tileid+'submitbutton'+submitbuttonid)
-        .on("mousedown",submit);
-};
-d3_svg.prototype.add_data2filtermenusubmitbutton = function (tileid_I,submitbuttonid_I){
-    // add data list (menu) to tile for the heatmap
-    if (tileid_I){var tileid = tileid_I;}
-    else{var tileid = this.tileid;};
-    if (submitbuttonid_I){var submitbuttonid = submitbuttonid_I;}
-    else{var submitbuttonid = this.submitbuttonid;};
-
-    var this_ = this;
-
-    function submit(){
-        var filterstringmenu = [];
-        for (key in this_.data2.filters){
-            var filterkey = d3.select("#"+tileid+'formlabel'+key).text();
-            var filterstring = d3.select("#"+tileid+'forminput'+key).node().value;
-            filterstringmenu.push({"text":filterkey,"value":filterstring});
-        };
-        this_.data2.convert_stringmenuinput2filter(filterstringmenu);
-        this_.data2.filter_stringdata();
-        this_.render();
-    };
-
-    this.submitbutton = d3.select("#"+tileid+'submitbutton'+submitbuttonid)
-        .on("mousedown",submit);
-};
-d3_svg.prototype.add_data2filtermenuresetbutton = function (tileid_I,resetbuttonid_I){
-    // add data list (menu) to tile for the heatmap
-    if (tileid_I){var tileid = tileid_I;}
-    else{var tileid = this.tileid;};
-    if (resetbuttonid_I){var resetbuttonid = resetbuttonid_I;}
-    else{var resetbuttonid = this.resetbuttonid;};
-
-    var this_ = this;
-    
-    function reset(){
-        this_.data2.reset_filters();
-        this_.data2.filter_stringdata();
-        this_.render();
-    };
-
-    this.resetbutton = d3.select("#"+tileid+'submitbutton'+resetbuttonid)
-        .on("click",reset);
-};
-d3_svg.prototype.add_data1filtermenuresetbutton = function (tileid_I,resetbuttonid_I){
-    // add data list (menu) to tile for the heatmap
-    if (tileid_I){var tileid = tileid_I;}
-    else{var tileid = this.tileid;};
-    if (resetbuttonid_I){var resetbuttonid = resetbuttonid_I;}
-    else{var resetbuttonid = this.resetbuttonid;};
-
-    var this_ = this;
-    
-    function reset(){
-        this_.data1.reset_filters();
-        this_.data1.filter_stringdata();
-        this_.render();
-    };
-
-    this.resetbutton = d3.select("#"+tileid+'submitbutton'+resetbuttonid)
-        .on("click",reset);
-};
 d3_svg.prototype.set_svgstyle = function () {
     // predefined css style for svg
     //var selector1 = "#" + this.id;
@@ -223,4 +139,55 @@ d3_svg.prototype.set_svgstyle = function () {
     };
     var selectorstyle = [{ 'selection': selector1, 'style': style1 }];
     this.set_d3css(selectorstyle);
+};
+d3_svg.prototype.set_duration = function(duration_I){
+    // set the transition duration
+    this.duration = duration_I;
+};
+d3_svg.prototype.set_svggcss = function (selectionstyle_I) {
+    //set custom css style to svgg
+    //Input:
+    // selectionstyle_I = [{selection: string e.g., '.axis line, .axis path'
+    //                      style: key:value strings e.g., {'fill': 'none', 'stroke': '#000',
+    //                                                      'shape-rendering': 'crispEdges'}}]
+    for (var i = 0; i < selectionstyle_I.length; i++) {
+        this.svgg.selectAll(selectionstyle_I[i].selection)
+            .style(selectionstyle_I[i].style);
+    };
+};
+d3_svg.prototype.set_d3css = function (selectionstyle_I) {
+    //set custom css style to d3
+    //Input:
+    // selectionstyle_I = [{selection: string e.g., '.axis line, .axis path'
+    //                      style: key:value strings e.g., {'fill': 'none', 'stroke': '#000',
+    //                                                      'shape-rendering': 'crispEdges'}}]
+    for (var i = 0; i < selectionstyle_I.length; i++) {
+        d3.selectAll(selectionstyle_I[i].selection)
+            .style(selectionstyle_I[i].style);
+    };
+};
+d3_svg.prototype.set_zoom = function (){
+    //add zoom
+    var draw = this.draw;
+    var render = this.render;
+    this.zoom = d3.behavior.zoom()
+        .scaleExtent([1,10])
+        //.on("zoom", render);
+        .on("zoom", draw);
+};
+d3_svg.prototype.add_zoom = function(){
+    //add zoom to svg
+    var zoom = this.zoom;
+    this.svgg.call(zoom);
+    //this.zoom(svgelement);
+};
+d3_svg.prototype.render = function () {
+    //render the svg
+
+    //your code here...
+};
+d3_svg.prototype.draw = function () {
+    //draw the svg
+
+    //your code here...
 };
