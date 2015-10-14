@@ -1,18 +1,18 @@
 "use strict";
-function ddt_svg_circlepacklayout2d_01() {
-    // circlepacklayout
+function ddt_svg_packlayout2d_01() {
+    // packlayout
     // description:
-    // generic circlepacklayout
+    // generic packlayout
     // NOTES:
     // 1. data_I.datanestkeys = [] of multiple keys in order
     // 2. data_I.datalastchild = string describing the final child element
     // 2. data_I.svgpadding = float
     ddt_svg.call(this);
 };
-ddt_svg_circlepacklayout2d_01.prototype = Object.create(ddt_svg.prototype);
-ddt_svg_circlepacklayout2d_01.prototype.constructor = ddt_svg_circlepacklayout2d_01;
-ddt_svg_circlepacklayout2d_01.prototype.make_svg = function(data_I,parameters_I){
-	// circlepacklayout definition
+ddt_svg_packlayout2d_01.prototype = Object.create(ddt_svg.prototype);
+ddt_svg_packlayout2d_01.prototype.constructor = ddt_svg_packlayout2d_01;
+ddt_svg_packlayout2d_01.prototype.make_svg = function(data_I,parameters_I){
+	// packlayout definition
 
 	this.ddtsvg = new d3_graph2d();
 	
@@ -34,7 +34,7 @@ ddt_svg_circlepacklayout2d_01.prototype.make_svg = function(data_I,parameters_I)
     //this.ddtsvg.set_tooltipstyle();
     this.ddtsvg.set_zoom();
     this.ddtsvg.data1.format_keyvalues2namechildren(data_I.datalastchild); //new!
-    this.ddtsvg.set_packlayout(parameters_I.svgpadding};); //new
+    this.ddtsvg.set_packlayout(parameters_I.svgpadding); //new
     this.ddtsvg.render = function () {
         this.add_graph2d2tile();
         //this.add_chart2d2tile_packlayoutcircle();
