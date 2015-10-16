@@ -10,10 +10,6 @@ d3_chart2d.prototype.set_heatmapdata1 = function (cellsize_I) {
     var columnsleaves = this.data1keymap.columnsleaves;
     var columnsindex = this.data1keymap.columnsindex;
     var rowsindex = this.data1keymap.rowsindex;
-    
-    //heatmap specific properties
-    this.cellsize = cellsize_I;
-    this.legendelementwidth = cellsize_I*1.5;
 
     this.uniquecollabels = this.get_uniquelabels(listdatafiltered,columnslabel);
     this.uniquerowlabels = this.get_uniquelabels(listdatafiltered,rowslabel);
@@ -69,6 +65,10 @@ d3_chart2d.prototype.set_heatmapdata1 = function (cellsize_I) {
     listdatafiltered.forEach(function(d){values.push(d[zdata]);});
     this.maxvalue = d3.max(values);
     this.minvalue = d3.min(values);
+    
+    //heatmap specific properties
+    this.cellsize = cellsize_I;
+    this.legendelementwidth = cellsize_I*1.0;
 
     //initial row/col sort order
     this.rowsortorder=false;
@@ -441,8 +441,16 @@ d3_chart2d.prototype.add_heatmapdata1tooltipandfill = function () {
         });
 
 };
-d3_chart2d.prototype.add_heatmapdata1legend = function(){
+d3_chart2d.prototype.add_heatmapdata1legend = function(orientation_I){
     // add lengend to the heatmap
+    // INPUT:
+    // orientation_I = 'bottom left','top right'
+
+    if (typeof orientation_I !== 'undefined'){
+        var orientation = orientation_I;
+    } else{ 
+        var orientation = 'bottom left';
+    };
 
     var listdatafiltered = this.data1.listdatafiltered;
     var columnslabel = this.data1keymap.columnslabel;
@@ -518,46 +526,118 @@ d3_chart2d.prototype.add_heatmapdata1legend = function(){
           .attr("class", "legend");
         var colorfactor = 0.1;
     } else{
+        if ( (Math.floor10(maxvalue,3) - Math.ceil10(minvalue,3)) > 1000 ){
+            var datarange = d3.range(Math.floor10(minvalue,3),Math.ceil10(maxvalue,3),1000);
+            var round_exp = 3;
+            var nsteps = 1000.;
+        } else if ( (Math.floor10(maxvalue,2) - Math.ceil10(minvalue,2)) > 100 ){
+            var datarange = d3.range(Math.floor10(minvalue,2),Math.ceil10(maxvalue,2),100);
+            var round_exp = 2;
+            var nsteps = 100.;
+        } else if ( (Math.floor10(maxvalue,1) - Math.ceil10(minvalue,1)) > 10 ){
+            var datarange = d3.range(Math.floor10(minvalue,1),Math.ceil10(maxvalue,1),10);
+            var round_exp = 1;
+            var nsteps = 10.;
+        } else if ( (Math.floor10(maxvalue,0) - Math.ceil10(minvalue,0)) > 1 ){
+            var datarange = d3.range(Math.floor10(minvalue,0),Math.ceil10(maxvalue,1),1);
+            var round_exp = 0;
+            var nsteps = 1.;
+        } else if ( (Math.floor10(maxvalue,-1) - Math.ceil10(minvalue,-1)) > .1 ){
+            var datarange = d3.range(Math.floor10(minvalue,-1),Math.ceil10(maxvalue,-1),.1);
+            var round_exp = -1;
+            var nsteps = .1;
+        } else if ( (Math.floor10(maxvalue,-2) - Math.ceil10(minvalue,-2)) > .01 ){
+            var datarange = d3.range(Math.floor10(minvalue,-2),Math.ceil10(maxvalue,-2),.01);
+            var round_exp = -2;
+            var nsteps = .01;
+        } else if ( (Math.floor10(maxvalue,-3) - Math.ceil10(minvalue,-3)) > .001 ){
+            var datarange = d3.range(Math.floor10(minvalue,-3),Math.ceil10(maxvalue,-3),.001);
+            var round_exp = -3;
+            var nsteps = .001;
+        } else {
+            var datarange = d3.range(Math.floor10(minvalue),Math.ceil10(maxvalue));
+        }
+
         this.legenddata1 = this.svgg.selectAll(".legend")
-          .data(d3.range(Math.floor(minvalue), Math.ceil(maxvalue))); //use for expression data (domain -10.0-10.0)
+          .data(datarange); //use for expression data (domain -10.0-10.0)
         this.legenddata1enter = this.legenddata1
           .enter().append("g")
           .attr("class", "legend");
-        var colorfactor = Math.ceil10(21.0 / (maxvalue - minvalue),-3);
-          };
+        var colorfactor = Math.ceil10(1/datarange.length,-2);
+      };
     
     this.legenddata1.exit().remove();
 
-    this.legenddata1.select("rect").transition()
-        .attr("x", function (d, i) { return legendelementwidth * i; })
-        .attr("y", height + (cellsize * 2))
-        .attr("width", legendelementwidth)
-        .attr("height", cellsize)
-        .style("fill", function (d, i) { return colorscale(i * colorfactor); });
+    // legend on the bottom
+    if (orientation==='bottom left'){
+        this.legenddata1.select("rect").transition()
+            .attr("x", function (d, i) { return legendelementwidth * i; })
+            .attr("y", height + (cellsize * 2))
+            .attr("width", legendelementwidth)
+            .attr("height", cellsize)
+            .style("fill", function (d, i) { 
+                return colorscale(i * colorfactor); });
 
-    this.legenddata1enter.append("rect")
-        .attr("x", function (d, i) { return legendelementwidth * i; })
-        .attr("y", height + (cellsize * 2))
-        .attr("width", legendelementwidth)
-        .attr("height", cellsize)
-        .style("fill", function (d, i) { return colorscale(i * colorfactor); });
+        this.legenddata1enter.append("rect")
+            .attr("x", function (d, i) { return legendelementwidth * i; })
+            .attr("y", height + (cellsize * 2))
+            .attr("width", legendelementwidth)
+            .attr("height", cellsize)
+            .style("fill", function (d, i) { 
+                return colorscale(i * colorfactor); });
 
-    this.legenddata1.select("text").transition()
-        .attr("class", "mono")
-        .text(function (d) { 
+        this.legenddata1.select("text").transition()
+            .attr("class", "mono")
+            .text(function (d) { 
+                    return d; })
+            .attr("width", legendelementwidth)
+            .attr("x", function (d, i) {return legendelementwidth * i; })
+            .attr("y", height + (cellsize * 4));
+
+        this.legenddata1enter.append("text")
+            .attr("class", "mono")
+            .text(function (d) { 
                 return d; })
-        .attr("width", legendelementwidth)
-        .attr("x", function (d, i) { return legendelementwidth * i; })
-        .attr("y", height + (cellsize * 4));
+            .attr("width", legendelementwidth)
+            .attr("x", function (d, i) { 
+                return legendelementwidth * i; })
+            .attr("y", height + (cellsize * 4));
+    } else if (orientation==='top right'){
+    //legend on the side
+        this.legenddata1.select("rect").transition()
+            .attr("x", width + (cellsize * 2))
+            .attr("y", function (d, i) { return legendelementwidth * i; })
+            .attr("width", cellsize)
+            .attr("height", legendelementwidth)
+            .style("fill", function (d, i) { 
+                return colorscale(i * colorfactor); });
 
-    this.legenddata1enter.append("text")
-        .attr("class", "mono")
-        .text(function (d) { 
-            return d; })
-        .attr("width", legendelementwidth)
-        .attr("x", function (d, i) { 
-            return legendelementwidth * i; })
-        .attr("y", height + (cellsize * 4));
+        this.legenddata1enter.append("rect")
+            .attr("x", width + (cellsize * 2))
+            .attr("y", function (d, i) { return legendelementwidth * i; })
+            .attr("width", cellsize)
+            .attr("height", legendelementwidth)
+            .style("fill", function (d, i) { 
+                return colorscale(i * colorfactor); });
+
+        this.legenddata1.select("text").transition()
+            .attr("class", "mono")
+            .text(function (d) { 
+                    return d; })
+            .attr("height", legendelementwidth)
+            .attr("x", width + (cellsize * 3))
+            .attr("y", function (d, i) { 
+                return legendelementwidth * i + legendelementwidth; });
+
+        this.legenddata1enter.append("text")
+            .attr("class", "mono")
+            .text(function (d) { 
+                return d; })
+            .attr("height", legendelementwidth)
+            .attr("x", width + (cellsize * 3))
+            .attr("y", function (d, i) {
+                return legendelementwidth * i + legendelementwidth; });
+        };
 
 };
 d3_chart2d.prototype.add_heatmapdata1drowpdownmenu = function (tileid_I){

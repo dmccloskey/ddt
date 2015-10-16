@@ -60,7 +60,7 @@ ddt_svg_heatmap_01.prototype.make_svg = function(data_I,parameters_I){
         this.add_heatmapdata1animation();
         this.add_heatmapdata1rowlabels(parameters_I.svgdatalisttileid);
         this.add_heatmapdata1columnlabels(parameters_I.svgdatalisttileid);
-        this.add_heatmapdata1legend();
+        this.add_heatmapdata1legend(parameters_I.svglegendorientation);
         //this.add_heatmapdata1drowpdownmenu("tile1");
         this.add_heatmapdata1datalist(parameters_I.svgdatalisttileid);
         this.add_heatmapdata1tooltipandfill();
