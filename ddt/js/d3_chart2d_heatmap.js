@@ -270,7 +270,8 @@ d3_chart2d.prototype.add_heatmapdata1 = function () {
         .attr("class", function(d){return "cell cell-border cr"+(d[rowsindex])+" cc"+(d[columnsindex]);})
         .attr("width", cellsize)
         .attr("height", cellsize)
-        .style("fill", function(d) { return colorscale(d[zdata]); });
+        .style("fill", function(d) {
+            return colorscale(d[zdata]); });
 
     this.heatmap.exit().remove();
     
@@ -282,7 +283,8 @@ d3_chart2d.prototype.add_heatmapdata1 = function () {
         .attr("class", function(d){return "cell cell-border cr"+(d[rowsindex])+" cc"+(d[columnsindex]);})
         .attr("width", cellsize)
         .attr("height", cellsize)
-        .style("fill", function(d) { return colorscale(d[zdata]); });
+        .style("fill", function(d) {
+            return colorscale(d[zdata]); });
 };
 d3_chart2d.prototype.add_heatmapdata1animation = function () {
     //add animation to heatmapdata1

@@ -1,5 +1,5 @@
 "use strict";
-//var ddt_svg_heatmap_01 = function () {
+// TODO: implement dendrogram (https://github.com/rstudio/d3heatmap/tree/master/inst/htmlwidgets/lib/d3heatmapcore)
 function ddt_svg_heatmap_01() {
     // heatmap
     // description:
