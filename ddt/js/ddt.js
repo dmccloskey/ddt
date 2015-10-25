@@ -314,9 +314,23 @@ d3_data.prototype.clear_data = function () {
 };
 d3_data.prototype.change_filters = function (filter_I) {
     // modify the filter according to the new filter
+    // Behavior: 
+    // 1. update existing filters
+    // 2. add in new filters if they do not exist
     
     for (var key in filter_I) {
         this.filters[key] = filter_I[key];
+    };
+};
+d3_data.prototype.change_filtersinkeys = function (filter_I) {
+    // modify the filter according to the new filter
+    // Behavior: 
+    // 1. update existing filters that are in the keys
+    
+    for (var key in filter_I) {
+        if (Object.keys(this.filters).indexOf(key) > -1){
+            this.filters[key] = filter_I[key];
+        };
     };
 };
 d3_data.prototype.format_keyvalues2namechildren = function(lastchild_I){
@@ -356,7 +370,8 @@ d3_data.prototype.convert_stringmenuinput2filter = function(filterstring_I){
         //this.filters[filterstring_I[i].text]=filterstring_I[i].value.split(",");
         filtermap[filterstring_I[i].text]=filterstring_I[i].value.split(",");
     };
-    this.change_filters(filtermap)
+    //this.change_filters(filtermap) //can lead to adding in filters unintentionally
+    this.change_filtersinkeys(filtermap)
 };
 d3_data.prototype.change_nestkeys = function(nestkey_I) {
     // change the nest keys and update nestdatafiltered
@@ -705,7 +720,9 @@ d3_svg_data.prototype.set_colorscale = function (colorscale_I,colorcategory_I,co
     //  colordomain_I = [] e.g., [0,1],[0,1000],[-1000,1000],[-10,0,10],[0.0,0.5,1.0]
     //                           'min,0,max'
     //  colorcategory_I = category10, category20, category20a, category20b, category20c
-    //                    brewer, heatmap21, heatmap10
+    //                    brewer, heatmap21, heatmap10, blue2gold64RBG, blue2gold64HSV
+    // NOTES:
+    //  custom colors generated from http://www.perbang.dk/rgbgradient/
 
 
     // custom colorscale
@@ -720,7 +737,7 @@ d3_svg_data.prototype.set_colorscale = function (colorscale_I,colorcategory_I,co
     //var blue2gold64HSV = ['#0E1B4E','#0F1950','#101753','#111556','#121359','#16135B','#1B155E','#201661','#251764','#2A1967','#301A69','#351C6C','#3B1D6F','#411F72','#472075','#4E2277','#54247A','#5A257D','#612780','#682983','#6F2B85','#762D88','#7D2E8B','#84308E','#8B3291','#923493','#963793','#993991','#9C3B8F','#9F3D8D','#A13F8B','#A44289','#A74487','#AA4685','#AC4983','#AF4B81','#B24E7F','#B5507C','#B8537A','#BA5578','#BD5876','#C05A74','#C35D72','#C66070','#C8636E','#CB666C','#CE686A','#D16F6B','#D4776E','#D67F71','#D98674','#DC8E77','#DF967B','#E29E7E','#E4A681','#E7AD84','#EAB587','#EDBD8B','#F0C58E','#F2CC92','#F5D495','#F8DC98','#FBE39C','#FEEAA0'];
     var blue2red64RBG = ['#1D2B63','#202A61','#23295F','#26285E','#29285C','#2C275B','#302659','#332658','#362556','#392455','#3C2453','#3F2352','#432250','#46224F','#49214D','#4C204C','#4F204A','#521F49','#561E47','#591E46','#5C1D44','#5F1C43','#621B41','#661B3F','#691A3E','#6C193C','#6F193B','#721839','#751738','#791736','#7C1635','#7F1533','#821532','#851430','#88132F','#8C132D','#8F122C','#92112A','#951129','#981027','#9B0F26','#9F0F24','#A20E23','#A50D21','#A80C1F','#AB0C1E','#AF0B1C','#B20A1B','#B50A19','#B80918','#BB0816','#BE0815','#C20713','#C50612','#C80610','#CB050F','#CE040D','#D1040C','#D5030A','#D80209','#DB0207','#DE0106','#E10004','#E50003'];
     var blue2red64HSV = ['#1D2A63','#1D2965','#1D2667','#1D2469','#1D226B','#1D1F6D','#1E1D6F','#211D71','#241D73','#271D75','#2A1D77','#2E1D79','#311D7B','#351D7D','#391D7F','#3D1D81','#411C84','#451C86','#4A1C88','#4E1C8A','#531C8C','#581B8E','#5D1B90','#621B92','#671A94','#6D1A96','#731A98','#78199A','#7E199C','#84199E','#8B18A0','#9118A2','#9817A5','#9F17A7','#A616A9','#AB16A8','#AD15A5','#AF15A2','#B1149E','#B3149A','#B51396','#B71292','#B9128E','#BB1189','#BD1085','#BF1080','#C10F7B','#C30E75','#C60D70','#C80D6A','#CA0C64','#CC0B5E','#CE0A57','#D00951','#D2084A','#D40743','#D6063C','#D80634','#DA052C','#DC0425','#DE031C','#E00214','#E2010B','#E50002'];
-    
+
     var listdatafiltered = this.data1.listdatafiltered;
     if (colorscale_I==='quantile' && colordomain_I==='min,0,max' && colordatalabel_I && colorcategory_I==='colorbrewer'){
             this.colorscale = d3.scale.quantile()
@@ -6482,7 +6499,7 @@ ddt_svg_boxandwhiskersplot2d_01.prototype.make_svg = function(data_I,parameters_
         //this.set_svgelementzoomcss();
     };
 };
-//var ddt_svg_heatmap_01 = function () {
+// TODO: implement dendrogram (https://github.com/rstudio/d3heatmap/tree/master/inst/htmlwidgets/lib/d3heatmapcore)
 function ddt_svg_heatmap_01() {
     // heatmap
     // description:

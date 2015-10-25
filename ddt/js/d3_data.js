@@ -134,9 +134,23 @@ d3_data.prototype.clear_data = function () {
 };
 d3_data.prototype.change_filters = function (filter_I) {
     // modify the filter according to the new filter
+    // Behavior: 
+    // 1. update existing filters
+    // 2. add in new filters if they do not exist
     
     for (var key in filter_I) {
         this.filters[key] = filter_I[key];
+    };
+};
+d3_data.prototype.change_filtersinkeys = function (filter_I) {
+    // modify the filter according to the new filter
+    // Behavior: 
+    // 1. update existing filters that are in the keys
+    
+    for (var key in filter_I) {
+        if (Object.keys(this.filters).indexOf(key) > -1){
+            this.filters[key] = filter_I[key];
+        };
     };
 };
 d3_data.prototype.format_keyvalues2namechildren = function(lastchild_I){
@@ -176,7 +190,8 @@ d3_data.prototype.convert_stringmenuinput2filter = function(filterstring_I){
         //this.filters[filterstring_I[i].text]=filterstring_I[i].value.split(",");
         filtermap[filterstring_I[i].text]=filterstring_I[i].value.split(",");
     };
-    this.change_filters(filtermap)
+    //this.change_filters(filtermap) //can lead to adding in filters unintentionally
+    this.change_filtersinkeys(filtermap)
 };
 d3_data.prototype.change_nestkeys = function(nestkey_I) {
     // change the nest keys and update nestdatafiltered
