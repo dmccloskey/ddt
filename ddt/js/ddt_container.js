@@ -242,7 +242,7 @@ ddt_container.prototype.add_datafiltermenubuttons = function(datafiltermenu_I){
 ddt_container.prototype.__main__ = function(parameters,data,tile2datamap,filtermenu){
     //run
     //ddt_test = new ddt_container();
-    //container manipuation features
+    //container manipulation features
     this.add_header2container();
     this.add_jsonimportbutton2container();
     this.add_jsonexportbutton2container();
