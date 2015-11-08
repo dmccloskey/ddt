@@ -54,36 +54,107 @@ d3_tile.prototype.add_tile2container = function () {
         this.append_tile2container();
     };
 };
-d3_tile.prototype.append_tile2container = function () {
+d3_tile.prototype.append_tile2container = function (containerid_I,rowid_I,colid_I) {
     // set column id
-    //ondrop="drop(event)" ondragover="allowDrop(event)"
+    if(typeof(containerid_I)!=="undefined"){
+        var containerid = containerid_I;
+    } else {
+        var containerid = this.containerid;
+    };
+    if(typeof(rowid_I)!=="undefined"){
+        var rowid = rowid_I;
+    } else {
+        var rowid = this.rowid;
+    };
+    if(typeof(colid_I)!=="undefined"){
+        var colid = colid_I;
+    } else {
+        var colid = this.colid;
+    };
+
+    var this_ = this;
+
+    function allowDrop() {
+        if (d3.event){
+            d3.event.preventDefault();
+        };
+    };
+    function drop() {
+        this_.trigger_drop();
+    };
+    function dragEnter() {
+        if (d3.event){
+            var tiletargetid = d3.event.target.id;
+            if (tiletargetid.indexOf('col')===0 || tiletargetid.indexOf('row')===0){
+                d3.event.target.style.background="grey";
+            };
+        };
+    };
+    function dragLeave() {
+        if (d3.event){
+            d3.event.target.style.background="";
+        };
+    };
     var row = d3.select("#" + this.containerid)
         .append("div")
         .attr("class", this.rowclass)
-        .attr("id", this.rowid)
+        .attr("id", rowid)
         .on("drop", drop)
         .on("dragover", allowDrop)
         .on("dragleave", dragLeave)
         .on("dragenter",dragEnter);
-//         .on("drop", "drop(event);")
-//         .on("dragover", "allowDrop(event);")
-//         .on("dragenter","dragEnter(event);");
     var col = row.append("div")
         .attr("class", this.colclass)
-        .attr("id", this.colid)
+        .attr("id", colid)
         .on("drop", drop)
         .on("dragover", allowDrop)
         .on("dragleave", dragLeave)
         .on("dragenter",dragEnter);
-//         .on("drop", "drop(event);")
-//         .on("dragover", "allowDrop(event);")
-//         .on("dragenter","dragEnter(event);");
     this.tile = col.append("div")
         .attr("class", this.tileclass)
         .attr("id", this.tileid);
 };
-d3_tile.prototype.append_tile2row = function () {
+d3_tile.prototype.append_tile2row = function (containerid_I,rowid_I,colid_I) {
     // add tile as new column in an existing row
+    if(typeof(containerid_I)!=="undefined"){
+        var containerid = containerid_I;
+    } else {
+        var containerid = this.containerid;
+    };
+    if(typeof(rowid_I)!=="undefined"){
+        var rowid = rowid_I;
+    } else {
+        var rowid = this.rowid;
+    };
+    if(typeof(colid_I)!=="undefined"){
+        var colid = colid_I;
+    } else {
+        var colid = this.colid;
+    };
+    var this_ = this;
+
+    function allowDrop() {
+        if (d3.event){
+            d3.event.preventDefault();
+        };
+    };
+    function drop() {
+        this_.trigger_drop();
+    };
+    function dragEnter() {
+        if (d3.event){
+            var tiletargetid = d3.event.target.id;
+            if (tiletargetid.indexOf('col')===0 || tiletargetid.indexOf('row')===0){
+                d3.event.target.style.background="grey";
+            };
+        };
+    };
+    function dragLeave() {
+        if (d3.event){
+            d3.event.target.style.background="";
+        };
+    };
+
     var col = d3.select("#" + this.containerid).select("#" + this.rowid)
         .append("div")
         .attr("class", this.colclass)
@@ -92,18 +163,32 @@ d3_tile.prototype.append_tile2row = function () {
         .on("dragover", allowDrop)
         .on("dragleave", dragLeave)
         .on("dragenter",dragEnter);
-//         .on("drop", "drop(event);")
-//         .on("dragover", "allowDrop(event);")
-//         .on("dragenter","dragEnter(event);");
     this.tile = col.append("div")
         .attr("class", this.tileclass)
         .attr("id", this.tileid);
 };
-d3_tile.prototype.append_tile2col = function () {
+d3_tile.prototype.append_tile2col = function (containerid_I,rowid_I,colid_I) {
     // add tile to as a new row in an existing column
-    this.tile = d3.select("#" + this.containerid)
-        .select("#" + this.rowid)
-        .select("#" + this.colid)
+    if(typeof(containerid_I)!=="undefined"){
+        var containerid = containerid_I;
+    } else {
+        var containerid = this.containerid;
+    };
+    if(typeof(rowid_I)!=="undefined"){
+        var rowid = rowid_I;
+    } else {
+        var rowid = this.rowid;
+    };
+    if(typeof(colid_I)!=="undefined"){
+        var colid = colid_I;
+    } else {
+        var colid = this.colid;
+    };
+    
+
+    this.tile = d3.select("#" + containerid)
+        .select("#" + rowid)
+        .select("#" + colid)
         .append("div")
         .attr("class", this.tileclass)
         .attr("id", this.tileid);
@@ -310,6 +395,12 @@ d3_tile.prototype.add_navigationmenu2header = function(){
 
         };
     };
+    function movetileright(){
+    };
+    function movetileup(){
+    };
+    function movetiledown(){
+    };
 
     var navmenu = this.tileheader.append("div")
         .attr("id", tileid + 'navigationmenu');
@@ -320,7 +411,80 @@ d3_tile.prototype.add_navigationmenu2header = function(){
         .attr("data-toggle","tooltip")
         .attr("title","move left");
     moveleftbutton.on("click",movetileleft);
-}
+    var moverightbutton = navmenu.append("div")
+        .attr("class","glyphicon glyphicon-arrow-right pull-left")
+        .attr("id", tileid + 'movetileright')
+        .style({"cursor":"pointer"})
+        .attr("data-toggle","tooltip")
+        .attr("title","move right");
+    moverightbutton.on("click",movetileright);
+    var moveupbutton = navmenu.append("div")
+        .attr("class","glyphicon glyphicon-arrow-up pull-left")
+        .attr("id", tileid + 'movetileup')
+        .style({"cursor":"pointer"})
+        .attr("data-toggle","tooltip")
+        .attr("title","move up");
+    moveupbutton.on("click",movetileup);
+    var movedownbutton = navmenu.append("div")
+        .attr("class","glyphicon glyphicon-arrow-down pull-left")
+        .attr("id", tileid + 'movetiledown')
+        .style({"cursor":"pointer"})
+        .attr("data-toggle","tooltip")
+        .attr("title","move down");
+    movedownbutton.on("click",movetiledown);
+};
+d3_tile.prototype.add_resize2header = function(){
+    // add tile resize
+    // expand tile col width 1 increment
+    // decrease tile width 1 increment
+    // increments are the following:
+    //  3, 4, 6, 8, 12
+
+    //TODO
+    var tileid = this.tileid;
+    var rowid = this.rowid;
+    var colid = this.colid;
+    var colclass = this.colclass;
+    var colsizes = [3,4,6,8,12];
+
+    var this_ = this;
+    function expandtilehorizontal(){
+        var colclasslist = this_.colclass.split('-');
+        var colclassint = parseInt(colclasslist.pop());
+        var colclassbase = colclasslist.join('-')
+        var colclassnewint = 12;
+        for (var i=0;colsizes.length;i++){
+            if(colsizes[i]>colclassint){
+                colclassnewint = colsizes[i];
+                break;
+            };
+        };
+        var colclassnew = colclassbase + '-' + colclassnewint.toString();
+        this_.colclass = colclassnew;
+        var tilecol = d3.select("#"+tileid).node().parentNode
+        tilecol.className = colclassnew;
+    };
+    function shrinktilehorizontal(){ 
+    };
+
+    var resizemenu = this.tileheader.append("div")
+        .attr("id", tileid + 'resizemenu');
+    var expandbutton = resizemenu.append("div")
+        .attr("class","glyphicon  glyphicon-resize-full pull-left")
+        .attr("id", tileid + 'expandtile')
+        .style({"cursor":"pointer"})
+        .attr("data-toggle","tooltip")
+        .attr("title","expand tile width");
+    expandbutton.on("click",expandtilehorizontal);
+
+    var shrinkbutton = resizemenu.append("div")
+        .attr("class","glyphicon  glyphicon-resize-small pull-left")
+        .attr("id", tileid + 'shrinktile')
+        .style({"cursor":"pointer"})
+        .attr("data-toggle","tooltip")
+        .attr("title","shrink tile width");
+    shrinkbutton.on("click",shrinktilehorizontal);
+};
 d3_tile.prototype.set_draganddrop = function () {
     // set drag and drop attribute to tile
     //draggable="true" ondragstart="drag(event)"
@@ -341,36 +505,26 @@ function allowDrop() {
         d3.event.preventDefault();
     };
 };
-function drop() {
+d3_tile.prototype.trigger_drop = function() {
+    // drop event function
     if (d3.event){
         d3.event.preventDefault();
         d3.event.target.style.background="";
         var tiletargetid = d3.event.target.id;
         if (tiletargetid.indexOf('col')===0){
             // append tile as a new column of the same row
+            //var tiletargetidrow = d3.event.target.parentNode.id;
             var tiledropid = d3.event.dataTransfer.getData("text");
-            var tiledrop = d3.select("#"+tiledropid);
-            d3.event.target.appendChild(document.getElementById(tiledropid));
+            var tiledrop = d3.select("#"+tiledropid).node();
+            //this.append_tile2col(this.containerid,tiletargetidrow,tiletargetid);
+            d3.event.target.appendChild(tiledrop);
         };
         if (tiletargetid.indexOf('row')===0){
             // append tile as a new row
             var tiledropid = d3.event.dataTransfer.getData("text");
-            var tiledrop = d3.select("#"+tiledropid);
-            d3.event.target.appendChild(document.getElementById(tiledropid));
+            var tiledrop = d3.select("#"+tiledropid).node().parentNode;
+            d3.event.target.appendChild(tiledrop);
         };
-    };
-};
-function dragEnter() {
-    if (d3.event){
-        var tiletargetid = d3.event.target.id;
-        if (tiletargetid.indexOf('col')===0 || tiletargetid.indexOf('row')===0){
-            d3.event.target.style.background="grey";
-        };
-    };
-};
-function dragLeave() {
-    if (d3.event){
-        d3.event.target.style.background="";
     };
 };
 

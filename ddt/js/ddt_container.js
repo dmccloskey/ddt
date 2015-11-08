@@ -280,7 +280,7 @@ ddt_container.prototype.add_jsonexportbutton2container = function (){
     var jsonexportbutton = this.containerheader
         .append("div")
         //.attr("class","glyphicon glyphicon-download pull-right")
-        .attr("class","glyphicon glyphicon-floppy-save pull-left")
+        .attr("class","glyphicon glyphicon-save-file pull-left")
         .attr("id", containerid + 'jsonexportbutton')
         .style({"cursor":"pointer"})
         .attr("data-toggle","tooltip")
@@ -325,7 +325,7 @@ ddt_container.prototype.add_jsonimportbutton2container = function (){
     var jsonimportbutton = this.containerheader
         .append("div")
         //.attr("class","glyphicon glyphicon-download pull-right")
-        .attr("class","glyphicon glyphicon-floppy-open pull-left")
+        .attr("class","glyphicon glyphicon-open-file pull-left")
         .attr("id", containerid + 'jsonexportbutton')
         .style({"cursor":"pointer"})
         .attr("data-toggle","tooltip")
