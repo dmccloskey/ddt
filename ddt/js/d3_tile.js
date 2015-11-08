@@ -488,6 +488,10 @@ d3_tile.prototype.add_navigationmenu2header = function(){
             };
         };
         // update the rowid
+        if (rowidup==="containerheader"){
+            // do not add tiles to the containerheader row
+            return;
+        };
         this_.rowid = rowidup;
         // get the row up node
         var rowupnode = parentRowNode.childNodes[rowids.indexOf(rowidup)];
@@ -589,13 +593,13 @@ d3_tile.prototype.add_resize2header = function(){
     // expand tile col width 1 increment
     // decrease tile width 1 increment
     // increments are the following:
-    //  3, 4, 6, 8, 12
+    //  3, 4, 6, 8, 9, 12
 
     var tileid = this.tileid;
     var rowid = this.rowid;
     var colid = this.colid;
     var colclass = this.colclass;
-    var colsizes = [3,4,6,8,12];
+    var colsizes = [3,4,6,8,9,12];
 
     var this_ = this;
     function expandtilehorizontal(){
