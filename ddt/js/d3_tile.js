@@ -38,6 +38,24 @@ d3_tile.prototype.set_colclass = function (colclass_I) {
     // set column class
     this.colclass = colclass_I;
 };
+d3_tile.prototype.update_colclass = function (colclass_I) {
+    // update the column class
+    var tileid = this.tileid;
+
+    this.colclass = colclass_I;
+
+    var tilecol = d3.select("#"+tileid).node().parentNode
+    tilecol.className = colclass_I;
+};
+d3_tile.prototype.update_colid = function (colid_I){
+    // update the column id
+    var tileid = this.tileid;
+
+    this.colid = colid_I;
+
+    var tilecol = d3.select("#"+tileid).node().parentNode
+    tilecol.id = colid_I;
+}
 d3_tile.prototype.set_tileclass = function (tileclass_I) {
     // set tile class
     this.tileclass = tileclass_I;
@@ -386,20 +404,153 @@ d3_tile.prototype.add_navigationmenu2header = function(){
     var this_ = this;
 
     function movetileleft(){
-        var colidint = parseInt(rowid.replace('col',''));
-        var colidleftint = colidint-1;
-        var colidleft = colidleftint.toString();
-        var tileleft = d3.select("#"+colidleft+ " .panel");
-        if (tileleft){
-            //swap places with the tile to the left
+        //swap places with the tile to the left
 
+        // get all colids in the row
+        var colNode = this_.get_colnode(tileid);
+        var rowNode = this_.get_rownode(tileid);
+        var colids = this_.get_colidsinrow(tileid);
+        // get the current colid (it may have not been updated)
+        var colid = colNode.id;
+        // get the colid to the left
+        if (colids.indexOf(colid)===0){
+            // this is the first column in the row
+            // do nothing
+            return;
         };
+        var colidleft = colids[0];
+        for (var i=1;i<colids.length;i++){
+            if (colids[i]===colid){
+                colidleft = colids[i-1];
+                break;
+            };
+        };
+        // update the colid of left tile
+        var colNodeLeft=rowNode.childNodes[colids.indexOf(colidleft)];
+        colNodeLeft.id = colid;
+        // update the colid of this tile
+        this_.update_colid(colidleft);
+        // swap tiles
+        rowNode.insertBefore(colNode,colNodeLeft);
     };
     function movetileright(){
+        //swap places with the tile to the left
+        
+        // get all colids in the row
+        var colNode = this_.get_colnode(tileid);
+        var rowNode = this_.get_rownode(tileid);
+        var colids = this_.get_colidsinrow(tileid);
+        // get the current colid (it may have not been updated)
+        var colid = colNode.id;
+        // get the colid to the right
+        if (colids.indexOf(colid)===colids.length){
+            // this is the last column in the row
+            // do nothing
+            return;
+        };
+        var colidright = colids[-1];
+        for (var i=0;i<colids.length-1;i++){
+            if (colids[i]===colid){
+                colidright = colids[i+1];
+                break;
+            };
+        };
+        // update the colid of left tile
+        var colNoderight=rowNode.childNodes[colids.indexOf(colidright)];
+        colNoderight.id = colid;
+        // update the colid of this tile
+        this_.update_colid(colidright);
+        // swap tiles
+        rowNode.insertBefore(colNoderight,colNode);
     };
     function movetileup(){
+        //add tile as last column of upper row
+        
+        // get all colids in the upper row
+        var colNode = this_.get_colnode(tileid);
+        var rowNode = this_.get_rownode(tileid);
+        var parentRowNode = this_.get_parentrownode(tileid);
+        var rowids = this_.get_rowidsinparentrow(tileid);
+        // get the current colid and rowid (it may have not been updated)
+        var colid = colNode.id;
+        var rowid = rowNode.id;
+        // get the row above
+        if (rowids.indexOf(rowid)===0){
+            // this is the first
+            // do nothing
+            return;
+        };
+        var rowidup = rowids[0];
+        for (var i=1;i<rowids.length;i++){
+            if (rowids[i]===rowid){
+                rowidup = rowids[i-1];
+                break;
+            };
+        };
+        // update the rowid
+        this_.rowid = rowidup;
+        // get the row up node
+        var rowupnode = parentRowNode.childNodes[rowids.indexOf(rowidup)];
+        var rowupnodechildrenlength = rowupnode.childNodes.length;
+        // get the row up node id
+        var lastcolid = rowupnode.childNodes[rowupnodechildrenlength-1].id;
+        // increment the last col id
+        var lastcolidint = this_.convert_colid2int(lastcolid);
+        var newcolidint = lastcolidint + 1;
+        var newcolid = this_.make_colidfromint(newcolidint);
+        // update the colid of this colnode
+        this_.update_colid(newcolid)
+        // append the tile as the last column of the row
+        rowupnode.appendChild(colNode);
     };
     function movetiledown(){
+        //add tile as first column of lower row
+        // get all colids in the upper row
+        var colNode = this_.get_colnode(tileid);
+        var rowNode = this_.get_rownode(tileid);
+        var parentRowNode = this_.get_parentrownode(tileid);
+        var rowids = this_.get_rowidsinparentrow(tileid);
+        // get the current colid and rowid (it may have not been updated)
+        var colid = colNode.id;
+        var rowid = rowNode.id;
+        // get the row below
+        if (rowids.indexOf(rowid)===rowids.length-1){
+            // this is the last row
+            // do nothing
+            return;
+        };
+        var rowiddown = rowids[0];
+        for (var i=1;i<rowids.length;i++){
+            if (rowids[i]===rowid){
+                rowiddown = rowids[i+1];
+                break;
+            };
+        };
+        // update the rowid
+        this_.rowid = rowiddown;
+        // get the row down node
+        var rowdownnode = parentRowNode.childNodes[rowids.indexOf(rowiddown)];
+        var rowdownnodechildrenlength = rowdownnode.childNodes.length;
+        // get the row down node id
+        var firstcol = rowdownnode.childNodes[0];
+        var firstcolid = firstcol.id;
+        var lastcol = rowdownnode.childNodes[rowdownnodechildrenlength-1];
+        var lastcolid = rowdownnode.childNodes[rowdownnodechildrenlength-1].id;
+        // get the row down column ids
+        var colidsdown = this_.get_colidsinrow(firstcol.childNodes[0].id);
+        // increment the last col id
+        var lastcolidint = this_.convert_colid2int(lastcolid);
+        var lastcolidint = lastcolidint + 1;
+        var lastcolid = this_.make_colidfromint(lastcolidint);
+        colidsdown.push(lastcolid); //add the updated lastcolid to the rowids list
+        // increment all columns in the row down node
+        for (var i=0;i<rowdownnodechildrenlength;i++){
+            rowdownnode.childNodes[i].id = colidsdown[i+1];
+        };
+        // update the colid of this colnode
+        this_.update_colid(firstcolid)
+        // insert the tile as the first column of the row
+        rowdownnode.insertBefore(colNode,firstcol);
     };
 
     var navmenu = this.tileheader.append("div")
@@ -409,28 +560,28 @@ d3_tile.prototype.add_navigationmenu2header = function(){
         .attr("id", tileid + 'movetileleft')
         .style({"cursor":"pointer"})
         .attr("data-toggle","tooltip")
-        .attr("title","move left");
+        .attr("title","column left");
     moveleftbutton.on("click",movetileleft);
     var moverightbutton = navmenu.append("div")
         .attr("class","glyphicon glyphicon-arrow-right pull-left")
         .attr("id", tileid + 'movetileright')
         .style({"cursor":"pointer"})
         .attr("data-toggle","tooltip")
-        .attr("title","move right");
+        .attr("title","column right");
     moverightbutton.on("click",movetileright);
     var moveupbutton = navmenu.append("div")
         .attr("class","glyphicon glyphicon-arrow-up pull-left")
         .attr("id", tileid + 'movetileup')
         .style({"cursor":"pointer"})
         .attr("data-toggle","tooltip")
-        .attr("title","move up");
+        .attr("title","row up");
     moveupbutton.on("click",movetileup);
     var movedownbutton = navmenu.append("div")
         .attr("class","glyphicon glyphicon-arrow-down pull-left")
         .attr("id", tileid + 'movetiledown')
         .style({"cursor":"pointer"})
         .attr("data-toggle","tooltip")
-        .attr("title","move down");
+        .attr("title","row down");
     movedownbutton.on("click",movetiledown);
 };
 d3_tile.prototype.add_resize2header = function(){
@@ -440,7 +591,6 @@ d3_tile.prototype.add_resize2header = function(){
     // increments are the following:
     //  3, 4, 6, 8, 12
 
-    //TODO
     var tileid = this.tileid;
     var rowid = this.rowid;
     var colid = this.colid;
@@ -453,36 +603,31 @@ d3_tile.prototype.add_resize2header = function(){
         var colclassint = parseInt(colclasslist.pop());
         var colclassbase = colclasslist.join('-')
         var colclassnewint = 12;
-        for (var i=0;colsizes.length;i++){
+        for (var i=0;i<colsizes.length;i++){
             if(colsizes[i]>colclassint){
                 colclassnewint = colsizes[i];
                 break;
             };
         };
         var colclassnew = colclassbase + '-' + colclassnewint.toString();
-        this_.colclass = colclassnew;
-        var tilecol = d3.select("#"+tileid).node().parentNode
-        tilecol.className = colclassnew;
+        this_.update_colclass(colclassnew);
     };
     function shrinktilehorizontal(){ 
         var colclasslist = this_.colclass.split('-');
         var colclassint = parseInt(colclasslist.pop());
-        if (colclassint === Math.min(colsizes)){
-            //no smaller width available
-            return;
-        };
         var colclassbase = colclasslist.join('-')
         var colclassnewint = 3;
-        for (var i=1;colsizes.length;i++){
+        for (var i=1;i<colsizes.length;i++){
             if(colsizes[i]>=colclassint){
                 colclassnewint = colsizes[i-1];
                 break;
             };
         };
         var colclassnew = colclassbase + '-' + colclassnewint.toString();
-        this_.colclass = colclassnew;
-        var tilecol = d3.select("#"+tileid).node().parentNode
-        tilecol.className = colclassnew;
+        this_.update_colclass(colclassnew);
+//         this_.colclass = colclassnew;
+//         var tilecol = d3.select("#"+tileid).node().parentNode
+//         tilecol.className = colclassnew;
     };
 
     var resizemenu = this.tileheader.append("div")
@@ -513,15 +658,10 @@ d3_tile.prototype.set_draganddrop = function () {
         if (d3.event){
             d3.event.dataTransfer.setData("text", d3.event.target.id);
         };
-};
+    };
 
     this.tile.attr("draggable", "true")
         .on("dragstart", drag);
-};
-function allowDrop() {
-    if (d3.event){
-        d3.event.preventDefault();
-    };
 };
 d3_tile.prototype.trigger_drop = function() {
     // drop event function
@@ -530,7 +670,7 @@ d3_tile.prototype.trigger_drop = function() {
         d3.event.target.style.background="";
         var tiletargetid = d3.event.target.id;
         if (tiletargetid.indexOf('col')===0){
-            // append tile as a new column of the same row
+            // append tile to an existing column
             //var tiletargetidrow = d3.event.target.parentNode.id;
             var tiledropid = d3.event.dataTransfer.getData("text");
             var tiledrop = d3.select("#"+tiledropid).node();
@@ -538,11 +678,136 @@ d3_tile.prototype.trigger_drop = function() {
             d3.event.target.appendChild(tiledrop);
         };
         if (tiletargetid.indexOf('row')===0){
-            // append tile as a new row
+            // append tile as a new column to an existing row
             var tiledropid = d3.event.dataTransfer.getData("text");
             var tiledrop = d3.select("#"+tiledropid).node().parentNode;
+            // get the last column id
+            var rowchildrenlength = d3.event.target.childNodes.length;
+            var lastcolid = d3.event.target.childNodes[rowchildrenlength-1].id;
+            // make a new column id
+            var lastcolidint = this.convert_colid2int(lastcolid);
+            var newcolidint = lastcolidint + 1;
+            var newcolid = this.make_colidfromint(newcolidint);
+            // update the tile column id
+            tiledrop.id=newcolid;
+            // append the tile as the last column of the row
             d3.event.target.appendChild(tiledrop);
         };
     };
 };
+d3_tile.prototype.convert_colid2int = function(colid_I){
+    //convert a column id string to an integer
+    var colidint_O = 0;
+    if (typeof(colid_I)!=="undefined"){
+        var colidstr = colid_I;
+    } else {
+        console.log("no colid provided");
+        return colidint_O;
+    };
 
+    if (colidstr.indexOf('col')===0){
+        colidint_O = parseInt(colidstr.replace('col',''));
+    } else {
+        console.log("invalid colid provided");
+        return colidint_O;
+    };
+    return colidint_O;
+};
+d3_tile.prototype.make_colidfromint = function(colidint_I){
+    //convert a column id int to a string
+    var colid_O = 'col0';
+    if (typeof(colidint_I)!=="undefined"){
+        var colidint = colidint_I;
+    } else {
+        console.log("no colid provided");
+        return colid_O;
+    };
+    colid_O = 'col' + colidint.toString();
+    return colid_O;
+};
+d3_tile.prototype.get_colnode = function(tileid_I){
+    //get column node by the tileid
+    //INPUT:
+    //tileid_I = tileid;
+    //OUTPUT:
+    //colNode = node of the column  
+    if (typeof(tileid_I)!=="undefined"){
+        var tileid = tileid_I;
+    } else {
+        var tileid = this.tileid;
+    };
+    var colNode = d3.select("#"+tileid).node().parentNode;
+    return colNode;
+};
+d3_tile.prototype.get_rownode = function(tileid_I){
+    //get row node by the tileid
+    //INPUT:
+    //tileid_I = tileid;
+    //OUTPUT:
+    //rowNode = node of the row 
+    if (typeof(tileid_I)!=="undefined"){
+        var tileid = tileid_I;
+    } else {
+        var tileid = this.tileid;
+    };
+    var colNode = d3.select("#"+tileid).node().parentNode;
+    var rowNode = colNode.parentNode;
+    return rowNode;
+};
+d3_tile.prototype.get_colidsinrow = function(tileid_I){
+    //get all colids in a row by the tileid
+    //INPUT:
+    //tileid_I = tileid;
+    //OUTPUT:
+    //colids = list of colids in the row  
+    if (typeof(tileid_I)!=="undefined"){
+        var tileid = tileid_I;
+    } else {
+        var tileid = this.tileid;
+    };  
+    var output_O = [];
+    var colNode = d3.select("#"+tileid).node().parentNode;
+    var rowNode = colNode.parentNode;
+    var colids = [];
+    for (var i=0;i<rowNode.childNodes.length;i++){
+        colids.push(rowNode.childNodes[i].id);
+    };
+    return colids;
+};
+d3_tile.prototype.get_parentrownode = function(tileid_I){
+    //get parent node of the row
+    //INPUT:
+    //tileid_I = tileid;
+    //OUTPUT:
+    //rowParentNode = node of the row 
+    if (typeof(tileid_I)!=="undefined"){
+        var tileid = tileid_I;
+    } else {
+        var tileid = this.tileid;
+    };
+    var colNode = d3.select("#"+tileid).node().parentNode;
+    var rowNode = colNode.parentNode;
+    var parentRowNode = rowNode.parentNode;
+    return parentRowNode;
+};
+d3_tile.prototype.get_rowidsinparentrow = function(tileid_I){
+    //get all colids in a row by the tileid
+    //INPUT:
+    //tileid_I = tileid;
+    //OUTPUT:
+    //colids = list of colids in the row  
+    if (typeof(tileid_I)!=="undefined"){
+        var tileid = tileid_I;
+    } else {
+        var tileid = this.tileid;
+    };  
+    var output_O = [];
+    var colNode = d3.select("#"+tileid).node().parentNode;
+    var rowNode = colNode.parentNode;
+    var parentRowNode = rowNode.parentNode;
+    var rowids = [];
+    for (var i=0;i<parentRowNode.childNodes.length;i++){
+        rowids.push(parentRowNode.childNodes[i].id);
+    };
+    return rowids;
+};
