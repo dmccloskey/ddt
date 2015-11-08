@@ -465,6 +465,24 @@ d3_tile.prototype.add_resize2header = function(){
         tilecol.className = colclassnew;
     };
     function shrinktilehorizontal(){ 
+        var colclasslist = this_.colclass.split('-');
+        var colclassint = parseInt(colclasslist.pop());
+        if (colclassint === Math.min(colsizes)){
+            //no smaller width available
+            return;
+        };
+        var colclassbase = colclasslist.join('-')
+        var colclassnewint = 3;
+        for (var i=1;colsizes.length;i++){
+            if(colsizes[i]>=colclassint){
+                colclassnewint = colsizes[i-1];
+                break;
+            };
+        };
+        var colclassnew = colclassbase + '-' + colclassnewint.toString();
+        this_.colclass = colclassnew;
+        var tilecol = d3.select("#"+tileid).node().parentNode
+        tilecol.className = colclassnew;
     };
 
     var resizemenu = this.tileheader.append("div")
