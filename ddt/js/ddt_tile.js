@@ -29,6 +29,7 @@ ddt_tile.prototype.set_tile = function(){
     this.tile.set_tileclass(tileclass);
     this.tile.set_rowclass(rowclass);
     this.tile.set_colclass(colclass);
+
 };
 ddt_tile.prototype.make_tile = function(){
     // make the tile
@@ -60,10 +61,14 @@ ddt_tile_svg.prototype.make_tile = function(data_I,parameters_I){
 
     this.tile.add_tile2container();
     this.tile.add_header2tile();
+    //this.tile.add_navigationmenu2header(); //TODO: add right, up, down
     this.tile.add_removebutton2header();
     this.tile.add_title2header(header_I);
     this.tile.add_body2tile();
     this.tile.add_footer2tile();
+
+    //this.tile.add_swipe();
+    this.tile.set_draganddrop();
 
     //svg
     this.ddtsvg = this.get_svg(svgtype_I);
@@ -136,6 +141,9 @@ ddt_tile_table.prototype.make_tile = function(data_I,parameters_I){
     this.tile.add_title2header(header_I);
     this.tile.add_body2tile();
     this.tile.add_footer2tile();
+    
+    //this.tile.add_swipe();
+    this.tile.set_draganddrop();
 
     //table
     this.ddttable = this.get_table(tabletype_I);
@@ -197,6 +205,7 @@ ddt_tile_html.prototype.make_tile = function(data_I,parameters_I){
     if (parameters_I.formupdatebuttonidtext){
         this.tile.add_submitbutton2footer(parameters_I.formupdatebuttonidtext);
         };
+    this.tile.set_draganddrop();
 
     //html
     this.ddthtml = this.get_html(htmltype_I);

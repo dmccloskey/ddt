@@ -56,18 +56,57 @@ d3_tile.prototype.add_tile2container = function () {
 };
 d3_tile.prototype.append_tile2container = function () {
     // set column id
-    var row = d3.select("#" + this.containerid).append("div").attr("class", this.rowclass).attr("id", this.rowid);
-    var col = row.append("div").attr("class", this.colclass).attr("id", this.colid);
-    this.tile = col.append("div").attr("class", this.tileclass).attr("id", this.tileid);
+    //ondrop="drop(event)" ondragover="allowDrop(event)"
+    var row = d3.select("#" + this.containerid)
+        .append("div")
+        .attr("class", this.rowclass)
+        .attr("id", this.rowid)
+        .on("drop", drop)
+        .on("dragover", allowDrop)
+        .on("dragleave", dragLeave)
+        .on("dragenter",dragEnter);
+//         .on("drop", "drop(event);")
+//         .on("dragover", "allowDrop(event);")
+//         .on("dragenter","dragEnter(event);");
+    var col = row.append("div")
+        .attr("class", this.colclass)
+        .attr("id", this.colid)
+        .on("drop", drop)
+        .on("dragover", allowDrop)
+        .on("dragleave", dragLeave)
+        .on("dragenter",dragEnter);
+//         .on("drop", "drop(event);")
+//         .on("dragover", "allowDrop(event);")
+//         .on("dragenter","dragEnter(event);");
+    this.tile = col.append("div")
+        .attr("class", this.tileclass)
+        .attr("id", this.tileid);
 };
 d3_tile.prototype.append_tile2row = function () {
     // add tile as new column in an existing row
-    var col = d3.select("#" + this.containerid).select("#" + this.rowid).append("div").attr("class", this.colclass).attr("id", this.colid);
-    this.tile = col.append("div").attr("class", this.tileclass).attr("id", this.tileid);
+    var col = d3.select("#" + this.containerid).select("#" + this.rowid)
+        .append("div")
+        .attr("class", this.colclass)
+        .attr("id", this.colid)
+        .on("drop", drop)
+        .on("dragover", allowDrop)
+        .on("dragleave", dragLeave)
+        .on("dragenter",dragEnter);
+//         .on("drop", "drop(event);")
+//         .on("dragover", "allowDrop(event);")
+//         .on("dragenter","dragEnter(event);");
+    this.tile = col.append("div")
+        .attr("class", this.tileclass)
+        .attr("id", this.tileid);
 };
 d3_tile.prototype.append_tile2col = function () {
     // add tile to as a new row in an existing column
-    this.tile = d3.select("#" + this.containerid).select("#" + this.rowid).select("#" + this.colid).append("div").attr("class", this.tileclass).attr("id", this.tileid);
+    this.tile = d3.select("#" + this.containerid)
+        .select("#" + this.rowid)
+        .select("#" + this.colid)
+        .append("div")
+        .attr("class", this.tileclass)
+        .attr("id", this.tileid);
 };
 d3_tile.prototype.add_footer2tile = function () {
     // add footer to tile
@@ -136,7 +175,6 @@ d3_tile.prototype.add_removebutton2header = function(){
 
     var tileid = this.tileid;
     var this_ = this;
-    var remove_tile = this.remove_tile;
 
     function removetile(){
         d3.selectAll('#'+tileid).remove();
@@ -176,5 +214,163 @@ d3_tile.prototype.add_body2tile = function (title_I){
 
     this.tilebody = d3.select('#'+tileid).append("div")
         .attr("class","panel-body")
-        .attr("id",tileid+"panel-body")
+        .attr("id",tileid+"panel-body");
 };
+d3_tile.prototype.add_pan = function () {
+    // add pan functionality using hammer.js
+   
+    var tileid = this.tileid;
+
+    var myElement = document.getElementById(tileid+"panel-heading");
+    var hammertime = new Hammer(myElement);
+
+    hammertime.get('pan').set(
+        { direction: Hammer.DIRECTION_ALL});
+
+    hammertime.on('panleft panright', function(ev) {
+        console.log("horizontal");
+    });
+    hammertime.on('panup pandown', function(ev) {
+        console.log("vertical");
+    });
+};
+d3_tile.prototype.add_swipe = function () {
+    // add swipe functionality using hammer.js
+   
+    var tileid = this.tileid;
+
+    var myElement = document.getElementById(tileid+"panel-heading");
+    var hammertime = new Hammer(myElement);
+
+    hammertime.get('swipe').set(
+        { direction: Hammer.DIRECTION_ALL,
+        prevent_default: true,
+        drag_min_distance:1,
+        swipe_velocity:.1
+        });
+
+    hammertime.on('swipeleft', function(ev) {
+        console.log("left");
+    });
+    hammertime.on('swiperight', function(ev) {
+        console.log("right");
+    });
+    hammertime.on('swipeup', function(ev) {
+        console.log("up");
+    });
+    hammertime.on('swipedown', function(ev) {
+        console.log("down");
+    });
+};
+d3_tile.prototype.add_tap = function () {
+    // add tap functionality using hammer.js
+   
+    var tileid = this.tileid;
+
+    var myElement = document.getElementById(tileid+"panel-heading");
+    var hammertime = new Hammer(myElement);
+
+    // Tap recognizer with minimal 2 taps
+    hammertime.add( new Hammer.Tap({ event: 'doubletap', taps: 2 }) );
+    // Single tap recognizer
+    hammertime.add( new Hammer.Tap({ event: 'singletap' }) );
+    // we want to recognize this simulatenous, so a quadrupletap will be detected even while a tap has been recognized.
+    hammertime.get('doubletap').recognizeWith('singletap');
+    // we only want to trigger a tap, when we don't have detected a doubletap
+    hammertime.get('singletap').requireFailure('doubletap');
+    hammertime.on("doubletap", function(ev) {
+        console.log(ev);
+    });
+
+//     hammertime.on('tap', function(ev) {
+//         console.log(ev);
+//     });
+};
+d3_tile.prototype.add_navigationmenu2header = function(){
+    //add a navigation menu
+    //move tile 1 column to the left
+    //move tile 1 column to the right
+    //move tile 1 row up
+    //move tile 1 row down
+
+    //TODO
+    var tileid = this.tileid;
+    var rowid = this.rowid;
+    var colid = this.colid;
+
+    var this_ = this;
+
+    function movetileleft(){
+        var colidint = parseInt(rowid.replace('col',''));
+        var colidleftint = colidint-1;
+        var colidleft = colidleftint.toString();
+        var tileleft = d3.select("#"+colidleft+ " .panel");
+        if (tileleft){
+            //swap places with the tile to the left
+
+        };
+    };
+
+    var navmenu = this.tileheader.append("div")
+        .attr("id", tileid + 'navigationmenu');
+    var moveleftbutton = navmenu.append("div")
+        .attr("class","glyphicon glyphicon-arrow-left pull-left")
+        .attr("id", tileid + 'movetileleft')
+        .style({"cursor":"pointer"})
+        .attr("data-toggle","tooltip")
+        .attr("title","move left");
+    moveleftbutton.on("click",movetileleft);
+}
+d3_tile.prototype.set_draganddrop = function () {
+    // set drag and drop attribute to tile
+    //draggable="true" ondragstart="drag(event)"
+   
+    var tileid = this.tileid;
+
+    function drag() {
+        if (d3.event){
+            d3.event.dataTransfer.setData("text", d3.event.target.id);
+        };
+};
+
+    this.tile.attr("draggable", "true")
+        .on("dragstart", drag);
+};
+function allowDrop() {
+    if (d3.event){
+        d3.event.preventDefault();
+    };
+};
+function drop() {
+    if (d3.event){
+        d3.event.preventDefault();
+        d3.event.target.style.background="";
+        var tiletargetid = d3.event.target.id;
+        if (tiletargetid.indexOf('col')===0){
+            // append tile as a new column of the same row
+            var tiledropid = d3.event.dataTransfer.getData("text");
+            var tiledrop = d3.select("#"+tiledropid);
+            d3.event.target.appendChild(document.getElementById(tiledropid));
+        };
+        if (tiletargetid.indexOf('row')===0){
+            // append tile as a new row
+            var tiledropid = d3.event.dataTransfer.getData("text");
+            var tiledrop = d3.select("#"+tiledropid);
+            d3.event.target.appendChild(document.getElementById(tiledropid));
+        };
+    };
+};
+function dragEnter() {
+    if (d3.event){
+        var tiletargetid = d3.event.target.id;
+        if (tiletargetid.indexOf('col')===0 || tiletargetid.indexOf('row')===0){
+            d3.event.target.style.background="grey";
+        };
+    };
+};
+function dragLeave() {
+    if (d3.event){
+        d3.event.target.style.background="";
+    };
+};
+
