@@ -319,76 +319,6 @@ d3_tile.prototype.add_body2tile = function (title_I){
         .attr("class","panel-body")
         .attr("id",tileid+"panel-body");
 };
-d3_tile.prototype.add_pan = function () {
-    // add pan functionality using hammer.js
-   
-    var tileid = this.tileid;
-
-    var myElement = document.getElementById(tileid+"panel-heading");
-    var hammertime = new Hammer(myElement);
-
-    hammertime.get('pan').set(
-        { direction: Hammer.DIRECTION_ALL});
-
-    hammertime.on('panleft panright', function(ev) {
-        console.log("horizontal");
-    });
-    hammertime.on('panup pandown', function(ev) {
-        console.log("vertical");
-    });
-};
-d3_tile.prototype.add_swipe = function () {
-    // add swipe functionality using hammer.js
-   
-    var tileid = this.tileid;
-
-    var myElement = document.getElementById(tileid+"panel-heading");
-    var hammertime = new Hammer(myElement);
-
-    hammertime.get('swipe').set(
-        { direction: Hammer.DIRECTION_ALL,
-        prevent_default: true,
-        drag_min_distance:1,
-        swipe_velocity:.1
-        });
-
-    hammertime.on('swipeleft', function(ev) {
-        console.log("left");
-    });
-    hammertime.on('swiperight', function(ev) {
-        console.log("right");
-    });
-    hammertime.on('swipeup', function(ev) {
-        console.log("up");
-    });
-    hammertime.on('swipedown', function(ev) {
-        console.log("down");
-    });
-};
-d3_tile.prototype.add_tap = function () {
-    // add tap functionality using hammer.js
-   
-    var tileid = this.tileid;
-
-    var myElement = document.getElementById(tileid+"panel-heading");
-    var hammertime = new Hammer(myElement);
-
-    // Tap recognizer with minimal 2 taps
-    hammertime.add( new Hammer.Tap({ event: 'doubletap', taps: 2 }) );
-    // Single tap recognizer
-    hammertime.add( new Hammer.Tap({ event: 'singletap' }) );
-    // we want to recognize this simulatenous, so a quadrupletap will be detected even while a tap has been recognized.
-    hammertime.get('doubletap').recognizeWith('singletap');
-    // we only want to trigger a tap, when we don't have detected a doubletap
-    hammertime.get('singletap').requireFailure('doubletap');
-    hammertime.on("doubletap", function(ev) {
-        console.log(ev);
-    });
-
-//     hammertime.on('tap', function(ev) {
-//         console.log(ev);
-//     });
-};
 d3_tile.prototype.add_navigationmenu2header = function(){
     //add a navigation menu
     //move tile 1 column to the left
@@ -396,7 +326,6 @@ d3_tile.prototype.add_navigationmenu2header = function(){
     //move tile 1 row up
     //move tile 1 row down
 
-    //TODO
     var tileid = this.tileid;
     var rowid = this.rowid;
     var colid = this.colid;
@@ -832,4 +761,124 @@ d3_tile.prototype.get_rowidsinparentrow = function(tileid_I){
         rowids.push(parentRowNode.childNodes[i].id);
     };
     return rowids;
+};
+d3_tile.prototype.add_duplicatebutton2header = function (){
+    // add duplication button to tile
+    // TODO: fix
+
+    var tileid = this.tileid;
+    var rowid = this.rowid;
+    var colid = this.colid;
+
+    var this_ = this;
+
+    function duplicatetile(){
+        //duplicate the tile
+        
+        // get all colids in the row
+        var colNode = this_.get_colnode(tileid);
+        var rowNode = this_.get_rownode(tileid);
+        var colids = this_.get_colidsinrow(tileid);
+        // get the current colid (it may have not been updated)
+        var colid = colNode.id;
+        // duplicate the colNode
+        var colNodeCopy=colNode.cloneNode(true);
+        // make a new column id
+        var colidint = this_.convert_colid2int(colid);
+        var newcolidint = colidint + 1;
+        var newcolid = this_.make_colidfromint(newcolidint);
+        // make a new tileid
+        var newtileid = tileid+"-copy"
+        // update the copied node
+        colNodeCopy.id = newcolid;
+        colNodeCopy.childNodes[0].id = newtileid;
+        // swap tiles
+        rowNode.appendChild(colNodeCopy);
+    };
+
+    var duplicatetilebutton = this.tileheader.append("div")
+        .attr("class","glyphicon glyphicon-duplicate pull-right")
+        .attr("id", tileid + 'duplicatetile')
+        .style({"cursor":"pointer"})
+        .attr("data-toggle","tooltip")
+        .attr("title","duplicate");
+    duplicatetilebutton.on("click",duplicatetile);
+};
+d3_tile.prototype.enable_touch = function (){
+    // all touch features
+    this.add_touchpan();
+    this.add_touchswipe();
+    this.add_touchtap();
+    this.add_touchpinch();
+    this.add_touchpress();
+}
+d3_tile.prototype.add_touchpan = function () {
+    // add pan functionality using hammer.js
+   
+    var tileid = this.tileid;
+
+    var myElement = document.getElementById(tileid+"panel-heading");
+    var hammertime = new Hammer(myElement);
+
+    hammertime.get('pan').set(
+        { direction: Hammer.DIRECTION_ALL});
+
+    hammertime.on('panleft panright', function(ev) {
+        console.log("horizontal");
+    });
+    hammertime.on('panup pandown', function(ev) {
+        console.log("vertical");
+    });
+};
+d3_tile.prototype.add_touchswipe = function () {
+    // add swipe functionality using hammer.js
+   
+    var tileid = this.tileid;
+
+    var myElement = document.getElementById(tileid+"panel-heading");
+    var hammertime = new Hammer(myElement);
+
+    hammertime.get('swipe').set(
+        { direction: Hammer.DIRECTION_ALL,
+        prevent_default: true,
+        drag_min_distance:1,
+        swipe_velocity:.1
+        });
+
+    hammertime.on('swipeleft', function(ev) {
+        console.log("left");
+    });
+    hammertime.on('swiperight', function(ev) {
+        console.log("right");
+    });
+    hammertime.on('swipeup', function(ev) {
+        console.log("up");
+    });
+    hammertime.on('swipedown', function(ev) {
+        console.log("down");
+    });
+};
+d3_tile.prototype.add_touchtap = function () {
+    // add tap functionality using hammer.js
+   
+    var tileid = this.tileid;
+
+    var myElement = document.getElementById(tileid+"panel-heading");
+    var hammertime = new Hammer(myElement);
+
+    // Tap recognizer with minimal 2 taps
+    hammertime.add( new Hammer.Tap({ event: 'doubletap', taps: 2 }) );
+    // Single tap recognizer
+    hammertime.add( new Hammer.Tap({ event: 'singletap' }) );
+    // we want to recognize this simulatenous, so a quadrupletap will be detected even while a tap has been recognized.
+    hammertime.get('doubletap').recognizeWith('singletap');
+    // we only want to trigger a tap, when we don't have detected a doubletap
+    hammertime.get('singletap').requireFailure('doubletap');
+    hammertime.on("doubletap", function(ev) {
+        console.log(ev);
+    });
+
+//     hammertime.on('tap', function(ev) {
+//         console.log(ev);
+//     });
 };
