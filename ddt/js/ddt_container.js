@@ -246,6 +246,7 @@ ddt_container.prototype.__main__ = function(parameters,data,tile2datamap,filterm
     this.add_header2container();
     this.add_jsonimportbutton2container();
     this.add_jsonexportbutton2container();
+	this.add_encryptionbutton2container();
     //ddt data and template
     this.set_parameters(parameters);
     this.add_data(data);
@@ -307,6 +308,10 @@ ddt_container.prototype.add_jsonimportbutton2container = function (){
                 return function(e) {
                     // Get the data file
                     var result = e.target.result;
+                    //check for encryption
+                    if (this_.password){
+                        result=sjcl.decrypt(this_.password, result);
+                    };
                     // validate the input
                     var ddtinput = new ddt_input();
                     var ddtinputjson = JSON.parse(result);
@@ -452,10 +457,6 @@ ddt_container.prototype.export_alldatajson_string = function () {
     ev.initMouseEvent("click", true, false, self, 0, 0, 0, 0, 0, false, false, false, false, 0, null);
     a.dispatchEvent(ev);
 };
-
-
-
-
 ddt_container.prototype.get_parameters = function(){
     //return the parameters object in string format
     if (typeof this.parameters !== "undefined"){
@@ -522,6 +523,12 @@ ddt_container.prototype.export_alldatajson = function () {
     var a = document.createElement('a');
     a.download ="container" + '.json'; // file name
     var j = JSON.stringify(this.get_alldata());
+
+    //check for encryption
+    if (this.password){
+        j=sjcl.encrypt(this.password, j);
+    };
+
     a.setAttribute("href-lang", "application/json");
     // test/json instead of application/json preserves white spaces!
     a.href = 'data:text/json;charset=utf-8,' + j;
@@ -529,4 +536,125 @@ ddt_container.prototype.export_alldatajson = function () {
     var ev = document.createEvent("MouseEvents");
     ev.initMouseEvent("click", true, false, self, 0, 0, 0, 0, 0, false, false, false, false, 0, null);
     a.dispatchEvent(ev);
+};
+ddt_container.prototype.set_password = function(password_I){
+    // set the container password_I
+    if (typeof(password_I)!=="undefined"){
+        var password = password_I;
+    } else {
+        var password = null;
+    }
+
+    this.password = password;
+};
+ddt_container.prototype.add_encryptionbutton2container = function(){
+    // add data incryption when downloading a container json file
+    // dependencies: https://bitwiseshiftleft.github.io/sjcl/
+
+    // add button to export all json data from the container to file
+    var this_ = this;
+    var containerid = this.containerid;
+    var password = this.password;
+
+    function setpassword(){
+        var currentbuttoncolor = this_.jsonencryptionbutton.node().style['color'];
+        if (!this_.password && currentbuttoncolor==""){
+            // encrypt
+            // get user password:
+            var password = prompt("enter your password to lock the container");
+            this_.set_password(password); //necessary to pass svg as "this"
+            // change the button color
+            this_.jsonencryptionbutton.style({"color": "red"});
+            alert("input data will now be decrypted and output data will be encrypted")
+        } else if (this_.password && currentbuttoncolor=="red"){
+            // decrypt
+            // get user password:
+            var password = prompt("enter your password to unlock the container");
+            if (password===this_.password){
+                this_.password = null;
+                this_.jsonencryptionbutton.style({"color": ""});
+            } else {
+                alert("invalid password provided");
+            };
+            
+        };
+    };
+
+    this.jsonencryptionbutton = this.containerheader
+        .append("div")
+        .attr("class","glyphicon glyphicon-certificate pull-left ui-btn ui-btn-inline")
+        .attr("id", containerid + 'jsonencryptionbutton')
+        .style({"cursor":"pointer"})
+        .attr("data-toggle","tooltip")
+        .attr("title","encrypt container");
+    this.jsonencryptionbutton.on("click", setpassword);
+    // ensure that the button is colored red if the container is password protected
+    if (this.password){
+        this.jsonencryptionbutton.style({"color": "red"});
+    };
+
+//     var jsonencryptionbutton = this.containerheader
+//         .append("div")
+//         .attr("data-rol","main")
+//         .attr("class","ui-content")
+//         .append("a")
+//         .attr("href","#encryptionpopup")
+//         .attr("data-rel","passwordpopup")
+//         .append("div")
+//         .attr("class","glyphicon glyphicon-certificate pull-left ui-btn ui-btn-inline")
+//         .attr("id", containerid + 'jsonencryptionbutton')
+//         .style({"cursor":"pointer"})
+//         .attr("data-toggle","tooltip")
+//         .attr("title","encrypt container");
+//     //jsonencryptionbutton.on("click", setpassword);
+
+//     var passwordpopupform = d3.select("body")
+//         .append("div")
+//         .attr("data-role","passwordpopup")
+//         .attr("id",'encryptionpopup')
+//         .attr("class","ui-content")
+//         .style({"min-width":"250px"})
+//         .append("form")
+//         .attr("method","post")
+//         .attr("action","demoform.asp")
+//         .append("div");
+//     var passwordpopupformheader = passwordpopupform
+//         .append("h3")
+//         .text("loggin information");
+//     var passwordpopupformusernamelabel = passwordpopupform
+//         .append("label")
+//         .attr("for","usrnam")
+//         .attr("class","ui-hidden-accessible")
+//         .text("Username");
+//     var passwordpopupformusernameinput = passwordpopupform
+//         .append("input")
+//         .attr("type","text")
+//         .attr("name","user")
+//         .attr("id","usrnam")
+//         .attr("placeholder","Username");
+//     var passwordpopupformpasswordlabel = passwordpopupform
+//         .append("label")
+//         .attr("for","pswd")
+//         .attr("class","ui-hidden-accessible")
+//         .text("Password");
+//     var passwordpopupformpasswordinput = passwordpopupform
+//         .append("input")
+//         .attr("type","text")
+//         .attr("name","passw")
+//         .attr("id","pswd")
+//         .attr("placeholder","Password");
+//     var passwordpopupformstayloggedininput = passwordpopupform
+//         .append("input")
+//         .attr("type","checkbox")
+//         .attr("name","login")
+//         .attr("id","log")
+//         .attr("value","1")
+//         .attr("data-mini","true");
+//     var passwordpopupformsubmitinput = passwordpopupform
+//         .append("input")
+//         .attr("type","submit")
+//         .attr("name","login")
+//         .attr("id","passwordpopupsubmitbutton")
+//         .attr("value","Log in")
+//         .attr("data-inline","true");
 };
