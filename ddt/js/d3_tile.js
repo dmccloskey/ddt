@@ -496,16 +496,25 @@ d3_tile.prototype.add_navigationmenu2header = function(){
         // get the row up node
         var rowupnode = parentRowNode.childNodes[rowids.indexOf(rowidup)];
         var rowupnodechildrenlength = rowupnode.childNodes.length;
-        // get the row up node id
-        var lastcolid = rowupnode.childNodes[rowupnodechildrenlength-1].id;
-        // increment the last col id
-        var lastcolidint = this_.convert_colid2int(lastcolid);
-        var newcolidint = lastcolidint + 1;
-        var newcolid = this_.make_colidfromint(newcolidint);
-        // update the colid of this colnode
-        this_.update_colid(newcolid)
-        // append the tile as the last column of the row
-        rowupnode.appendChild(colNode);
+        if (rowupnodechildrenlength===0){
+            //there is no column in the row
+            //append as the first column
+            // update the colid of this colnode
+            this_.update_colid("col1")
+            // insert the tile as the first column of the row
+            rowupnode.appendChild(colNode);
+        } else {
+            // get the row up node id
+            var lastcolid = rowupnode.childNodes[rowupnodechildrenlength-1].id;
+            // increment the last col id
+            var lastcolidint = this_.convert_colid2int(lastcolid);
+            var newcolidint = lastcolidint + 1;
+            var newcolid = this_.make_colidfromint(newcolidint);
+            // update the colid of this colnode
+            this_.update_colid(newcolid)
+            // append the tile as the last column of the row
+            rowupnode.appendChild(colNode);
+        };
     };
     function movetiledown(){
         //add tile as first column of lower row
@@ -535,26 +544,35 @@ d3_tile.prototype.add_navigationmenu2header = function(){
         // get the row down node
         var rowdownnode = parentRowNode.childNodes[rowids.indexOf(rowiddown)];
         var rowdownnodechildrenlength = rowdownnode.childNodes.length;
-        // get the row down node id
-        var firstcol = rowdownnode.childNodes[0];
-        var firstcolid = firstcol.id;
-        var lastcol = rowdownnode.childNodes[rowdownnodechildrenlength-1];
-        var lastcolid = rowdownnode.childNodes[rowdownnodechildrenlength-1].id;
-        // get the row down column ids
-        var colidsdown = this_.get_colidsinrow(firstcol.childNodes[0].id);
-        // increment the last col id
-        var lastcolidint = this_.convert_colid2int(lastcolid);
-        var lastcolidint = lastcolidint + 1;
-        var lastcolid = this_.make_colidfromint(lastcolidint);
-        colidsdown.push(lastcolid); //add the updated lastcolid to the rowids list
-        // increment all columns in the row down node
-        for (var i=0;i<rowdownnodechildrenlength;i++){
-            rowdownnode.childNodes[i].id = colidsdown[i+1];
+        if (rowdownnodechildrenlength===0){
+            //there is no column in the row
+            //append as the first column
+            // update the colid of this colnode
+            this_.update_colid("col1")
+            // insert the tile as the first column of the row
+            rowdownnode.appendChild(colNode);
+        } else {
+            // get the row down node id
+            var firstcol = rowdownnode.childNodes[0];
+            var firstcolid = firstcol.id;
+            var lastcol = rowdownnode.childNodes[rowdownnodechildrenlength-1];
+            var lastcolid = rowdownnode.childNodes[rowdownnodechildrenlength-1].id;
+            // get the row down column ids
+            var colidsdown = this_.get_colidsinrow(firstcol.childNodes[0].id);
+            // increment the last col id
+            var lastcolidint = this_.convert_colid2int(lastcolid);
+            var lastcolidint = lastcolidint + 1;
+            var lastcolid = this_.make_colidfromint(lastcolidint);
+            colidsdown.push(lastcolid); //add the updated lastcolid to the rowids list
+            // increment all columns in the row down node
+            for (var i=0;i<rowdownnodechildrenlength;i++){
+                rowdownnode.childNodes[i].id = colidsdown[i+1];
+            };
+            // update the colid of this colnode
+            this_.update_colid(firstcolid)
+            // insert the tile as the first column of the row
+            rowdownnode.insertBefore(colNode,firstcol);
         };
-        // update the colid of this colnode
-        this_.update_colid(firstcolid)
-        // insert the tile as the first column of the row
-        rowdownnode.insertBefore(colNode,firstcol);
     };
 
     var navmenu = this.tileheader.append("div")
