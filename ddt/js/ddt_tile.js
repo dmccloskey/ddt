@@ -68,8 +68,7 @@ ddt_tile_svg.prototype.make_tile = function(data_I,parameters_I){
     this.tile.add_title2header(header_I);
     this.tile.add_body2tile();
     this.tile.add_footer2tile();
-
-    //this.tile.add_swipe();
+    
     this.tile.set_draganddrop();
 
     //svg
@@ -211,7 +210,7 @@ ddt_tile_html.prototype.make_tile = function(data_I,parameters_I){
     if (parameters_I.formupdatebuttonidtext){
         this.tile.add_submitbutton2footer(parameters_I.formupdatebuttonidtext);
         };
-    this.tile.set_draganddrop();
+    //this.tile.set_draganddrop();
 
     //html
     this.ddthtml = this.get_html(htmltype_I);

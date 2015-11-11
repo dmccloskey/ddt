@@ -36,6 +36,7 @@ ddt_svg_heatmap_01.prototype.make_svg = function(data_I,parameters_I){
     this.ddtsvg.set_margin(parameters_I.svgmargin);
     //this.ddtsvg.set_heatmapdata1(parameters_I.svgcellsize); //must be done initially to set the height/width correctly
     this.ddtsvg.add_svgexportbutton2tile();
+    this.ddtsvg.add_resizebuttons2footer();
     //this.ddtsvg.set_tooltip();
     //this.ddtsvg.set_tooltipstyle();
     //this.ddtsvg.set_zoom();

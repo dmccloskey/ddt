@@ -191,3 +191,90 @@ d3_svg.prototype.draw = function () {
 
     //your code here...
 };
+d3_svg.prototype.add_svgmenubutton2tile = function (){
+    //add a menu button to the footer of the chart
+    var this_ = this;
+
+    var svgmenubutton = d3.select('#'+this.tileid+"panel-footer").append("div");
+
+    function showsvgmenu(){
+        this_.export_svgelement(); //necessary to pass svg as "this"
+    };
+
+    svgmenubutton.attr("class","glyphicon  glyphicon glyphicon-menu-hamburger pull-right")
+        .attr("id", tileid + 'svgmenubutton')
+        .style({"cursor":"pointer"})
+        .attr("data-toggle","tooltip")
+        .attr("title","svg options menu");
+    svgmenubutton.on("click", showsvgmenu);
+};
+d3_svg.prototype.add_resizebuttons2footer = function(){
+    // add svg resize
+    // expand tile col width 1 increment
+
+    var tileid = this.tileid;
+
+    var this_ = this;
+
+    function expandsvghorizontal(){
+        var width = this_.width;
+        var height = this_.height;
+        var widthnew = width*1.5;
+        this_.set_width(widthnew);
+        this_.render();
+    };
+    function shrinksvghorizontal(){ 
+        var width = this_.width;
+        var height = this_.height;
+        var widthnew = width*0.75;
+        this_.set_width(widthnew);
+        this_.render();
+    };
+    function expandsvgvertical(){
+        var width = this_.width;
+        var height = this_.height;
+        var heightnew = height*1.5;
+        this_.set_height(heightnew);
+        this_.render();
+    };
+    function shrinksvgvertical(){ 
+        var width = this_.width;
+        var height = this_.height;
+        var heightnew = height*0.75;
+        this_.set_height(heightnew);
+        this_.render();
+    };
+
+    var svgresizemenubutton = d3.select('#'+this.tileid+"panel-footer").append("div");
+
+
+    var svgshrinkbuttonhorizontal = svgresizemenubutton.append("div")
+        .attr("class","glyphicon  glyphicon-resize-small pull-right")
+        .attr("id", tileid + 'shrinksvghorizontal')
+        .style({"cursor":"pointer"})
+        .attr("data-toggle","tooltip")
+        .attr("title","shrink svg width");
+    svgshrinkbuttonhorizontal.on("click",shrinksvghorizontal);
+    var svgexpandbuttonhorizontal = svgresizemenubutton.append("div")
+        .attr("class","glyphicon glyphicon-resize-horizontal pull-right")
+        .attr("id", tileid + 'expandsvghorizontal')
+        .style({"cursor":"pointer"})
+        .attr("data-toggle","tooltip")
+        .attr("title","expand svg width");
+    svgexpandbuttonhorizontal.on("click",expandsvghorizontal);
+
+    var svgshrinkbuttonvertical = svgresizemenubutton.append("div")
+        .attr("class","glyphicon  glyphicon-resize-small pull-right")
+        .attr("id", tileid + 'shrinksvgvertical')
+        .style({"cursor":"pointer"})
+        .attr("data-toggle","tooltip")
+        .attr("title","shrink svg height");
+    svgshrinkbuttonvertical.on("click",shrinksvgvertical);
+    var svgexpandbuttonvertical = svgresizemenubutton.append("div")
+        .attr("class","glyphicon glyphicon-resize-vertical pull-right")
+        .attr("id", tileid + 'expandsvgvertical')
+        .style({"cursor":"pointer"})
+        .attr("data-toggle","tooltip")
+        .attr("title","expand svg height");
+    svgexpandbuttonvertical.on("click",expandsvgvertical);
+};
