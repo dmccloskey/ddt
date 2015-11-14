@@ -317,7 +317,8 @@ d3_svg.prototype.add_svgmenubutton2tile = function (){
     var menumodal = new d3_html_modal();
     menumodal.set_tileid(tileid);
     menumodal.add_modal2tile(modaltargetid);
-    
+    menumodal.add_title2modalheader('SVG Options')
+
 //     svgmenubutton.on("click",showsvgmenu);
 
 };

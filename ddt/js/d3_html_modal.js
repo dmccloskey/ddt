@@ -56,6 +56,7 @@ d3_html_modal.prototype.add_modal2tile = function (nodeid_I){
     this.add_closebutton2modalheader();
     this.add_body2modal();
     this.add_form2modalbody();
+    this.add_login2modalbodyform();
     this.add_footer2modal();
 };
 d3_html_modal.prototype.add_header2modal = function (htmlmodal_I){
@@ -71,8 +72,15 @@ d3_html_modal.prototype.add_header2modal = function (htmlmodal_I){
     };
 
     this.htmlmodalheader = htmlmodal.append("div")
-        .attr("class","modal_header")
+        .attr("class","modal-header")
         .attr("id",tileid + "modalheader");
+};
+
+d3_html_modal.prototype.add_title2modalheader = function(title_I){
+    //add a title to the modal header
+    this.htmlmodalheader.append("h4")
+        .attr("class","modal_title")
+        .text(title_I);
 };
 d3_html_modal.prototype.add_closebutton2modalheader = function(){
     // add a close button to the modal header
@@ -85,7 +93,8 @@ d3_html_modal.prototype.add_closebutton2modalheader = function(){
         .attr("id",tileid+"modalheaderclosebutton")
         .attr("data-dismiss","modal")
         .attr("aria-hidden","true")
-        .text("&times;");
+        .append("span")
+        .attr("class","glyphicon glyphicon-trash");
 };
 d3_html_modal.prototype.add_body2modal = function (htmlmodal_I){
     // add body to bootstrap modal element
@@ -100,7 +109,7 @@ d3_html_modal.prototype.add_body2modal = function (htmlmodal_I){
     };
 
     this.htmlmodalbody = htmlmodal.append("div")
-        .attr("class","modal_body")
+        .attr("class","modal-body")
         .attr("id",tileid + "modalbody");
 };
 d3_html_modal.prototype.add_form2modalbody = function (htmlmodal_I){
@@ -180,7 +189,7 @@ d3_html_modal.prototype.add_footer2modal = function (htmlmodal_I){
     };
 
     this.htmlmodalfooter = htmlmodal.append("div")
-        .attr("class","modal_footer")
+        .attr("class","modal-footer")
         .attr("id",tileid + "modalfooter");
 };
 d3_html_modal.prototype.add_savebutton2modalbodyfooter = function (){
