@@ -547,6 +547,23 @@ ddt_container.prototype.set_password = function(password_I){
 
     this.password = password;
 };
+ddt_container.prototype.check_containerencryption = function(){
+    //check if the container is password protected
+    //OUTPUT:
+    //encrypted_O = boolean, true if password protected
+    var encrypted_O = false;
+    var currentbuttoncolor = this.jsonencryptionbuttontrigger.node().style['color'];
+    if (!this.password && currentbuttoncolor==""){
+        encrypted_O=false;
+    } else if (this.password && currentbuttoncolor=="red"){
+        encrypted_O=true;
+    } else{
+        encrypted=false;
+        console.log("password and button color mismatch.");
+    }
+    ;
+    return encrypted_O;
+}
 ddt_container.prototype.add_encryptionbutton2container = function(){
     // add data incryption when downloading a container json file
     // dependencies: https://bitwiseshiftleft.github.io/sjcl/
@@ -556,42 +573,150 @@ ddt_container.prototype.add_encryptionbutton2container = function(){
     var containerid = this.containerid;
     var password = this.password;
 
-    function setpassword(){
-        var currentbuttoncolor = this_.jsonencryptionbutton.node().style['color'];
-        if (!this_.password && currentbuttoncolor==""){
+    //html alert version start
+    //------------------------
+//     function setpassword(){
+//         var currentbuttoncolor = this_.jsonencryptionbutton.node().style['color'];
+//         if (!this_.password && currentbuttoncolor==""){
+//             // encrypt
+//             // get user password:
+//             var password = prompt("enter your password to lock the container");
+//             this_.set_password(password); //necessary to pass svg as "this"
+//             // change the button color
+//             this_.jsonencryptionbutton.style({"color": "red"});
+//             alert("input data will now be decrypted and output data will be encrypted")
+//         } else if (this_.password && currentbuttoncolor=="red"){
+//             // decrypt
+//             // get user password:
+//             var password = prompt("enter your password to unlock the container");
+//             if (password===this_.password){
+//                 this_.password = null;
+//                 this_.jsonencryptionbutton.style({"color": ""});
+//             } else {
+//                 alert("invalid password provided");
+//             };
+            
+//         };
+//     };
+//     this.jsonencryptionbutton = this.containerheader
+//         .append("div")
+//         .attr("class","glyphicon glyphicon-certificate pull-left ui-btn ui-btn-inline")
+//         .attr("id", containerid + 'jsonencryptionbutton')
+//         .style({"cursor":"pointer"})
+//         .attr("data-toggle","tooltip")
+//         .attr("title","encrypt container");
+//     this.jsonencryptionbutton.on("click", setpassword);
+//     // ensure that the button is colored red if the container is password protected
+//     if (this.password){
+//         this.jsonencryptionbutton.style({"color": "red"});
+//     };
+    //html alert version end
+    //----------------------
+
+    //bootstrap modal version start
+    //-----------------------------
+    function getpassword_modal(){
+        //get the container password
+        var encrypted = this_.check_containerencryption();
+        if (!encrypted){
             // encrypt
             // get user password:
-            var password = prompt("enter your password to lock the container");
-            this_.set_password(password); //necessary to pass svg as "this"
-            // change the button color
-            this_.jsonencryptionbutton.style({"color": "red"});
-            alert("input data will now be decrypted and output data will be encrypted")
-        } else if (this_.password && currentbuttoncolor=="red"){
+            menumodal.change_modalheadertitle('Encrypt container');
+            $("#"+containerid + "modal").modal('show');
+        } else {
             // decrypt
             // get user password:
-            var password = prompt("enter your password to unlock the container");
+            menumodal.change_modalheadertitle('Decrypt container');
+            $("#"+containerid + "modal").modal('show');
+        };
+    };
+    function setpassword_modal(){
+        //set the container password
+        var encrypted = this_.check_containerencryption();
+        if (!encrypted){
+            // encrypt
+            // get user password:
+            var password = d3.select("#"+containerid+"modalbodyformpasswordinput").node().value;
+            this_.set_password(password); //necessary to pass svg as "this"
+            // change the button color
+            this_.jsonencryptionbuttontrigger.style({"color": "red"});
+            //alert("input data will now be decrypted and output data will be encrypted")
+        } else {
+            // decrypt
+            // get user password:
+            var password = d3.select("#"+containerid+"modalbodyformpasswordinput").node().value;
             if (password===this_.password){
                 this_.password = null;
-                this_.jsonencryptionbutton.style({"color": ""});
+                this_.jsonencryptionbuttontrigger.style({"color": ""});
             } else {
                 alert("invalid password provided");
             };
             
         };
+        // prevent browser default page refresh
+        d3.event.preventDefault();
+        $("#"+containerid + "modal").modal('hide');
     };
-
     this.jsonencryptionbutton = this.containerheader
         .append("div")
-        .attr("class","glyphicon glyphicon-certificate pull-left ui-btn ui-btn-inline")
         .attr("id", containerid + 'jsonencryptionbutton')
+        .attr("class","pull-left")
         .style({"cursor":"pointer"})
         .attr("data-toggle","tooltip")
-        .attr("title","encrypt container");
-    this.jsonencryptionbutton.on("click", setpassword);
+        .attr("title","encrypt container")
+    this.jsonencryptionbuttontrigger = this.jsonencryptionbutton
+        .append("span")
+        .attr("class","glyphicon glyphicon-certificate pull-left ui-btn ui-btn-inline")
+        .attr("aria-hidden","true")
+        .attr("data-toggle","modal")
+        .attr("data-target",containerid + "modal")
     // ensure that the button is colored red if the container is password protected
     if (this.password){
         this.jsonencryptionbutton.style({"color": "red"});
     };
+
+    //add the modal menu object
+    var modaltargetid = "#" + containerid + 'jsonencryptionbutton';
+    //var modaltargetid = "body";
+    var menumodal = new d3_html_modal();
+    menumodal.set_tileid(containerid);
+    menumodal.add_modal2tile(modaltargetid);
+    menumodal.add_header2modal();
+    menumodal.add_closebutton2modalheader();
+    menumodal.add_body2modal();
+    menumodal.add_form2modalbody();
+    menumodal.add_footer2modal();
+    menumodal.add_title2modalheader('');
+    menumodal.add_content2modalbodyform = function (){
+        // add content to the modal body form
+        var tileid = this.tileid;
+
+        var modalbodyformpassword = this.modalbodyform
+            .append("div")
+            .attr("class","form-group")
+            .attr("id",tileid+"modalbodyformpassword")
+            .append("label")
+            .attr("for",tileid+"modalbodyformpasswordinput")
+            .text("Password")
+            .append("input")
+            .attr("type","password")
+            .attr("class", "form-control")
+            .attr("id",tileid+"modalbodyformpasswordinput")
+            .attr("placeholder","Password");
+
+        var modalbodyformbutton = this.modalbodyform
+            .append("button")
+            .attr("class","btn btn-default")
+            .attr("id",tileid+"modalbodyformbutton")
+            .text("Submit");
+
+        modalbodyformbutton.on("click",setpassword_modal)
+    };
+    menumodal.add_content2modalbodyform();
+
+    this.jsonencryptionbuttontrigger.on("click", getpassword_modal);
+    //bootstrap modal version end
+    //-----------------------------
 
 //     var jsonencryptionbutton = this.containerheader
 //         .append("div")

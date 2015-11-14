@@ -51,13 +51,6 @@ d3_html_modal.prototype.add_modal2tile = function (nodeid_I){
         .attr("class","modal-dialog")
         .append("div")
         .attr("class","modal-content");
-
-    this.add_header2modal();
-    this.add_closebutton2modalheader();
-    this.add_body2modal();
-    this.add_form2modalbody();
-    this.add_login2modalbodyform();
-    this.add_footer2modal();
 };
 d3_html_modal.prototype.add_header2modal = function (htmlmodal_I){
     // add header to bootstrap modal element
@@ -75,12 +68,19 @@ d3_html_modal.prototype.add_header2modal = function (htmlmodal_I){
         .attr("class","modal-header")
         .attr("id",tileid + "modalheader");
 };
-
 d3_html_modal.prototype.add_title2modalheader = function(title_I){
     //add a title to the modal header
+    var tileid = this.tileid;
     this.htmlmodalheader.append("h4")
-        .attr("class","modal_title")
+        .attr("class","modal-title")
+        .attr("id",tileid + "modalheadertitle")
         .text(title_I);
+};
+d3_html_modal.prototype.change_modalheadertitle = function(title_I){
+    //change the title of the modal header
+    var tileid = this.tileid;
+    var htmlmodalheadertitle = d3.select("#"+tileid + "modalheadertitle");
+    htmlmodalheadertitle.text(title_I);
 };
 d3_html_modal.prototype.add_closebutton2modalheader = function(){
     // add a close button to the modal header
@@ -92,7 +92,8 @@ d3_html_modal.prototype.add_closebutton2modalheader = function(){
         .attr("class","close")
         .attr("id",tileid+"modalheaderclosebutton")
         .attr("data-dismiss","modal")
-        .attr("aria-hidden","true")
+        //.attr("aria-hidden","true")
+        .attr("aria-label","Close")
         .append("span")
         .attr("class","glyphicon glyphicon-trash");
 };
@@ -120,7 +121,7 @@ d3_html_modal.prototype.add_form2modalbody = function (htmlmodal_I){
         .attr("role","form")
         .attr("id",tileid + "modalbodyform");  
 };
-d3_html_modal.prototype.add_content2modalbodyform = function (content_I){
+d3_html_modal.prototype.add_content2modalbodyform = function (){
     // add content to the modal body form
     var tileid = this.tileid;
 
