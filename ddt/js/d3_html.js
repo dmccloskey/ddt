@@ -8,6 +8,8 @@ function d3_html() {
     this.html = null;
     this.data = null;
     this.datakeymap = {}; // mapping of keys to data element, chart elements, or other descriptor
+    this.htmlfooter = null;
+    this.htmlheader = null;
 };
 d3_html.prototype.add_html2tile = function(){
     // set the html
@@ -978,7 +980,30 @@ d3_html.prototype.import_filtermenujson = function(){
 //         .attr("id", function(d){return id + 'submitbutton' + d.id;})
 //         .text(function(d){return d.text;});
 // };
+d3_html.prototype.add_htmlfooter2tile = function () {
+    // add footer row to tile
+    var tileid = this.tileid;
 
+    // necessary to encapsolate import/export functions
+    this.htmlfooter = d3.select('#'+this.tileid+"panel-footer")
+        .append("div")
+        .attr("class","row")
+        .attr("id",tileid + 'footer')
+        .append("div")
+        .attr("class","col-lg-12");
+};
+d3_html.prototype.add_htmlheader2tile = function () {
+    // add header row to tile
+    var tileid = this.tileid;
+
+    // necessary to encapsolate import/export functions
+    this.htmlfooter = d3.select('#'+this.tileid+"panel-header")
+        .append("div")
+        .attr("class","row")
+        .attr("id",tileid + 'header')
+        .append("div")
+        .attr("class","col-lg-12");
+};
 d3_html.prototype.add_jsonexportbutton2tile = function () {
     // add button to export the table element
     // http://www.html5rocks.com/en/tutorials/file/dndfiles/
@@ -999,17 +1024,16 @@ d3_html.prototype.add_jsonexportbutton2tile = function () {
         .attr("title","save filter");
     jsonexportbutton.on("click", exportfiltermenujson);
 };
-d3_html.prototype.add_jsonimportandexportbutton2tile = function () {
+d3_html.prototype.add_jsonimportandexportbutton2tile = function (htmlfooter_I) {
     // add import and export buttons to tileid
     var tileid = this.tileid;
 
     // necessary to encapsolate import/export functions
-    this.htmlfooter = d3.select('#'+this.tileid+"panel-footer")
-        .append("div")
-        .attr("class","row")
-        .attr("id",tileid + 'footer')
-        .append("div")
-        .attr("class","col-lg-12");
+    if (typeof(htmlfooter_I)!=="undefined"){
+        this.htmlfooter = htmlfooter_I;
+    } else if (this.htmlfooter===null){
+        this.add_htmlfooter2tile();
+    };
     
     this.add_jsonexportbutton2tile();
     this.add_jsonimportbutton2tile();

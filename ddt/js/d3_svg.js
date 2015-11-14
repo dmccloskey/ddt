@@ -191,23 +191,6 @@ d3_svg.prototype.draw = function () {
 
     //your code here...
 };
-d3_svg.prototype.add_svgmenubutton2tile = function (){
-    //add a menu button to the footer of the chart
-    var this_ = this;
-
-    var svgmenubutton = d3.select('#'+this.tileid+"panel-footer").append("div");
-
-    function showsvgmenu(){
-        this_.export_svgelement(); //necessary to pass svg as "this"
-    };
-
-    svgmenubutton.attr("class","glyphicon  glyphicon glyphicon-menu-hamburger pull-right")
-        .attr("id", tileid + 'svgmenubutton')
-        .style({"cursor":"pointer"})
-        .attr("data-toggle","tooltip")
-        .attr("title","svg options menu");
-    svgmenubutton.on("click", showsvgmenu);
-};
 d3_svg.prototype.add_resizebuttons2footer = function(){
     // add svg resize
     // expand tile col width 1 increment
@@ -217,32 +200,16 @@ d3_svg.prototype.add_resizebuttons2footer = function(){
     var this_ = this;
 
     function expandsvghorizontal(){
-        var width = this_.width;
-        var height = this_.height;
-        var widthnew = width*1.5;
-        this_.set_width(widthnew);
-        this_.render();
+        this_.expand_svghorizontal();
     };
     function shrinksvghorizontal(){ 
-        var width = this_.width;
-        var height = this_.height;
-        var widthnew = width*0.75;
-        this_.set_width(widthnew);
-        this_.render();
+        this_.shrink_svghorizontal();
     };
     function expandsvgvertical(){
-        var width = this_.width;
-        var height = this_.height;
-        var heightnew = height*1.5;
-        this_.set_height(heightnew);
-        this_.render();
+        this_.expand_svgvertical();
     };
     function shrinksvgvertical(){ 
-        var width = this_.width;
-        var height = this_.height;
-        var heightnew = height*0.75;
-        this_.set_height(heightnew);
-        this_.render();
+        this_.shrink_svgvertical();
     };
 
     var svgresizemenubutton = d3.select('#'+this.tileid+"panel-footer").append("div");
@@ -277,4 +244,80 @@ d3_svg.prototype.add_resizebuttons2footer = function(){
         .attr("data-toggle","tooltip")
         .attr("title","expand svg height");
     svgexpandbuttonvertical.on("click",expandsvgvertical);
+};
+d3_svg.prototype.expand_svghorizontal = function(){
+    //expand svg horizontal
+    var width = this.width;
+    var height = this.height;
+    var widthnew = width*1.5;
+    this.set_width(widthnew);
+    this.render();
+};
+d3_svg.prototype.shrink_svghorizontal = function(){ 
+    //shrink svg horizontal
+    var width = this.width;
+    var height = this.height;
+    var widthnew = width*2.0/3.0;
+    this.set_width(widthnew);
+    this.render();
+};
+d3_svg.prototype.expand_svgvertical = function(){
+    //expand svg vertical
+    var width = this.width;
+    var height = this.height;
+    var heightnew = height*1.5;
+    this.set_height(heightnew);
+    this.render();
+};
+d3_svg.prototype.shrink_svgvertical = function(){ 
+    //shrink svg vertical
+    var width = this.width;
+    var height = this.height;
+    var heightnew = height*2.0/3.0;
+    this.set_height(heightnew);
+    this.render();
+};
+d3_svg.prototype.add_svgmenubutton2tile = function (){
+    //add a menu button to the footer of the chart
+    var tileid = this.tileid;
+    var this_ = this;
+
+    var svgmenubutton = d3.select('#'+this.tileid+"panel-footer").append("div");
+
+    function showsvgmenu(){
+         $("#"+tileid + "modal").modal('show');
+    };
+
+    svgmenubutton
+        .attr("class","pull-right")
+        .style({"cursor":"pointer"})
+        .attr("data-toggle","tooltip")
+        .attr("title","svg options menu")
+        .attr("id", tileid + 'svgmenubutton')
+        //a version
+        .append("a")
+        .attr("href","#"+tileid + "modal")
+        .attr("data-toggle","modal")
+        //button version
+//         .append("button")
+//         .attr("class","btn btn-default")
+//         .attr("data-toggle","modal")
+//         .attr("data-target",tileid + "modal")
+        .append("span")
+        .attr("class","glyphicon  glyphicon glyphicon-menu-hamburger")
+        .attr("aria-hidden","true")
+        //prefered version
+//         .attr("data-toggle","modal")
+//         .attr("data-target",tileid + "modal")
+        ;
+
+    //add the modal menu object
+    var modaltargetid = "#" + tileid + 'svgmenubutton';
+    //var modaltargetid = "body";
+    var menumodal = new d3_html_modal();
+    menumodal.set_tileid(tileid);
+    menumodal.add_modal2tile(modaltargetid);
+    
+//     svgmenubutton.on("click",showsvgmenu);
+
 };
