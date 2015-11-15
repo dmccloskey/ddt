@@ -83,7 +83,7 @@ d3_data.prototype.remove_keysfromlistdata = function (key_I){
         };
     };
 };
-d3_data.prototype.filter_data = function () {
+d3_data.prototype.filter_listdata = function () {
     // apply filters to list data for the following data types:
     // 1. string
     // 2. boolean
@@ -92,11 +92,12 @@ d3_data.prototype.filter_data = function () {
     // 5. custom function
 
     // clear listdatafiltered and nestdatafiltered
-    this.listdatafiltered = listdatafiltered_O;
-    this.nestdatafiltered = this.convert_list2nestlist(listdatafiltered_O,this.nestkey);
+    this.listdatafiltered = [];
+    this.nestdatafiltered = [];
 
     // apply each filter based on the data type
-    
+    // TODO filter based on datatype
+    this.filter_stringdata();
 
     // remake nestdatafiltered
     this.nestdatafiltered = this.convert_list2nestlist(this.listdatafiltered,this.nestkey);
@@ -111,7 +112,7 @@ d3_data.prototype.filter_stringdata = function () {
 
     // NOTE: changes made to listdatacopy are applied to this.listdata
     var listdatacopy = this.listdata;
-    var listdatafiltered_O = [];
+    var listdatafiltered_O = this.listdatafiltered;
 
     //pass each row through the filter
     for (var i = 0; i < listdatacopy.length; i++) {
@@ -146,18 +147,18 @@ d3_data.prototype.filter_stringdata = function () {
         };
     });
 
-    // re-make the nestdatafiltered
-    // NOTE: workflow to pass it through multiple filters (not just a string filter)
-    // 1. clear listdatafiltered and nestdatafiltered
-    // 2. pass listdata through each filter and append used_ data to list data filtered
-    // 3. remake nestdatafiltered
-    this.listdatafiltered = listdatafiltered_O;
-    this.nestdatafiltered = this.convert_list2nestlist(listdatafiltered_O,this.nestkey);
+//     // re-make the nestdatafiltered
+//     // NOTE: workflow to pass it through multiple filters (not just a string filter)
+//     // 1. clear listdatafiltered and nestdatafiltered
+//     // 2. pass listdata through each filter and append used_ data to list data filtered
+//     // 3. remake nestdatafiltered
+//     this.listdatafiltered = listdatafiltered_O;
+//     this.nestdatafiltered = this.convert_list2nestlist(listdatafiltered_O,this.nestkey);
 
-    // update the filters
-    if (this.listdatafiltered.length!==0){
-        this.update_filters();
-        };
+//     // update the filters
+//     if (this.listdatafiltered.length!==0){
+//         this.update_filters();
+//         };
 };
 d3_data.prototype.set_listdata = function (listdata_I,nestkey_I) {
     // set list data and initialize filtered data

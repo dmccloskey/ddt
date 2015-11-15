@@ -196,10 +196,10 @@ ddt_container.prototype.add_datafiltermenusubmitbutton = function (tileid_I,html
         };
         for (var cnt=0;cnt<this_.data.length;cnt++){
             this_.data[cnt].convert_stringmenuinput2filter(filterstringmenu);
-            this_.data[cnt].filter_stringdata();
+            this_.data[cnt].filter_listdata();
         };
 //         this_.tiles[tileindex].data[0].convert_stringmenuinput2filter(filterstringmenu);
-//         this_.tiles[tileindex].data[0].filter_stringdata();
+//         this_.tiles[tileindex].data[0].filter_listdata();
         this_.update_container();  
     };
 
@@ -222,7 +222,7 @@ ddt_container.prototype.add_datafiltermenuresetbutton = function (tileid_I,reset
         for (var cnt=0;cnt<this_.data.length;cnt++){
             this_.data[cnt].reset_usedkey(); //check reset_usedkey
             this_.data[cnt].reset_filters();
-            this_.data[cnt].filter_stringdata();
+            this_.data[cnt].filter_listdata();
         };
         this_.update_container();    
     };
