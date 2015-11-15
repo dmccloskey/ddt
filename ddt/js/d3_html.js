@@ -1061,7 +1061,7 @@ d3_html.prototype.add_jsonimportbutton2tile = function () {
                     var result = e.target.result;
                     var filtermenu = JSON.parse(result);
                     this_.data.filters = filtermenu;
-                    this_.data.filter_stringdata();
+                    this_.data.filter_listdata();
                     this_.render();
                 };
             })(file1);
@@ -1073,7 +1073,7 @@ d3_html.prototype.add_jsonimportbutton2tile = function () {
     //                 var result = e.target.result;
     //                 var filtermenu = JSON.parse(result);
     //                 this_.data.filters = filtermenu;
-    //                 this_.data.filter_stringdata();
+    //                 this_.data.filter_listdata();
     //                 this_.render();
     //             };
     //         })(file1);

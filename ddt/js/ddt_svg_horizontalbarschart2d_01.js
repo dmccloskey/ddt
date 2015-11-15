@@ -44,7 +44,7 @@ ddt_svg_horizontalbarschart2d_01.prototype.make_svg = function(data_I,parameters
     	// permanent filter on the data
     	if (parameters_I.svgfilters){
 			this.data1.change_filters(parameters_I.svgfilters);
-			this.data1.filter_stringdata();
+			this.data1.filter_listdata();
     	};
         this.add_chart2d2tile();
         this.set_svgstyle();

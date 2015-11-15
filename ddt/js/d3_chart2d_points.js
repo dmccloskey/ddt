@@ -115,10 +115,10 @@ d3_chart2d.prototype.add_pointsdata1seriesfilter = function () {
         var filters = [];
         _this.data1.filters[series_label].forEach(function (n) { if (n !== d[series_label]) { filters.push(n); }; });
         _this.data1.filters[series_label] = filters;
-        _this.data1.filter_stringdata();
+        _this.data1.filter_listdata();
         if (_this.filterdata1and2){
             _this.data2.filters[series_label] = filters;
-            _this.data2.filter_stringdata();
+            _this.data2.filter_listdata();
         };
         _this.render();
     });
@@ -135,10 +135,10 @@ d3_chart2d.prototype.add_pointsdata1featurefilter = function () {
             //else {console.log(n);}; 
             });
         _this.data1.filters[feature_label] = filters;
-        _this.data1.filter_stringdata();
+        _this.data1.filter_listdata();
         if (_this.filterdata1and2){
             _this.data2.filters[feature_label] = filters;
-            _this.data2.filter_stringdata();
+            _this.data2.filter_listdata();
         };
         _this.render();
     });

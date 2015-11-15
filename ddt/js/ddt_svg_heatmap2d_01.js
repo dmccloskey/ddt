@@ -40,7 +40,7 @@ ddt_svg_heatmap_01.prototype.make_svg = function(data_I,parameters_I){
     //this.ddtsvg.set_tooltip();
     //this.ddtsvg.set_tooltipstyle();
     //this.ddtsvg.set_zoom();
-    //this.ddtsvg.data1.filter_stringdata();
+    //this.ddtsvg.data1.filter_listdata();
 //     this.ddtsvg.set_colorscale(parameters_I.svgcolorscale,
 // 								parameters_I.svgcolorcategory,
 // 								parameters_I.svgcolordomain,

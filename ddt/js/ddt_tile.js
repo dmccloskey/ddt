@@ -161,7 +161,7 @@ ddt_tile_table.prototype.update_tile = function(data_I){
 
     //update the data filters...
     //this.ddttable.add_data(data_I);
-    //this.ddttable.ddttable.data.filter_stringdata();
+    //this.ddttable.ddttable.data.filter_listdata();
     //re-render the table
     this.ddttable.ddttable.render();
 };

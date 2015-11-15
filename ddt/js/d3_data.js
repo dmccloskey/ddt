@@ -6,6 +6,7 @@ function d3_data() {
     //of listed key-value paired data
     //(e.g., from a database)
 
+
     this.keys = []; // list of columns that can be applied as nest keys and filters
     this.nestkey = ''; // key to apply to nest
     this.filters = {}; // {key1:[string1,string2,...],...}
@@ -62,12 +63,12 @@ d3_data.prototype.reset_usedkey = function (){
 d3_data.prototype.add_keysandvalues2listdata = function (key_values_I){
     // add a new key and default value to list data
     //INPUT:
-    //key_values_I = [{"key":string,"value":...}]
+    //key_values_I = {"key":"value",...}
     
     for (var i = 0; i < this.listdata.length; i++) {
-        for (var j = 0; j < key_values_I; j++){
-            if (typeof(this.listdata[i][j["key"]])==="undefined"){
-                this.listdata[i][j["key"]] = j["value"];
+        for (var key in Object.keys(key_values_I)){
+            if (typeof(this.listdata[i][key])==="undefined"){
+                this.listdata[i][key] = key_values_I[key];
             };
         };
     };
@@ -116,8 +117,6 @@ d3_data.prototype.filter_stringdata = function () {
 
     //pass each row through the filter
     for (var i = 0; i < listdatacopy.length; i++) {
-        //listdatacopy[i]['used_'] = true; //reset used_
-                                         //refactor:  remove and call seperately before any reset or update
         for (var filter in this.filters) {
             //console.log(filter);
             if (typeof listdatacopy[i][filter] !== "undefined"){
@@ -146,19 +145,6 @@ d3_data.prototype.filter_stringdata = function () {
             listdatafiltered_O.push(d)
         };
     });
-
-//     // re-make the nestdatafiltered
-//     // NOTE: workflow to pass it through multiple filters (not just a string filter)
-//     // 1. clear listdatafiltered and nestdatafiltered
-//     // 2. pass listdata through each filter and append used_ data to list data filtered
-//     // 3. remake nestdatafiltered
-//     this.listdatafiltered = listdatafiltered_O;
-//     this.nestdatafiltered = this.convert_list2nestlist(listdatafiltered_O,this.nestkey);
-
-//     // update the filters
-//     if (this.listdatafiltered.length!==0){
-//         this.update_filters();
-//         };
 };
 d3_data.prototype.set_listdata = function (listdata_I,nestkey_I) {
     // set list data and initialize filtered data
@@ -336,18 +322,61 @@ d3_data.prototype.clear_data = function () {
     this.listdatafiltered = [];
     this.nestdatafiltered = [];
 };
-//TODO: SQL functions
-d3_data.prototype.get_rows = function(query_I){
+d3_data.prototype.get_listdata = function(){
     // retrieve rows from listdata
-
+    return this.listdata;
 };
-d3_data.prototype.update_rows = function(query_I){
-    // update rows in listdata
-
+d3_data.prototype.get_listdatafiltered = function(){
+    // retrieve filtered rows from listdatafiltered
+    return this.listdatafiltered;
 };
-d3_data.prototype.add_rows = function(query_I){
+d3_data.prototype.get_nestdatafiltered = function(){
+    // retrieve filtered rows from nestdatafiltered
+    return this.nestdatafiltered;
+};
+d3_data.prototype.update_listdata = function(key_values_I){
+    // update rows in listdata that are used_
+    //INPUT:
+    //key_values_I = {"key":"new value",...};
+    
+    for (var i = 0; i < this.listdata.length; i++) {
+        if (this.listdata[i]["used_"]){ //apply update to filtered data
+            for (var key in Object.keys(key_values_I)){
+                if (typeof(this.listdata[i][key])!=="undefined"){ //do not add in new keys not presents
+                    this.listdata[i][key] = key_values_I[key];
+                };
+            };
+        };
+    };    
+};
+d3_data.prototype.add_listdata = function(data_row_I){
     // add rows to listdata
+    //INPUT:
+    //data_row_I = [{}] of data to add
+
+    var listdatakeys = Object.keys(this.listdata[0]);
+    var listdata_O = this.listdata;
+
+    data_row_I.forEach(function(d){
+        //ensure each row has all keys
+        var newdata = {};
+        for (var key in listdatakeys){
+            if(typeof(d[key]==="undefined")){
+                newdata[key]=null;
+            } else {
+                newdata[key] = d[key];
+            };
+        };
+        listdata_O.push(newdata);
+    });
 };
-d3_data.prototype.remove_rows = function(query_I){
+d3_data.prototype.remove_listdata = function(){
     // remove rows from listdata
+
+    //make a new listdata
+    var listdata_O = [];
+    this.listdatafiltered.forEach(function(d){
+        listdata_O.push(d);
+    });
+    this.listdata = listdata_O;
 };

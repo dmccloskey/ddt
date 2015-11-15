@@ -23,7 +23,7 @@ ddt_html_href_01.prototype.make_html = function(data_I,parameters_I){
     	// permanent filter on the data
     	if (typeof parameters_I.htmlfilters != "undefined"){
 			this.data.change_filters(parameters_I.htmlfilters);
-			this.data.filter_stringdata();
+			this.data.filter_listdata();
     	};
         this.add_html2tile();
 		this.set_htmlstyle();

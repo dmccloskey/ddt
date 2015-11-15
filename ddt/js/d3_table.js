@@ -199,7 +199,7 @@ d3_table.prototype.add_tablecellfilter = function(){
         var filters = [];
         _this.data.filters[column].forEach(function (n) { if (n !== d) { filters.push(n);}; });
         _this.data.filters[column] = filters;
-        _this.data.filter_stringdata();
+        _this.data.filter_listdata();
         _this.render();
     });
 };
@@ -379,7 +379,7 @@ d3_table.prototype.add_datafiltermenusubmitbutton = function (tileid_I,submitbut
             filterstringmenu.push({"text":filterkey,"value":filterstring});
         };
         this_.data.convert_stringmenuinput2filter(filterstringmenu);
-        this_.data.filter_stringdata();
+        this_.data.filter_listdata();
         this_.render();
     };
 
@@ -397,7 +397,7 @@ d3_table.prototype.add_datafiltermenuresetbutton = function (tileid_I,resetbutto
     
     function reset(){
         this_.data.reset_filters();
-        this_.data.filter_stringdata();
+        this_.data.filter_listdata();
         this_.render();
     };
 

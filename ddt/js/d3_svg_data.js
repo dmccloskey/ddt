@@ -28,7 +28,7 @@ d3_svg_data.prototype.add_data1filtermenusubmitbutton = function (tileid_I,submi
             filterstringmenu.push({"text":filterkey,"value":filterstring});
         };
         this_.data1.convert_stringmenuinput2filter(filterstringmenu);
-        this_.data1.filter_stringdata();
+        this_.data1.filter_listdata();
         this_.render();
     };
 
@@ -52,7 +52,7 @@ d3_svg_data.prototype.add_data2filtermenusubmitbutton = function (tileid_I,submi
             filterstringmenu.push({"text":filterkey,"value":filterstring});
         };
         this_.data2.convert_stringmenuinput2filter(filterstringmenu);
-        this_.data2.filter_stringdata();
+        this_.data2.filter_listdata();
         this_.render();
     };
 
@@ -70,7 +70,7 @@ d3_svg_data.prototype.add_data2filtermenuresetbutton = function (tileid_I,resetb
     
     function reset(){
         this_.data2.reset_filters();
-        this_.data2.filter_stringdata();
+        this_.data2.filter_listdata();
         this_.render();
     };
 
@@ -88,7 +88,7 @@ d3_svg_data.prototype.add_data1filtermenuresetbutton = function (tileid_I,resetb
     
     function reset(){
         this_.data1.reset_filters();
-        this_.data1.filter_stringdata();
+        this_.data1.filter_listdata();
         this_.render();
     };
 
@@ -257,8 +257,8 @@ d3_svg_data.prototype.set_filterdata1and2 = function(filterdata1and2_I){
 };
 d3_svg_data.prototype.filter_data1and2stringdata = function(){
     //filter all data
-    if (this.data1){this.data1.filter_stringdata();};
-    if (this.data2){this.data2.filter_stringdata();}; 
+    if (this.data1){this.data1.filter_listdata();};
+    if (this.data2){this.data2.filter_listdata();}; 
 };
 d3_svg_data.prototype.set_data1keymap = function (data1keymap_I) {
     //set the data1 column identifiers for xdata, yudata, serieslabel, and featureslabel
