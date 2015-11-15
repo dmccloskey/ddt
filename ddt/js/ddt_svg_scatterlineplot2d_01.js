@@ -32,6 +32,13 @@ ddt_svg_scatterlineplot2d_01.prototype.make_svg = function(data_I,parameters_I){
     this.add_data(data_I);
     this.set_datakeymaps(parameters_I.svgkeymap);
 
+    //Testing in progress...
+//     var navtabs_I = [
+//                  {"litext":"options","href":"#" + parameters_I.svgid + "options","data-target":"#" + parameters_I.svgid + "options"}, 
+//                  {"litext":"svg","href":"#" + parameters_I.svgid,"data-target":"#" + parameters_I.svgid}
+//                  ];
+//     this.ddtsvg.add_navtabs2tile(navtabs_I);
+
 	// svg specific properties
     this.ddtsvg.set_margin(parameters_I.svgmargin);
     this.ddtsvg.set_filterdata1and2(true); //filter data 1 and 2 together
@@ -39,7 +46,6 @@ ddt_svg_scatterlineplot2d_01.prototype.make_svg = function(data_I,parameters_I){
     this.ddtsvg.set_height(parameters_I.svgheight);
     this.ddtsvg.set_colorscale(); //color for series_label will remain consistent
     this.ddtsvg.add_svgexportbutton2tile();
-    this.ddtsvg.add_svgmenubutton2tile();
     this.ddtsvg.add_resizebuttons2footer();
 //     this.ddtsvg.add_data1filtermenuresetbutton(parameters_I.svgformtileid,parameters_I.svgresetbuttonid)
 //     this.ddtsvg.add_data2filtermenuresetbutton(parameters_I.svgformtileid,parameters_I.svgresetbuttonid)

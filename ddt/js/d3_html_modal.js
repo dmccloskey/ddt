@@ -76,8 +76,8 @@ d3_html_modal.prototype.add_title2modalheader = function(title_I){
         .attr("id",tileid + "modalheadertitle")
         .text(title_I);
 };
-d3_html_modal.prototype.change_modalheadertitle = function(title_I){
-    //change the title of the modal header
+d3_html_modal.prototype.update_modalheadertitle = function(title_I){
+    //update the title of the modal header
     var tileid = this.tileid;
     var htmlmodalheadertitle = d3.select("#"+tileid + "modalheadertitle");
     htmlmodalheadertitle.text(title_I);

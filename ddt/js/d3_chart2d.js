@@ -449,41 +449,73 @@ d3_chart2d.prototype.add_y1axisgridlines = function () {
 };
 d3_chart2d.prototype.add_x1axislabel = function (x1axislabel_I) {
     //add x1axis label properties
+    var tileid = this.tileid;
     this.x1axis.append("text")
         .attr("class", "label")
         .attr("x", this.width / 2)
         .attr("y", 28)
         .style("text-anchor", "middle")
-        .text(x1axislabel_I);
+        .text(x1axislabel_I)
+        .attr("id",tileid+"x1axislabel");
 };
 d3_chart2d.prototype.add_x2axislabel = function (x2axislabel_I) {
     //set x2axis label properties
+    var tileid = this.tileid;
     this.x1axis.append("text")
         .attr("class", "label")
         .attr("x", this.width / 2)
         .attr("y", -28)
         .style("text-anchor", "middle")
-        .text(x2axislabel_I);
+        .text(x2axislabel_I)
+        .attr("id",tileid+"x2axislabel");
 };
-d3_chart2d.prototype.add_y1axislabel = function (y1axislabel) {
+d3_chart2d.prototype.add_y1axislabel = function (y1axislabel_I) {
     //set y1axis label properties
+    var tileid = this.tileid;
     this.y1axis.append("text")
         .attr("class", "label")
         .attr("transform", "rotate(-90)")
         .attr("y", -28)
         .attr("x", -this.height / 2)
         .style("text-anchor", "middle")
-        .text(y1axislabel);
+        .text(y1axislabel_I)
+        .attr("id",tileid+"y1axislabel");
 };
-d3_chart2d.prototype.add_y2axislabel = function (y2axislabel) {
+d3_chart2d.prototype.add_y2axislabel = function (y2axislabel_I) {
     //set y2axis label properties
+    var tileid = this.tileid;
     this.y2axis.append("text")
         .attr("class", "label")
         .attr("transform", "rotate(-90)")
         .attr("y", 28)
         .attr("x", -this.height / 2)
         .style("text-anchor", "middle")
-        .text(y2axislabel);
+        .text(y2axislabel_I)
+        .attr("id",tileid+"y2axislabel");
+};
+d3_chart2d.prototype.update_x1axislabel = function (x1axislabel_I) {
+    //add x1axis label properties
+    var tileid = this.tileid;
+    var x1axislabel = d3.select("#"+tileid + "x1axislabel");
+    x1axislabel.text(x1axislabel_I);
+};
+d3_chart2d.prototype.update_x2axislabel = function (x2axislabel_I) {
+    //add x2axis label properties
+    var tileid = this.tileid;
+    var x2axislabel = d3.select("#"+tileid + "x2axislabel");
+    x2axislabel.text(x2axislabel_I);
+};
+d3_chart2d.prototype.update_y1axislabel = function (y1axislabel_I) {
+    //add y1axis label properties
+    var tileid = this.tileid;
+    var y1axislabel = d3.select("#"+tileid + "y1axislabel");
+    y1axislabel.text(y1axislabel_I);
+};
+d3_chart2d.prototype.update_y2axislabel = function (y2axislabel_I) {
+    //add y2axis label properties
+    var tileid = this.tileid;
+    var y2axislabel = d3.select("#"+tileid + "y2axislabel");
+    y2axislabel.text(y2axislabel_I);
 };
 d3_chart2d.prototype.set_tooltip = function () {
     //set tooltip properties

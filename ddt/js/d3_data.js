@@ -9,7 +9,9 @@ function d3_data() {
     this.keys = []; // list of columns that can be applied as nest keys and filters
     this.nestkey = ''; // key to apply to nest
     this.filters = {}; // {key1:[string1,string2,...],...}
-    this.listdata = []; // data in database table form (must contain a column "_used");
+                       //NOTE: only string filters and string filtering is supported
+                       //TODO: support filtering on boolean, numeric, date and time, and custom functions
+    this.listdata = []; // data in database table form (must contain a column "used_");
     this.listdatafiltered = []; // data in database table form
     this.nestdatafiltered = []; // data in nested form
 };
@@ -38,19 +40,83 @@ d3_data.prototype.convert_list2nestmap = function (data_I,key_I) {
         .map(data_I);
     return nesteddata_O;
 };
+d3_data.prototype.add_usedkey2listdata = function (){
+    // add used_ key to listdata
+    // should be done once to ensure that here is a used_ key
+    
+    //set _used to false:
+    for (var i = 0; i < this.listdata.length; i++) {
+        if (typeof(this.listdata[i]["used_"])==="undefined"){
+            this.listdata[i]['used_'] = true;
+        };
+    };
+};
+d3_data.prototype.reset_usedkey = function (){
+    // reset used_ to true on listdata
+    
+    //set _used to false:
+    for (var i = 0; i < this.listdata.length; i++) {
+        this.listdata[i]['used_'] = true;
+    };
+};
+d3_data.prototype.add_keysandvalues2listdata = function (key_values_I){
+    // add a new key and default value to list data
+    //INPUT:
+    //key_values_I = [{"key":string,"value":...}]
+    
+    for (var i = 0; i < this.listdata.length; i++) {
+        for (var j = 0; j < key_values_I; j++){
+            if (typeof(this.listdata[i][j["key"]])==="undefined"){
+                this.listdata[i][j["key"]] = j["value"];
+            };
+        };
+    };
+};
+d3_data.prototype.remove_keysfromlistdata = function (key_I){
+    // remove a key from list data
+    //INPUT:
+    //key_I = string
+    
+    for (var i = 0; i < this.listdata.length; i++) {
+        for(var k in key_I){
+            delete this.listdata[i][k];
+        };
+    };
+};
+d3_data.prototype.filter_data = function () {
+    // apply filters to list data for the following data types:
+    // 1. string
+    // 2. boolean
+    // 3. numeric
+    // 4. date and time
+    // 5. custom function
+
+    // clear listdatafiltered and nestdatafiltered
+    this.listdatafiltered = listdatafiltered_O;
+    this.nestdatafiltered = this.convert_list2nestlist(listdatafiltered_O,this.nestkey);
+
+    // apply each filter based on the data type
+    
+
+    // remake nestdatafiltered
+    this.nestdatafiltered = this.convert_list2nestlist(this.listdatafiltered,this.nestkey);
+
+    // update the filters
+    if (this.listdatafiltered.length!==0){
+        this.update_filters();
+        };
+};
 d3_data.prototype.filter_stringdata = function () {
     // apply filters to listdata
 
+    // NOTE: changes made to listdatacopy are applied to this.listdata
     var listdatacopy = this.listdata;
     var listdatafiltered_O = [];
-    
-    //set _used to false:
-    for (var i = 0; i < listdatacopy.length; i++) {
-        listdatacopy[i]['used_'] = true;
-    };
 
     //pass each row through the filter
     for (var i = 0; i < listdatacopy.length; i++) {
+        //listdatacopy[i]['used_'] = true; //reset used_
+                                         //refactor:  remove and call seperately before any reset or update
         for (var filter in this.filters) {
             //console.log(filter);
             if (typeof listdatacopy[i][filter] !== "undefined"){
@@ -81,6 +147,10 @@ d3_data.prototype.filter_stringdata = function () {
     });
 
     // re-make the nestdatafiltered
+    // NOTE: workflow to pass it through multiple filters (not just a string filter)
+    // 1. clear listdatafiltered and nestdatafiltered
+    // 2. pass listdata through each filter and append used_ data to list data filtered
+    // 3. remake nestdatafiltered
     this.listdatafiltered = listdatafiltered_O;
     this.nestdatafiltered = this.convert_list2nestlist(listdatafiltered_O,this.nestkey);
 
@@ -97,8 +167,28 @@ d3_data.prototype.set_listdata = function (listdata_I,nestkey_I) {
     this.nestdatafiltered = this.convert_list2nestlist(listdata_I,this.nestkey);
 };
 d3_data.prototype.set_keys = function (keys_I) {
-    // add list data
+    // set the keys
+    //INPUT:
+    //keys_I = list of strings
     this.keys = keys_I;
+};
+d3_data.prototype.add_keys = function (keys_I) {
+    // add keys
+    //INPUT:
+    //keys_I = list of strings
+    for (var i=0;i<keys_I.length;i++){
+        var newkey = keys_I[i]; //should ensure that the key is a string
+        this.keys.push(newkey);
+    };
+};
+d3_data.prototype.remove_keys = function (keys_I) {
+    // remove keys
+    //INPUT:
+    //keys_I = list of strings
+    for (var i=0;i<keys_I.length;i++){
+        var removekey = keys_I[i]; //should ensure that the key is a string
+        this.keys.pop(removekey);
+    };
 };
 d3_data.prototype.reset_filters = function () {
     // generate the initial filter
@@ -125,12 +215,6 @@ d3_data.prototype.update_filters = function () {
         filters[this.keys[key_cnt]] = colentries.values();
     };
     this.filters = filters;
-};
-d3_data.prototype.clear_data = function () {
-    // add list data
-    this.listdata = [];
-    this.listdatafiltered = [];
-    this.nestdatafiltered = [];
 };
 d3_data.prototype.change_filters = function (filter_I) {
     // modify the filter according to the new filter
@@ -244,4 +328,25 @@ d3_data.prototype.get_datajson = function(filtereddataonly_I){
 //additional functions
 function escapeRegExp(string){
     return string.replace(/[.*+?^${}()|[\]\\]/g, "\\$&");
+};
+d3_data.prototype.clear_data = function () {
+    // clear list data
+    this.listdata = [];
+    this.listdatafiltered = [];
+    this.nestdatafiltered = [];
+};
+//TODO: SQL functions
+d3_data.prototype.get_rows = function(query_I){
+    // retrieve rows from listdata
+
+};
+d3_data.prototype.update_rows = function(query_I){
+    // update rows in listdata
+
+};
+d3_data.prototype.add_rows = function(query_I){
+    // add rows to listdata
+};
+d3_data.prototype.remove_rows = function(query_I){
+    // remove rows from listdata
 };

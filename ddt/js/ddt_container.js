@@ -44,10 +44,11 @@ ddt_container.prototype.add_data = function(data_I){
     // add data to container
     //INPUT:
     // data_I = [{data:[],datakeys:[],datanestkeys:[]},...]
-    for (var cnt=0;cnt<data_I.length;cnt++){ //switched from i to cnt due to i changing within the loop
+    for (var cnt=0;cnt<data_I.length;cnt++){
         var d3data = new d3_data();
         d3data.set_keys(data_I[cnt].datakeys);
         d3data.set_listdata(data_I[cnt].data,data_I[cnt].datanestkeys);
+        d3data.add_usedkey2listdata(); //ensure a used_ key in each data object
         d3data.reset_filters();
         this.data.push(d3data);
     };
@@ -61,11 +62,32 @@ ddt_container.prototype.add_containertiles = function(){
         this.tiles.push(tile);
     };
 };
+ddt_container.prototype.get_containertilebytileid = function(tileid_I){
+    // retrieve a container tile
+    //INPUT:
+    //tileid_I = string, tileid
+    //OUTPUT:
+    //tile_O = tile object
+    if (typeof(tileid_I)!=="undefined"){
+        var tileid = tileid_I;
+    } else {
+        console.log('no tileid provided.');
+        return null;
+    };
+    var tile_O = null;
+    for (var i=0; i<this.tiles.length; i++){
+        if (this.tiles[i].tileid == tileid){
+            tile_O = this.tiles[i];
+            break;
+        };
+    };
+    return tile_O;
+};
 ddt_container.prototype.make_container = function(){
     // call all tile make functions
     var data = this.data;
     this.add_containertiles();
-    for (var cnt=0;cnt<this.tiles.length;cnt++){ //switched from i to cnt due to i changing within the loop
+    for (var cnt=0;cnt<this.tiles.length;cnt++){
         var tiledataindex = this.tile2datamap[this.parameters[cnt].tileid];
         var tiledata = [];
         tiledataindex.forEach(function(d){tiledata.push(data[d]);});
@@ -75,7 +97,7 @@ ddt_container.prototype.make_container = function(){
 ddt_container.prototype.update_container = function(){
     // call all tile update functions
     var data = this.data;
-    for (var cnt=0;cnt<this.tiles.length;cnt++){ //switched from i to cnt due to i changing within the loop
+    for (var cnt=0;cnt<this.tiles.length;cnt++){ 
         var tiledataindex = this.tile2datamap[this.parameters[cnt].tileid];
         var tiledata = [];
         tiledataindex.forEach(function(d){tiledata.push(data[d]);});
@@ -84,11 +106,12 @@ ddt_container.prototype.update_container = function(){
 };
 ddt_container.prototype.reset_containerdata = function(){
     // reset data filters and call all tile update functions
-    for (cnt=0;cnt<this.data.length;cnt++){ //switched from i to cnt due to i changing within the loop
+    for (cnt=0;cnt<this.data.length;cnt++){ 
+        this.data[cnt].reset_usedkey(); //check reset_usedkey
         this.data[cnt].reset_filters();
     };
     var data = this.data;
-    for (var cnt=0;cnt<this.tiles.length;cnt++){ //switched from i to cnt due to i changing within the loop
+    for (var cnt=0;cnt<this.tiles.length;cnt++){ 
         var tiledataindex = this.tile2datamap[this.parameters[cnt].tileid];
         var tiledata = [];
         tiledataindex.forEach(function(d){tiledata.push(data[d]);});
@@ -111,7 +134,7 @@ ddt_container.prototype.filter_containerdata = function(filter_I){
     // apply a global filter to all container data
     // INPUT:
     // filter_I = {key:value,...}
-    for (var cnt=0;cnt<this.data.length;cnt++){ //switched from i to cnt due to i changing within the loop
+    for (var cnt=0;cnt<this.data.length;cnt++){ 
         this.data[cnt].change_filters(filter_I);
     };
 };
@@ -196,7 +219,8 @@ ddt_container.prototype.add_datafiltermenuresetbutton = function (tileid_I,reset
     
     function reset(){
         // reset data filters and call all tile update functions
-        for (var cnt=0;cnt<this_.data.length;cnt++){ //switched from i to cnt due to i changing within the loop
+        for (var cnt=0;cnt<this_.data.length;cnt++){
+            this_.data[cnt].reset_usedkey(); //check reset_usedkey
             this_.data[cnt].reset_filters();
             this_.data[cnt].filter_stringdata();
         };
@@ -621,12 +645,12 @@ ddt_container.prototype.add_encryptionbutton2container = function(){
         if (!encrypted){
             // encrypt
             // get user password:
-            menumodal.change_modalheadertitle('Encrypt container');
+            menumodal.update_modalheadertitle('Encrypt container');
             $("#"+containerid + "modal").modal('show');
         } else {
             // decrypt
             // get user password:
-            menumodal.change_modalheadertitle('Decrypt container');
+            menumodal.update_modalheadertitle('Decrypt container');
             $("#"+containerid + "modal").modal('show');
         };
     };

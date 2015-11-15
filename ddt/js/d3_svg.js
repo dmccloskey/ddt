@@ -277,6 +277,65 @@ d3_svg.prototype.shrink_svgvertical = function(){
     this.set_height(heightnew);
     this.render();
 };
+d3_svg.prototype.add_navtabs2tile = function(navtabs_I){
+    //add navigation tabs to tile body
+    //INPUT
+    //navtabs_I = [{"litext":"svg","href":,"data-target":},
+    //             {"litext":"options","href":,"data-target":}
+    // ];
+    //
+    //
+    //
+
+    var tileid = this.tileid;
+
+    if (typeof(navtabs_I)!=="undefined"){
+        var navtabs = navtabs_I;
+    } else {
+        var navtabs = [];
+    };
+    
+    //extract out the navigation tabs
+    var navtabstext = [];
+    navtabs.forEach(function(d){
+        navtabstext.push(d["litext"]);
+    });
+
+    this.svgnavtabs = d3.select('#' + tileid+"panel-body")
+        .append("ul")
+        .attr("id",tileid+"svgnavigationtabs")
+        .attr("class","nav nav-tabs")
+        .selectAll("li")
+        .data(navtabs);
+
+    //add the li elements
+    this.svgnavtabs.exit().remove();
+    this.svgnavtabsenter = this.svgnavtabs.enter();
+    this.svgnavtabsenter.append("li")
+        .append("a")
+        .attr("href",function(d){
+            return d["href"];
+        })
+        .attr("data-target",function(d){
+            return d["data-target"];
+        })
+        .attr("data-toggle","tab")
+        .text(function(d){
+            return d["litext"];
+        });
+
+    this.svgnavtabs.transition()
+        .attr("href",function(d){
+            return d["href"];
+        })
+        .attr("data-target",function(d){
+            return d["data-target"];
+        })
+        .attr("data-toggle","tab")
+        .text(function(d){
+            return d["litext"];
+        });
+};
 //TODO: re-implement using tabs
 d3_svg.prototype.add_svgmenubutton2tile = function (){
     //add a menu button to the footer of the chart
