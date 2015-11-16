@@ -9,6 +9,7 @@ function ddt_container(){
     this.tile2datamap = {};
     this.containerid = 'container'
     this.container=null;
+    this.containerheader=null;
 };
 ddt_container.prototype.set_parameters = function(parameters_I){
     // set parameters to container
@@ -32,13 +33,29 @@ ddt_container.prototype.set_tile2datamap = function(tile2datamap_I){
     // tile2datamap_I = {tileid:[dataindex,...],...}
     this.tile2datamap=tile2datamap_I;
 };
-ddt_container.prototype.add_parameters = function(parameters_I){
-    // add parameters to container
-    this.parameters.push(parameters_I);
+ddt_container.prototype.add_tile2datamap = function(tile2datamap_I){
+    // add to tile2datamap
+    // INPUT:
+    // tile2datamap_I = {tileid:[dataindex,...],...}
+    for(var key in tile2datamap_I){
+        this.tile2datamap[key]=tile2datamap_I[key];
+    };
 };
-ddt_container.prototype.add_tile = function(tile_I){
+ddt_container.prototype.add_parameters = function(parameters_I,pos_I){
+    // add parameters to container
+    if (typeof(pos_I)==="number"){
+        this.parameters.splice(pos_I,0,parameters_I);
+    } else {
+        this.parameters.push(parameters_I);
+    };
+};
+ddt_container.prototype.add_tile = function(tile_I,pos_I){
     // add tile to container
-    this.tiles.push(tile_I);
+    if (typeof(pos_I)==="number"){
+        this.tiles.splice(pos_I,0,tile_I);
+    } else {
+        this.tile.push(tile_I);
+    };
 };
 ddt_container.prototype.add_data = function(data_I){
     // add data to container
@@ -266,31 +283,64 @@ ddt_container.prototype.add_datafiltermenubuttons = function(datafiltermenu_I){
 ddt_container.prototype.__main__ = function(parameters,data,tile2datamap,filtermenu){
     //run
     //ddt_test = new ddt_container();
-    //container manipulation features
-    this.add_header2container();
-    this.add_jsonimportbutton2container();
-    this.add_jsonexportbutton2container();
-	this.add_encryptionbutton2container();
-    //ddt data and template
-    this.set_parameters(parameters);
-    this.add_data(data);
-    this.set_tile2datamap(tile2datamap);
+    ddt_test.set_parameters(parameters);
+    ddt_test.add_data(data);
+    ddt_test.set_tile2datamap(tile2datamap);
+    //add container options menu
+    if (!ddt_test.containerheader){
+        ddt_test.add_headerparameters();
+        ddt_test.add_headerdata();
+        ddt_test.add_headertile2datamap();
+    };
     //make the container
-    this.make_container();
+    ddt_test.make_container();
+    ddt_test.add_header2container();
     //add the container filter buttons
     if (typeof filtermenu !== "undefined") { ddt_test.add_datafiltermenubuttons(filtermenu); }
     else { ddt_test.add_datafiltermenubuttons(); };
+};
+ddt_container.prototype.add_headerparameters = function(){
+    // add a header row parameters
+    var containerid = this.containerid;
+    var parameters = {
+        'tileheader':'Container options','tiletype':'html',
+        'tileid':"containerheader",'rowid':"row0",'colid':"col1",
+        'tileclass':"panel panel-default",'rowclass':"row",'colclass':"col-sm-12",
+        'htmlid':'containerheader',
+        "htmltype":'containerheader_01'
+        };
+    var pos = 0;
+
+    this.add_parameters(parameters,pos);
+};
+ddt_container.prototype.add_headerdata = function(){
+    // add header row data
+    var data = {"data":[{"version":"developer"}],
+            "datakeys":['version'],
+            "datanestkeys":['version']}
+    this.add_data(data);
+};
+ddt_container.prototype.add_headertile2datamap = function(){
+    // add header row tile2datamap
+    var datalength = this.data.length;
+    var tile2datamap = {'containerheader':[datalength]};
+    this.add_tile2datamap(tile2datamap);
 };
 ddt_container.prototype.add_header2container = function(){
     // add a header row to the container
     var containerid = this.containerid;
 
-    this.containerheader = d3.select('#'+this.containerid)
+    this.containerheader = d3.select('#'+"containerheaderhtml")
         .append("div")
         .attr("class","row")
-        .attr("id",containerid + 'header')
         .append("div")
-        .attr("class","col-lg-12");
+        .attr("class","col-sm-12")
+        .attr("id",containerid + 'header');
+    
+    this.add_jsonimportbutton2container();
+    this.add_jsonexportbutton2container();
+    this.add_encryptionbutton2container();
+    //TODO: this.add_newtilebutton2continer();
 
 };
 ddt_container.prototype.add_jsonexportbutton2container = function (){
@@ -806,4 +856,18 @@ ddt_container.prototype.add_encryptionbutton2container = function(){
 //         .attr("id","passwordpopupsubmitbutton")
 //         .attr("value","Log in")
 //         .attr("data-inline","true");
+};
+ddt_container.prototype.add_newtilebutton2container = function(){
+    //add a new tile to the container
+    //Behavior:
+    //1. popup modal
+    //  a. select tile templates
+    //  b. select associated data
+    //  c. input tile parameters
+    //2. add new tile on submit
+    //  a. add the new tile parameters object
+    //  b. add the new tile tile2datamap values
+    //  c. make the tile
+    //  d. add the new tile to the container
+    //TODO:
 };

@@ -74,6 +74,7 @@
     <script src="js/ddt_html_href_02.js"></script>
     <script src="js/ddt_html_media_01.js"></script>
     <script src="js/ddt_html_escher_01.js"></script>
+    <script src="js/ddt_html_containerheader_01.js"></script>
     <script src="js/ddt_tile.js"></script>
     <script src="js/ddt_container.js"></script>
     <script src="js/ddt_input.js"></script>
@@ -112,16 +113,23 @@
 	<script type="text/javascript">
 		ddt_test = new ddt_container();
 		//container manipuation features (order matters)
-		ddt_test.add_header2container();
-		ddt_test.add_jsonimportbutton2container();
-		ddt_test.add_jsonexportbutton2container();
-		ddt_test.add_encryptionbutton2container();
+// 		ddt_test.add_header2container();
+// 		ddt_test.add_jsonimportbutton2container();
+// 		ddt_test.add_jsonexportbutton2container();
+// 		ddt_test.add_encryptionbutton2container();
 		//ddt data and template
 		ddt_test.set_parameters(parameters);
 		ddt_test.add_data(data);
 		ddt_test.set_tile2datamap(tile2datamap);
+		//add container options menu
+		if (!ddt_test.containerheader){
+			ddt_test.add_headerparameters();
+			ddt_test.add_headerdata();
+			ddt_test.add_headertile2datamap();
+		};
 		//make the container
 		ddt_test.make_container();
+		ddt_test.add_header2container();
 		//add the container filter buttons
 		if (typeof(filtermenu) !== "undefined") { ddt_test.add_datafiltermenubuttons(filtermenu); }
 		else { ddt_test.add_datafiltermenubuttons(); };
