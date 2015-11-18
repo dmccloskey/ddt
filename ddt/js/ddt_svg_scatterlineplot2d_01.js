@@ -1,22 +1,40 @@
 "use strict";
 //var ddt_svg_scatterlineplot2d_01 = function () {
 function ddt_svg_scatterlineplot2d_01() {
-    // scatterlineplot
-    // description:
-    // data 1 and 2 are plotted along the same axis
-    // data 1 = points
-    // data 2 = line
-    // parameters:
-    // parameters_I = e.g., {"svgtype":'scatterlineplot2d_01',"svgkeymap":[data1_keymap,data1_keymap],
-    //                        'svgid':'svg1',
-    //                        "svgmargin":{ 'top': 50, 'right': 150, 'bottom': 50, 'left': 50 },
-    //                        "svgwidth":500,"svgheight":350,
-    //                        "svgx1axislabel":"jump_time_point","svgy1axislabel":"frequency",
-    //						  'svgformtileid':'tile1','svgresetbuttonid':'reset1','svgsubmitbuttonid':'submit1'};
-    //                where data1_keymap = {'xdata':'time_point',
-    //                    'ydata':'mutation_frequency',
-    //                    'serieslabel':'mutation_id',
-    //                    'featureslabel':''};
+// 	Scatter plot and line plot
+// 	DESCRIPTION:
+// 	A scatter plot and line plot are rendered on the same figure
+// 	INPUT:
+// 	data 1 and 2 are plotted along the same axis
+// 	data1 = points
+// 	data2 = line
+// 	data1_keymap = {
+// 		'xdata':'time_point',
+// 		'ydata':'mutation_frequency',
+// 		'serieslabel':'mutation_id',
+// 		'featureslabel':''
+// 		};
+// 	parameters_I = e.g., {
+// 		SVG parameters
+// 		"svgtype":'scatterlineplot2d_01',
+// 		"svgkeymap":[data1_keymap,data1_keymap],
+// 		'svgid':'svg1',
+// 		"svgmargin":{ 'top': 50, 'right': 150, 'bottom': 50, 'left': 50 },
+// 		"svgwidth":500,
+// 		"svgheight":350,
+// 		"svgx1axislabel":"jump_time_point",
+// 		"svgy1axislabel":"frequency",
+// 		Tile parameters
+// 		'tileheader':'Population mutation frequency',
+// 		'tiletype':'svg',
+// 		'tileid':"tile2",
+// 		'rowid':"row1",
+// 		'colid':"col2",
+// 		'tileclass':"panel panel-default",
+// 		'rowclass':"row",
+// 		'colclass':"col-sm-8"
+// 		};
+		
     ddt_svg.call(this);
 };
 ddt_svg_scatterlineplot2d_01.prototype = Object.create(ddt_svg.prototype);

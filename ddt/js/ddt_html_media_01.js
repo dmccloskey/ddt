@@ -1,7 +1,54 @@
 "use strict";
 //var ddt_html_media_01 = function () {
 function ddt_html_media_01() {
-    // dropdown button group with href tile
+// 	responsive HTML media
+// 	DESCRIPTION:
+// 	responsive HTML media
+// 	INPUT:
+// 	data2 = [{}] of data objects (see d3_data)
+// 	data2_keys = 
+// 		[
+// 		'project_id',
+// 		'project_section',
+// 		'project_heading',
+// 		'project_tileorder'
+// 		];
+// 	data2_nestkeys = 
+// 		[
+// 		'project_id'
+// 		];
+// 	data2_keymap = 
+// 		{
+// 		'htmlmediasrc':'project_media',
+// 		'htmlmediaalt':'',
+// 		'htmlmediahref':'project_href',
+// 		'htmlmediaheading':'project_heading',
+// 		'htmlmediaparagraph':'project_paragraph'
+// 		};
+// 	data_I = 
+// 		[{
+// 		"data":data2,
+// 		"datakeys":data2_keys,
+// 		"datanestkeys":data2_nestkeys
+// 		}];
+// 	parameters_I = 
+// 		{
+// 		HTML parameters
+// 		"htmlkeymap":[data2_keymap],
+// 		'htmltype':'media_01',
+// 		'htmlid':htmlid,
+// 		Tile parameters
+// 		'tileheader':tileheader,
+// 		'tiletype':'html',
+// 		'tileid':tileid,
+// 		'rowid':"row1",
+// 		'colid':colid,
+// 		'tileclass':"panel panel-default",
+// 		'rowclass':"row",
+// 		'colclass':"col-sm-6"
+// 		};
+
+
     ddt_html.call(this);
 };
 ddt_html_media_01.prototype = Object.create(ddt_html.prototype);

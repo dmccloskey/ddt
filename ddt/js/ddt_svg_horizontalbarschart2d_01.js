@@ -1,20 +1,36 @@
 "use strict";
 //var ddt_svg_horizontalbarschart2d_01 = function () {
 function ddt_svg_horizontalbarschart2d_01() {
-    // horizontalbarschart
-    // description:
-    // data 1 and 2 are plotted along the same axis
-    // data 1 = points
-    // data 2 = line
-    // parameters:
-    // parameters_I = e.g., {"svgtype":'horizontalbarschart2d_01',"svgkeymap":[data1_keymap],
-	//					'svgid':'svg1',
-	//					"svgmargin":{ 'top': 50, 'right': 150, 'bottom': 50, 'left': 50 },
-	//					"svgwidth":500,"svgheight":350,"svgy1axislabel":"rate (mmol*gDCW-1*hr-1)",
-	//					"svgfilters":{'met_id':['glc-D','ac']}
-	//			where data1_keymap = {'xdata':'met_id','ydata':'rate_average',
-	//				'serieslabel':'sample_name_abbreviation','featureslabel':'met_id',
-	//				'ydatalb':'rate_lb','ydataub':'rate_ub'};
+// 	Horizontal bars chart
+// 	DESCRIPTION:
+// 	Horizontal bars with error bars
+// 	INPUT:
+// 	data1
+// 	data1_keymap = {
+// 		'xdata':'flux_distance',
+// 		'ydata':'rxn_id',
+// 		'serieslabel':'simulation_id_2',
+// 		'featureslabel':'rxn_id'
+// 		};
+// 	parameters_I = e.g., {
+// 		SVG parameters
+// 		"svgtype":'horizontalbarschart2d_01',
+// 		"svgkeymap":[data1_keymap],
+// 		'svgid':'svg1',
+// 		"svgmargin":{ 'top': 50, 'right': 250, 'bottom': 50, 'left': 50 },
+// 		"svgwidth":350,
+// 		"svgheight":900,
+// 		"svgx1axislabel":"flux_distance",
+// 		"svgy1axislabel":"rxn_id",
+// 		"svgfilters":{'met_id':['glc-D','ac']}
+// 		Tile parameters
+// 		'tileheader':'Flux distance',
+// 		'tiletype':'svg','tileid':"tile1",
+// 		'rowid':"row2",'colid':"col1",
+// 		'tileclass':"panel panel-default",
+// 		'rowclass':"row",'colclass':"col-sm-6"
+// 		};
+
     ddt_svg.call(this);
 };
 ddt_svg_horizontalbarschart2d_01.prototype = Object.create(ddt_svg.prototype);

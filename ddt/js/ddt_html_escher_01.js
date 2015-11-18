@@ -1,7 +1,40 @@
 "use strict";
 //var ddt_html_escher_01 = function () {
 function ddt_html_escher_01() {
-    // dropdown button group with href tile
+// 	Embedded escher map
+// 	DESCRIPTION:
+// 	Embedded escher map
+// 	INPUT:
+// 	Data1 = rxns
+// 	Data2 = metabolites
+// 	Data3 = genes
+// 	data1_keymap = {
+// 		'values':'dG_r_mean',
+// 		'key':'rxn_id'
+// 		};
+// 	data2_keymap = {
+// 		'values':'concentration',
+// 		'key':'met_id'
+// 		};
+// 	parameters_I = {
+// 		HTML parameters
+// 		"htmlkeymap":[data1_keymap,data2_keymap],
+// 		'htmltype':'escher_01','htmlid':'html1',
+// 		'escherdataindex':{"reactiondata":0,"metabolitedata":1,"mapdata":2},
+// 		'escherembeddedcss':None,
+// 		'escheroptions':None
+// 		Tile paramters
+// 		'tileheader':'Escher map',
+// 		'tiletype':'html',
+// 		'tileid':"tile1",
+// 		'rowid':"row3",
+// 		'colid':"col1",
+// 		'tileclass':"panel panel-default",
+// 		'rowclass':"row",
+// 		'colclass':"col-sm-12"
+// 		};
+
+
     ddt_html.call(this);
 };
 ddt_html_escher_01.prototype = Object.create(ddt_html.prototype);

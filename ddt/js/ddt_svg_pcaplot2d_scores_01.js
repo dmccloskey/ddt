@@ -1,9 +1,36 @@
 "use strict";
 function ddt_svg_pcaplot2d_scores_01() {
-//var ddt_svg_pcaplot2d_scores_01 = function () {
-    // pcaplot2d_scores
-    // description:
-    // 
+// 	pcaplot2d_scores
+// 	DESCRIPTION:
+// 	PCA scores plot (compare to boxAndWhiskers)
+// 	INPUT:
+// 	data1
+// 	data1_keymap = {
+// 		'xdata':'score_'+str(PC[0]),
+// 		'ydata':'score_'+str(PC[1]),
+// 		'serieslabel':'sample_name_abbreviation',
+// 		'featureslabel':'sample_name_short'
+// 		};
+// 	parameters_I = {
+// 		SVG parameters
+// 		"svgtype":'pcaplot2d_scores_01',
+// 		"svgkeymap":[data1_keymap],
+// 		'svgid':'svg1',
+// 		"svgmargin":{ 'top': 50, 'right': 150, 'bottom': 50, 'left': 50 },
+// 		"svgwidth":400,
+// 		"svgheight":350,
+// 		"svgx1axislabel":data1_O[0]['axislabel'+str(PC[0])],
+// 		"svgy1axislabel":data1_O[0]['axislabel'+str(PC[1])],
+// 		Tile parameters
+// 		'tileheader':'Scores','tiletype':'svg',
+// 		'tileid':"scorestile"+str(PC_cnt),
+// 		'rowid':"row1",
+// 		'colid':"col"+str(PC_cnt+1),
+// 		'tileclass':"panel panel-default",
+// 		'rowclass':"row",
+// 		'colclass':"col-sm-6"
+// 		};
+
     ddt_svg.call(this);
 };
 ddt_svg_pcaplot2d_scores_01.prototype = Object.create(ddt_svg.prototype);

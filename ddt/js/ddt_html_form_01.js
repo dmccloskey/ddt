@@ -1,7 +1,56 @@
 "use strict";
 //var ddt_html_form_01 = function () {
 function ddt_html_form_01() {
-    // form tile
+// 	responsive HTML form
+// 	DESCRIPTION:
+// 	HTML form tile
+// 	utilized as a filter menu for svg and table tiles
+// 	INPUT:
+// 	data1 = [{}] of database rows (see d3_data)
+// 	data1_keys = list of column headers to use as keys when filtering/sorting/displaying 
+//		[ e.g.
+// 		'experiment_id',
+// 		'time_point',
+// 		'sample_name_abbreviation',
+// 		'dG_r',
+// 		'dG_r_units'
+// 		];
+// 	data1_nestkeys = [ list of column headers to use as the nest keys
+// 		[ e.g.
+// 		'sample_name_abbreviation'
+// 		];
+// 	data1_keymap = { map between tile parameters and data keys
+// 		{
+// 		'values':'dG_r_mean',
+// 		'key':'rxn_id'
+// 		};
+// 	data_I = [{ the data object
+// 		[{
+// 		"data":data1,
+// 		"datakeys":data1_keys,
+// 		"datanestkeys":data1_nestkeys
+// 		},
+// 		]
+// 	parameters_I = { parameters that define the HTML and tile
+// 		{
+// 		HTML parameters
+// 		'htmlid':'filtermenuform1',
+// 		"htmltype":'form_01',
+// 		"formsubmitbuttonidtext":{'id':'submit1','text':'submit'},
+// 		"formresetbuttonidtext":{'id':'reset1','text':'reset'},
+// 		"formupdatebuttonidtext":{'id':'update1','text':'update'}
+// 		
+// 		Tile parameters
+// 		'tileheader':'Filter menu',
+// 		'tiletype':'html',
+// 		'tileid':"filtermenu1",
+// 		'rowid':"row1",
+// 		'colid':"col1",
+// 		'tileclass':"panel panel-default",
+// 		'rowclass':"row",
+// 		'colclass':"col-sm-6"
+// 		};
+
     ddt_html.call(this);
 };
 ddt_html_form_01.prototype = Object.create(ddt_html.prototype);

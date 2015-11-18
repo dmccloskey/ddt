@@ -1,5 +1,4 @@
 "use strict";
-//var ddt_html_href_01 = function () {
 function ddt_html_href_01() {
     // dropdown button group with href tile
     ddt_html.call(this);

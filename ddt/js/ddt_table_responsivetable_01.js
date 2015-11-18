@@ -1,14 +1,23 @@
 "use strict";
 //var ddt_table_responsivetable_01 = function () {
 function ddt_table_responsivetable_01() {
-    // responsive table
-    // description:
-    // data is formatted and presented in tabular form
-    // parameters:
-    // parameters_I = e.g., {"tabletype":'table_01',
-	//					'tableid':'table1',
-	//					"tablefilters":{'met_id':['glc-D','ac'],
-	//					"tableclass":"table table-hover"}
+// 	responsive HTML table
+// 	DESCRIPTION
+// 	data is formatted and presented in tabular form
+// 	INPUT:
+// 	data1
+// 	parameters_I = e.g., {
+// 		SVG parameters
+// 		"tabletype":'table_01',
+// 		'tableid':'table1',
+// 		"tablefilters":{'met_id':['glc-D','ac'],
+// 		"tableheaders":['experiment_id','sample_name_abbreviation','met_id','rate_average','rate_var','rate_lb','rate_ub','rate_units','n','comment_','used_'],
+// 		"tableclass":"table  table-condensed table-hover",
+// 		Tile parameters
+// 		'tileheader':'Uptake/secretion rates','tiletype':'table','tileid':"tile3",'rowid':"row1",'colid':"col1",
+// 		'tileclass':"panel panel-default",'rowclass':"row",'colclass':"col-sm-12"
+// 		};
+
     ddt_table.call(this);
 };
 ddt_table_responsivetable_01.prototype = Object.create(ddt_table.prototype);
@@ -28,8 +37,6 @@ ddt_table_responsivetable_01.prototype.make_table = function(data_I,parameters_I
     if (parameters_I.tableheaders){this.ddttable.set_tableheaders(parameters_I.tableheaders);}
     else {this.ddttable.extract_tableheaders();};
     this.ddttable.add_csvandjsonexportbutton2tile();
-//     this.ddttable.add_datafiltermenuresetbutton(parameters_I.tableformtileid,parameters_I.tableresetbuttonid)
-//     this.ddttable.add_datafiltermenusubmitbutton(parameters_I.tableformtileid,parameters_I.tablesubmitbuttonid)
     this.ddttable.render = function () {
     	// permanent filter on the data
     	if (parameters_I.tablefilters){

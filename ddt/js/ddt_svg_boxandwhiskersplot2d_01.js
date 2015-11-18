@@ -1,18 +1,43 @@
 "use strict";
 //var ddt_svg_boxandwhiskersplot2d_01 = function () {
 function ddt_svg_boxandwhiskersplot2d_01() {
-    // boxandwhiskersplot
-    // description:
-    // data 1 and 2 are plotted along the same axis
-    // data 1 = points
-    // data 2 = line
-    // parameters:
-    // parameters_I = e.g., {"svgtype":'boxandwhiskersplot2d_01',"svgkeymap":[data1_keymap],
-    //                        'svgid':'svg1',
-    //                        "svgmargin":{ 'top': 50, 'right': 150, 'bottom': 50, 'left': 50 },
-    //                        "svgwidth":500,"svgheight":350,
-    //                        "svgx1axislabel":"jump_time_point","svgy1axislabel":"frequency"};
-    ddt_svg.call(this);
+// 	Custom box and whiskers plot
+// 	DESCRIPTION:
+//  Bullet plot describes the mean and confidence intervals of the data
+//	Box and whiskers describe the median, interquartile, and ranges of the data
+// 	INPUT:
+// 	data1 = points
+// 	data1_keymap = {'xdata':'component_group_name',
+// 		'ydata':'mean',
+// 		'ydatalb':'ci_lb',
+// 		'ydataub':'ci_ub',
+// 		'ydatamin':'min',
+// 		'ydatamax':'max',
+// 		'ydataiq1':'iq_1',
+// 		'ydataiq3':'iq_3',
+// 		'ydatamedian':'median',
+// 		'serieslabel':'sample_name_abbreviation',
+// 		'featureslabel':'component_group_name'};
+// 	parameters_I = e.g., {
+// 	SVG parameters:
+// 		"svgtype":'boxandwhiskersplot2d_01',
+// 		"svgkeymap":[data1_keymap],
+// 		'svgid':'svg1',
+// 		"svgmargin":{ 'top': 50, 'right': 150, 'bottom': 50, 'left': 50 },
+// 		"svgwidth":500,"svgheight":350,
+// 		"svgx1axislabel":"jump_time_point",
+// 		"svgy1axislabel":"frequency"
+// 	Tile parameters:
+// 		'tileheader':'Custom box and whiskers plot',
+// 		'tiletype':'svg',
+// 		'tileid':"tile2",
+// 		'rowid':"row1",
+// 		'colid':"col2",
+// 		'tileclass':"panel panel-default",
+// 		'rowclass':"row",
+// 		'colclass':"col-sm-8"};
+
+	ddt_svg.call(this);
 };
 ddt_svg_boxandwhiskersplot2d_01.prototype = Object.create(ddt_svg.prototype);
 ddt_svg_boxandwhiskersplot2d_01.prototype.constructor = ddt_svg_boxandwhiskersplot2d_01;

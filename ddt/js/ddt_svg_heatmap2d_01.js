@@ -1,22 +1,44 @@
 "use strict";
 // TODO: implement dendrogram (https://github.com/rstudio/d3heatmap/tree/master/inst/htmlwidgets/lib/d3heatmapcore)
 function ddt_svg_heatmap_01() {
-    // heatmap
-    // description:
-    // generic heatmap
-    // parameters:
-    // parameters_I = e.g., {"svgtype":'heatmap2d_01',"svgkeymap":[data1_keymap],
-    //                        'svgid':'svg1',
-    //                         'svgcellsize':18,'svgmargin':{ 'top': 200, 'right': 150, 'bottom': 50, 'left': 10 },
-    //                        'svgcolorscale':'quantile',
-    //                        'svgcolorcategory':'heatmap10',
-    //                        'svgcolordomain':[0,1], (frequency) or "min,0,max" (log normalized)
-    //                        'svgcolordatalabel':'value',
-    //                        'svgdatalisttileid':'tile1'};
-    //                  where data1_keymap = {'xdata':'row_leaves','ydata':'col_leaves','zdata':'value',
-    //                          'rowslabel':'row_label','columnslabel':'col_label',
-    //                          'rowsindex':'row_index','columnsindex':'col_index',
-    //                          'rowsleaves':'row_leaves','columnsleaves':'col_leaves'};
+// 	Heatmap
+// 	DESCRIPTION:
+// 	Heatmap with column/row ordering
+// 	INPUT:
+// 	data1_keymap = {
+// 		'xdata':'row_leaves',
+// 		'ydata':'col_leaves',
+// 		'zdata':'value',
+// 		'rowslabel':'row_label',
+// 		'columnslabel':'col_label',
+// 		'rowsindex':'row_index',
+// 		'columnsindex':'col_index',
+// 		'rowsleaves':'row_leaves',
+// 		'columnsleaves':'col_leaves'
+// 		};
+// 	parameters_I = e.g., {
+// 		SVG parameters
+// 		"svgtype":'heatmap2d_01',
+// 		"svgkeymap":[data1_keymap],
+// 		'svgid':'svg1',
+// 		'svgcellsize':18,
+// 		'svgmargin':{ 'top': 200, 'right': 150, 'bottom': 50, 'left': 10 },
+// 		'svgcolorscale':'quantile',
+// 		'svgcolorcategory':'heatmap10',
+// 		'svgcolordomain':[0,1], (frequency) or "min,0,max" (log normalized)
+// 		'svgcolordatalabel':'value',
+// 		'svgdatalisttileid':'tile1' //tileid of the row/column sorting menu
+// 		Tile parameters
+// 		'tileheader':'heatmap',
+// 		'tiletype':'svg',
+// 		'tileid':"tile2",
+// 		'rowid':"row2",
+// 		'colid':"col1",
+// 		'tileclass':"panel panel-default",
+// 		'rowclass':"row",
+// 		'colclass':"col-sm-12"
+// 		};
+		
     ddt_svg.call(this);
 };
 ddt_svg_heatmap_01.prototype = Object.create(ddt_svg.prototype);

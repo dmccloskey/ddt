@@ -1,20 +1,37 @@
 "use strict";
 //var ddt_svg_verticalbarschart2d_01 = function () {
 function ddt_svg_verticalbarschart2d_01() {
-    // verticalbarschart
-    // description:
-    // data 1 and 2 are plotted along the same axis
-    // data 1 = points
-    // data 2 = line
-    // parameters:
-    // parameters_I = e.g., {"svgtype":'verticalbarschart2d_01',"svgkeymap":[data1_keymap],
-	//					'svgid':'svg1',
-	//					"svgmargin":{ 'top': 50, 'right': 150, 'bottom': 50, 'left': 50 },
-	//					"svgwidth":500,"svgheight":350,"svgy1axislabel":"rate (mmol*gDCW-1*hr-1)",
-	//					"svgfilters":{'met_id':['glc-D','ac']}
-	//			where data1_keymap = {'xdata':'met_id','ydata':'rate_average',
-	//				'serieslabel':'sample_name_abbreviation','featureslabel':'met_id',
-	//				'ydatalb':'rate_lb','ydataub':'rate_ub'};
+// 	Vertical bars chart
+// 	DESCRIPTION:
+// 	Vertical bars with error bars
+// 	INPUT:
+// 	data1
+// 	data1_keymap = {
+// 		'xdata':'met_id',
+// 		'ydata':'rate_average',
+// 		'serieslabel':'sample_name_abbreviation',
+// 		'featureslabel':'met_id',
+// 		'ydatalb':'rate_lb',
+// 		'ydataub':'rate_ub'
+// 		};
+// 	parameters_I = e.g., {
+// 		SVG parameters
+// 		"svgtype":'horizontalbarschart2d_01',"svgkeymap":[data1_keymap],
+// 		'svgid':'svg1',
+// 		"svgmargin":{ 'top': 50, 'right': 150, 'bottom': 50, 'left': 50 },
+// 		"svgwidth":500,"svgheight":350,"svgy1axislabel":"rate (mmol*gDCW-1*hr-1)",
+// 		"svgfilters":{'met_id':['glc-D','ac']}
+// 		Tile parameters
+// 		'tileheader':'Uptake/secretion rates',
+// 		'tiletype':'svg',
+// 		'tileid':"tile1",
+// 		'rowid':"row1",
+// 		'colid':"col1",
+// 		'tileclass':"panel panel-default",
+// 		'rowclass':"row",
+// 		'colclass':"col-sm-12"
+// 		};
+
     ddt_svg.call(this);
 };
 ddt_svg_verticalbarschart2d_01.prototype = Object.create(ddt_svg.prototype);

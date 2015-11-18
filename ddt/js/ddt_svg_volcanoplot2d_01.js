@@ -1,10 +1,39 @@
 "use strict";
 //var ddt_svg_volcanoplot2d_01 = function () {
 function ddt_svg_volcanoplot2d_01() {
-    // scatterplot2d with 1 data set and filled x1x2/y1y2 axis
-    // utilized for a volcano plot or pca loadings plot
-    // description:
-    // 
+// 	Volcano plot
+// 	DESCRIPTION:
+// 	scatterplot2d with 1 data set and filled x1x2/y1y2 axis
+// 	utilized for a volcano plot or pca loadings plot
+// 	INPUT:
+// 	Data1
+// 	data1_keymap = {
+// 		'ydata':'pvalue_corrected_negLog10',
+// 		'xdata':'fold_change_log2',
+// 		'serieslabel':'',
+// 		'featureslabel':'component_group_name'
+// 		};
+// 	parameters_I = {
+// 		SVG parameters
+// 		"svgtype":'volcanoplot2d_01',
+// 		"svgkeymap":[data1_keymap],
+// 		'svgid':'svg1',
+// 		"svgmargin":{ 'top': 50, 'right': 50, 'bottom': 50, 'left': 50 },
+// 		"svgwidth":500,
+// 		"svgheight":350,
+// 		"svgx1axislabel":'Fold Change [log2(FC)]',
+// 		"svgy1axislabel":'Probability [-log10(P)]',
+// 		Tile parameters
+// 		'tileheader':'Volcano plot',
+// 		'tiletype':'svg',
+// 		'tileid':"tile2",
+// 		'rowid':"row1",
+// 		'colid':"col2",
+// 		'tileclass':"panel panel-default",
+// 		'rowclass':"row",
+// 		'colclass':"col-sm-8"
+// 		};
+		
     ddt_svg.call(this);
 };
 ddt_svg_volcanoplot2d_01.prototype = Object.create(ddt_svg.prototype);
