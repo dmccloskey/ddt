@@ -213,6 +213,7 @@ ddt_container.prototype.add_datafiltermenusubmitbutton = function (tileid_I,html
         };
         for (var cnt=0;cnt<this_.data.length;cnt++){
             this_.data[cnt].convert_stringmenuinput2filter(filterstringmenu);
+            //this_.data[cnt].reset_usedkey(); //check reset_usedkey
             this_.data[cnt].filter_listdata();
         };
 //         this_.tiles[tileindex].data[0].convert_stringmenuinput2filter(filterstringmenu);
@@ -336,7 +337,8 @@ ddt_container.prototype.add_header2container = function(){
         .append("div")
         .attr("class","col-sm-12")
         .attr("id",containerid + 'header');
-    
+    // check for the version
+    // options based on the version
     this.add_jsonimportbutton2container();
     this.add_jsonexportbutton2container();
     this.add_encryptionbutton2container();

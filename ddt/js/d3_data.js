@@ -130,7 +130,7 @@ d3_data.prototype.filter_stringdata = function () {
                         lst_filters.push(str_d);
                     });
                     var str_filter = lst_filters.join('|');
-                    //var str_filter = this.filters[filter].join('|');  //breaks for 'mmol*gDCW*hr-1' because * is a regular expression
+                    //NOTES: need to check for an array (arrays will break)
                     if (!str_compare.match(str_filter)) {
                         listdatacopy[i]['used_'] = false;
                     };
