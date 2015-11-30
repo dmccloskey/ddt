@@ -213,7 +213,7 @@ d3_chart2d.prototype.set_pointsdata1featurestyle = function(){
     var featuresstyle = {
         'font-size': '10px',
         'font-style': 'normal',
-        'font-family': 'arial'
+        'font-family': 'Arial'
     };
     var selectorstyle = [{ 'selection': featuresselector, 'style': featuresstyle }]
     this.set_svggcss(selectorstyle);
@@ -225,7 +225,7 @@ d3_chart2d.prototype.set_pointsdata1featurestyle_notext = function(){
     var featuresstyle = {
         'font-size': '10px',
         'font-style': 'normal',
-        'font-family': 'arial',
+        'font-family': 'Arial',
         'opacity':'0.0'
     };
     var selectorstyle = [{ 'selection': featuresselector, 'style': featuresstyle }]

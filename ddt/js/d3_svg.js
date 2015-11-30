@@ -90,24 +90,34 @@ d3_svg.prototype.export_svgelement = function () {
     var do_beautify_I = true;
     var a = document.createElement('a'), xml, ev;
     var svg_sel = "#" + this.id;
-    a.download = 'figure' + '.svg'; // file name
-    // convert node to xml string
-    xml = (new XMLSerializer()).serializeToString(d3.select(svg_sel).node()); //div element interferes with reading the svg file in illustrator/pdf/inkscape
-    if (do_beautify_I) xml = vkbeautify.xml(xml);
-    xml = '<?xml version="1.0" encoding="utf-8"?>\n \
-            <!DOCTYPE svg PUBLIC "-//W3C//DTD SVG 1.1//EN"\n \
-        "http://www.w3.org/Graphics/SVG/1.1/DTD/svg11.dtd">\n' + xml;
-    a.setAttribute("href-lang", "image/svg+xml");
-    a.href = 'data:image/svg+xml;base64,' + utf8_to_b64(xml); // create data uri
-    // <a> constructed, simulate mouse click on it
-    ev = document.createEvent("MouseEvents");
-    ev.initMouseEvent("click", true, false, self, 0, 0, 0, 0, 0, false, false, false, false, 0, null);
-    a.dispatchEvent(ev);
+    var name = 'figure'
+
+    // alert if blob isn't going to work
+    _check_filesaver();
+
+//     // convert node to xml string
+     var xml = (new XMLSerializer()).serializeToString(d3.select(svg_sel).node()); //div element interferes with reading the svg file in illustrator/pdf/inkscape
+     if (do_beautify_I){xml = vkbeautify.xml(xml);};
+     xml = '<?xml version="1.0" encoding="utf-8"?>\n \
+        <!DOCTYPE svg PUBLIC "-//W3C//DTD SVG 1.1//EN"\n \
+     "http://www.w3.org/Graphics/SVG/1.1/DTD/svg11.dtd">\n' + xml;
+
+    // save
+//     a.download = name + '.svg'; // file name
+//     a.setAttribute("href-lang", "image/svg+xml");
+//     a.href = 'data:image/svg+xml;base64,' + utf8_to_b64(xml); // create data uri
+//     // <a> constructed, simulate mouse click on it
+//     ev = document.createEvent("MouseEvents");
+//     ev.initMouseEvent("click", true, false, self, 0, 0, 0, 0, 0, false, false, false, false, 0, null);
+//     a.dispatchEvent(ev);
+
+    var blob = new Blob([xml], {type: "image/svg+xml"});
+    saveAs(blob, name + '.svg');
 
     // definitions
     function utf8_to_b64(str) {
         return window.btoa(unescape(encodeURIComponent(str)));
-    }
+    };
 };
 d3_svg.prototype.add_datalist2tile = function (datalist_valuetext_I) {
     // add datalist (menu) for input

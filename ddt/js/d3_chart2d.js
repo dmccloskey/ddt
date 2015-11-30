@@ -773,7 +773,7 @@ d3_chart2d.prototype.set_x1andy1axeslabelstyle = function () {
     var style = {
         'font-size': '14px',
         'font-style': 'normal',
-        'font-family': 'arial'
+        'font-family': 'Arial'
     };
     var selectorstyle = [{ 'selection': x1axisselector, 'style': style },
                      { 'selection': y1axisselector, 'style': style }]
@@ -788,7 +788,7 @@ d3_chart2d.prototype.set_x1x2andy1y2axestickstyle = function () {
     var style = {
         'font-size': '14px',
         'font-style': 'normal',
-        'font-family': 'arial'
+        'font-family': 'Arial'
     };
     var selectorstyle = [{ 'selection': x1axisselector, 'style': style },
                      { 'selection': y1axisselector, 'style': style },
