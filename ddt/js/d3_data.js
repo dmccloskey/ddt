@@ -24,12 +24,16 @@ d3_data.prototype.add_nestkey = function(key_I){
 }
 d3_data.prototype.convert_list2nestlist = function (data_I,key_I,rollup_I) {
     // convert a list of objects to a d3 nest by a key
+    // BUG: entries of null/''/undefined break the nest
+    
     var add_nestkey = this.add_nestkey;
     var nesteddata_O = d3.nest();
     for (var i=0;i<key_I.length;i++){
         nesteddata_O = nesteddata_O.key(add_nestkey(key_I[i]));
     };
-    if (rollup_I){nesteddata_O = nesteddata_O.rollup(rollup_I)};
+    if (typeof(rollup_I)!=="undefined"){
+        nesteddata_O = nesteddata_O.rollup(rollup_I);
+    };
     nesteddata_O = nesteddata_O.entries(data_I);
     return nesteddata_O;
 };
@@ -244,7 +248,7 @@ d3_data.prototype.format_keyvalues2namechildren = function(lastchild_I){
             delete d.values;
         };
     };
-    this.nestdatafiltered.forEach(rename)
+    this.nestdatafiltered.forEach(rename);
 };
 d3_data.prototype.convert_filter2stringmenuinput = function(){
     // convert filter list to filter string list

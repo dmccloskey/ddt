@@ -109,9 +109,9 @@ ddt_tile_svg.prototype.get_svg = function(svgtype_I){
     } else if (svgtype_I=='pcaplot2d_scores_01'){
         return new ddt_svg_pcaplot2d_scores_01();
     } else if (svgtype_I=='treelayout2d_01'){
-        return new ddt_svg_treelayout2d2d_01();
+        return new ddt_svg_treelayout2d_01();
     } else if (svgtype_I=='circlepacklayout2d_01'){
-        return new ddt_svg_circlepacklayout2d2d_01();
+        return new ddt_svg_circlepacklayout2d_01();
     } else {
         return null;
     };

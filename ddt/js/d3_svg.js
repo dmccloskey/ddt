@@ -417,3 +417,17 @@ d3_svg.prototype.add_svgmenubutton2tile = function (){
     svgmenubuttontrigger.on("click",showsvgmenu);
 
 };
+d3_svg.prototype.make_colorscale = function(color_start_I,color_end_I,length_I){
+    //make a custom color scale
+    //INPUT:
+    //color_start_I = rgb start e.g. "#007AFF"
+    //color_end_I = rgb end e.g. '#FFF500'
+    //length_I = # of colors in the scale
+    //OUTPUT:
+    //color_scale_O = linear d3 color scale
+
+    var color_scale_O = d3.scale.linear().domain([1,length_I])
+              .interpolate(d3.interpolateHcl)
+              .range([d3.rgb(color_start_I), d3.rgb(color_end_I)]);
+    return color_scale_O;
+};

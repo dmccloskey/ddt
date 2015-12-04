@@ -6,7 +6,9 @@ function ddt_svg_packlayout2d_01() {
     // NOTES:
     // 1. data_I.datanestkeys = [] of multiple keys in order
     // 2. data_I.datalastchild = string describing the final child element
-    // 2. data_I.svgpadding = float
+    // 3. data_I.svgpadding = float
+    // parameters_I.svgduration
+    // parameters_I.svgpadding
     ddt_svg.call(this);
 };
 ddt_svg_packlayout2d_01.prototype = Object.create(ddt_svg.prototype);
@@ -38,7 +40,6 @@ ddt_svg_packlayout2d_01.prototype.make_svg = function(data_I,parameters_I){
     this.ddtsvg.set_packlayout(parameters_I.svgpadding); //new
     this.ddtsvg.render = function () {
         this.add_graph2d2tile();
-        //this.add_chart2d2tile_packlayoutcircle();
         this.set_packlayoutfocusdata1();
         this.set_packlayoutnodesdata1();
         this.set_packlayoutviewdata1();
