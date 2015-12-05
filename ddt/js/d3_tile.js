@@ -282,6 +282,7 @@ d3_tile.prototype.add_removebutton2header = function(){
     function removetile(){
         d3.selectAll('#'+tileid).remove();
         this_.tile = null;
+        //this_ = null;
     };
     
     //Split #1

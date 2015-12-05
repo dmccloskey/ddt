@@ -205,12 +205,15 @@ ddt_container.prototype.add_datafiltermenusubmitbutton = function (tileid_I,html
                 tileindex=i;
                 tiledataindex = this_.tile2datamap[d.parameters.tileid];
             };
-        })
-        for (var key in this_.data[tiledataindex].filters){
-            var filterkey = d3.select("#"+htmlid+'formlabel'+key).text();
-            var filterstring = d3.select("#"+htmlid+'forminput'+key).node().value;
-            filterstringmenu.push({"text":filterkey,"value":filterstring});
-        };
+        });
+        tiledataindex.forEach(function(d){
+            for (var key in this_.data[d].filters){
+    //         for (var key in this_.data[tiledataindex].filters){
+                var filterkey = d3.select("#"+htmlid+'formlabel'+key).text();
+                var filterstring = d3.select("#"+htmlid+'forminput'+key).node().value;
+                filterstringmenu.push({"text":filterkey,"value":filterstring});
+            };
+        });
         for (var cnt=0;cnt<this_.data.length;cnt++){
             this_.data[cnt].convert_stringmenuinput2filter(filterstringmenu);
             //this_.data[cnt].reset_usedkey(); //check reset_usedkey
@@ -284,9 +287,9 @@ ddt_container.prototype.add_datafiltermenubuttons = function(datafiltermenu_I){
 ddt_container.prototype.__main__ = function(parameters,data,tile2datamap,filtermenu){
     //run
     //ddt_test = new ddt_container();
-    ddt_test.set_parameters(parameters);
-    ddt_test.add_data(data);
-    ddt_test.set_tile2datamap(tile2datamap);
+    if (typeof(parameters) !== "undefined") {ddt_test.set_parameters(parameters);};
+    if (typeof(data) !== "undefined") {ddt_test.add_data(data);};
+    if (typeof(tile2datamap) !== "undefined") {ddt_test.set_tile2datamap(tile2datamap);};
     //add container options menu
     if (!ddt_test.containerheader){
         ddt_test.add_headerparameters();
@@ -330,13 +333,16 @@ ddt_container.prototype.add_headertile2datamap = function(){
 ddt_container.prototype.add_header2container = function(){
     // add a header row to the container
     var containerid = this.containerid;
-
-    this.containerheader = d3.select('#'+"containerheaderhtml")
-        .append("div")
-        .attr("class","row")
-        .append("div")
-        .attr("class","col-sm-12")
-        .attr("id",containerid + 'header');
+    
+    if (!this.containerheader){
+        var headernode = d3.select('#'+"containerheaderhtml");
+        this.containerheader = d3.select('#'+"containerheaderhtml")
+            .append("div")
+            .attr("class","row")
+            .append("div")
+            .attr("class","col-sm-12")
+            .attr("id",containerid + 'header');
+    };
     // check for the version
     // options based on the version
     this.add_jsonimportbutton2container();
@@ -456,6 +462,7 @@ ddt_container.prototype.remove_container = function(){
     this.tiles = [];
     this.data = [];
     this.tile2datamap = {};
+    this.containerheader = null;
 };
 ddt_container.prototype.get_parameters_string = function(){
     //return the parameters object in string format
