@@ -117,6 +117,12 @@ d3_chart2d.prototype.set_y1range = function (scale_I,invert_I) {
         } else {
             this.y1scale = d3.scale.linear().range([this.height, 0]); //starts at the bottom left
         };
+    } else if (scale_I === 'radial') {
+        if (invert_I){
+            this.y1scale = d3.scale.linear().range([0,2*Math.PI]); //starts at the top left
+        } else {
+            this.y1scale = d3.scale.linear().range([2*Math.PI, 0]); //starts at the bottom left
+        };
     } else if (scale_I === 'ordinal') {
         this.y1scale = d3.scale.ordinal();
     } else if (scale_I === 'ordinal-rangeRoundBands') {
@@ -755,6 +761,16 @@ d3_chart2d.prototype.set_x1andy1axesstyle = function () {
                      { 'selection': y1axisselector, 'style': style }]
     this.set_svggcss(selectorstyle);
 };
+d3_chart2d.prototype.set_x1axistickstyle = function () {
+    // predefined css style for x1 and y1 axis
+    var x1axisselector = '#' + this.id + 'x1axis' + ' g.tick text';
+    var style = {
+        'font-size': '12px'
+    };
+    var selectorstyle = [{ 'selection': x1axisselector, 'style': style },
+                     ]
+    this.set_svggcss(selectorstyle);
+};
 d3_chart2d.prototype.set_x1andy1axestickstyle = function () {
     // predefined css style for x1 and y1 axis
     var x1axisselector = '#' + this.id + 'x1axis' + ' g.tick text';
@@ -764,6 +780,18 @@ d3_chart2d.prototype.set_x1andy1axestickstyle = function () {
     };
     var selectorstyle = [{ 'selection': x1axisselector, 'style': style },
                      { 'selection': y1axisselector, 'style': style }]
+    this.set_svggcss(selectorstyle);
+};
+d3_chart2d.prototype.set_x1axislabelstyle = function () {
+    // predefined css style for x1 and y1 axis
+    var x1axisselector = '#' + this.id + 'x1axis' + ' text.label';
+    var style = {
+        'font-size': '14px',
+        'font-style': 'normal',
+        'font-family': 'Arial'
+    };
+    var selectorstyle = [{ 'selection': x1axisselector, 'style': style },
+                     ]
     this.set_svggcss(selectorstyle);
 };
 d3_chart2d.prototype.set_x1andy1axeslabelstyle = function () {

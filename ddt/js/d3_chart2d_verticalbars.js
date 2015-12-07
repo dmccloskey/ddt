@@ -76,7 +76,13 @@ d3_chart2d.prototype.add_verticalbarsdata1tooltipandfill = function () {
     var colorscale = this.colorscale;
     var series_label = this.data1keymap.serieslabel;
     var metid = this.data1keymap.featureslabel;
-    var y_data = this.data1keymap.ydata;
+
+    if (typeof(this.data1keymap.tooltipdata)!=="undefined"){
+        var y_data = this.data1keymap.tooltipdata;
+    } else {
+        var y_data = this.data1keymap.ydata;
+    };
+    
     var y_data_lb = this.data1keymap.ydatalb;
     var y_data_ub = this.data1keymap.ydataub;
     var id = this.id;

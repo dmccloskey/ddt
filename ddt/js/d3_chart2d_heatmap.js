@@ -711,7 +711,7 @@ d3_chart2d.prototype.set_heatmapdata1css = function () {
     var selector5 = '#' + this.id + ' text.mono';
     var style5 = {
         'font-size': '10pt',
-        'font-family': 'Consolas, courier',
+        'font-family': 'Arial',
         'fill': '#aaa'
     };
     var selectorstyle = [{ 'selection': selector1, 'style': style1 },

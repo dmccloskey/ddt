@@ -100,6 +100,12 @@ d3_chart2d.prototype.add_horizontalbarsdata1tooltipandfill = function () {
     var x_data_ub = this.data1keymap.xdataub;
     var id = this.id;
 
+    if (typeof(this.data1keymap.tooltipdata)!=="undefined"){
+        var x_data = this.data1keymap.tooltipdata;
+    } else {
+        var x_data = this.data1keymap.ydata;
+    };
+
     // set the tooltip
     this.tooltip = d3.tip().attr('class', 'd3-tip')
         .html(function(d){

@@ -112,6 +112,8 @@ ddt_tile_svg.prototype.get_svg = function(svgtype_I){
         return new ddt_svg_treelayout2d_01();
     } else if (svgtype_I=='circlepacklayout2d_01'){
         return new ddt_svg_circlepacklayout2d_01();
+    } else if (svgtype_I=='verticalpieschart2d_01'){
+        return new ddt_svg_verticalpieschart2d_01();
     } else {
         return null;
     };

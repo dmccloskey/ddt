@@ -31,6 +31,14 @@ d3_svg.prototype.set_height = function (height_I) {
     // set height properties
     this.height = height_I;
 };
+d3_svg.prototype.set_radius = function (radius_I){
+    // set the radius property
+    if (typeof(radius_I)!=="undefined"){
+        this.radius = Math.min(width_I, height_I) / 2;
+    } else {
+        this.radius = Math.min(this.width, this.height) / 2;
+    };
+};
 d3_svg.prototype.add_svgelement2tile = function () {
     // add svg element to parent tile
 
