@@ -60,7 +60,8 @@ d3_chart2d.prototype.set_piedata1 = function (sort_I){
     };
     var y_data = this.data1keymap.ydata;
     this.pie = d3.layout.pie()
-        .sort(function(a, b) { return b[y_data] - a[y_data]; })
+        .sort(sort)
+        //.sort(function(a, b) { return b[y_data] - a[y_data]; })
         .value(function(d){return +d[y_data];});
 };
 d3_chart2d.prototype.set_x1x2domain_verticalpieschart = function () {

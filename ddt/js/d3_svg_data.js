@@ -219,9 +219,10 @@ d3_svg_data.prototype.set_colorscale = function (colorscale_I,colorcategory_I,co
         this.colorscale = d3.scale.quantile().domain(colordomain_I).category20b();
     }else if (colorscale_I==='quantile' &&  colorcategory_I==='category20c'){
         this.colorscale = d3.scale.quantile().category20c();
-    }else{
+    }else if (colorcategory_I==='HSV_all_127'){
         this.colorscale = d3.scale.ordinal().range(HSV_all_127);
-        //this.colorscale = d3.scale.category20c();
+    }else{
+        this.colorscale = d3.scale.category20c();
     };
 };
 d3_svg_data.prototype.add_data = function(data_I){
