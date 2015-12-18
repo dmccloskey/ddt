@@ -405,22 +405,48 @@ d3_table.prototype.add_datafiltermenuresetbutton = function (tileid_I,resetbutto
         .on("click",reset);
 };
 d3_table.prototype.add_tablesort = function(sort_settings_I){
-    // add table sort using jquery
+    // sort the data
+    // DESCRIPTION:
+    // single click: sort in ascending order
+    // double click: sort in descenting order
     var id = this.id;
     var this_ = this;
 
-    this.tableheader.on('click', function (d, i) {
-        var order = [];
-        var key_dir = {};
-        key_dir[d]='asc';
-        order.push(key_dir);
-        this_.data.order_listdatafiltered(order);
-        this_.render();
-    });
-    
-//     $(document).ready(function() 
-//         { 
-//             $("#"+id+"table").tablesorter(); 
-//         } 
-//     );  
+//     this.tableheader
+//         .on('click', function (d, i) {
+//             var order = [];
+//             var key_dir = {};
+//             key_dir[d]='asc';
+//             order.push(key_dir);
+//             this_.data.order_listdatafiltered(order);
+//             this_.render();
+//         });
+
+    this.tableheader
+        .on('click', function (d, i) {
+            var order = [];
+            var key_dir = {};
+            switch (d3.event.which) {
+                case 1:
+                    //alert('Left Mouse button pressed.');
+                    key_dir[d]='asc';
+                    order.push(key_dir);
+                case 2:
+                    //alert('Middle Mouse button pressed.');
+                    key_dir[d]='asc';
+                    order.push(key_dir);
+                case 3:
+                    //alert('Right Mouse button pressed.');
+                    key_dir[d]='desc';
+                    order.push(key_dir);
+                default:
+                    //alert('You have a strange Mouse!');
+                    key_dir[d]='asc';
+                    order.push(key_dir);
+            };
+            this_.data.order_listdatafiltered(order);
+            this_.render();
+        });
+
+
 };
