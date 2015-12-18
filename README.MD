@@ -49,4 +49,3 @@ Volcano plot with a filter menu
 
 ![volcanoplot.png]
 (screenshots/volcanoplot.png)
-

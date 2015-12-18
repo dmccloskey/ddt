@@ -1,14 +1,24 @@
 "use strict";
-//var ddt_svg_boxandwhiskersplot2d_01 = function () {
-function ddt_svg_boxandwhiskersplot2d_01() {
+function ddt_svg_boxandwhiskersplot2d_02() {
 // 	Custom box and whiskers plot
 // 	DESCRIPTION:
 //  Bullet plot describes the mean and confidence intervals of the data
 //	Box and whiskers describe the median, interquartile, and ranges of the data
 // 	INPUT:
-// 	data1 = points
-// 	data1_keymap = {'xdata':'component_group_name',
-// 		TODO: 'ydata':'calculated_concentrations', //vector of datapoints
+// 	data1_keys = [
+// 		'analysis_id',
+// 		'experiment_id',
+// 		'sample_name_abbreviation',
+// 		'component_name',
+// 		'time_point',
+// 		'calculated_concentration_units',
+// 		'component_group_name'
+// 	];
+// 	data1_nestkeys = [
+// 		'component_name'
+// 	];
+// 	data1_keymap = {
+// 		'xdata':'component_name',
 // 		'ydatamean':'mean',
 // 		'ydatalb':'ci_lb',
 // 		'ydataub':'ci_ub',
@@ -18,16 +28,40 @@ function ddt_svg_boxandwhiskersplot2d_01() {
 // 		'ydataiq3':'iq_3',
 // 		'ydatamedian':'median',
 // 		'serieslabel':'sample_name_abbreviation',
-// 		'featureslabel':'component_group_name'};
+// 		'featureslabel':'component_name'
+// 	};
+// 	data2_keys = [
+// 		'analysis_id',
+// 		'experiment_id',
+// 		'sample_name_abbreviation',
+// 		'component_name',
+// 		'time_point',
+// 		'calculated_concentration_units',
+// 		'component_group_name'
+// 	];
+// 	data2_nestkeys = [
+// 		'component_name'
+// 	];
+// 	data2_keymap = {
+// 		'xdata':'component_name',
+// 		'ydata':'calculated_concentration',
+// 		'serieslabel':'sample_name_abbreviation',
+// 		'featureslabel':'component_name'
+// 	};
+// 	data_I = [
+// 		{"data":data_1,"datakeys":data1_keys,"datanestkeys":data1_nestkeys},
+// 		{"data":data_2,"datakeys":data2_keys,"datanestkeys":data2_nestkeys},
+// 	]
 // 	parameters_I = e.g., {
 // 	SVG parameters:
-// 		"svgtype":'boxandwhiskersplot2d_01',
+// 		"svgtype":'boxandwhiskersplot2d_02',
 // 		"svgkeymap":[data1_keymap],
 // 		'svgid':'svg1',
 // 		"svgmargin":{ 'top': 50, 'right': 150, 'bottom': 50, 'left': 50 },
 // 		"svgwidth":500,"svgheight":350,
 // 		"svgx1axislabel":"jump_time_point",
 // 		"svgy1axislabel":"frequency"
+//		"svgdata2pointsradius":5.0;
 // 	Tile parameters:
 // 		'tileheader':'Custom box and whiskers plot',
 // 		'tiletype':'svg',
@@ -40,9 +74,9 @@ function ddt_svg_boxandwhiskersplot2d_01() {
 
 	ddt_svg.call(this);
 };
-ddt_svg_boxandwhiskersplot2d_01.prototype = Object.create(ddt_svg.prototype);
-ddt_svg_boxandwhiskersplot2d_01.prototype.constructor = ddt_svg_boxandwhiskersplot2d_01;
-ddt_svg_boxandwhiskersplot2d_01.prototype.make_svg = function(data_I,parameters_I){
+ddt_svg_boxandwhiskersplot2d_02.prototype = Object.create(ddt_svg.prototype);
+ddt_svg_boxandwhiskersplot2d_02.prototype.constructor = ddt_svg_boxandwhiskersplot2d_02;
+ddt_svg_boxandwhiskersplot2d_02.prototype.make_svg = function(data_I,parameters_I){
 	// boxandwhiskersplot definition
 
 	this.ddtsvg = new d3_chart2d();
@@ -92,9 +126,18 @@ ddt_svg_boxandwhiskersplot2d_01.prototype.make_svg = function(data_I,parameters_
         
         // make the circle and whiskers plot
         if (this.data1keymap.ydatalb && this.data1keymap.ydataub){this.add_boxandwhiskersdata1_lbub();};
-        if (this.data1keymap.ydata){
+        if (this.data1keymap.ydatamean){
         	this.add_boxandwhiskersdata1_mean();
         	this.add_boxandwhiskersdata1tooltipandfill_mean();
+        };
+        // add in the data points (either from data 1 or from data 2)
+        if (typeof(this.data2keymap.ydata)!=="undefined"){
+        	this.add_boxandwhiskersdata2();
+        	this.add_boxandwhiskersdata2_points(parameters_I.svgdata2pointsradius);
+        	this.add_boxandwhiskerspointsdata2tooltipandfill();
+        	//this.add_boxandwhiskersdata2tooltipandfill_points();
+        } else if (typeof(this.data1keymap.ydata)!=="undefined"){
+        	this.add_boxandwhiskersdata1_points();        	
         };
         this.set_x1andy1axesstyle_verticalbarschart();
         this.add_x1axislabel(parameters_I.svgx1axislabel);

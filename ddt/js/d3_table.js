@@ -407,9 +407,20 @@ d3_table.prototype.add_datafiltermenuresetbutton = function (tileid_I,resetbutto
 d3_table.prototype.add_tablesort = function(sort_settings_I){
     // add table sort using jquery
     var id = this.id;
-    $(document).ready(function() 
-        { 
-            $("#"+id+"table").tablesorter(); 
-        } 
-    );  
+    var this_ = this;
+
+    this.tableheader.on('click', function (d, i) {
+        var order = [];
+        var key_dir = {};
+        key_dir[d]='asc';
+        order.push(key_dir);
+        this_.data.order_listdatafiltered(order);
+        this_.render();
+    });
+    
+//     $(document).ready(function() 
+//         { 
+//             $("#"+id+"table").tablesorter(); 
+//         } 
+//     );  
 };

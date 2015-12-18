@@ -8,7 +8,7 @@ d3_chart2d.prototype.add_boxandwhiskersdata1 = function () {
 //     fliers: points representing data that extend beyond the whiskers (outliers).
 //     means: points or lines representing the means.
 
-    var y_data_mean = this.data1keymap.ydata;
+    var y_data_mean = this.data1keymap.ydatamean;
     var y_data_lb = this.data1keymap.ydatalb;
     var y_data_ub = this.data1keymap.ydataub;
     var y_data_median = this.data1keymap.ydatamedian;
@@ -41,7 +41,7 @@ d3_chart2d.prototype.add_boxandwhiskersdata1 = function () {
 d3_chart2d.prototype.add_boxandwhiskersdata1_box = function (){
     // add box for the quartiles to box and whiskers plot
 
-    var y_data_mean = this.data1keymap.ydata;
+    var y_data_mean = this.data1keymap.ydatamean;
     var y_data_lb = this.data1keymap.ydatalb;
     var y_data_ub = this.data1keymap.ydataub;
     var y_data_median = this.data1keymap.ydatamedian;
@@ -84,7 +84,7 @@ d3_chart2d.prototype.add_boxandwhiskersdata1_box = function (){
 d3_chart2d.prototype.add_boxandwhiskersdata1_median = function (){
     // add lines for the median to box and whiskers plot
 
-    var y_data_mean = this.data1keymap.ydata;
+    var y_data_mean = this.data1keymap.ydatamean;
     var y_data_lb = this.data1keymap.ydatalb;
     var y_data_ub = this.data1keymap.ydataub;
     var y_data_median = this.data1keymap.ydatamedian;
@@ -128,7 +128,7 @@ d3_chart2d.prototype.add_boxandwhiskersdata1_median = function (){
 d3_chart2d.prototype.add_boxandwhiskersdata1_mean = function (){
     // add lines for the mean to box and whiskers plot
 
-    var y_data_mean = this.data1keymap.ydata;
+    var y_data_mean = this.data1keymap.ydatamean;
     var y_data_lb = this.data1keymap.ydatalb;
     var y_data_ub = this.data1keymap.ydataub;
     var y_data_median = this.data1keymap.ydatamedian;
@@ -193,7 +193,7 @@ d3_chart2d.prototype.add_boxandwhiskersdata1_mean = function (){
 d3_chart2d.prototype.add_boxandwhiskersdata1_caps = function (){
     // add lines for caps to box and whiskers plot
 
-    var y_data_mean = this.data1keymap.ydata;
+    var y_data_mean = this.data1keymap.ydatamean;
     var y_data_lb = this.data1keymap.ydatalb;
     var y_data_ub = this.data1keymap.ydataub;
     var y_data_median = this.data1keymap.ydatamedian;
@@ -259,7 +259,7 @@ d3_chart2d.prototype.add_boxandwhiskersdata1_caps = function (){
 d3_chart2d.prototype.add_boxandwhiskersdata1_whiskers = function (){
     // add lines for whiskers to box and whiskers plot
 
-    var y_data_mean = this.data1keymap.ydata;
+    var y_data_mean = this.data1keymap.ydatamean;
     var y_data_lb = this.data1keymap.ydatalb;
     var y_data_ub = this.data1keymap.ydataub;
     var y_data_median = this.data1keymap.ydatamedian;
@@ -325,7 +325,7 @@ d3_chart2d.prototype.add_boxandwhiskersdata1_whiskers = function (){
 d3_chart2d.prototype.add_boxandwhiskersdata1_lbub = function (){
     // add lines for lb and ub to box and whiskers plot
 
-    var y_data_mean = this.data1keymap.ydata;
+    var y_data_mean = this.data1keymap.ydatamean;
     var y_data_lb = this.data1keymap.ydatalb;
     var y_data_ub = this.data1keymap.ydataub;
     var y_data_median = this.data1keymap.ydatamedian;
@@ -431,7 +431,7 @@ d3_chart2d.prototype.add_boxandwhiskersdata1tooltipandfill_box = function () {
     //add a change in color upon moving the mouse over the box
     //NOTE: both must be within the same "on" method
 
-    var y_data_mean = this.data1keymap.ydata;
+    var y_data_mean = this.data1keymap.ydatamean;
     var y_data_lb = this.data1keymap.ydatalb;
     var y_data_ub = this.data1keymap.ydataub;
     var y_data_median = this.data1keymap.ydatamedian;
@@ -488,7 +488,7 @@ d3_chart2d.prototype.add_boxandwhiskersdata1tooltipandfill_mean = function () {
     //add a change in color upon moving the mouse over the box
     //NOTE: both must be within the same "on" method
 
-    var y_data_mean = this.data1keymap.ydata;
+    var y_data_mean = this.data1keymap.ydatamean;
     var y_data_lb = this.data1keymap.ydatalb;
     var y_data_ub = this.data1keymap.ydataub;
     var y_data_median = this.data1keymap.ydatamedian;
@@ -544,6 +544,177 @@ d3_chart2d.prototype.add_boxandwhiskersdata1tooltipandfill_mean = function () {
         })
         .on("mouseout", function (d) {
             d3.select(this).style("fill", colorscale(d[series_label]));
+            tip.hide(d);
+            //d3.select("#" + id + "tooltip").classed("hidden", true);
+        });
+};
+d3_chart2d.prototype.add_boxandwhiskersdata1_points = function () {
+    //points properties
+    var y_data = this.data1keymap.ydata;
+    var x_data = this.data1keymap.xdata;
+    var series_label = this.data1keymap.serieslabel;
+    var x1scale = this.x1scale;
+    var x2scale = this.x2scale;
+    var y1scale = this.y1scale;
+    var colorscale = this.colorscale;
+    var id = this.id;
+    var radius = 5.0;
+        
+    //points: circles showing the individual data points of the box and whiskers plot
+    this.boxandwhiskerspointsdata1 = this.boxandwhiskerslabel.selectAll(".points")
+        .data(function (d) { return d.values; });
+
+    this.boxandwhiskerspointsdata1.exit().remove();
+
+    this.boxandwhiskerspointsdata1.transition()
+        .attr("r", radius)
+        .attr("id", function (d, i) { return id + "point" + i.toString(); })
+        .attr("cx", function (d) { return x2scale(d[series_label]) + x2scale.rangeBand()*0.5; ; })
+        .attr("cy", function (d) { return y1scale(d[y_data]); })
+        .style("stroke", "black")
+        .style("fill", "none");
+      
+    this.boxandwhiskerspointsdata1enter = this.boxandwhiskerspointsdata1.enter()
+        .append("circle")
+        .attr("class", "points");
+
+    this.boxandwhiskerspointsdata1enter
+        .attr("r", radius)
+        .attr("id", function (d, i) {
+            return id + "point" + i.toString(); })
+        .attr("cx", function (d) {
+            return x2scale(d[series_label]) + x2scale.rangeBand()*0.5; ; })
+        .attr("cy", function (d) {
+            return y1scale(d[y_data]); })
+        .style("stroke", "black")
+        //.style("stroke", function (d) { return colorscale(d[series_label]); })
+        .style("fill", "none");
+};
+d3_chart2d.prototype.add_boxandwhiskersdata2 = function () {
+    //add box and whiskers to the plot
+//     boxes: the main body of the boxplot showing the quartiles and the medians confidence intervals if enabled.
+//     medians: horizonal lines at the median of each box.
+//     whiskers: the vertical lines extending to the most extreme, n-outlier data points.
+//     caps: the horizontal lines at the ends of the whiskers.
+//     fliers: points representing data that extend beyond the whiskers (outliers).
+//     means: points or lines representing the means.
+
+    var x1scale = this.x1scale;
+    var y1scale = this.y1scale;
+    var colorscale = this.colorscale;
+    var id = this.id;
+
+    //assign the positioning of the feature labels
+    this.boxandwhiskersdata2label = this.svgg.selectAll(".labels")
+        .data(this.data2.nestdatafiltered);
+
+    this.boxandwhiskersdata2label.transition()
+        .attr("class", "labels")
+        .attr("transform", function (d) { return "translate(" + x1scale(d.key) + ",0)"; });
+
+    this.boxandwhiskersdata2label.exit().remove();
+
+    this.boxandwhiskersdata2labelenter = this.boxandwhiskersdata2label.enter().append("g")
+        .attr("class", "labels")
+        .attr("transform", function (d) { return "translate(" + x1scale(d.key) + ",0)"; });
+};
+d3_chart2d.prototype.add_boxandwhiskersdata2_points = function (radius_I) {
+    //points properties
+    var y_data = this.data2keymap.ydata;
+    var x_data = this.data2keymap.xdata;
+    var series_label = this.data2keymap.serieslabel;
+    var x1scale = this.x1scale;
+    var x2scale = this.x2scale;
+    var y1scale = this.y1scale;
+    var colorscale = this.colorscale;
+    var id = this.id;
+    if (typeof(radius_I)!=="undefined"){
+        var radius = radius_I;
+    } else {
+        var radius = 5.0;
+    };    
+        
+    //points: circles showing the individual data points of the box and whiskers plot
+    this.boxandwhiskerspointsdata2 = this.boxandwhiskersdata2label.selectAll(".points")
+        .data(function (d) { return d.values; });
+
+    this.boxandwhiskerspointsdata2.exit().remove();
+
+    this.boxandwhiskerspointsdata2.transition()
+        .attr("r", radius)
+        .attr("id", function (d, i) { return id + "point" + i.toString(); })
+        .attr("cx", function (d) { return x2scale(d[series_label]) + x2scale.rangeBand()*0.5; ; })
+        .attr("cy", function (d) { return y1scale(d[y_data]); })
+        .style("stroke", "black")
+        .style("fill", "none");
+      
+    this.boxandwhiskerspointsdata2enter = this.boxandwhiskerspointsdata2.enter()
+        .append("circle")
+        .attr("class", "points")
+
+    this.boxandwhiskerspointsdata2enter
+        .attr("r", radius)
+        .attr("id", function (d, i) {
+            return id + "point" + i.toString(); })
+        .attr("cx", function (d) {
+            return x2scale(d[series_label]) + x2scale.rangeBand()*0.5; ; })
+        .attr("cy", function (d) {
+            return y1scale(d[y_data]); })
+        .style("stroke", "black")
+        //.style("stroke", function (d) { return colorscale(d[series_label]); })
+        .style("fill", "none");
+};
+d3_chart2d.prototype.add_boxandwhiskerspointsdata2tooltipandfill = function () {
+    //add a tooltip upon moving the mouse over the point
+    //add a change in color upon moving the mouse over the point
+    //NOTE: both must be within the same "on" method
+    var colorscale = this.colorscale;
+    var series_label = this.data2keymap.serieslabel;
+    var feature_label = this.data2keymap.featureslabel;
+    
+    var x_data = this.data2keymap.xdata;
+    var y_data = this.data2keymap.ydata;
+    var id = this.id;
+
+    // set the tooltip
+    this.boxandwhiskerspointsdata2tooltip = d3.tip().attr('class', 'd3-tip')
+        .html(function(d){
+            if (typeof(d[x_data]) === 'string' && feature_label && typeof(feature_label) !== "undefined"){
+                return(d[feature_label] + '\nx: ' + d[x_data] + '; y: ' + d[y_data].toFixed(2));
+            } else if (typeof(d[x_data]) !== 'string' && feature_label && typeof(feature_label) !== "undefined"){
+                return(d[feature_label] + '\nx: ' + d[x_data].toFixed(2) + '; y: ' + d[y_data].toFixed(2));
+            } else if (typeof(d[x_data]) === 'string' && series_label && typeof(series_label) !== "undefined"){
+                return(d[series_label] + '\nx: ' + d[x_data] + '; y: ' + d[y_data].toFixed(2));
+            } else if (typeof(d[x_data]) !== 'string' && series_label && typeof(series_label) !== "undefined"){
+                return(d[series_label] + '\nx: ' + d[x_data].toFixed(2) + '; y: ' + d[y_data].toFixed(2));
+            } else if (typeof(d[x_data]) === 'string'){
+                return('x: ' + d[x_data] + '; y: ' + d[y_data].toFixed(2));
+            } else {
+                return ('x: ' + d[x_data].toFixed(2) + '; y: ' + d[y_data].toFixed(2));
+                    };
+            })
+        .style({
+           'line-height': '1',
+           'font-weight': 'bold',
+           'padding': '12px',
+           'background': 'rgba(0, 0, 0, 0.8)',
+           'color': '#fff',
+           'border-radius': '2px'
+        });
+    //this.set_d3tooltipstyle(); //not functional
+    this.svgg.call(this.boxandwhiskerspointsdata2tooltip);
+    var tip = this.boxandwhiskerspointsdata2tooltip;
+
+    //show tooltip
+    this.boxandwhiskerspointsdata2enter
+        .on("mouseover", function (d) {
+            //Change fill color
+            d3.select(this).style('fill', 'black');
+            //Show the tooltip
+            tip.show(d);
+            })  
+        .on("mouseout", function (d) {
+            d3.select(this).style("fill", "none");
             tip.hide(d);
             //d3.select("#" + id + "tooltip").classed("hidden", true);
         });

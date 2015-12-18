@@ -415,7 +415,7 @@ d3_data.prototype.group_listdatafiltered = function(groups_I){
 d3_data.prototype.order_listdatafiltered = function(order_I){
     // group list data
     // INPUT:
-    // order_I = {key:direction} e.g. {'analysis_id':'asc''}
+    // order_I = [{key:direction},...] e.g. [{'analysis_id':'asc'}]
     //      where direction = 'asc' ascending
     //                      = 'desc' descending
 
@@ -439,11 +439,13 @@ d3_data.prototype.order_listdatafiltered = function(order_I){
             }
         };
     };
-    for (var key in order_I){
-        if (order_I[key]==='asc'){
-            listdatafiltered.sort(sortproperty_asc(key));
-        } else if (order_I[key]==='desc'){
-            listdatafiltered.sort(sortproperty_desc(key));         
+    order_I.forEach(function(d){
+        for (var key in d){
+            if (d[key]==='asc'){
+                listdatafiltered.sort(sortproperty_asc(key));
+            } else if (d[key]==='desc'){
+                listdatafiltered.sort(sortproperty_desc(key));         
+            };
         };
-    };
+    });
 };
