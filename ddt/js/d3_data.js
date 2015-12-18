@@ -384,3 +384,66 @@ d3_data.prototype.remove_listdata = function(){
     });
     this.listdata = listdata_O;
 };
+d3_data.prototype.convert_listdatafiltered2crosstable = function(){
+    // donvert list data to cross table
+    var id = this.id;
+    var tileid = this.tileid;
+    var datalistdatafiltered = this.listdatafiltered;
+    var tableheaders = this.tableheaders;
+    var x_data = this.data1keymap.xdata;
+    var y_data = this.data1keymap.ydata;
+};
+d3_data.prototype.group_listdatafiltered = function(groups_I){
+    // group list data
+    // INPUT:
+    // groups_I = list of keys 
+    // OUTPUT:
+    // group_O = grouped list data
+
+    var listdatafiltered = this.listdatafiltered;
+    var group_set = new Set();
+    for (var i=0; i<listdatafiltered.length; i++){
+        var tmp = {};
+        for (var j=0; j<groups_I.length; j++){
+            tmp[groups_I[j]]=listdatafiltered[i][groups_I[j]];
+        };
+        group_set.add(tmp);
+    };
+    var group_O = Array.from(group_set);
+    return group_O;
+};
+d3_data.prototype.order_listdatafiltered = function(order_I){
+    // group list data
+    // INPUT:
+    // order_I = {key:direction} e.g. {'analysis_id':'asc''}
+    //      where direction = 'asc' ascending
+    //                      = 'desc' descending
+
+    var listdatafiltered =this.listdatafiltered;
+
+    function sortproperty_asc(prop) {
+        return function(a,b) {
+            if (typeof a[prop] === "number") {
+                return (a[prop] - b[prop]);
+            } else {
+                return ((a[prop] < b[prop]) ? -1 : ((a[prop] > b[prop]) ? 1 : 0));
+            }
+        };
+    };
+    function sortproperty_desc(prop) {
+        return function(a,b) {
+            if (typeof a[prop] === "number") {
+                return (b[prop] - a[prop]);
+            } else {
+                return ((b[prop] < a[prop]) ? -1 : ((b[prop] > a[prop]) ? 1 : 0));
+            }
+        };
+    };
+    for (var key in order_I){
+        if (order_I[key]==='asc'){
+            listdatafiltered.sort(sortproperty_asc(key));
+        } else if (order_I[key]==='desc'){
+            listdatafiltered.sort(sortproperty_desc(key));         
+        };
+    };
+};

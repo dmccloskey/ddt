@@ -423,23 +423,13 @@ d3_chart2d.prototype.add_heatmapdata1tooltipandfill = function () {
            d3.selectAll(".rowLabel").classed("text-highlight",function(r,ri){ return ri==(d[rowsindex]);});
            d3.selectAll(".colLabel").classed("text-highlight",function(c,ci){ return ci==(d[columnsindex]);});
            //update the tooltip
-           tip.show(d);
-//         //Update the tooltip position and value
-//         d3.select("#" + id + "tooltip")
-//          .style("left", (d3.event.pageX+10) + "px")
-//          .style("top", (d3.event.pageY-10) + "px")
-//              .select("#" + id + "value")
-//              .text(rowslabel + ": " + d[rowslabel] + ",\n" + columnslabel + ": " + d[columnslabel] + ",\n" + zdata + ": " + d[zdata]);
-//              //.text(d[rowslabel]+","+d[columnslabel]+"\ndata:"+d[zdata]);
-//             //Show the tooltip
-//             d3.select("#" + id + "tooltip").classed("hidden", false);        
+           tip.show(d);       
         })
         .on("mouseout", function(d){
                d3.select(this).classed("cell-hover",false);
                d3.selectAll(".rowLabel").classed("text-highlight",false);
                d3.selectAll(".colLabel").classed("text-highlight", false);
                tip.hide(d);
-               //d3.select("#" + id + "tooltip").classed("hidden", true);
         });
 
 };
