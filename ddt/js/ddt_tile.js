@@ -171,8 +171,10 @@ ddt_tile_table.prototype.update_tile = function(data_I){
 };
 ddt_tile_table.prototype.get_table = function(tabletype_I){
     // return the appropriate tile object
-    if (tabletype_I=='responsivetable_01'){
+    if (tabletype_I==='responsivetable_01'){
         return new ddt_table_responsivetable_01();
+    } else if (tabletype_I==='responsivecrosstable_01'){
+        return new ddt_table_responsivecrosstable_01();
     } else {
         return null;
     };

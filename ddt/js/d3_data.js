@@ -399,6 +399,8 @@ d3_data.prototype.group_listdatafiltered = function(groups_I){
     // groups_I = list of keys 
     // OUTPUT:
     // group_O = grouped list data
+    // TODO:
+    // broken...
 
     var listdatafiltered = this.listdatafiltered;
     var group_set = new Set();
@@ -411,6 +413,24 @@ d3_data.prototype.group_listdatafiltered = function(groups_I){
     };
     var group_O = Array.from(group_set);
     return group_O;
+};
+d3_data.prototype.get_uniquevaluesFromlistdatafiltered = function(key_I){
+    // get unique values
+    // INPUT:
+    // key_I = column key to extract 
+    // OUTPUT:
+    // uniquevalues_O = array of unique values
+    // TODO:
+    // broken...
+
+    var listdatafiltered = this.listdatafiltered;
+    var uniquevalues_set = new Set();
+    for (var i=0; i<listdatafiltered.length; i++){
+        var tmp = listdatafiltered[i][key_I];
+        uniquevalues_set.add(tmp);
+    };
+    var uniquevalues_O = Array.from(uniquevalues_set);
+    return uniquevalues_O;
 };
 d3_data.prototype.order_listdatafiltered = function(order_I){
     // group list data
@@ -445,6 +465,43 @@ d3_data.prototype.order_listdatafiltered = function(order_I){
                 listdatafiltered.sort(sortproperty_asc(key));
             } else if (d[key]==='desc'){
                 listdatafiltered.sort(sortproperty_desc(key));         
+            };
+        };
+    });
+};
+d3_data.prototype.order_nestdatafiltered = function(order_I){
+    // group list data
+    // INPUT:
+    // order_I = [{key:direction},...] e.g. [{'analysis_id':'asc'}]
+    //      where direction = 'asc' ascending
+    //                      = 'desc' descending
+
+    var nestdatafiltered =this.nestdatafiltered;
+
+    function sortproperty_asc(prop) {
+        return function(a,b) {
+            if (typeof a[prop] === "number") {
+                return (a[prop] - b[prop]);
+            } else {
+                return ((a[prop] < b[prop]) ? -1 : ((a[prop] > b[prop]) ? 1 : 0));
+            }
+        };
+    };
+    function sortproperty_desc(prop) {
+        return function(a,b) {
+            if (typeof a[prop] === "number") {
+                return (b[prop] - a[prop]);
+            } else {
+                return ((b[prop] < a[prop]) ? -1 : ((b[prop] > a[prop]) ? 1 : 0));
+            }
+        };
+    };
+    order_I.forEach(function(d){
+        for (var key in d){
+            if (d[key]==='asc'){
+                nestdatafiltered.sort(sortproperty_asc(key));
+            } else if (d[key]==='desc'){
+                nestdatafiltered.sort(sortproperty_desc(key));         
             };
         };
     });

@@ -21,3 +21,7 @@ ddt_table.prototype.add_data = function(data_I){
     // add data to ddttable
     this.ddttable.add_data(data_I[0]);
 };
+ddt_table.prototype.set_datakeymaps = function(datakeymaps_I){
+    // add data to ddtsvg
+    this.ddttable.set_datakeymaps(datakeymaps_I);
+};

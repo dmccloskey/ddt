@@ -8,6 +8,7 @@ function d3_table(){
     this.table = null;
     this.data = null;  
     this.tableheaders = [];
+    this.datakeymap = null;
 };
 d3_table.prototype.add_table2tile = function(){
     // set the table
@@ -445,8 +446,18 @@ d3_table.prototype.add_tablesort = function(sort_settings_I){
                     order.push(key_dir);
             };
             this_.data.order_listdatafiltered(order);
+            this_.data.order_nestdatafiltered(order);
             this_.render();
         });
 
 
+};
+d3_table.prototype.set_datakeymaps = function(keymaps_I){
+    //add datakeymaps
+    if (!keymaps_I){
+       console.warn("no data");
+    } else if (keymaps_I.length===1){
+        this.datakeymap = keymaps_I[0];
+    } else {console.warn("more data found than what is currently supported");
+    };
 };
