@@ -73,12 +73,12 @@ d3_table.prototype.add_crosstablebody = function(){
                 } else {
                     for (var i=0;i<row.values.length;i++){
                         if (row.values[i].key===column){
+                            //only the first value if multiple values are present
+                            //will be displayed
                             value = row.values[i].values[0][z_data];
                             break;
                         };
-                        
                     };
-                    
                 };
                 //console.log(value);
                 return {column: column, value: value};

@@ -5,7 +5,48 @@ function ddt_table_responsivecrosstable_01() {
 // 	DESCRIPTION
 // 	data is formatted and presented in tabular form
 // 	INPUT:
-// 	data1
+// 	data1 = [{},...]
+// 	data1_keys = [
+// 		'analysis_id',
+// 		'experiment_id',
+// 		'sample_name_abbreviation',
+// 		'sample_name_short',
+// 		'component_group_name',
+// 		'component_name',
+// 		'time_point',
+// 		'calculated_concentration_units'
+// 	];
+// 	data1_nestkeys = [
+// 		'component_name', //row label
+// 		'sample_name_short' //column label
+// 	];
+// 	data1_keymap = {
+// 		'xdata':'sample_name_short',
+// 		'ydata':'component_name',
+// 		'zdata':'calculated_concentration',
+// 		'rowslabel':'component_name',
+// 		'columnslabel':'sample_name_short',
+// 	};
+// 	data_I = [
+// 		{"data":data_points_1,"datakeys":data1_keys,"datanestkeys":data1_nestkeys}
+// 	];
+// 	parameters_I = {
+// 		//Table parameters
+// 		"tabletype":'responsivecrosstable_01',
+// 		"tablekeymap":[data1_keymap],
+// 		'tableid':'table1',
+// 		"tablefilters":None,
+// 		"tableclass":"table  table-condensed table-hover",
+// 		//Tile parameters
+// 		'tileheader':'Cross Table',
+// 		'tiletype':'table',
+// 		'tileid':"tile3",
+// 		'rowid':"row2",
+// 		'colid':"col1",
+// 		'tileclass':"panel panel-default",
+// 		'rowclass':"row",
+// 		'colclass':"col-sm-12"
+// 	};
 
     ddt_table.call(this);
 };
