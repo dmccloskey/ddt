@@ -94,6 +94,8 @@ ddt_tile_svg.prototype.get_svg = function(svgtype_I){
         return new ddt_svg_scatterlineplot2d_01();
     } else if (svgtype_I=='scatterlineplot2d_02'){
         return new ddt_svg_scatterlineplot2d_02();
+    } else if (svgtype_I=='areaplot2d_01'){
+        return new ddt_svg_areaplot2d_01();
     } else if (svgtype_I=='scatterplot2d_01'){
         return new ddt_svg_scatterplot2d_01();
     } else if (svgtype_I=='verticalbarschart2d_01'){
