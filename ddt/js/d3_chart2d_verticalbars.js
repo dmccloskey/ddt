@@ -63,10 +63,14 @@ d3_chart2d.prototype.add_verticalbarsdata1 = function () {
         .attr("class", "bars");
 
     this.barsrectenter.attr("width", x2scale.rangeBand())
-        .attr("x", function (d) { return x2scale(d[series_label]); })
-        .attr("y", function (d) { return y1scale(Math.max(d[y_data], 0)); })
-        .attr("height", function (d) { return Math.abs(y1scale(d[y_data]) - y1scale(0)); })
-        .style("fill", function (d) { return colorscale(d[series_label]); });
+        .attr("x", function (d) {
+            return x2scale(d[series_label]); })
+        .attr("y", function (d) {
+            return y1scale(Math.max(d[y_data], 0)); })
+        .attr("height", function (d) {
+            return Math.abs(y1scale(d[y_data]) - y1scale(0)); })
+        .style("fill", function (d) {
+            return colorscale(d[series_label]); });
 
 };
 d3_chart2d.prototype.add_verticalbarsdata1tooltipandfill = function () {
