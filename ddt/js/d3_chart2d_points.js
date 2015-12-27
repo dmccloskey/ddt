@@ -84,27 +84,10 @@ d3_chart2d.prototype.add_pointsdata1tooltipandfill = function () {
             d3.select(this).style('fill', 'red');
             //Show the tooltip
             tip.show(d);
-//             //Update the tooltip position and value
-//             if (typeof(d[x_data]) === 'string'){
-//                 d3.select("#" + id + "tooltip")
-//                     .style("left", (d3.event.pageX + 10) + "px")
-//                     .style("top", (d3.event.pageY - 10) + "px")
-//                     .select("#" + id + "value")
-//                     .text('x: ' + d[x_data] + '; y: ' + d[y_data].toFixed(2));
-//             } else {
-//                 d3.select("#" + id + "tooltip")
-//                     .style("left", (d3.event.pageX + 10) + "px")
-//                     .style("top", (d3.event.pageY - 10) + "px")
-//                     .select("#" + id + "value")
-//                     .text('x: ' + d[x_data].toFixed(2) + '; y: ' + d[y_data].toFixed(2));
-//                     };
-//             // Show the tooltip
-//             d3.select("#" + id + "tooltip").classed("hidden", false);
             })  
         .on("mouseout", function (d) {
             d3.select(this).style("fill", colorscale(d[series_label]));
             tip.hide(d);
-            //d3.select("#" + id + "tooltip").classed("hidden", true);
         });
 };
 d3_chart2d.prototype.add_pointsdata1seriesfilter = function () {

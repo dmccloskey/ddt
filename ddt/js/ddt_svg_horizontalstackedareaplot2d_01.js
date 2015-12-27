@@ -1,6 +1,5 @@
 "use strict";
-//var ddt_svg_areaplot2d_01 = function () {
-function ddt_svg_areaplot2d_01() {
+function ddt_svg_horizontalstackedareaplot2d_01() {
 // 	Area plot
 // 	DESCRIPTION:
 // 	A scatter plot and line plot are rendered on the same figure
@@ -24,6 +23,7 @@ function ddt_svg_areaplot2d_01() {
 // 		"svgheight":350,
 // 		"svgx1axislabel":"jump_time_point",
 // 		"svgy1axislabel":"frequency",
+//		"svgstackoffset":"wiggle",//wiggle = streamgraph, zero = area
 // 		Tile parameters
 // 		'tileheader':'Population mutation frequency',
 // 		'tiletype':'svg',
@@ -37,9 +37,9 @@ function ddt_svg_areaplot2d_01() {
 		
     ddt_svg.call(this);
 };
-ddt_svg_areaplot2d_01.prototype = Object.create(ddt_svg.prototype);
-ddt_svg_areaplot2d_01.prototype.constructor = ddt_svg_areaplot2d_01;
-ddt_svg_areaplot2d_01.prototype.make_svg = function(data_I,parameters_I){
+ddt_svg_horizontalstackedareaplot2d_01.prototype = Object.create(ddt_svg.prototype);
+ddt_svg_horizontalstackedareaplot2d_01.prototype.constructor = ddt_svg_horizontalstackedareaplot2d_01;
+ddt_svg_horizontalstackedareaplot2d_01.prototype.make_svg = function(data_I,parameters_I){
 	// areaplot definition
 
 	this.ddtsvg = new d3_chart2d();
@@ -64,11 +64,13 @@ ddt_svg_areaplot2d_01.prototype.make_svg = function(data_I,parameters_I){
     this.ddtsvg.render = function () {
         this.add_chart2d2tile();
         this.set_svgstyle();
+		this.set_stackdata1(parameters_I.svgstackoffset);
         //this.add_title(parameters.svgtitle);
         this.set_x1range("linear");
         this.set_y1range("linear");
         this.set_x1domain();
-        this.set_y1domain();
+        //this.set_y1domain();
+        this.set_y1domainstacked();
         this.set_x1axis();
         this.set_x1axistickformat(parameters_I.svgx1axistickformat);
         this.set_y1axis();
@@ -81,9 +83,8 @@ ddt_svg_areaplot2d_01.prototype.make_svg = function(data_I,parameters_I){
         //this.add_zoom();
         //this.set_colorscale(); //color for series_label will change each update
         // add area
-		this.set_areadata1();
-		this.set_stackdata1();
-		this.add_areadata1();
+		this.set_stackedareadata1();
+		this.add_stackedareadata1();
 		//this.add_areadata1text();
 		this.add_areadata1tooltipandstroke();
 		this.add_areadata1filter();

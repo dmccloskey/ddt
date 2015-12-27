@@ -95,7 +95,7 @@ d3_svg_data.prototype.add_data1filtermenuresetbutton = function (tileid_I,resetb
     this.resetbutton = d3.select("#"+tileid+'submitbutton'+resetbuttonid)
         .on("click",reset);
 };
-d3_svg_data.prototype.set_colorscale = function (colorscale_I,colorcategory_I,colordomain_I,colordatalabel_I) {
+d3_svg_data.prototype.set_colorscale = function (colorscale_I,colorcategory_I,colordomain_I,colordatalabel_I,customcolorrange_I) {
     // set color scale
     // INPUT:
     //  colorscale_I = ordinal (default), quantile
@@ -103,9 +103,12 @@ d3_svg_data.prototype.set_colorscale = function (colorscale_I,colorcategory_I,co
     //                           'min,0,max'
     //  colorcategory_I = category10, category20, category20a, category20b, category20c
     //                    brewer, heatmap21, heatmap10, blue2gold64RBG, blue2gold64HSV
+    //  colordatalabel_I = data key of the data column to base the color range on
+    //  customcolorrange_I = [] e.g., ["#aad", "#556"] 
     // NOTES:
     //  custom colors generated from http://www.perbang.dk/rgbgradient/
-
+    // TODO:
+    //  refactor into subfunctions
 
     // custom colorscale
     var heatmap21 = ["#081d58", "#162876", "#253494", "#23499E", "#2253A3", "#225ea8", "#1F77B4", "#1d91c0", "#2FA3C2", "#38ACC3", "#41b6c4", "#60C1BF", "#7fcdbb", "#91D4B9", "#A3DBB7", "#c7e9b4", "#DAF0B2", "#E3F4B1", "#edf8b1", "#F6FBC5", "#ffffd9"];
@@ -221,6 +224,8 @@ d3_svg_data.prototype.set_colorscale = function (colorscale_I,colorcategory_I,co
         this.colorscale = d3.scale.quantile().category20c();
     }else if (colorcategory_I==='HSV_all_127'){
         this.colorscale = d3.scale.ordinal().range(HSV_all_127);
+    }else if (typeof(customcolorrange_I)!=="undefined"){
+        this.colorscale = d3.scale.linear().range(customcolorrange_I);
     }else{
         this.colorscale = d3.scale.category20c();
     };
@@ -273,4 +278,45 @@ d3_svg_data.prototype.set_data1keymap = function (data1keymap_I) {
 d3_svg_data.prototype.set_data2keymap = function (data2keymap_I) {
     //set the data2 column identifiers for xdata, yudata, serieslabel, and featureslabel
     this.data2keymap = data2keymap_I;
+};
+d3_svg_data.prototype.set_stackdata1 = function (offset_I) {
+//     set stack properties
+//     offset_I = string,
+//         silhouette - center the stream, as in ThemeRiver.
+//         wiggle - minimize weighted change in slope.
+//         expand - normalize layers to fill the range [0,1].
+//         zero - use a zero baseline, i.e., the y-axis
+    if (typeof(offset_I)!=='undefined'){
+        var offset = offset_I;
+    } else {
+        var offset = "zero";
+    }
+
+    var x_data = this.data1keymap.xdata;
+    var y_data = this.data1keymap.ydata;
+    var x1scale = this.x1scale;
+    var y1scale = this.y1scale;
+
+    this.stackdata1 = d3.layout.stack()
+        .offset(offset_I)
+        .values(function(d) {
+            return d.values; 
+            })
+        .x(function(d){
+            return d[x_data];
+            })
+        .y(function(d){
+            return d[y_data];
+            })
+        .out(function(d,y0,y){
+            d.y0 = y0;
+            d.y = y;
+        })
+        ;
+//         .values(function(d) {
+//             var valuesmapped = d.values.map(function(xy){
+//                 return {x:xy[x_data],y:xy[y_data]}
+//                 }); 
+//             return valuesmapped;
+//             });
 };

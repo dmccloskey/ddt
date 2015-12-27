@@ -118,25 +118,14 @@ d3_chart2d.prototype.add_verticalbarsdata1tooltipandfill = function () {
             d3.select(this).style('fill', 'black');
             //show the tooltip
             tip.show(d);
-//             //Update the tooltip position and value
-//             d3.select("#" + id + "tooltip")
-//                 .style("left", (d3.event.pageX + 10) + "px")
-//                 .style("top", (d3.event.pageY - 10) + "px")
-//                 .select("#" + id + "value")
-//                 //.text("series_label: " + d[series_label] + ', ' + "met_id: " + d[met_id] + ', ' + "Value: " + d[y_data].toFixed(2) + ', ' + "95% CI: " + d[y_data_lb].toFixed(2) + "/" + d[y_data_ub].toFixed(2));
-//                 .text(d[series_label] + ': ' + "value: " + d[y_data].toFixed(2) + ', ' + "95% ci: " + d[y_data_lb].toFixed(2) + "/" + d[y_data_ub].toFixed(2));
-//             //Show the tooltip
-//             d3.select("#" + id + "tooltip").classed("hidden", false);
         })
         .on("mouseout", function (d) {
             d3.select(this).style("fill", colorscale(d[series_label]));
             tip.hide(d);
-            //d3.select("#" + id + "tooltip").classed("hidden", true);
         });
 };
 d3_chart2d.prototype.add_verticalbarsdata1errorbars = function () {
     //add vertical error bars to the chart
-    //TODO: change from poly line to 3 lines: lb,ub,and connector
 
     var x_data = this.data1keymap.xdata;
     var y_data = this.data1keymap.ydata;

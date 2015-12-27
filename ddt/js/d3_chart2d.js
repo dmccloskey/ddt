@@ -245,6 +245,43 @@ d3_chart2d.prototype.set_y2domain = function () {
         };
     this.y2scale.domain(d3.extent(data2)).nice();
 };
+d3_chart2d.prototype.set_y1domainstacked = function () {
+    // set y1-domain of the plot
+    var y_data = this.data1keymap.ydata;
+    var stackdata1 = this.stackdata1;
+    var nestdatafiltered = this.data1.nestdatafiltered
+    var _this = this;
+    var data1 = [];
+    var stackeddata1max = d3.max(stackdata1(nestdatafiltered), function(nest) {
+        var nestvalues = []; 
+        nest.values.forEach(function(d) {
+            nestvalues.push(d.y0 + d.y);
+            });
+        var nestmax = d3.max(nestvalues);
+        return nestmax;
+        });
+    var stackeddata1min = d3.min(stackdata1(nestdatafiltered), function(nest) {
+        var nestvalues = []; 
+        nest.values.forEach(function(d) {
+            nestvalues.push(d.y0);
+            });
+        var nestmin = d3.min(nestvalues);
+        return nestmin;
+        });
+    data1.push(stackeddata1max);
+    data1.push(stackeddata1min);
+    // check for unique values
+    var unique = data1.filter( onlyUnique );
+    // add in 0.0 if there is only 1 unique value to solve issue#1
+    // Problem: This is caused by an auto-adjustment of the y-axis from min_value(data array) to max_value(data array). When only one or a constant y-value is supplied, the min/max of the y-axis are set to the same value.
+    // Correction: ensure a minimum y-axis value of 0.0.
+    //
+    if (unique.length === 1){
+        data1.push(0.0);
+        };
+    //define the y1 scale
+    this.y1scale.domain(d3.extent(data1)).nice();
+};
 d3_chart2d.prototype.get_uniquelabels = function (data_I,label_I){
     // extract out unique series labels from listdatafiltered
     var label = label_I;
