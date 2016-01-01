@@ -126,7 +126,28 @@ function load_json_or_csv(f, csv_converter, callback, pre_fn, failure_fn,
     // Read in the image file as a data URL.
     reader.onload = onload_function;
     reader.readAsText(f);
-}
+};
+function csv_converter(csv_rows) {
+    /** Convert data from a csv file to json-style data.
+     File must include a header row.
+     */
+    // count rows
+    var c = csv_rows[0].length,
+        converted = [];
+    if (c < 2 || c > 3)
+        throw new Error('CSV file must have 2 or 3 columns');
+    // set up rows
+    for (var i = 1; i < c; i++) {
+        converted[i - 1] = {};
+    }
+    // fill
+    csv_rows.slice(1).forEach(function(row) {
+        for (var i = 1, l = row.length; i < l; i++) {
+            converted[i - 1][row[0]] = row[i];
+        }
+    });
+    return converted;
+};
 
 function download_svg(name, svg_sel, do_beautify) {
     /** Download an svg file using FileSaver.js.

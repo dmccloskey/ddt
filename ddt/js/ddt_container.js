@@ -371,7 +371,7 @@ ddt_container.prototype.add_jsonexportbutton2container = function (){
     jsonexportbutton.on("click", exportalldatajson);
 };
 ddt_container.prototype.add_jsonimportbutton2container = function (){
-    // add button to import all a new container from a json data file
+    // add button to import new container from a json data file
     var this_ = this;
     var containerid = this.containerid;
 
@@ -540,13 +540,30 @@ ddt_container.prototype.export_alldatajson_string = function () {
     ev.initMouseEvent("click", true, false, self, 0, 0, 0, 0, 0, false, false, false, false, 0, null);
     a.dispatchEvent(ev);
 };
-ddt_container.prototype.get_parameters = function(){
+ddt_container.prototype.get_parameters = function(include_header_I){
     //return the parameters object in string format
+    //INPUT:
+    //include_header_I = boolean, include the header tile (default=false)
+
+    //handle the input
+    if (typeof(include_header_I)!=="undefined"){
+        var include_header = include_header_I;
+    } else {
+        var include_header = false;
+    };
+    //get the parameters
     if (typeof this.parameters !== "undefined"){
         var parameters_O = this.parameters;
     } else {
         var parameters_O = null;
     };
+    //remove the header parameters (if specified)
+    if(parameters_O && !include_header){
+       parameters_O = parameters_O.filter( function(d) {
+            return d['htmlid']!=="containerheader";
+            });
+    };
+    
     return parameters_O
 };
 ddt_container.prototype.get_data = function(filtereddataonly_I){
@@ -569,12 +586,26 @@ ddt_container.prototype.get_data = function(filtereddataonly_I){
 
     return data_O
 };
-ddt_container.prototype.get_tile2datamap = function(){
+ddt_container.prototype.get_tile2datamap = function(include_header_I){
     //return the tile2datamap object in string format
+    //INPUT:
+    //include_header_I = boolean, include the header tile (default=false)
+
+    //handle the input
+    if (typeof(include_header_I)!=="undefined"){
+        var include_header = include_header_I;
+    } else {
+        var include_header = false;
+    };
+    //get the tile2datamap
     if (typeof this.tile2datamap !== "undefined"){
         var tile2datamap_O = this.tile2datamap;
     } else {
         var tile2datamap_O = null;
+    };
+    //remove the header parameters (if specified)
+    if(tile2datamap_O && !include_header){
+       delete tile2datamap_O["containerheader"];
     };
     return tile2datamap_O
 };
