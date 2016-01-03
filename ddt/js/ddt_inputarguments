@@ -1,8 +1,14 @@
 "use strict";
-function ddt_inputarguments() {
+class ddt_inputarguments() {
     // generic html element
-    this.node = null;
-    this.inputarguments = {};
+    constructor (node_I=null,inputarguments_I={}){
+        this.node = node_I;
+        this.inputarguments = inputarguments_I;
+    };
+    set node (node_I) { this.node = node_I}
+    get node () { return this.node}
+    set inputarguments (inputarguments_I) { this.inputarguments = inputarguments_I}
+    get inputarguments () { return this.inputarguments}
 };
 ddt_inputarguments.prototype.set_node = function(node_I,node_id_I){
     //set the node

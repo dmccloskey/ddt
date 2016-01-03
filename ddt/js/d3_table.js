@@ -1,5 +1,6 @@
 "use strict";
 //implement sortable and editable table using d3 and bootstrap
+//inherit from d3_html? reasoning: inherit buttons (e.g. glyphicon sort)
 //var d3_table = function (){
 function d3_table(){
     this.id = '';

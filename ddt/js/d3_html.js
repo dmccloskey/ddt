@@ -100,6 +100,16 @@ d3_html.prototype.set_d3css = function (selectionstyle_I) {
             .style(selectionstyle_I[i].style);
     };
 };
+d3_html.prototype.add_progressbar = function(){
+    // add progress bar
+    //E.g.,
+//     <div class="progress">
+//       <div class="progress-bar" role="progressbar" aria-valuenow="70"
+//       aria-valuemin="0" aria-valuemax="100" style="width:70%">
+//         70%
+//       </div>
+//     </div>
+}
 d3_html.prototype.add_checkbox = function () {
     // add checkbox for input
 };
