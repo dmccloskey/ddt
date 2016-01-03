@@ -100,11 +100,138 @@ d3_html.prototype.set_d3css = function (selectionstyle_I) {
             .style(selectionstyle_I[i].style);
     };
 };
-d3_html.prototype.add_draganddrop = function () {
-    // add file drag and drop for input
-};
 d3_html.prototype.add_checkbox = function () {
     // add checkbox for input
+};
+d3_html.prototype.add_radio = function () {
+    // add radio button for input
+};
+d3_html.prototype.add_inputgroup = function(){
+    // add input group to node
+};
+d3_html.prototype.add_input = function (inputarguments_I) {
+    // add input to node
+
+    var inputarguments = new ddt_inputarguments();
+    inputarguments.validate_inputarguments(inputarguments_I)
+    var node = inputarguments.get_node();
+    var input = inputarguments.get_inputarguments();
+
+    var div = node.append("div");
+    var label = node.append("label");
+    var input = node.append("input");
+
+    //div properties
+    if ('divid' in input) button.attr('id',input.divid);
+    if ('divclass' in input) button.attr('class', input.divclass);
+    if ('divtooltip' in input) {
+        button.attr("data-toggle","tooltip")
+        button.attr('title', input.divtooltip);
+    };
+
+    //label properties
+    if ('labeltext' in input) label.text(input.labeltext);
+    if ('labelid' in input) button.attr('id',input.labelid);
+    if ('labelclass' in input) button.attr('class', input.labelclass);
+
+    //input properties
+    if ('inputtype' in input) button.attr('type',inputinputtype);
+    if ('inputid' in input) button.attr('id',input.inputid);
+    if ('inputclass' in input) button.attr('class', input.inputclass);
+};
+d3_html.prototype.set_buttonproperties = function (button,button_span,input){
+    // set the button properties
+
+    //button properties
+    if ('buttonid' in input) button.attr('id',input.buttonid);
+    if ('buttonstyle' in input) button.style(input.buttonstyle);
+    if ('buttonclass' in input) button.attr('class', input.buttonclass);
+    if ('buttonon' in input) {
+        for (var i; i<input.buttonon.length; i++){
+            this.set_onmethod(button, input.buttonon[i]);
+        };
+    };
+    if ('buttontooltip' in input) {
+        button.attr("data-toggle","tooltip")
+        button.attr('title', input.buttontooltip);
+    };
+
+    //button_span properties
+    if ('spanid' in input) button_span.attr('id',input.spanid);
+    if ('spanstyle' in input) button_span.style(input.spanstyle);
+    if ('spanclass' in input) button_span.attr('class', input.spanclass);
+    if ('spantext' in input) button_span.text(input.spantext);
+    if ('spanicon' in input) button_span.classed(input.spanicon, true);
+    if ('spanaria-hidden' in input) button_span.attr('aria-hidden', input['spanaria-hidden']);
+    if ('spandata-toggle' in input) button_span.attr('data-toggle', input['spandata-toggle']);
+    if ('spandata-target' in input) button_span.attr('data-target', input['spandata-target']);
+    if ('spannon' in input) {
+        for (var i; i<input.spannon.length; i++){
+            this.set_onmethod(button_span, input.spannon[i]);
+        };
+    };
+};
+d3_html.prototype.add_button = function (inputarguments_I) {
+    // add button
+    // INPUT:
+    // node = node to add the button to
+    // node_id = node id to add the button to
+    // inputarguments = {} of button properties including the following:
+    //      id = 
+    //      class
+    //      text
+    //      icon
+    //      on_method
+    //      style = {} of styles
+
+    var inputarguments = new ddt_inputarguments();
+    inputarguments.validate_inputarguments(inputarguments_I)
+    var node = inputarguments.get_node();
+    var input = inputarguments.get_inputarguments();
+
+    var button = node.append('button');
+    var button_span = button.append('span');
+
+    this.set_buttonproperties(button,button_span,input);
+
+};
+d3_html.prototype.add_glyphiconbutton = function (inputarguments_I) {
+    // add button
+    // INPUT:
+    // node = node to add the button to
+    // node_id = node id to add the button to
+    // inputarguments = {} of button properties including the following:
+    //      id
+    //      class
+    //      text
+    //      icon
+    //      on
+    //
+    var inputarguments = new ddt_inputarguments();
+    inputarguments.validate_inputarguments(inputarguments_I)
+    var node = inputarguments.get_node();
+    var input = inputarguments.get_inputarguments();
+
+    var button = node.append('div');
+    var button_span = button.append('span');
+
+    this.set_buttonproperties(button,button_span,input);
+};
+d3_html.prototype.set_onmethod = function (node_I, on_method_I) {
+    // set on method for a node
+    // INPUT:
+    // node_I = button node
+    // on_method_I = {} with properties
+    //        method = name of the on method (e.g. click)
+    //        function = on_method function
+    //        target ?
+
+    node_I.on(on_method_I.method, function() {
+        on_method_I.function.call(on_method_I.target);
+    });
+};
+d3_html.prototype.add_dropdown = function () {
+    // add dropdown attribute
 };
 d3_html.prototype.add_color = function () {
     // add color pallet for input
@@ -112,153 +239,27 @@ d3_html.prototype.add_color = function () {
 d3_html.prototype.add_range = function () {
     // add range slider for input
 };
-d3_html.prototype.add_form = function(textarea_valuetext_I){
-    // add form to tile
-    if (typeof texarea_valuetext_I !== "undefined"){var textarea_valuetext = textarea_valuetext_I;}
-    else{var textarea_valuetext = this.data.listdatafiltered;}
-    var id = this.id;
-
-    this.htmlform = this.html.selectAll("form")
-        .data([textarea_valuetext]);
-
-    this.htmlformenter = this.htmlform.enter()
-        .append("form")
-        .attr("id", id + 'form');
-
-    this.htmlform.exit().remove();
-
+d3_html.prototype.add_text = function () {
+    // add text area
+};
+d3_html.prototype.add_search = function(){
+    // add search feature
+    // use selectisize.js
+    //"https://github.com/brianreavis/selectize.js"
+    // or datalist
+    //E.g.,
+//     <form action="demo_form.asp" method="get">
+//       <input list="browsers" name="browser">
+//       <datalist id="browsers">
+//         <option value="Internet Explorer">
+//         <option value="Firefox">
+//         <option value="Chrome">
+//         <option value="Opera">
+//         <option value="Safari">
+//       </datalist>
+//       <input type="submit">
+//     </form>
 }
-d3_html.prototype.add_input2form = function (textarea_valuetext_I) {
-    // add text area for input
-    // INPUT:
-    if (typeof texarea_valuetext_I !== "undefined"){var textarea_valuetext = textarea_valuetext_I;}
-    else{var textarea_valuetext = this.data.convert_filter2stringmenuinput();};
-
-    var id = this.id;
-
-//     this.htmlform = this.html.append("div")
-//         .attr("class","form-group")
-//         .attr("id", id + 'form');
-
-//     for (i=0;i<textarea_valuetext.length;i++){
-//         var formlabel = this.htmlform.append("label")
-//             .text(textarea_valuetext[i].text)
-//             .attr("id", id + 'formlabel' + textarea_valuetext[i].text);
-//         var forminput = this.htmlform.append("input")
-//             .attr("class","form-control")
-//             .attr("type","text")
-//             .attr("placeholder",textarea_valuetext[i].value)
-//             .attr("value",textarea_valuetext[i].value)
-//             .attr("id", id + 'forminput'+ textarea_valuetext[i].text);
-//     };
-
-    this.htmlformgroup = this.htmlform.selectAll(".form-group")
-        .data(textarea_valuetext);
-
-    this.htmlformgroupenter = this.htmlformgroup.enter()
-        .append("div")
-        .attr("class","form-group")
-        .attr("id", id + 'form-group');
-
-    this.htmlformgroup.exit().remove();
-
-    this.htmlformlabel = this.htmlformgroup.selectAll("label")
-        .data(function(row){
-            var textvalue = [];
-            textvalue.push({text:row.text,value:row.value});
-            return textvalue;
-        });
-
-    this.htmlformlabelenter = this.htmlformlabel.enter()
-        .append("label")
-        .attr("id", function(d){return id + 'formlabel' + d.text;})
-        .text(function(d){return d.text;});
-
-    this.htmlformlabel.transition()
-        .attr("id", function(d){return id + 'formlabel' + d.text;})
-        .text(function(d){return d.text;});
-
-    this.htmlformlabel.exit().remove();
-
-    this.htmlforminput = this.htmlformgroup.selectAll("input")
-        .data(function(row){
-            var textvalue = [];
-            textvalue.push({text:row.text,value:row.value});
-            return textvalue;
-        });
-
-    this.htmlforminput.exit().remove();
-
-    this.htmlforminput.transition()
-        .attr("class","form-control")
-        .attr("type","text")
-        .attr("value",function(d){return d.value;})
-        .attr("id", function(d){return id + 'forminput' + d.text;});
-
-    this.htmlforminputenter = this.htmlforminput.enter()
-        .append("input")
-        .attr("class","form-control")
-        .attr("type","text")
-        //.attr("placeholder",textarea_valuetext[i].value)
-        .attr("value",function(d){return d.value;})
-        .attr("id", function(d){return id + 'forminput' + d.text;});
-};
-d3_html.prototype.update_forminput = function(textarea_valuetext_I){
-    // update the form
-    if (typeof texarea_valuetext_I !== "undefined"){var textarea_valuetext = textarea_valuetext_I;}
-    else{var textarea_valuetext = this.data.convert_filter2stringmenuinput();};
-    var id = this.id;
-
-    for (var i=0;i<textarea_valuetext.length;i++){
-        var node = d3.select("#"+id + 'forminput'+ textarea_valuetext[i].text).node();
-        if (node){node.value=textarea_valuetext[i].value;};
-    };
-};
-d3_html.prototype.add_submitbutton2form = function (button_idtext_I) {
-    // add submit button
-    // INPUT:
-    //e.g. {'id':'submit1','text':'submit'};
-    if (!button_idtext_I){var button_idtext = {'id':'submit1','text':'submit'};}
-    else{var button_idtext = button_idtext_I;}
-
-    var id = this.id;
-    var tileid = this.tileid;
-
-    // note: chaining submitbuttongroup to htmlformenter instead of htmlform
-    // reason:      ensures that buttons will be added only once after a listener event
-    //              has been added to the property of the button.
-    this.submitbuttongroup = this.htmlformenter.selectAll(".btn-group")
-        .data(button_idtext)
-
-    this.submitbuttongroup.exit().remove();
-
-    this.submitbuttongroupenter = this.submitbuttongroup.enter()
-        .append("div")
-        .attr("class","btn-group")
-        .attr("id", id + "submitbtn-group");
-
-    this.submitbutton = this.submitbuttongroup.selectAll(".btn btn-default")
-        .data(function(row){
-            var idtext = [];
-            idtext.push({id:row.id,text:row.text});
-            return idtext;
-        });
-
-    this.submitbutton.exit().remove();
-
-    this.submitbutton.transition()
-        .attr("type","submit")
-        .attr("class", "btn btn-default")
-        .attr("id", function(d){return id + 'submitbutton' + d.id;})
-        .text(function(d){return d.text;});
-
-    this.submitbuttonenter = this.submitbutton.enter()
-        .append("button")
-        .attr("type","submit")
-        .attr("class", "btn btn-default")
-        .attr("id", function(d){return id + 'submitbutton' + d.id;})
-        .text(function(d){return d.text;});
-};
 d3_html.prototype.add_dropdownbuttongroup_href = function () {
     // add dropdown button group to the body of the html
     // each list element will have an href of the form:
@@ -905,14 +906,6 @@ d3_html.prototype.add_headeranddatalistsubmit_href = function(){
     d3.select("#"+ tileid + 'submitbutton'+button_idtext.id).on("click",go2url);
 
 };
-d3_html.prototype.set_formsubmitbuttonidtext = function(button_idtext_I) {
-    // set submit button
-    // INPUT:
-    //e.g. {'id':'submit1','text':'submit'};
-    if (!button_idtext_I){this.button_idtext = {'id':'submit1','text':'submit'};}
-    else{this.button_idtext = button_idtext_I;}
-};
-
 d3_html.prototype.export_filtermenujson = function () {
     // export the filter as json
 
@@ -926,14 +919,6 @@ d3_html.prototype.export_filtermenujson = function () {
     ev.initMouseEvent("click", true, false, self, 0, 0, 0, 0, 0, false, false, false, false, 0, null);
     a.dispatchEvent(ev);
 };
-
-//TODO: convert import closure to seperate function
-d3_html.prototype.import_filtermenujson = function(){
-    // import the filter from json
-    // TODO...
-    var filtermenu = null;
-};
-
 //TODO: convert add_jsonimportandexportbutton2tile
 // d3_html.prototype.add_submitbutton2form = function (button_idtext_I) {
 //     // add submit button
@@ -1038,6 +1023,12 @@ d3_html.prototype.add_jsonimportandexportbutton2tile = function (htmlfooter_I) {
     this.add_jsonexportbutton2tile();
     this.add_jsonimportbutton2tile();
 };
+//TODO: convert import closure to seperate function
+d3_html.prototype.import_filtermenujson = function(){
+    // import the filter from json
+    // TODO...
+    var filtermenu = null;
+};
 d3_html.prototype.add_jsonimportbutton2tile = function () {
     // add button to export the table element
     // http://www.html5rocks.com/en/tutorials/file/dndfiles/
@@ -1066,20 +1057,7 @@ d3_html.prototype.add_jsonimportbutton2tile = function () {
                 };
             })(file1);
 
-    //         // Closure to remove the file information.
-    //         reader.onloadend = (function(theFile) {
-    //             return function(e) {
-    //                 // Get the data file
-    //                 var result = e.target.result;
-    //                 var filtermenu = JSON.parse(result);
-    //                 this_.data.filters = filtermenu;
-    //                 this_.data.filter_listdata();
-    //                 this_.render();
-    //             };
-    //         })(file1);
-
             reader.readAsText(file1);
-    //         this_.import_filtermenujson(filtermenu); //necessary to pass svg as "this"
         };
     };
 
@@ -1111,4 +1089,120 @@ d3_html.prototype.add_jsonimportbutton2tile = function () {
             "display": 'block',
         });
     jsonimportbutton_input.on("change", importfiltermenujson);
+};
+d3_html.prototype.add_inputbuttongroup = function(button_text_I){
+    /*add input button group
+    INPUT:
+    button_text_I = button text
+    */
+    var id = this.id;
+    var listdatafiltered = [0];
+
+    if(typeof(button_text_I)!=="undefined"){
+        var button_text = button_text_I;
+    } else {
+        var button_text = "Browse...";
+    };
+
+    function updateData(e,d){
+        //update the input with the name of the text file
+        var input = d3.select("#" + id + 'inputgroupinput');
+        input.val(d);  
+        //replace the data object
+        this.data=d;
+    };
+
+    function readFile(){
+        var file1 = this.files[0];
+
+        if (!file1) {
+            alert("Failed to load file");
+        } else if (!file1.type.match('')) {
+            alert(file1.name + " is not a valid text file.");
+        } else {
+            load_json_or_csv(f, csv_converter, updateData);
+        };
+    };
+
+    this.htmlinputgroup = this.html.selectAll(".input-group")
+        .data(listdatafiltered);
+
+    this.htmlinputgroup.exit().remove;
+    this.htmlinputgroupenter = this.htmlinputgroup.enter()
+        .append("div")
+        .attr("class","input-group")
+        .attr("id",id + 'input-group');
+
+    this.htmpinputbuttongroup = this.htmlinputgroup.selectAll(".input-group-btn")
+        .data(function(d){
+            return listdatafiltered;
+        });
+
+    this.htmpinputbuttongroup.exit().remove;
+    this.htmpinputbuttongroupenter = this.htmlinputbuttongroup.enter()
+        .append("span")
+        .attr("class","input-group-btn")
+        .append("span")
+        .attr("class","btn btn-primary btn-file")
+        .text(button_text)
+        .append("input")
+        .attr("id",id + 'inputbuttongroupinput')
+        .attr("type","file")
+        .on("change",readFile);
+
+    this.htmpinputgroupinput = this.htmlinputgroup.selectAll(".form-control")
+        .data(function(d){
+            return listdatafiltered;
+        });
+
+    this.htmpinputgroupinput.exit().remove;
+    this.htmpinputgroupinputenter = this.htmlinputgroupinput.enter()
+        .append("input")
+        .attr("class","form-control")
+        .attr("id",id + 'inputgroupinput')
+        .attr("type","text");
+};
+d3_html.prototype.add_draganddrop = function (node_I,node_id_I,
+                 drop_function_I,dragover_function_I,
+                 dragenter_function_I,
+                 dragleave_function_I) {
+    // add drag and drop area
+    var id = this.id;
+    var listdatafiltered = [0]
+
+    function cancel(e) {
+      if (e.preventDefault) { e.preventDefault(); }
+      return false;
+    }
+
+    var this_ = this;
+
+    function allowDrop() {
+        if (d3.event){
+            d3.event.preventDefault();
+        };
+    };
+    function drop() {
+        this_.trigger_drop();
+    };
+    function dragEnter() {
+        if (d3.event){
+            var tiletargetid = d3.event.target.id;
+            if (tiletargetid.indexOf('col')===0 || tiletargetid.indexOf('row')===0){
+                d3.event.target.style.background="grey";
+            };
+        };
+    };
+
+    this.htmldraganddrop = this.html.selectAll("draganddrop")
+        .data([listdatafiltered]);
+
+    this.htmldraganddropender = this.htmldraganddrop.enter()
+        .append("div")
+        .attr("id", id + 'draganddrop')
+        .on("drop", drop)
+        .on("dragover", allowDrop)
+        .on("dragenter",dragEnter);
+
+    this.draganddrop.exit().remove();
 };

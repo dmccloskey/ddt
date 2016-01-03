@@ -910,4 +910,111 @@ ddt_container.prototype.add_newtilebutton2container = function(){
     //  c. make the tile
     //  d. add the new tile to the container
     //TODO:
+};ddt_container.prototype.add_replacelistdatabutton2container = function(){
+    // add a replace listdata button to the container
+
+    // add button to export all json data from the container to file
+    var this_ = this;
+    var containerid = this.containerid;
+
+    function updateData(e,d){
+        //update the input with the name of the text file
+        var input = d3.select("#" + id + 'inputgroupinput');
+        input.val(d);  
+        //replace the data object
+        this.data=d;
+    };
+    
+    function readFile(){
+        var file1 = this.files[0];
+
+        if (!file1) {
+            alert("Failed to load file");
+        } else if (!file1.type.match('')) {
+            alert(file1.name + " is not a valid text file.");
+        } else {
+            load_json_or_csv(f, csv_converter, updateData);
+        };
+    };
+
+    function updatelistdata_modal(){
+        //update the listdata
+        menumodal.update_modalheadertitle('Update list data');
+        $("#"+containerid + "modal").modal('show');
+    };
+    function replacelistdata_modal(){
+        //update the data
+        var data_index = d3.select("#"+containerid+"modalbodyformdataindexinput").node().value;
+        var listdata = d3.select("#"+containerid+"modalbodyformpasswordinput").node().value;
+        if (data_index && listdata){
+            this_.password = null;
+            this_.jsonencryptionbuttontrigger.style({"color": ""});
+        } else {
+            alert("data index or data file not provided.");
+        };
+        // prevent browser default page refresh
+        d3.event.preventDefault();
+        $("#"+containerid + "modal").modal('hide');
+    };
+
+    //add the modal menu object
+    var modaltargetid = "#" + containerid + 'jsonencryptionbutton';
+    //var modaltargetid = "body";
+    var menumodal = new d3_html_modal();
+    menumodal.set_tileid(containerid);
+    menumodal.add_modal2tile(modaltargetid);
+    menumodal.add_header2modal();
+    menumodal.add_closebutton2modalheader();
+    menumodal.add_body2modal();
+    menumodal.add_form2modalbody();
+    menumodal.add_footer2modal();
+    menumodal.add_title2modalheader('');
+    menumodal.add_content2modalbodyform = function (){
+        // add content to the modal body form
+        var tileid = this.tileid;
+
+        var modalbodyformdataindex = this.modalbodyform
+            .append("div")
+            .attr("class","form-group")
+            .attr("id",tileid+"modalbodyformdataindex")
+            .append("label")
+            .attr("for",tileid+"modalbodyformdataindexinput")
+            .text("data index")
+            .append("input")
+            .attr("type","number")
+            .attr("class", "form-control")
+            .attr("id",tileid+"modalbodyformdataindexinput")
+            .attr("placeholder","Password");
+
+        var modalbodyinputgroup = this.modalbodyform
+            .append("div")
+            .attr("class","input-group")
+            .attr("id",id + 'input-group');
+
+        var modalbodyinputbutton = modalbodyinputgroup.append("span")
+            .attr("class","input-group-btn")
+            .append("span")
+            .attr("class","btn btn-primary btn-file")
+            .text(button_text)
+            .append("input")
+            .attr("id",id + 'inputbuttongroupinput')
+            .attr("type","file")
+            .on("change",readFile);
+
+        var modalbodyinputgroupinput = modalbodyinputgroup.append("input")
+            .attr("class","form-control")
+            .attr("id",id + 'inputgroupinput')
+            .attr("type","text");
+
+        var modalbodyformbutton = this.modalbodyform
+            .append("button")
+            .attr("class","btn btn-default")
+            .attr("id",tileid+"modalbodyformbutton")
+            .text("Submit");
+
+        modalbodyformbutton.on("click",replacelistdata_modal);
+    };
+    menumodal.add_content2modalbodyform();
+
+    this.jsonencryptionbuttontrigger.on("click", updatelistdata_modal);
 };

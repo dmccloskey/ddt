@@ -1,6 +1,6 @@
 "use strict";
 function d3_html_modal() {
-    // generic chart
+    // bootstrap modal element
     d3_html.call(this);
 };
 d3_html_modal.prototype = Object.create(d3_html.prototype);

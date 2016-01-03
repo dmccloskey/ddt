@@ -59,7 +59,7 @@ ddt_html_form_01.prototype.make_html = function(data_I,parameters_I){
 //ddt_html_form_01.prototype.make_html = function(parameters_I){
     // make form
 
-	this.ddthtml = new d3_html();
+	this.ddthtml = new d3_html_form();
 	
 	// general html properties
 	this.set_parameters(parameters_I);

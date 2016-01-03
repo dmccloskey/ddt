@@ -7,19 +7,6 @@ function _check_filesaver() {
         alert("Blob not supported");
     };
 };
-
-function download_json(json, name) {
-    /** Download json file in a blob.
-     */
-
-    // alert if blob isn't going to work
-    _check_filesaver();
-
-    var j = JSON.stringify(json),
-        blob = new Blob([j], {type: "application/json"});
-    saveAs(blob, name + '.json');
-}
-
 function load_json(f, callback, pre_fn, failure_fn) {
     /** Try to load the file as JSON.
      Arguments
@@ -148,7 +135,17 @@ function csv_converter(csv_rows) {
     });
     return converted;
 };
+function download_json(json, name) {
+    /** Download json file in a blob.
+     */
 
+    // alert if blob isn't going to work
+    _check_filesaver();
+
+    var j = JSON.stringify(json),
+        blob = new Blob([j], {type: "application/json"});
+    saveAs(blob, name + '.json');
+};
 function download_svg(name, svg_sel, do_beautify) {
     /** Download an svg file using FileSaver.js.
      *

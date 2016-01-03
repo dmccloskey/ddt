@@ -264,7 +264,7 @@ d3_table.prototype.add_csvandjsonexportbutton2tile = function () {
 };
 d3_table.prototype.export_tableelementjson = function () {
     // export the table element as json
-    //TODO:...
+    //TODO: update using common json download method...
 
     var a = document.createElement('a');
     a.download ="table" + '.json'; // file name
@@ -283,7 +283,7 @@ d3_table.prototype.export_tableelementjson = function () {
 };
 d3_table.prototype.export_tableelementcsv = function () {
     // export the table element as csv
-    //TODO:...
+    //TODO: update using common csv download method...
 
     var a = document.createElement('a');
     a.download ="table" + '.csv'; // file name
