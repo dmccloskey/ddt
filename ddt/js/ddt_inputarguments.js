@@ -1,9 +1,9 @@
 "use strict";
-class ddt_inputarguments() {
+class ddt_inputarguments{
     // generic html element
-    constructor (node_I=null,inputarguments_I={}){
-        this.node = node_I;
-        this.inputarguments = inputarguments_I;
+    constructor (){
+        this.node=null;
+        this.inputarguments={};
     };
     set node (node_I) { this.node = node_I}
     get node () { return this.node}
