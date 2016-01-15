@@ -82,9 +82,15 @@ d3_chart2d.prototype.add_verticalbarsdata1tooltipandfill = function () {
     var metid = this.data1keymap.featureslabel;
 
     if (typeof(this.data1keymap.tooltipdata)!=="undefined"){
-        var y_data = this.data1keymap.tooltipdata;
+        var tooltipdata = this.data1keymap.tooltipdata;
     } else {
-        var y_data = this.data1keymap.ydata;
+        var tooltipdata = this.data1keymap.ydata;
+    };
+
+    if (typeof(this.data1keymap.tooltiplabel)!=="undefined"){
+        var tooltiplabel = this.data1keymap.tooltiplabel;
+    } else {
+        var tooltiplabel = this.data1keymap.serieslabel;
     };
     
     var y_data_lb = this.data1keymap.ydatalb;
@@ -95,10 +101,13 @@ d3_chart2d.prototype.add_verticalbarsdata1tooltipandfill = function () {
     this.tooltip = d3.tip().attr('class', 'd3-tip')
         .html(function(d){
             if(typeof(y_data_lb)==="undefined" || typeof(y_data_ub)==="undefined" || y_data_lb===null || y_data_ub===null){
-                return (d[series_label] + ': ' + "value: " + d[y_data].toFixed(2));
+                return (d[tooltiplabel] + ': ' + "value: " + d[tooltipdata].toFixed(2));
+            }
+            if(typeof(y_data_lb)==="undefined" || typeof(y_data_ub)==="undefined" || y_data_lb===null || y_data_ub===null){
+                return (d[tooltiplabel] + ': ' + "value: " + d[tooltipdata].toFixed(2));
             }
             else{
-                return (d[series_label] + ': ' + "value: " + d[y_data].toFixed(2) + ', ' + "95% ci: " + d[y_data_lb].toFixed(2) + "/" + d[y_data_ub].toFixed(2));
+                return (d[tooltiplabel] + ': ' + "value: " + d[tooltipdata].toFixed(2) + ', ' + "95% ci: " + d[y_data_lb].toFixed(2) + "/" + d[y_data_ub].toFixed(2));
             };
             })
         .style({

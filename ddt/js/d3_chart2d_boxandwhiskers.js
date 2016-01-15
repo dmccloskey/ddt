@@ -603,20 +603,23 @@ d3_chart2d.prototype.add_boxandwhiskersdata2 = function () {
     var y1scale = this.y1scale;
     var colorscale = this.colorscale;
     var id = this.id;
+    var nestdatafiltered = this.data2.nestdatafiltered;
+
+    //TODO: ensure nest keys of data1/2 are in the same order!
 
     //assign the positioning of the feature labels
     this.boxandwhiskersdata2label = this.svgg.selectAll(".labels")
-        .data(this.data2.nestdatafiltered);
+        .data(nestdatafiltered);
 
-    this.boxandwhiskersdata2label.transition()
-        .attr("class", "labels")
-        .attr("transform", function (d) { return "translate(" + x1scale(d.key) + ",0)"; });
+//     this.boxandwhiskersdata2label.transition()
+//         .attr("class", "labels")
+//         .attr("transform", function (d) { return "translate(" + x1scale(d.key) + ",0)"; });
 
-    this.boxandwhiskersdata2label.exit().remove();
+//     this.boxandwhiskersdata2label.exit().remove();
 
-    this.boxandwhiskersdata2labelenter = this.boxandwhiskersdata2label.enter().append("g")
-        .attr("class", "labels")
-        .attr("transform", function (d) { return "translate(" + x1scale(d.key) + ",0)"; });
+//     this.boxandwhiskersdata2labelenter = this.boxandwhiskersdata2label.enter().append("g")
+//         .attr("class", "labels")
+//         .attr("transform", function (d) { return "translate(" + x1scale(d.key) + ",0)"; });
 };
 d3_chart2d.prototype.add_boxandwhiskersdata2_points = function (radius_I) {
     //points properties
@@ -636,6 +639,7 @@ d3_chart2d.prototype.add_boxandwhiskersdata2_points = function (radius_I) {
         
     //points: circles showing the individual data points of the box and whiskers plot
     this.boxandwhiskerspointsdata2 = this.boxandwhiskersdata2label.selectAll(".points")
+    //this.boxandwhiskerspointsdata2 = this.boxandwhiskerslabel.selectAll(".points")
         .data(function (d) { return d.values; });
 
     this.boxandwhiskerspointsdata2.exit().remove();

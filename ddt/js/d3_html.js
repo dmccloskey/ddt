@@ -1215,4 +1215,11 @@ d3_html.prototype.add_draganddrop = function (node_I,node_id_I,
         .on("dragenter",dragEnter);
 
     this.draganddrop.exit().remove();
+};  
+d3_html.prototype.set_formsubmitbuttonidtext = function(button_idtext_I) {
+    // set submit button
+    // INPUT:
+    //e.g. {'id':'submit1','text':'submit'};
+    if (!button_idtext_I){this.button_idtext = {'id':'submit1','text':'submit'};}
+    else{this.button_idtext = button_idtext_I;}
 };
