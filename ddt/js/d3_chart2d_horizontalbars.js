@@ -103,7 +103,7 @@ d3_chart2d.prototype.add_horizontalbarsdata1tooltipandfill = function () {
     if (typeof(this.data1keymap.tooltipdata)!=="undefined"){
         var x_data = this.data1keymap.tooltipdata;
     } else {
-        var x_data = this.data1keymap.ydata;
+        var x_data = this.data1keymap.xdata;
     };
 
     // set the tooltip
