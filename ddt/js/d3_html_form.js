@@ -98,7 +98,30 @@ d3_html_form.prototype.add_rangeinput2form = function () {
     // add range slider for input
 };
 d3_html_form.prototype.add_textinput2form = function () {
-    // add range slider for input
+    // add text for input
+};
+d3_html_form.prototype.add_textareainput2form = function () {
+    // add text area for input
+    // INPUT:
+    // value
+    // id
+    // class
+    // type = textarea
+    // rows
+    // placeholder
+    // 
+
+    /*
+    //snippet
+    this.htmlforminputenter = this.htmlforminput.enter()
+        .append("input")
+        .attr("class","form-control")
+        .attr("type","textarea")
+        .attr("rows","3")
+        //.attr("placeholder",textarea_valuetext[i].value)
+        .attr("value",function(d){return d.value;})
+        .attr("id", function(d){return id + 'forminput' + d.text;});
+    */
 };
 d3_html_form.prototype.add_form = function(textarea_valuetext_I){
     // add form to tile
