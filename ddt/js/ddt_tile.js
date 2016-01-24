@@ -255,6 +255,8 @@ ddt_tile_html.prototype.get_html = function(htmltype_I){
         return new ddt_html_escher_01();
     } else if (htmltype_I=='containerheader_01'){
         return new ddt_html_containerheader_01();
+    } else if (htmltype_I=='formquery_01'){
+        return new ddt_html_formquery_01();
     } else {
         return null;
     };

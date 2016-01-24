@@ -260,3 +260,67 @@ d3_html_form.prototype.set_formsubmitbuttonidtext = function(button_idtext_I) {
     if (!button_idtext_I){this.button_idtext = {'id':'submit1','text':'submit'};}
     else{this.button_idtext = button_idtext_I;}
 };
+d3_html_form.prototype.add_postbutton2tile = function (button_idtext_I) {
+    // add submit button
+    // INPUT:
+    //e.g. {'id':'submit1','text':'submit'}
+    if (!button_idtext_I){var button_idtext = {'id':'post1','text':'post'};}
+    else{var button_idtext = button_idtext_I;}
+
+    var id = this.id;
+    var tileid = this.tileid;
+
+    this.postbutton = d3.select('#'+this.tileid+"panel-footer").selectAll(".btn btn-default")
+        .data([button_idtext])
+
+    this.postbutton.exit().remove;
+
+    this.postbutton.transition()
+        .attr("type","submit")
+        .attr("class", "btn btn-default")
+        .attr("id", function(d){return id + 'postbutton' + d.id;})
+        .text(function(d){return d.text;});
+
+    this.postbuttonenter = this.postbutton.enter()
+        .append("button")
+        .attr("type","submit")
+        .attr("class", "btn btn-default")
+        .attr("id", function(d){return id + 'posttbutton' + d.id;})
+        .text(function(d){return d.text;});
+};
+d3_html_form.prototype.set_postbuttonmethod = function (url_I){
+    // add post url and arguments
+    //INPUT:
+    //url_I = string, base url, e.g., 'SQLQuery'
+    var id = this.id;
+    var tileid = this.tileid;
+    var this_ = this;
+
+    function post(){
+        this_.post_query(url_I);
+    };
+
+    this.postbuttonenter.on("click",post);
+};
+d3_html_form.prototype.post_query = function(url_I){
+    // post query
+
+    var id = this.id;
+    var tileid = this.tileid;
+    var filterstringmenu = [];
+    for (var key in this.data.filters){
+        var filterkey = d3.select("#"+id+'formlabel'+key).text();
+        var filterstring = d3.select("#"+id+'forminput'+key).node().value;
+        filterstringmenu.push({"text":filterkey,"value":filterstring});
+    };
+    //this.data.convert_stringmenuinput2filter(filterstringmenu);
+
+    var url = url_I + '.html';
+    url += '?';
+    for (var i = 0, l = filterstringmenu.length; i < l; i++) {
+        if (i > 0) url += '&';
+        url += filterstringmenu[i]['text'] + '=' + filterstringmenu[i]['value'];
+    };
+    window.location.href = url;
+
+};
