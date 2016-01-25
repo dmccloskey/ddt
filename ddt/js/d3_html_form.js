@@ -88,6 +88,42 @@ d3_html_form.prototype.set_d3css = function (selectionstyle_I) {
 d3_html_form.prototype.add_draganddropinput2form = function () {
     // add file drag and drop for input
 };
+d3_html_form.prototype.add_radioinput2form = function (labeltext_I,radioinput_I) {
+    // add radio for input
+    //INPUT:
+    //labeltext_I = string
+    //radioinput_I = [{inputtext:,inputvalue:,inputtype:'radio'},...}
+
+    //TODO: validate the input
+    var labeltext = labeltext_I;
+    var radioinput = radioinput_I;
+
+    var id = this.id;
+    var inputtype = 'radio';
+    var formgroupid = id + 'form-group' + labeltext_I;
+    var formlabelid = id + 'formlabel' + labeltext_I;
+
+    var radioinputgroup = d3.select('#'+formgroupid)
+        .selectAll("input")
+        .data(radioinput);
+
+    radioinputgroup.exit().remove();
+
+    radioinputgroup.transition()
+        .attr("class","form-control")
+        .attr("type",function(d){return d.inputtype;})
+        .text(function(d){return d.inputtext;})
+        .attr("value",function(d){return d.inputvalue;})
+        .attr("id", function(d){return id + 'form' + d.inputtype + labeltext + d.inputtext;});
+
+    radioinputgroupenter = radioinputgroup.enter()
+        .append("input")
+        .attr("class","form-control")
+        .attr("type",function(d){return d.inputtype;})
+        .text(function(d){return d.inputtext;})
+        .attr("value",function(d){return d.inputvalue;})
+        .attr("id", function(d){return id + 'form' + d.inputtype + labeltext + d.inputtext;});
+};
 d3_html_form.prototype.add_checkboxinput2form = function () {
     // add checkbox for input
 };
@@ -138,6 +174,47 @@ d3_html_form.prototype.add_form = function(textarea_valuetext_I){
 
     this.htmlform.exit().remove();
 };
+d3_html_form.prototype.add_formgroup2form = function (texarea_valuetext_I) {
+    // add form group to the form
+    // INPUT:
+    // texarea_valuetext_I = [{labeltext:,}]
+    if (typeof texarea_valuetext_I !== "undefined"){
+        var textarea_valuetext = textarea_valuetext_I;
+        }
+    else{
+        var textarea_valuetext = this.data.convert_filter2stringmenuinput();
+    };
+    ;
+    var id = this.id;
+
+    this.htmlformgroup = this.htmlform.selectAll(".form-group")
+        .data(textarea_valuetext);
+
+    this.htmlformgroupenter = this.htmlformgroup.enter()
+        .append("div")
+        .attr("class","form-group")
+        .attr("id", id + 'form-group' + d.labeltext);
+
+    this.htmlformgroup.exit().remove();
+
+    this.htmlformlabel = this.htmlformgroup.selectAll("label")
+        .data(function(row){
+            var textvalue = [];
+            textvalue.push({labeltext:row.labeltext});
+            return textvalue;
+        });
+
+    this.htmlformlabelenter = this.htmlformlabel.enter()
+        .append("label")
+        .attr("id", function(d){return id + 'formlabel' + d.labeltext;})
+        .text(function(d){return d.labeltext;});
+
+    this.htmlformlabel.transition()
+        .attr("id", function(d){return id + 'formlabel' + d.labeltext;})
+        .text(function(d){return d.labeltext;});
+
+    this.htmlformlabel.exit().remove();
+};
 d3_html_form.prototype.add_input2form = function (textarea_valuetext_I) {
     // add text area for input
     // INPUT:
@@ -162,25 +239,25 @@ d3_html_form.prototype.add_input2form = function (textarea_valuetext_I) {
     this.htmlformlabel = this.htmlformgroup.selectAll("label")
         .data(function(row){
             var textvalue = [];
-            textvalue.push({text:row.text,value:row.value});
+            textvalue.push({labeltext:row.labeltext,inputvalue:row.inputvalue});
             return textvalue;
         });
 
     this.htmlformlabelenter = this.htmlformlabel.enter()
         .append("label")
-        .attr("id", function(d){return id + 'formlabel' + d.text;})
-        .text(function(d){return d.text;});
+        .attr("id", function(d){return id + 'formlabel' + d.labeltext;})
+        .text(function(d){return d.labeltext;});
 
     this.htmlformlabel.transition()
-        .attr("id", function(d){return id + 'formlabel' + d.text;})
-        .text(function(d){return d.text;});
+        .attr("id", function(d){return id + 'formlabel' + d.labeltext;})
+        .text(function(d){return d.labeltext;});
 
     this.htmlformlabel.exit().remove();
 
     this.htmlforminput = this.htmlformgroup.selectAll("input")
         .data(function(row){
             var textvalue = [];
-            textvalue.push({text:row.text,value:row.value});
+            textvalue.push({labeltext:row.labeltext,inputvalue:row.inputvalue});
             return textvalue;
         });
 
@@ -189,16 +266,16 @@ d3_html_form.prototype.add_input2form = function (textarea_valuetext_I) {
     this.htmlforminput.transition()
         .attr("class","form-control")
         .attr("type","text")
-        .attr("value",function(d){return d.value;})
-        .attr("id", function(d){return id + 'forminput' + d.text;});
+        .attr("value",function(d){return d.inputvalue;})
+        .attr("id", function(d){return id + 'forminput' + d.labeltext;});
 
     this.htmlforminputenter = this.htmlforminput.enter()
         .append("input")
         .attr("class","form-control")
         .attr("type","text")
         //.attr("placeholder",textarea_valuetext[i].value)
-        .attr("value",function(d){return d.value;})
-        .attr("id", function(d){return id + 'forminput' + d.text;});
+        .attr("value",function(d){return d.inputvalue;})
+        .attr("id", function(d){return id + 'forminput' + d.labeltext;});
 };
 d3_html_form.prototype.update_forminput = function(textarea_valuetext_I){
     // update the form
@@ -208,8 +285,8 @@ d3_html_form.prototype.update_forminput = function(textarea_valuetext_I){
     var id = this.id;
 
     for (var i=0;i<textarea_valuetext.length;i++){
-        var node = d3.select("#"+id + 'forminput'+ textarea_valuetext[i].text).node();
-        if (node){node.value=textarea_valuetext[i].value;};
+        var node = d3.select("#"+id + 'forminput'+ textarea_valuetext[i].labeltext).node();
+        if (node){node.value=textarea_valuetext[i].inputvalue;};
     };
 };
 d3_html_form.prototype.add_submitbutton2form = function (button_idtext_I) {

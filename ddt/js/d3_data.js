@@ -254,7 +254,7 @@ d3_data.prototype.convert_filter2stringmenuinput = function(){
     // convert filter list to filter string list
     var filterstring = [];
     for (var key in this.filters){
-        filterstring.push({"text":key,"value":this.filters[key].toString()});
+        filterstring.push({"labeltext":key,"inputvalue":this.filters[key].toString()});
         };
     return filterstring;
 };
@@ -263,7 +263,7 @@ d3_data.prototype.convert_stringmenuinput2filter = function(filterstring_I){
     var filtermap = {};
     for (var i=0;i<filterstring_I.length;i++){
         //this.filters[filterstring_I[i].text]=filterstring_I[i].value.split(",");
-        filtermap[filterstring_I[i].text]=filterstring_I[i].value.split(",");
+        filtermap[filterstring_I[i].labeltext]=filterstring_I[i].inputvalue.split(",");
     };
     //this.change_filters(filtermap) //can lead to adding in filters unintentionally
     this.change_filtersinkeys(filtermap)

@@ -211,7 +211,7 @@ ddt_container.prototype.add_datafiltermenusubmitbutton = function (tileid_I,html
     //         for (var key in this_.data[tiledataindex].filters){
                 var filterkey = d3.select("#"+htmlid+'formlabel'+key).text();
                 var filterstring = d3.select("#"+htmlid+'forminput'+key).node().value;
-                filterstringmenu.push({"text":filterkey,"value":filterstring});
+                filterstringmenu.push({"labeltext":filterkey,"inputvalue":filterstring});
             };
         });
         for (var cnt=0;cnt<this_.data.length;cnt++){
