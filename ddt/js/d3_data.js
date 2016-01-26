@@ -506,3 +506,85 @@ d3_data.prototype.order_nestdatafiltered = function(order_I){
         };
     });
 };
+//TODO:
+d3_data.prototype.convert_filter2forminput = function(){
+    /* convert filter list to form input based on the type of the filter elements
+    PRIMITIVE DATA TYPES:
+    Boolean
+    Null
+    Undefined
+    Number
+    String
+    Object:
+        Date()
+
+    */
+
+    //default values
+    var inputrows = '5';
+    var textarea_length = 50;
+
+    var forminput = [];
+    for (var key in this.filters){
+        var forminputrow = {};
+        forminputrow['labeltext']=key;
+        forminputrow['inputvalue']=this.filters[key].toString();
+        if (typeof(this.filters[key][0])==='number'){
+            forminputrow['inputtype'] = 'range';
+            var inputmin = Math.min(this.filters[key]);
+            var inputmax = Math.max(this.filters[key]);
+            var input = [];
+            this.filters[key].forEach(function(d){
+                input.push({'inputtype':'range',
+                            'inputtext':d,
+                            'inputvalue':d,
+                            'inputmin':inputmin,
+                            'inputmax':inputmax,    
+                });
+            });
+            forminputrow['input']=input;
+        } else if (typeof(this.filters[key][0])==='string' && this.filters[key].length === 1 && this.filters[key][0].length > textarea_length){
+            forminputrow['inputtype'] = 'textarea';
+            var input = [];
+            this.filters[key].forEach(function(d){
+                input.push({'inputtype':'textarea',
+                            'inputtext':d,
+                            'inputvalue':d,
+                            'inputrows':inputrows,   
+                });
+            });
+            forminputrow['input']=input; 
+        } else if (typeof(this.filters[key][0])==='string' && this.filters[key].length === 1 && this.filters[key][0].length <= textarea_length){
+            forminputrow['inputtype'] = 'text';
+            var input = [];
+            this.filters[key].forEach(function(d){
+                input.push({'inputtype':'text',
+                            'inputtext':d,
+                            'inputvalue':d,  
+                });
+            });
+            forminputrow['input']=input; 
+        } else if (typeof(this.filters[key][0])==='string'){
+            forminputrow['inputtype'] = 'checkbox';
+            var input = [];
+            this.filters[key].forEach(function(d){
+                input.push({'inputtype':'checkbox',
+                            'inputtext':d,
+                            'inputvalue':d,  
+                });
+            });
+            forminputrow['input']=input; 
+        } else {
+            console.log('filter data type not recognized.')
+            forminputrow['inputtype'] = 'text';
+            var input = [];
+            input.push({'inputtype':'text',
+                        'inputtext':key,
+                        'inputvalue':this.filters[key].toString(),  
+            });
+            forminputrow['input']=input; 
+        }
+        forminput.push(forminputrow);
+        };
+    return forminput;
+};

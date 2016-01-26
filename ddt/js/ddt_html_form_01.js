@@ -72,6 +72,7 @@ ddt_html_form_01.prototype.make_html = function(data_I,parameters_I){
     this.ddthtml.render = function(){
         this.add_html2tile();
         this.add_form();
+        //this.add_forminput2form(); //Testing in progress...
         this.add_input2form();
         this.update_forminput();
         // The below code causes the application to crash

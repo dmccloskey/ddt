@@ -69,14 +69,11 @@ ddt_html_formquery_01.prototype.make_html = function(data_I,parameters_I){
         this.add_html2tile();
         this.add_form();
         this.add_input2form();
+//         this.add_forminput2form(); //Testing in progress...
+        if(typeof(parameters_I.htmlalert)!=='undefined' && parameters_I.htmlalert){alert(parameters_I.htmlalert);}
+//         this.add_formgroup2form();
+//         this.add_textareainput2form(parameters_I.forminput);
         this.update_forminput();
-        // The below code causes the application to crash
-        // reason: unknown
-        // hypothesis: binding of "onclick" event generates an infinite loop
-        // workaround: added submitbuttons to the tile where they are not associated with any bound data
-//         this.add_submitbutton2form([parameters_I.formsubmitbuttonidtext,
-//         	parameters_I.formresetbuttonidtext,
-//         	parameters_I.formupdatebuttonidtext]);
     };
 };
 ddt_html_formquery_01.prototype.update_html = function(data_I){
