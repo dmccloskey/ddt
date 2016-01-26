@@ -1,14 +1,19 @@
 "use strict";
-class ddt_inputarguments{
+// class ddt_inputarguments{
+//     // generic html element
+//     constructor (){
+//         this.node=null;
+//         this.inputarguments={};
+//     };
+//     set node (node_I) { this.node = node_I}
+//     get node () { return this.node}
+//     set inputarguments (inputarguments_I) { this.inputarguments = inputarguments_I}
+//     get inputarguments () { return this.inputarguments}
+// };
+function ddt_inputarguments(){
     // generic html element
-    constructor (){
-        this.node=null;
-        this.inputarguments={};
-    };
-    set node (node_I) { this.node = node_I}
-    get node () { return this.node}
-    set inputarguments (inputarguments_I) { this.inputarguments = inputarguments_I}
-    get inputarguments () { return this.inputarguments}
+    this.node=null;
+    this.inputarguments={};
 };
 ddt_inputarguments.prototype.set_node = function(node_I,node_id_I){
     //set the node
@@ -23,7 +28,7 @@ ddt_inputarguments.prototype.set_node = function(node_I,node_id_I){
         console.log("node not defined.");
     };
     //validate the node
-    if (typeof(node)==="undefined" || !node){
+    if (typeof(this.node)==="undefined" || !this.node){
         this.node = null;
         console.log("node not found.");        
     };

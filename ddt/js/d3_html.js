@@ -116,9 +116,6 @@ d3_html.prototype.add_checkbox = function () {
 d3_html.prototype.add_radio = function () {
     // add radio button for input
 };
-d3_html.prototype.add_inputgroup = function(){
-    // add input group to node
-};
 d3_html.prototype.add_input = function (inputarguments_I) {
     // add input to node
 
@@ -127,27 +124,28 @@ d3_html.prototype.add_input = function (inputarguments_I) {
     var node = inputarguments.get_node();
     var input = inputarguments.get_inputarguments();
 
-    var div = node.append("div");
-    var label = node.append("label");
-    var input = node.append("input");
+    var nodediv = node.append("div");
+    var nodelabel = node.append("label");
+    var nodeinput = node.append("input");
 
     //div properties
-    if ('divid' in input) button.attr('id',input.divid);
-    if ('divclass' in input) button.attr('class', input.divclass);
+    if ('divid' in input) nodediv.attr('id',input.divid);
+    if ('divclass' in input) nodediv.attr('class', input.divclass);
     if ('divtooltip' in input) {
-        button.attr("data-toggle","tooltip")
-        button.attr('title', input.divtooltip);
+        nodediv.attr("data-toggle","tooltip")
+        nodediv.attr('title', input.divtooltip);
     };
 
     //label properties
-    if ('labeltext' in input) label.text(input.labeltext);
-    if ('labelid' in input) button.attr('id',input.labelid);
-    if ('labelclass' in input) button.attr('class', input.labelclass);
+    if ('labeltext' in input) nodelabel.text(input.labeltext);
+    if ('labelid' in input) nodelabel.attr('id',input.labelid);
+    if ('labelclass' in input) nodelabel.attr('class', input.labelclass);
 
     //input properties
-    if ('inputtype' in input) button.attr('type',inputinputtype);
-    if ('inputid' in input) button.attr('id',input.inputid);
-    if ('inputclass' in input) button.attr('class', input.inputclass);
+    if ('inputtype' in input) nodeinput.attr('type',input.inputtype);
+    if ('inputid' in input) nodeinput.attr('id',input.inputid);
+    if ('inputclass' in input) nodeinput.attr('class', input.inputclass);
+    if ('inputvalue' in input) nodeinput.attr('value', input.inputvalue);
 };
 d3_html.prototype.set_buttonproperties = function (button,button_span,input){
     // set the button properties

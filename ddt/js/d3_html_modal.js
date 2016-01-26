@@ -1,9 +1,10 @@
 "use strict";
 function d3_html_modal() {
     // bootstrap modal element
-    d3_html.call(this);
+    //d3_html.call(this);
+    d3_html_form.call(this);
 };
-d3_html_modal.prototype = Object.create(d3_html.prototype);
+d3_html_modal.prototype = Object.create(d3_html_form.prototype);
 d3_html_modal.prototype.constructor = d3_html_modal;
 d3_html_modal.prototype.add_modaltriggerbutton = function (nodeid_I){
     // add modal trigger button to tileid

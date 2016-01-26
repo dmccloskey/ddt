@@ -507,8 +507,10 @@ d3_data.prototype.order_nestdatafiltered = function(order_I){
     });
 };
 //TODO:
-d3_data.prototype.convert_filter2forminput = function(){
+d3_data.prototype.convert_filter2forminput = function(filters_I){
     /* convert filter list to form input based on the type of the filter elements
+    OPTIONAL INPUT:
+    filters_I = [], specific list of keys to convert
     PRIMITIVE DATA TYPES:
     Boolean
     Null
@@ -520,12 +522,19 @@ d3_data.prototype.convert_filter2forminput = function(){
 
     */
 
+    if (typeof(filters_I)!=='undefined'){
+        var filters = filters_I
+    } else {
+        var filters = Object.keys(this.filters);
+    };
+
     //default values
     var inputrows = '5';
     var textarea_length = 50;
 
     var forminput = [];
-    for (var key in this.filters){
+    for (var i=0; i<filters.length; i++){
+        var key = filters[i];
         var forminputrow = {};
         forminputrow['labeltext']=key;
         forminputrow['inputvalue']=this.filters[key].toString();
