@@ -171,22 +171,29 @@ d3_html_form.prototype.add_radioinput2form = function (labeltext_I,radioinput_I)
 //         .attr("id", function(d){return id + 'form' + d.inputtype + labeltext + d.inputtext;});
 // };
 d3_html_form.prototype.add_checkboxinput2form = function (inputarguments_I) {
+    // add checkbox as input
 
     var inputarguments = new ddt_inputarguments();
     inputarguments.validate_inputarguments(inputarguments_I)
     var node = inputarguments.get_node();
     var input = inputarguments.get_inputarguments();
 
-    var labeltext = input.labeltext;
-    var checkboxinput = input.input;
-
     var id = this.id;
+    var this_ = this;
     var inputtype = 'checkbox';
+    var labeltextdata = this.data.get_uniquevaluesFromlistdata(input.labeltext);
 
+    function updatefilter(){
+        if (this.checked){
+            this_.data.add_element2FiltersByKey(input.labeltext,this.value);
+        } else {
+            this_.data.remove_elementFromFiltersByKey(input.labeltext,this.value);
+        };
+    };
 
     var checkboxinputgroup = node
         .selectAll("div")
-        .data(checkboxinput);
+        .data(input.input);
 
     checkboxinputgroup.exit().remove();
 
@@ -197,7 +204,7 @@ d3_html_form.prototype.add_checkboxinput2form = function (inputarguments_I) {
         .attr("type",function(d){return d.inputtype;})
         //.attr("class","form-control")
         .attr("value",function(d){return d.inputvalue;})
-        .attr("id", function(d){return id + 'form' + d.inputtype + labeltext + d.inputtext;});
+        .attr("id", function(d){return id + 'form' + d.inputtype + input.labeltext + d.inputtext;});
 
     var checkboxinputgroupenter = checkboxinputgroup.enter()
         .append("div")
@@ -212,8 +219,15 @@ d3_html_form.prototype.add_checkboxinput2form = function (inputarguments_I) {
         .attr("type",function(d){return d.inputtype;})
         //.attr("class","form-control")
         .attr("value",function(d){return d.inputvalue;})
-        .attr("id", function(d){return id + 'form' + d.inputtype + labeltext + d.inputtext;})
-        .attr("checked","true");
+        .attr("id", function(d){return id + 'form' + d.inputtype + input.labeltext + d.inputtext;})
+        .attr("checked",function(d){
+            if (labeltextdata.indexOf(d.inputvalue) > -1){
+                return true;
+            } else {
+                return false;
+            };
+            });
+    checkboxlabelinput.on("click",updatefilter)
 };
 d3_html_form.prototype.add_colorinput2form = function () {
     // add color pallet for input
@@ -371,6 +385,7 @@ d3_html_form.prototype.add_label2formgroup = function (inputarguments_I) {
         }
     else{
         var node = this.htmlformgroup;
+        var node = this.htmlformgroupenter;
         var forminput = this.data.convert_filter2forminput();
     };
 
@@ -480,14 +495,24 @@ d3_html_form.prototype.show_filterbuttonmodal = function (targetid_I,key_I) {
     formgroup_I['inputarguments']=this_.data.convert_filter2forminput([key_I]);
 
     function updatetextinput(){
-        // get checked values
+//         // get checked values
+//         var checkedvalues;
+//         var filterstring = checkedvalues.toString();
+//         var filterstringmenu = [];
+//         filterstringmenu.push({"labeltext":filterkey,"inputvalue":filterstring});
+
         // update the filterstringmenu
-        //this.update_textinput()
+        this_.update_forminput();
+        // prevent browser default page refresh
+        d3.event.preventDefault();
+        $("#"+id + "modal").modal('hide');
     };
 
     //instantiate the modal menu object
     var modaltargetid = "#" + targetid_I;
     var menumodal = new d3_html_modal();
+    menumodal.add_data([this.data]);
+    menumodal.set_id(id+'modal');
     menumodal.set_tileid(id);
     menumodal.add_modal2tile(modaltargetid);
     menumodal.add_header2modal();
@@ -522,7 +547,8 @@ d3_html_form.prototype.add_textinput2formgroup = function () {
     var id = this.id;
 
 //     this.htmlforminput = this.htmlformgroup.selectAll("textarea")
-    this.htmlforminput = this.htmlformgroup.selectAll("input")
+    this.htmlforminput = this.htmlformgroupenter.selectAll("input")
+//     this.htmlforminput = this.htmlformgroup.selectAll("input")
         .data(function(row){
             var textvalue = [];
             textvalue.push({labeltext:row.labeltext,inputvalue:row.inputvalue});
@@ -575,7 +601,7 @@ d3_html_form.prototype.add_forminput2form = function (inputarguments_I) {
         var forminput = inputarguments.get_inputarguments();
         }
     else{
-        var node = this.htmlform;
+        var node = this.htmlformenter;
         var forminput = this.data.convert_filter2forminput();
     };
 
@@ -583,13 +609,13 @@ d3_html_form.prototype.add_forminput2form = function (inputarguments_I) {
 
     //add formgroups with labels
     this.add_formgroup2form(inputarguments_I);
-    this.add_label2formgroup({'node':this.htmlformgroup,'inputarguments':forminput});
+    this.add_label2formgroup({'node':this.htmlformgroupenter,'inputarguments':forminput});
 
     //add individual form input elements
     for (var i=0; i<forminput.length; i++){
         var nodeid = '#'+this.htmlformgroup[i][0].id
         if (forminput[i].inputtype === 'textarea'){
-            this.add_textareainput2form({'node':this.htmlformgroup,'inputarguments':forminput[i]});
+            this.add_textareainput2form({'node_id':nodeid,'inputarguments':forminput[i]});
         } else if (forminput[i].inputtype === 'text') {
             this.add_textinput2form(forminput[i]);
         } else if (forminput[i].inputtype === 'radio') {
@@ -622,7 +648,7 @@ d3_html_form.prototype.add_input2form = function (textarea_valuetext_I) {
 
     var id = this.id;
 
-    this.htmlformgroup = this.htmlform.selectAll(".form-group")
+    this.htmlformgroup = this.htmlformenter.selectAll(".form-group")
         .data(textarea_valuetext);
 
     this.htmlformgroupenter = this.htmlformgroup.enter()

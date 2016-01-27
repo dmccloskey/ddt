@@ -374,6 +374,23 @@ d3_data.prototype.add_listdata = function(data_row_I){
         listdata_O.push(newdata);
     });
 };
+d3_data.prototype.remove_elementFromFiltersByKey = function(key_I,element_I){
+    // remove element from filters
+    // INPUT:
+    // key_I = filter key
+    // element_I = filter element
+    var index = this.filters[key_I].indexOf(element_I);
+    if (index > -1) {
+        this.filters[key_I].splice(index, 1);
+    };
+};
+d3_data.prototype.add_element2FiltersByKey = function(key_I,element_I){
+    // add element to filters
+    // INPUT:
+    // key_I = filter key
+    // element_I = filter element
+    this.filters[key_I].push(element_I);
+};
 d3_data.prototype.remove_listdata = function(){
     // remove rows from listdata
 
@@ -411,8 +428,26 @@ d3_data.prototype.group_listdatafiltered = function(groups_I){
         };
         group_set.add(tmp);
     };
-    var group_O = Array.from(group_set);
+    var group_O = Array.from(group_set.entries());
     return group_O;
+};
+d3_data.prototype.get_uniquevaluesFromlistdata = function(key_I){
+    // get unique values
+    // INPUT:
+    // key_I = column key to extract 
+    // OUTPUT:
+    // uniquevalues_O = array of unique values
+    // TODO:
+    // broken...
+
+    var listdata = this.listdata;
+    var uniquevalues_set = new Set();
+    for (var i=0; i<listdata.length; i++){
+        var tmp = listdata[i][key_I];
+        uniquevalues_set.add(tmp);
+    };
+    var uniquevalues_O = Array.from(uniquevalues_set.values());
+    return uniquevalues_O;
 };
 d3_data.prototype.get_uniquevaluesFromlistdatafiltered = function(key_I){
     // get unique values
@@ -429,7 +464,7 @@ d3_data.prototype.get_uniquevaluesFromlistdatafiltered = function(key_I){
         var tmp = listdatafiltered[i][key_I];
         uniquevalues_set.add(tmp);
     };
-    var uniquevalues_O = Array.from(uniquevalues_set);
+    var uniquevalues_O = Array.from(uniquevalues_set.values());
     return uniquevalues_O;
 };
 d3_data.prototype.order_listdatafiltered = function(order_I){
@@ -563,16 +598,16 @@ d3_data.prototype.convert_filter2forminput = function(filters_I){
                 });
             });
             forminputrow['input']=input; 
-        } else if (typeof(this.filters[key][0])==='string' && this.filters[key].length === 1 && this.filters[key][0].length <= textarea_length){
-            forminputrow['inputtype'] = 'text';
-            var input = [];
-            this.filters[key].forEach(function(d){
-                input.push({'inputtype':'text',
-                            'inputtext':d,
-                            'inputvalue':d,  
-                });
-            });
-            forminputrow['input']=input; 
+//         } else if (typeof(this.filters[key][0])==='string' && this.filters[key].length === 1 && this.filters[key][0].length <= textarea_length){
+//             forminputrow['inputtype'] = 'text';
+//             var input = [];
+//             this.filters[key].forEach(function(d){
+//                 input.push({'inputtype':'text',
+//                             'inputtext':d,
+//                             'inputvalue':d,  
+//                 });
+//             });
+//             forminputrow['input']=input; 
         } else if (typeof(this.filters[key][0])==='string'){
             forminputrow['inputtype'] = 'checkbox';
             var input = [];
