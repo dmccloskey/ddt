@@ -437,7 +437,8 @@ d3_html_form.prototype.add_filterbutton2filterbuttongroup = function (){
     function showfilterbuttonmodal(){
         // get the target id and associated filter key
         var targetnode = d3.event.target;
-        var targetid = targetnode.parentNode.parentNode.id;
+        var targetid = targetnode.id;
+        //var targetid = targetnode.parentNode.parentNode.id;
         var key = targetnode.parentNode.parentNode.getAttribute('value');
         this_.show_filterbuttonmodal(targetid,key);
     };
@@ -527,20 +528,18 @@ d3_html_form.prototype.show_filterbuttonmodal = function (targetid_I,key_I) {
 };
 d3_html_form.prototype.add_searchbutton2filterbuttongroup = function (){
     // add filter button to the filter button groups
-// glyphicon glyphicon-filter
-// glyphicon glyphicon-sort-by-attributes
-// glyphicon glyphicon-sort-by-attributes-alt
-// glyphicon glyphicon-search
+    //TODO: add searchbox below filterbuttongroup
 
     var this_ = this;
     var id = this.id;
 
     function showsearchbuttonpopover(){
 //         // get the target id and associated filter key
-//         var targetnode = d3.event.target;
-//         var targetid = targetnode.parentNode.parentNode.id;
-//         var key = targetnode.parentNode.parentNode.getAttribute('value');
-//         this_.show_searchbuttonpopover(targetid,key);
+         var targetnode = d3.event.target;
+         var targetid = targetnode.id;
+         var targetid = targetnode.parentNode.parentNode.id;
+         var key = targetnode.parentNode.parentNode.getAttribute('value');
+         this_.show_searchbuttonpopover(targetid,key);
     };
 
     this.htmlformsearchbutton = this.htmlformfilterbuttongroup.selectAll(".glyphicon glyphicon-search")
@@ -565,8 +564,13 @@ d3_html_form.prototype.add_searchbutton2filterbuttongroup = function (){
         .attr("class","glyphicon glyphicon-search pull-left")
         .attr("id", function(d){return id + 'formsearchbutton' + d.labeltext;})
         .style({"cursor":"pointer"})
-        .attr("data-toggle","tooltip")
-        .attr("title","search data");
+//         .attr("data-toggle","tooltip")
+//         .attr("title","search data")
+        .attr("data-toggle","popover")
+        .attr("data-placement","top")
+        .attr("data-html","true")
+        .attr("data-trigger","focus")
+        ;
 
     this.htmlformsearchbuttonenter.on("click", showsearchbuttonpopover);
 };
@@ -587,7 +591,7 @@ d3_html_form.prototype.show_searchbuttonpopover = function (targetid_I,key_I) {
         this_.update_forminput();
         // prevent browser default page refresh
         d3.event.preventDefault();
-        $("#"+popoverid+'popover').popover('hide');
+        $(popovertargetid).popover('hide');
     };
 
     //instantiate the popover menu object
@@ -599,12 +603,9 @@ d3_html_form.prototype.show_searchbuttonpopover = function (targetid_I,key_I) {
     menupopover.set_tileid(id);
     menupopover.add_popover2tile(popovertargetid);
     menupopover.add_header2popover();
-    menupopover.add_closebutton2popoverheader();
-    menupopover.add_title2popoverheader('Filter by ' + key_I); //order matters (add title after close button)
+    menupopover.add_title2popoverheader('Search');
     menupopover.add_body2popover();
     menupopover.add_form2popoverbody();
-    menupopover.add_footer2popover();
-    menupopover.add_title2popoverheader('');
     menupopover.add_content2popoverbodyform = function (){
         // add content to the popover body form
         var id = this.id;
@@ -624,8 +625,16 @@ d3_html_form.prototype.show_searchbuttonpopover = function (targetid_I,key_I) {
     menupopover.add_content2popoverbodyform();
 
     // show the popover
-    $("#"+popoverid+'popover').popover('show');
-}
+    $(popovertargetid).popover({
+        html: true,
+        title: function () {
+            return $("#"+popoverid+'popoverheader').html();
+        },
+        content: function () {
+            return $("#"+popoverid+'popoverbody').html();
+        }
+    });
+};
 d3_html_form.prototype.add_sortbybutton2filterbuttongroup = function (){
     // add filter button to the filter button groups
 // glyphicon glyphicon-filter
@@ -637,11 +646,20 @@ d3_html_form.prototype.add_sortbybutton2filterbuttongroup = function (){
     var id = this.id;
 
     function sortby(){
-//         // get the target id and associated filter key
-//         var targetnode = d3.event.target;
-//         var targetid = targetnode.parentNode.parentNode.id;
-//         var key = targetnode.parentNode.parentNode.getAttribute('value');
-//         this_.show_searchbuttonpopover(targetid,key);
+        // get the target id and associated filter key
+        var targetnode = d3.event.target;
+        var key = targetnode.parentNode.parentNode.getAttribute('value');
+        // sort the data
+        var order = [];
+        var key_dir = {};
+        key_dir[key]='asc';
+        order.push(key_dir);
+        this_.data.order_listdatafiltered(order);
+        this_.data.order_nestdatafiltered(order);
+        this_.data.order_filters(order);
+        //var textarea_valuetext_I = this_.data.convert_filter2stringmenuinput([key]);
+        //this_.update_forminput(textarea_valuetext_I);
+        this_.update_forminput();
     };
 
     this.htmlformsortbybutton = this.htmlformfilterbuttongroup.selectAll(".glyphicon glyphicon-sort-by-attributes")
@@ -672,11 +690,20 @@ d3_html_form.prototype.add_sortbybutton2filterbuttongroup = function (){
     this.htmlformsortbybuttonenter.on("click", sortby);
 
     function sortbyalt(){
-//         // get the target id and associated filter key
-//         var targetnode = d3.event.target;
-//         var targetid = targetnode.parentNode.parentNode.id;
-//         var key = targetnode.parentNode.parentNode.getAttribute('value');
-//         this_.show_searchbuttonpopover(targetid,key);
+        // get the target id and associated filter key
+        var targetnode = d3.event.target;
+        var key = targetnode.parentNode.parentNode.getAttribute('value');
+        // sort the data
+        var order = [];
+        var key_dir = {};
+        key_dir[key]='desc';
+        order.push(key_dir);
+        this_.data.order_listdatafiltered(order);
+        this_.data.order_nestdatafiltered(order);
+        this_.data.order_filters(order);
+        //var textarea_valuetext_I = this_.data.convert_filter2stringmenuinput([key]);
+        //this_.update_forminput(textarea_valuetext_I);
+        this_.update_forminput();
     };
 
     this.htmlformsortbyaltbutton = this.htmlformfilterbuttongroup.selectAll(".glyphicon glyphicon-sort-by-attributes-alt")

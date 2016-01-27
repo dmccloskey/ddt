@@ -250,10 +250,19 @@ d3_data.prototype.format_keyvalues2namechildren = function(lastchild_I){
     };
     this.nestdatafiltered.forEach(rename);
 };
-d3_data.prototype.convert_filter2stringmenuinput = function(){
+d3_data.prototype.convert_filter2stringmenuinput = function(filters_I){
     // convert filter list to filter string list
+    // OPTIONAL INPUT:
+    // filters_I = [], specific list of keys to convert
+
+    if (typeof(filters_I)!=='undefined'){
+        var filters = filters_I
+    } else {
+        var filters = Object.keys(this.filters);
+    };
     var filterstring = [];
-    for (var key in this.filters){
+    for (var i=0; i<filters.length; i++){
+        var key = filters[i];
         filterstring.push({"labeltext":key,"inputvalue":this.filters[key].toString()});
         };
     return filterstring;
@@ -466,6 +475,43 @@ d3_data.prototype.get_uniquevaluesFromlistdatafiltered = function(key_I){
     };
     var uniquevalues_O = Array.from(uniquevalues_set.values());
     return uniquevalues_O;
+};
+d3_data.prototype.order_filters = function(order_I){
+    // group list data
+    // INPUT:
+    // order_I = [{key:direction},...] e.g. [{'analysis_id':'asc'}]
+    //      where direction = 'asc' ascending
+    //                      = 'desc' descending
+
+    var filters = this.filters;
+
+    function sortproperty_asc() {
+        return function(a,b) {
+            if (typeof a === "number") {
+                return (a - b);
+            } else {
+                return ((a < b) ? -1 : ((a > b) ? 1 : 0));
+            }
+        };
+    };
+    function sortproperty_desc() {
+        return function(a,b) {
+            if (typeof a === "number") {
+                return (b - a);
+            } else {
+                return ((b < a) ? -1 : ((b > a) ? 1 : 0));
+            }
+        };
+    };
+    order_I.forEach(function(d){
+        for (var key in d){
+            if (d[key]==='asc'){
+                filters[key].sort(sortproperty_asc());
+            } else if (d[key]==='desc'){
+                filters[key].sort(sortproperty_desc());         
+            };
+        };
+    });
 };
 d3_data.prototype.order_listdatafiltered = function(order_I){
     // group list data

@@ -86,9 +86,12 @@ d3_table.prototype.add_tableheader = function(){
 
     this.tableheaderenter = this.tableheader.enter();
     this.tableheaderenter.append("th")
+        .attr('id',function (d) { return id+'th'+d; })
         .text(function (d) { return d; });
 
-    this.tableheader.transition().text(function (d) { return d; });
+    this.tableheader.transition()
+        .attr('id',function (d) { return id+'th'+d; })
+        .text(function (d) { return d; });
 
     this.tableheader.exit().remove();
 
@@ -406,53 +409,6 @@ d3_table.prototype.add_datafiltermenuresetbutton = function (tileid_I,resetbutto
     this.resetbutton = d3.select("#"+tileid+'submitbutton'+resetbuttonid)
         .on("click",reset);
 };
-d3_table.prototype.add_tablesort = function(sort_settings_I){
-    // sort the data
-    // DESCRIPTION:
-    // single click: sort in ascending order
-    // double click: sort in descenting order
-    var id = this.id;
-    var this_ = this;
-
-//     this.tableheader
-//         .on('click', function (d, i) {
-//             var order = [];
-//             var key_dir = {};
-//             key_dir[d]='asc';
-//             order.push(key_dir);
-//             this_.data.order_listdatafiltered(order);
-//             this_.render();
-//         });
-
-    this.tableheader
-        .on('click', function (d, i) {
-            var order = [];
-            var key_dir = {};
-            switch (d3.event.which) {
-                case 1:
-                    //alert('Left Mouse button pressed.');
-                    key_dir[d]='asc';
-                    order.push(key_dir);
-                case 2:
-                    //alert('Middle Mouse button pressed.');
-                    key_dir[d]='asc';
-                    order.push(key_dir);
-                case 3:
-                    //alert('Right Mouse button pressed.');
-                    key_dir[d]='desc';
-                    order.push(key_dir);
-                default:
-                    //alert('You have a strange Mouse!');
-                    key_dir[d]='asc';
-                    order.push(key_dir);
-            };
-            this_.data.order_listdatafiltered(order);
-            this_.data.order_nestdatafiltered(order);
-            this_.render();
-        });
-
-
-};
 d3_table.prototype.set_datakeymaps = function(keymaps_I){
     //add datakeymaps
     if (!keymaps_I){
@@ -461,4 +417,122 @@ d3_table.prototype.set_datakeymaps = function(keymaps_I){
         this.datakeymap = keymaps_I[0];
     } else {console.warn("more data found than what is currently supported");
     };
+};
+// d3_table.prototype.add_tablesort = function(sort_settings_I){
+//     // sort the data
+//     // DESCRIPTION:
+//     // single click: sort in ascending order
+//     // double click: sort in descenting order
+//     // TODO:
+//     // add tooltip
+//     // add popover with sort asc and desc
+//     var id = this.id;
+//     var this_ = this;
+
+//     this.tableheader
+//         .on('click', function (d, i) {
+//             var order = [];
+//             var key_dir = {};
+//             switch (d3.event.which) {
+//                 case 1:
+//                     //alert('Left Mouse button pressed.');
+//                     key_dir[d]='asc';
+//                     order.push(key_dir);
+//                 case 2:
+//                     //alert('Middle Mouse button pressed.');
+//                     key_dir[d]='asc';
+//                     order.push(key_dir);
+//                 case 3:
+//                     //alert('Right Mouse button pressed.');
+//                     key_dir[d]='desc';
+//                     order.push(key_dir);
+//                 default:
+//                     //alert('You have a strange Mouse!');
+//                     key_dir[d]='asc';
+//                     order.push(key_dir);
+//             };
+//             this_.data.order_listdatafiltered(order);
+//             this_.data.order_nestdatafiltered(order);
+//             this_.render();
+//         });
+
+
+// };
+d3_table.prototype.add_tablesort = function(sort_settings_I){
+    // sort the data
+    // DESCRIPTION:
+    // single click: sort in ascending order
+    // double click: sort in descenting order
+    // TODO:
+    // add tooltip
+    // add popover with sort asc and desc
+    var id = this.id;
+    var this_ = this;
+
+    function showheaderpopover(key){
+//         // get the target id and associated filter key
+         var targetnode = d3.event.target;
+         var targetid = targetnode.id;
+         this_.show_headerpopover(targetid,key);
+    };
+
+    this.tableheader
+        .attr("data-toggle","popover")
+        .attr("data-placement","top")
+        .attr("data-html","true")
+        .attr("data-trigger","focus")
+        .on('click', function(d){
+            showheaderpopover(d);
+            });
+};
+d3_table.prototype.show_headerpopover = function (targetid_I,key_I) {
+    // show the search button popover element
+    // INPUT:
+    // targetid_I = event node button id
+    // key_I = associated filter key
+
+    var this_ = this;
+    var id = this.id;
+
+    function updatetextinput(){
+
+    };
+
+    //instantiate the popover menu object
+    var popovertargetid = "#" + targetid_I;
+    var popoverid = id+key_I;
+    var menupopover = new d3_html_popover();
+    menupopover.add_data([this.data]);
+    menupopover.set_id(popoverid);
+    menupopover.set_tileid(id);
+    menupopover.add_popover2tile(popovertargetid);
+    menupopover.add_header2popover();
+    menupopover.add_title2popoverheader('Sort');
+    menupopover.add_body2popover();
+    menupopover.add_form2popoverbody();
+    menupopover.add_content2popoverbodyform = function (){
+        // add content to the popover body form
+        var id = this.id;
+        var formid = id + "popoverbodyform";
+
+        var popoverbodyformbutton = this.popoverbodyform
+            .append("button")
+            .attr("class","btn btn-default")
+            .attr("id",id+"popoverbodyformbutton")
+            .text("Submit");
+
+        popoverbodyformbutton.on("click",updatetextinput)
+    };
+    menupopover.add_content2popoverbodyform();
+
+    // show the popover
+    $(popovertargetid).popover({
+        html: true,
+        title: function () {
+            return $("#"+popoverid+'popoverheader').html();
+        },
+        content: function () {
+            return $("#"+popoverid+'popoverbody').html();
+        }
+    });
 };
