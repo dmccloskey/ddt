@@ -7,11 +7,11 @@ function d3_html_modal() {
 d3_html_modal.prototype = Object.create(d3_html_form.prototype);
 d3_html_modal.prototype.constructor = d3_html_modal;
 d3_html_modal.prototype.add_modaltriggerbutton = function (nodeid_I){
-    // add modal trigger button to tileid
+    // add modal trigger button to id
     //INPUT:
     //nodeid_I: = specific node id to attach the modal to
 
-    var tileid = this.tileid;
+    var id = this.id;
     var this_ = this;
 
     if (typeof(nodeid_I)!=="undefined"){
@@ -23,15 +23,16 @@ d3_html_modal.prototype.add_modaltriggerbutton = function (nodeid_I){
     this.htmlmodaltriggerbutton = tile.append("button")
         .attr("class","btn btn-primary")
         .attr("data-toggle","modal")
-        .attr("data-target",tileid + "modal")
+        .attr("data-target",id + "modal")
         .text("Show modal");
 };
 d3_html_modal.prototype.add_modal2tile = function (nodeid_I){
-    //add a bootstrap modal element to the tileid
+    //add a bootstrap modal element to the id
     //INPUT:
     //nodeid_I: = specific node id to attach the modal to
 
     var tileid = this.tileid;
+    var id = this.id;
     var this_ = this;
 
     if (typeof(nodeid_I)!=="undefined"){
@@ -42,10 +43,10 @@ d3_html_modal.prototype.add_modal2tile = function (nodeid_I){
     };
     this.htmlmodal = tile.append("div")
         .attr("class","modal fade")
-        .attr("id",tileid + "modal")
+        .attr("id",id + "modal")
         .attr("tabindex","-1")
         .attr("role","dialog")
-        .attr("aria-labelledby",tileid + "modal")
+        .attr("aria-labelledby",id + "modal")
         .attr("aria-hidden","true")
         //.style({"display": "block"})
         .append("div")
@@ -57,7 +58,7 @@ d3_html_modal.prototype.add_header2modal = function (htmlmodal_I){
     // add header to bootstrap modal element
     // INPUT:
     // htmlmodal_I = htmlmodal node
-    var tileid = this.tileid;
+    var id = this.id;
 
     if (typeof(htmlmodal_I)!=="undefined"){
         var htmlmodal = htmlmodal_I;
@@ -67,31 +68,31 @@ d3_html_modal.prototype.add_header2modal = function (htmlmodal_I){
 
     this.htmlmodalheader = htmlmodal.append("div")
         .attr("class","modal-header")
-        .attr("id",tileid + "modalheader");
+        .attr("id",id + "modalheader");
 };
 d3_html_modal.prototype.add_title2modalheader = function(title_I){
     //add a title to the modal header
-    var tileid = this.tileid;
+    var id = this.id;
     this.htmlmodalheader.append("h4")
         .attr("class","modal-title")
-        .attr("id",tileid + "modalheadertitle")
+        .attr("id",id + "modalheadertitle")
         .text(title_I);
 };
 d3_html_modal.prototype.update_modalheadertitle = function(title_I){
     //update the title of the modal header
-    var tileid = this.tileid;
-    var htmlmodalheadertitle = d3.select("#"+tileid + "modalheadertitle");
+    var id = this.id;
+    var htmlmodalheadertitle = d3.select("#"+id + "modalheadertitle");
     htmlmodalheadertitle.text(title_I);
 };
 d3_html_modal.prototype.add_closebutton2modalheader = function(){
     // add a close button to the modal header
-    var tileid = this.tileid;
+    var id = this.id;
     var this_ = this;
 
     var modalheaderclosebutton = this.htmlmodalheader.append("button")
         .attr("type","button")
         .attr("class","close")
-        .attr("id",tileid+"modalheaderclosebutton")
+        .attr("id",id+"modalheaderclosebutton")
         .attr("data-dismiss","modal")
         //.attr("aria-hidden","true")
         .attr("aria-label","Close")
@@ -102,7 +103,7 @@ d3_html_modal.prototype.add_body2modal = function (htmlmodal_I){
     // add body to bootstrap modal element
     // INPUT:
     // htmlmodal_I = htmlmodal node
-    var tileid = this.tileid;
+    var id = this.id;
 
     if (typeof(htmlmodal_I)!=="undefined"){
         var htmlmodal = htmlmodal_I;
@@ -112,19 +113,19 @@ d3_html_modal.prototype.add_body2modal = function (htmlmodal_I){
 
     this.htmlmodalbody = htmlmodal.append("div")
         .attr("class","modal-body")
-        .attr("id",tileid + "modalbody");
+        .attr("id",id + "modalbody");
 };
 d3_html_modal.prototype.add_form2modalbody = function (htmlmodal_I){
     // add form to modalbody
-    var tileid = this.tileid;
+    var id = this.id;
 
     this.modalbodyform = this.htmlmodalbody.append("form")
         .attr("role","form")
-        .attr("id",tileid + "modalbodyform");  
+        .attr("id",id + "modalbodyform");  
 };
 d3_html_modal.prototype.add_content2modalbodyform = function (){
     // add content to the modal body form
-    var tileid = this.tileid;
+    var id = this.id;
 
     var content = this.modalbodyform
         .append("div")
@@ -133,48 +134,48 @@ d3_html_modal.prototype.add_content2modalbodyform = function (){
 };
 d3_html_modal.prototype.add_login2modalbodyform = function (login_I){
     // add content to the modal body form
-    var tileid = this.tileid;
+    var id = this.id;
 
     var modalbodyformusername = this.modalbodyform
         .append("div")
         .attr("class","form-group")
-        .attr("id",tileid+"modalbodyformusername")
+        .attr("id",id+"modalbodyformusername")
         .append("label")
-        .attr("for",tileid+"modalbodyformusernameinput")
+        .attr("for",id+"modalbodyformusernameinput")
         .text("Username")
         .append("input")
         .attr("type","text")
         .attr("class", "form-control")
-        .attr("id",tileid+"modalbodyformusernameinput")
+        .attr("id",id+"modalbodyformusernameinput")
         .attr("placeholder","Username");
 
     var modalbodyformpassword = this.modalbodyform
         .append("div")
         .attr("class","form-group")
-        .attr("id",tileid+"modalbodyformpassword")
+        .attr("id",id+"modalbodyformpassword")
         .append("label")
-        .attr("for",tileid+"modalbodyformpasswordinput")
+        .attr("for",id+"modalbodyformpasswordinput")
         .text("Password")
         .append("input")
         .attr("type","password")
         .attr("class", "form-control")
-        .attr("id",tileid+"modalbodyformpasswordinput")
+        .attr("id",id+"modalbodyformpasswordinput")
         .attr("placeholder","Password");
 
     var modalbodyformcheckbox = this.modalbodyform
         .append("div")
         .attr("class","checkbox")
-        .attr("id",tileid+"modalbodyformcheckbox")
+        .attr("id",id+"modalbodyformcheckbox")
         .append("label")
         .append("input")
         .attr("type","checkbox")
         .text("Remember me")
-        .attr("id",tileid+"modalbodyformcheckboxinput");
+        .attr("id",id+"modalbodyformcheckboxinput");
 
     var modalbodyformbutton = this.modalbodyform
         .append("button")
         .attr("class","btn btn-default")
-        .attr("id",tileid+"modalbodyformbutton")
+        .attr("id",id+"modalbodyformbutton")
         .attr("type","submit")
         .text("Submit");
 };
@@ -182,7 +183,7 @@ d3_html_modal.prototype.add_footer2modal = function (htmlmodal_I){
     // add footer to bootstrap modal element
     // INPUT:
     // htmlmodal_I = htmlmodal node
-    var tileid = this.tileid;
+    var id = this.id;
     
     if (typeof(htmlmodal_I)!=="undefined"){
         var htmlmodal = htmlmodal_I;
@@ -192,16 +193,16 @@ d3_html_modal.prototype.add_footer2modal = function (htmlmodal_I){
 
     this.htmlmodalfooter = htmlmodal.append("div")
         .attr("class","modal-footer")
-        .attr("id",tileid + "modalfooter");
+        .attr("id",id + "modalfooter");
 };
 d3_html_modal.prototype.add_savebutton2modalbodyfooter = function (){
     // add save button to the modal body footer
-    var tileid = this.tileid;
+    var id = this.id;
 
     var modalfootersavebutton = this.htmlmodalfooter
         .append("button")
         .attr("class","btn btn-primary")
-        .attr("id",tileid+"modalfootersavebutton")
+        .attr("id",id+"modalfootersavebutton")
         .attr("type","button")
         .text("Save changes");
 };

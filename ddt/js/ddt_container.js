@@ -793,6 +793,7 @@ ddt_container.prototype.add_encryptionbutton2container = function(){
     var modaltargetid = "#" + containerid + 'jsonencryptionbutton';
     //var modaltargetid = "body";
     var menumodal = new d3_html_modal();
+    menumodal.set_id(containerid);
     menumodal.set_tileid(containerid);
     menumodal.add_modal2tile(modaltargetid);
     menumodal.add_header2modal();
@@ -803,25 +804,25 @@ ddt_container.prototype.add_encryptionbutton2container = function(){
     menumodal.add_title2modalheader('');
     menumodal.add_content2modalbodyform = function (){
         // add content to the modal body form
-        var tileid = this.tileid;
+        var id = this.id;
 
         var modalbodyformpassword = this.modalbodyform
             .append("div")
             .attr("class","form-group")
-            .attr("id",tileid+"modalbodyformpassword")
+            .attr("id",id+"modalbodyformpassword")
             .append("label")
-            .attr("for",tileid+"modalbodyformpasswordinput")
+            .attr("for",id+"modalbodyformpasswordinput")
             .text("Password")
             .append("input")
             .attr("type","password")
             .attr("class", "form-control")
-            .attr("id",tileid+"modalbodyformpasswordinput")
+            .attr("id",id+"modalbodyformpasswordinput")
             .attr("placeholder","Password");
 
         var modalbodyformbutton = this.modalbodyform
             .append("button")
             .attr("class","btn btn-default")
-            .attr("id",tileid+"modalbodyformbutton")
+            .attr("id",id+"modalbodyformbutton")
             .text("Submit");
 
         modalbodyformbutton.on("click",setpassword_modal)

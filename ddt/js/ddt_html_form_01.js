@@ -77,6 +77,8 @@ ddt_html_form_01.prototype.make_html = function(data_I,parameters_I){
         this.add_label2formgroup();
         this.add_filterbuttongroup2formgroup();
         this.add_filterbutton2filterbuttongroup();
+        this.add_searchbutton2filterbuttongroup();
+        this.add_sortbybutton2filterbuttongroup();
         this.add_textinput2formgroup();
         //this.add_input2form();
         this.update_forminput();

@@ -124,60 +124,16 @@ d3_html_form.prototype.add_radioinput2form = function (labeltext_I,radioinput_I)
         .attr("value",function(d){return d.inputvalue;})
         .attr("id", function(d){return id + 'form' + d.inputtype + labeltext + d.inputtext;});
 };
-//d3_html_form.prototype.add_checkboxinput2form = function (forminput_I) {
-    /* add checkbox for input
-    INPUT:
-	forminput_I = 
-        {labeltext:'sqlquery',inputtype:'checkbox',input:[
-                 {'inputtext':'sql_query','inputvalue':'','inputtype':'checkbox','inputrows':'3'},
-                ]
-        },
-    */
-
-//     //TODO: validate the input
-//     var forminput = forminput_I;
-//     var labeltext = forminput.labeltext;
-//     var checkboxinput = forminput.input;
-
-//     var id = this.id;
-//     var inputtype = 'checkbox';
-//     var formgroupid = id + 'form-group' + labeltext;
-//     var formlabelid = id + 'formlabel' + labeltext;
-
-
-//     var checkboxinputgroup = d3.select('#'+formgroupid)
-//         .selectAll("div")
-//         .data(checkboxinput);
-
-//     checkboxinputgroup.exit().remove();
-
-// //     checkboxinputgroup.transition()
-// //         .attr("class","form-control")
-// //         .attr("type",function(d){return d.inputtype;}) 
-// //         .text(function(d){return d.inputtext;})
-// //         .attr("value",function(d){return d.inputvalue;})
-// //         .attr("id", function(d){return id + 'form' + d.inputtype + labeltext + d.inputtext;});
-
-//     var checkboxinputgroupenter = checkboxinputgroup.enter()
-//         .append("div")
-//         .attr("class","checkbox")
-//         .append("label")
-//         .attr("class", 'pull-right')
-//         .text(function(d){return d.inputtext;})
-//         .append("input")
-//         .attr("type",function(d){return d.inputtype;})
-//         //.attr("class","form-control")
-//         .attr("value",function(d){return d.inputvalue;})
-//         .attr("id", function(d){return id + 'form' + d.inputtype + labeltext + d.inputtext;});
-// };
 d3_html_form.prototype.add_checkboxinput2form = function (inputarguments_I) {
     // add checkbox as input
 
+    // handle the input
     var inputarguments = new ddt_inputarguments();
     inputarguments.validate_inputarguments(inputarguments_I)
     var node = inputarguments.get_node();
     var input = inputarguments.get_inputarguments();
 
+    // default variables
     var id = this.id;
     var this_ = this;
     var inputtype = 'checkbox';
@@ -191,30 +147,64 @@ d3_html_form.prototype.add_checkboxinput2form = function (inputarguments_I) {
         };
     };
 
+    // check box div
     var checkboxinputgroup = node
         .selectAll("div")
         .data(input.input);
 
     checkboxinputgroup.exit().remove();
 
-    checkboxinputgroup.transition().selectAll('label')
-        .text(function(d){return d.inputtext;});
-
-    checkboxinputgroup.transition().selectAll('input')
-        .attr("type",function(d){return d.inputtype;})
-        //.attr("class","form-control")
-        .attr("value",function(d){return d.inputvalue;})
-        .attr("id", function(d){return id + 'form' + d.inputtype + input.labeltext + d.inputtext;});
-
     var checkboxinputgroupenter = checkboxinputgroup.enter()
         .append("div")
         .attr("class","checkbox");
 
-    var checkboxlabel = checkboxinputgroupenter
+    // check box label
+    var checkboxlabel = checkboxinputgroupenter.selectAll('label')
+        .data(function(row){
+            var textvalue = [];
+            textvalue.push({inputtype:row.inputtype,
+                inputtext:row.inputtext,
+                inputvalue:row.inputvalue,
+                });
+            return textvalue;
+        });
+
+    checkboxlabel.exit().remove;
+
+    checkboxlabel.transition()
+        .text(function(d){return d.inputtext;});
+
+    var checkboxlabelenter = checkboxlabel.enter()
         .append("label")
         .text(function(d){return d.inputtext;});
-        
-    var checkboxlabelinput = checkboxlabel
+
+    // check box input
+    var checkboxinput = checkboxlabel.selectAll('input')
+        .data(function(row){
+            var textvalue = [];
+            textvalue.push({inputtype:row.inputtype,
+                inputtext:row.inputtext,
+                inputvalue:row.inputvalue,
+                });
+            return textvalue;
+        });
+
+    checkboxinput.exit().remove;
+
+    checkboxinput.transition()
+        .attr("type",function(d){return d.inputtype;})
+        //.attr("class","form-control")
+        .attr("value",function(d){return d.inputvalue;})
+        .attr("id", function(d){return id + 'form' + d.inputtype + input.labeltext + d.inputtext;})
+        .attr("checked",function(d){
+            if (labeltextdata.indexOf(d.inputvalue) > -1){
+                return true;
+            } else {
+                return false;
+            };
+            });
+
+    var checkboxinputenter = checkboxinput.enter()
         .append("input")
         .attr("type",function(d){return d.inputtype;})
         //.attr("class","form-control")
@@ -227,7 +217,7 @@ d3_html_form.prototype.add_checkboxinput2form = function (inputarguments_I) {
                 return false;
             };
             });
-    checkboxlabelinput.on("click",updatefilter)
+    checkboxinputenter.on("click",updatefilter);
 };
 d3_html_form.prototype.add_colorinput2form = function () {
     // add color pallet for input
@@ -384,7 +374,7 @@ d3_html_form.prototype.add_label2formgroup = function (inputarguments_I) {
         var forminput = inputarguments.get_inputarguments();
         }
     else{
-        var node = this.htmlformgroup;
+        //var node = this.htmlformgroup;
         var node = this.htmlformgroupenter;
         var forminput = this.data.convert_filter2forminput();
     };
@@ -440,9 +430,6 @@ d3_html_form.prototype.add_filterbuttongroup2formgroup = function () {
 };
 d3_html_form.prototype.add_filterbutton2filterbuttongroup = function (){
     // add filter button to the filter button groups
-// glyphicon glyphicon-filter
-// glyphicon glyphicon-sort-by-order
-// glyphicon glyphicon-sort-by-order-alt
 
     var this_ = this;
     var id = this.id;
@@ -495,36 +482,32 @@ d3_html_form.prototype.show_filterbuttonmodal = function (targetid_I,key_I) {
     formgroup_I['inputarguments']=this_.data.convert_filter2forminput([key_I]);
 
     function updatetextinput(){
-//         // get checked values
-//         var checkedvalues;
-//         var filterstring = checkedvalues.toString();
-//         var filterstringmenu = [];
-//         filterstringmenu.push({"labeltext":filterkey,"inputvalue":filterstring});
-
         // update the filterstringmenu
         this_.update_forminput();
         // prevent browser default page refresh
         d3.event.preventDefault();
-        $("#"+id + "modal").modal('hide');
+        $("#"+modalid+'modal').modal('hide');
     };
 
     //instantiate the modal menu object
     var modaltargetid = "#" + targetid_I;
+    var modalid = id+key_I;
     var menumodal = new d3_html_modal();
     menumodal.add_data([this.data]);
-    menumodal.set_id(id+'modal');
+    menumodal.set_id(modalid);
     menumodal.set_tileid(id);
     menumodal.add_modal2tile(modaltargetid);
     menumodal.add_header2modal();
     menumodal.add_closebutton2modalheader();
+    menumodal.add_title2modalheader('Filter by ' + key_I); //order matters (add title after close button)
     menumodal.add_body2modal();
     menumodal.add_form2modalbody();
     menumodal.add_footer2modal();
     menumodal.add_title2modalheader('');
     menumodal.add_content2modalbodyform = function (){
         // add content to the modal body form
-        var tileid = this.tileid;
-        var formid = tileid + "modalbodyform";
+        var id = this.id;
+        var formid = id + "modalbodyform";
         formgroup_I['node_id']='#'+formid;
 
         this.add_forminput2form(formgroup_I);
@@ -532,7 +515,7 @@ d3_html_form.prototype.show_filterbuttonmodal = function (targetid_I,key_I) {
         var modalbodyformbutton = this.modalbodyform
             .append("button")
             .attr("class","btn btn-default")
-            .attr("id",tileid+"modalbodyformbutton")
+            .attr("id",id+"modalbodyformbutton")
             .text("Submit");
 
         modalbodyformbutton.on("click",updatetextinput)
@@ -540,8 +523,189 @@ d3_html_form.prototype.show_filterbuttonmodal = function (targetid_I,key_I) {
     menumodal.add_content2modalbodyform();
 
     // show the modal
-    $("#"+ id + "modal").modal('show');
+    $("#"+modalid+'modal').modal('show');
+};
+d3_html_form.prototype.add_searchbutton2filterbuttongroup = function (){
+    // add filter button to the filter button groups
+// glyphicon glyphicon-filter
+// glyphicon glyphicon-sort-by-attributes
+// glyphicon glyphicon-sort-by-attributes-alt
+// glyphicon glyphicon-search
+
+    var this_ = this;
+    var id = this.id;
+
+    function showsearchbuttonpopover(){
+//         // get the target id and associated filter key
+//         var targetnode = d3.event.target;
+//         var targetid = targetnode.parentNode.parentNode.id;
+//         var key = targetnode.parentNode.parentNode.getAttribute('value');
+//         this_.show_searchbuttonpopover(targetid,key);
+    };
+
+    this.htmlformsearchbutton = this.htmlformfilterbuttongroup.selectAll(".glyphicon glyphicon-search")
+        .data(function(row){
+            var textvalue = [];
+            textvalue.push({labeltext:row.labeltext,
+                inputvalue:row.inputvalue,
+                inputtype:row.inputtype,
+                input:row.input
+                });
+            return textvalue;
+        });
+
+    this.htmlformsearchbutton.exit().remove();
+
+    this.htmlformsearchbutton.transition()
+        .attr("class","glyphicon glyphicon-search pull-left")
+        .attr("id", function(d){return id + 'formsearchbuttongroup' + d.labeltext;});
+
+    this.htmlformsearchbuttonenter = this.htmlformsearchbutton.enter()
+        .append("div")
+        .attr("class","glyphicon glyphicon-search pull-left")
+        .attr("id", function(d){return id + 'formsearchbutton' + d.labeltext;})
+        .style({"cursor":"pointer"})
+        .attr("data-toggle","tooltip")
+        .attr("title","search data");
+
+    this.htmlformsearchbuttonenter.on("click", showsearchbuttonpopover);
+};
+d3_html_form.prototype.show_searchbuttonpopover = function (targetid_I,key_I) {
+    // show the search button popover element
+    // INPUT:
+    // targetid_I = event node button id
+    // key_I = associated filter key
+
+    var this_ = this;
+    var id = this.id;
+
+    var formgroup_I = {};
+    formgroup_I['inputarguments']=this_.data.convert_filter2forminput([key_I]);
+
+    function updatetextinput(){
+        // update the filterstringmenu
+        this_.update_forminput();
+        // prevent browser default page refresh
+        d3.event.preventDefault();
+        $("#"+popoverid+'popover').popover('hide');
+    };
+
+    //instantiate the popover menu object
+    var popovertargetid = "#" + targetid_I;
+    var popoverid = id+key_I;
+    var menupopover = new d3_html_popover();
+    menupopover.add_data([this.data]);
+    menupopover.set_id(popoverid);
+    menupopover.set_tileid(id);
+    menupopover.add_popover2tile(popovertargetid);
+    menupopover.add_header2popover();
+    menupopover.add_closebutton2popoverheader();
+    menupopover.add_title2popoverheader('Filter by ' + key_I); //order matters (add title after close button)
+    menupopover.add_body2popover();
+    menupopover.add_form2popoverbody();
+    menupopover.add_footer2popover();
+    menupopover.add_title2popoverheader('');
+    menupopover.add_content2popoverbodyform = function (){
+        // add content to the popover body form
+        var id = this.id;
+        var formid = id + "popoverbodyform";
+        formgroup_I['node_id']='#'+formid;
+
+        this.add_forminput2form(formgroup_I);
+
+        var popoverbodyformbutton = this.popoverbodyform
+            .append("button")
+            .attr("class","btn btn-default")
+            .attr("id",id+"popoverbodyformbutton")
+            .text("Submit");
+
+        popoverbodyformbutton.on("click",updatetextinput)
+    };
+    menupopover.add_content2popoverbodyform();
+
+    // show the popover
+    $("#"+popoverid+'popover').popover('show');
 }
+d3_html_form.prototype.add_sortbybutton2filterbuttongroup = function (){
+    // add filter button to the filter button groups
+// glyphicon glyphicon-filter
+// glyphicon glyphicon-sort-by-attributes
+// glyphicon glyphicon-sort-by-attributes-alt
+// glyphicon glyphicon-search
+
+    var this_ = this;
+    var id = this.id;
+
+    function sortby(){
+//         // get the target id and associated filter key
+//         var targetnode = d3.event.target;
+//         var targetid = targetnode.parentNode.parentNode.id;
+//         var key = targetnode.parentNode.parentNode.getAttribute('value');
+//         this_.show_searchbuttonpopover(targetid,key);
+    };
+
+    this.htmlformsortbybutton = this.htmlformfilterbuttongroup.selectAll(".glyphicon glyphicon-sort-by-attributes")
+        .data(function(row){
+            var textvalue = [];
+            textvalue.push({labeltext:row.labeltext,
+                inputvalue:row.inputvalue,
+                inputtype:row.inputtype,
+                input:row.input
+                });
+            return textvalue;
+        });
+
+    this.htmlformsortbybutton.exit().remove();
+
+    this.htmlformsortbybutton.transition()
+        .attr("class","glyphicon glyphicon-sort-by-attributes pull-left")
+        .attr("id", function(d){return id + 'formsortbybuttongroup' + d.labeltext;});
+
+    this.htmlformsortbybuttonenter = this.htmlformsortbybutton.enter()
+        .append("div")
+        .attr("class","glyphicon glyphicon-sort-by-attributes pull-left")
+        .attr("id", function(d){return id + 'formsortbybutton' + d.labeltext;})
+        .style({"cursor":"pointer"})
+        .attr("data-toggle","tooltip")
+        .attr("title","sort ascending");
+
+    this.htmlformsortbybuttonenter.on("click", sortby);
+
+    function sortbyalt(){
+//         // get the target id and associated filter key
+//         var targetnode = d3.event.target;
+//         var targetid = targetnode.parentNode.parentNode.id;
+//         var key = targetnode.parentNode.parentNode.getAttribute('value');
+//         this_.show_searchbuttonpopover(targetid,key);
+    };
+
+    this.htmlformsortbyaltbutton = this.htmlformfilterbuttongroup.selectAll(".glyphicon glyphicon-sort-by-attributes-alt")
+        .data(function(row){
+            var textvalue = [];
+            textvalue.push({labeltext:row.labeltext,
+                inputvalue:row.inputvalue,
+                inputtype:row.inputtype,
+                input:row.input
+                });
+            return textvalue;
+        });
+
+    this.htmlformsortbyaltbutton.exit().remove();
+
+    this.htmlformsortbyaltbutton.transition()
+        .attr("class","glyphicon glyphicon-sort-by-attributes-alt pull-left")
+        .attr("id", function(d){return id + 'formsortbyaltbuttongroup' + d.labeltext;});
+
+    this.htmlformsortbyaltbuttonenter = this.htmlformsortbyaltbutton.enter()
+        .append("div")
+        .attr("class","glyphicon glyphicon-sort-by-attributes-alt pull-left")
+        .attr("id", function(d){return id + 'formsortbyaltbutton' + d.labeltext;})
+        .style({"cursor":"pointer"})
+        .attr("data-toggle","tooltip")
+        .attr("title","sort descending");
+
+    this.htmlformsortbyaltbuttonenter.on("click", sortbyalt);
+};
 d3_html_form.prototype.add_textinput2formgroup = function () {
     // add text input to the form groups
     var id = this.id;
