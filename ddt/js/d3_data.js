@@ -619,6 +619,7 @@ d3_data.prototype.convert_filter2forminput = function(filters_I){
         var forminputrow = {};
         forminputrow['labeltext']=key;
         forminputrow['inputvalue']=this.filters[key].toString();
+        //forminputrow['inputvalue']=this.filters[key];
         if (typeof(this.filters[key][0])==='number'){
             forminputrow['inputtype'] = 'range';
             var inputmin = Math.min(this.filters[key]);

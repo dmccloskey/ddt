@@ -437,8 +437,8 @@ d3_html_form.prototype.add_filterbutton2filterbuttongroup = function (){
     function showfilterbuttonmodal(){
         // get the target id and associated filter key
         var targetnode = d3.event.target;
-        var targetid = targetnode.id;
-        //var targetid = targetnode.parentNode.parentNode.id;
+        //var targetid = targetnode.id;
+        var targetid = targetnode.parentNode.parentNode.id;
         var key = targetnode.parentNode.parentNode.getAttribute('value');
         this_.show_filterbuttonmodal(targetid,key);
     };
@@ -636,11 +636,7 @@ d3_html_form.prototype.show_searchbuttonpopover = function (targetid_I,key_I) {
     });
 };
 d3_html_form.prototype.add_sortbybutton2filterbuttongroup = function (){
-    // add filter button to the filter button groups
-// glyphicon glyphicon-filter
-// glyphicon glyphicon-sort-by-attributes
-// glyphicon glyphicon-sort-by-attributes-alt
-// glyphicon glyphicon-search
+    // add sort by to the filter button groups
 
     var this_ = this;
     var id = this.id;
@@ -752,7 +748,9 @@ d3_html_form.prototype.add_textinput2formgroup = function () {
         .attr("class","form-control")
 //         .attr("rows","1")
         .attr("type","text")
-        .attr("value",function(d){return d.inputvalue;})
+        .attr("value",function(d){
+            return d.inputvalue;
+            })
         .attr("id", function(d){return id + 'forminput' + d.labeltext;});
 
     this.htmlforminputenter = this.htmlforminput.enter()
@@ -762,7 +760,9 @@ d3_html_form.prototype.add_textinput2formgroup = function () {
 //         .attr("rows","1")
         .attr("type","text")
         //.attr("placeholder",textarea_valuetext[i].value)
-        .attr("value",function(d){return d.inputvalue;})
+        .attr("value",function(d){
+            return d.inputvalue;
+            })
         .attr("id", function(d){return id + 'forminput' + d.labeltext;});
 };
 d3_html_form.prototype.add_forminput2form = function (inputarguments_I) {
@@ -897,7 +897,8 @@ d3_html_form.prototype.add_input2form = function (textarea_valuetext_I) {
 d3_html_form.prototype.update_forminput = function(textarea_valuetext_I){
     // update the form
     if (typeof texarea_valuetext_I !== "undefined"){var textarea_valuetext = textarea_valuetext_I;}
-    else{var textarea_valuetext = this.data.convert_filter2stringmenuinput();};
+    //else{var textarea_valuetext = this.data.convert_filter2stringmenuinput();};
+    else{var textarea_valuetext = this.data.convert_filter2forminput();};
     var id = this.id;
 
     for (var i=0;i<textarea_valuetext.length;i++){
