@@ -138,19 +138,42 @@ d3_html_form.prototype.add_checkboxinput2form = function (inputarguments_I) {
     var this_ = this;
     var inputtype = 'checkbox';
     var labeltextdata = this.data.get_uniquevaluesFromlistdata(input.labeltext);
+    var checkboxoptions = [
+        {'inputtype':'checkbox','inputvalue':'toggle all','inputtext':'toggle all',}
+        ]; 
 
     function updatefilter(){
+        if (this.value==="toggle all" && this.check){
+            //check all checkboxes
+            checkboxinput.attr("checked",function(d){ return true});
+            //remove all data from filters
+            for (var i=0;i<input.input.length;i++){
+                this_.data.add_element2FiltersByKey(input.labeltext,input.input[i]['inputvalue']);                
+            };
+
+        } else if (this.value==="toggle all"){
+            //uncheck check all checkboxes
+            checkboxinput.attr("checked",function(d){ return false});
+            //add all data to filters
+            for (var i=0;i<input.input.length;i++){
+                this_.data.remove_elementFromFiltersByKey(input.labeltext,input.input[i]['inputvalue']);
+            };
+            
+        }
         if (this.checked){
             this_.data.add_element2FiltersByKey(input.labeltext,this.value);
         } else {
             this_.data.remove_elementFromFiltersByKey(input.labeltext,this.value);
+            // uncheck toggle all
+
         };
     };
 
     // check box div
     var checkboxinputgroup = node
         .selectAll("div")
-        .data(input.input);
+        .data(checkboxoptions.concat(input.input));
+        //.data(input.input);
 
     checkboxinputgroup.exit().remove();
 
@@ -206,7 +229,8 @@ d3_html_form.prototype.add_checkboxinput2form = function (inputarguments_I) {
 
     var checkboxinputenter = checkboxinput.enter()
         .append("input")
-        .attr("type",function(d){return d.inputtype;})
+        .attr("type",function(d){
+            return d.inputtype;})
         //.attr("class","form-control")
         .attr("value",function(d){return d.inputvalue;})
         .attr("id", function(d){return id + 'form' + d.inputtype + input.labeltext + d.inputtext;})
