@@ -143,9 +143,11 @@ d3_html_form.prototype.add_checkboxinput2form = function (inputarguments_I) {
         ]; 
 
     function updatefilter(){
-        if (this.value==="toggle all" && this.check){
+        if (this.value==="toggle all" && this.checked){
             //check all checkboxes
-            checkboxinput.attr("checked",function(d){ return true});
+            var formgroup = d3.select('#' + id + 'form-group' + input.labeltext);
+            var checkboxes = formgroup.selectAll("input");
+            checkboxes[0].forEach(function(d){d.checked=true;});
             //remove all data from filters
             for (var i=0;i<input.input.length;i++){
                 this_.data.add_element2FiltersByKey(input.labeltext,input.input[i]['inputvalue']);                
@@ -153,7 +155,9 @@ d3_html_form.prototype.add_checkboxinput2form = function (inputarguments_I) {
 
         } else if (this.value==="toggle all"){
             //uncheck check all checkboxes
-            checkboxinput.attr("checked",function(d){ return false});
+            var formgroup = d3.select('#' + id + 'form-group' + input.labeltext);
+            var checkboxes = formgroup.selectAll("input");
+            checkboxes[0].forEach(function(d){d.checked=false;});
             //add all data to filters
             for (var i=0;i<input.input.length;i++){
                 this_.data.remove_elementFromFiltersByKey(input.labeltext,input.input[i]['inputvalue']);
