@@ -816,7 +816,8 @@ d3_html.prototype.add_headeranddatalist_href = function(){
 
     this.headergroup.exit().remove();
 
-    this.header = this.headergroup.selectAll("#" + id + "header")
+    //this.header = this.headergroup.selectAll("#" + id + "header")
+    this.header = this.headergroup.selectAll('h4')
         .data(function(row){
             var keys = [];
             keys.push({key:row.key});
@@ -829,14 +830,14 @@ d3_html.prototype.add_headeranddatalist_href = function(){
         //.attr("id",id + "header")
         .attr("id", function(d){return id + "h4" + d.key;})
         //specific text replace for sbaas:
-        .text(function(d){return d.key.replace("export_data","").replace("_js","");});
+        .text(function(d){return d.key.replace("export_data","").replace("_js","").replace("_io","");});
 
     this.header.selectAll("h4")
         .attr("class","list-group-item-heading")
         //.attr("id",id + "header")
         .attr("id", function(d){return id + "h4" + d.key;})
         //specific text replace for sbaas:
-        .text(function(d){return d.key.replace("export_data","").replace("_js","");});
+        .text(function(d){return d.key.replace("export_data","").replace("_js","").replace("_io","");});
 
     this.header.exit().remove();
 
@@ -874,7 +875,8 @@ d3_html.prototype.add_headeranddatalist_href = function(){
         .append("option")
         .attr("id",id + "option")
         .attr("value",function(d,i){
-            var url = hrefurl+"?";
+            //var url = hrefurl+"?";
+            var url = "";
             url += d.buttonparameter + "=" +d.buttontext+"&";
             url += d.liparameter + "=" + d.litext;
             return url;
@@ -883,7 +885,8 @@ d3_html.prototype.add_headeranddatalist_href = function(){
 
     this.option.select("option")
         .attr("value",function(d,i){
-            var url = hrefurl+"?";
+            //var url = hrefurl+"?";
+            var url = "";
             url += d.buttonparameter + "=" +d.buttontext+"&";
             url += d.liparameter + "=" + d.litext;
             return url;
@@ -898,9 +901,15 @@ d3_html.prototype.add_headeranddatalistsubmit_href = function(){
     var button_idtext = this.button_idtext;
     var id = this.id;
     var tileid = this.tileid;
+    var hrefurl = this.url;
 	
 	function go2url(){
-	    window.location.href = d3.select("#"+ id + "select").node().value;
+	    //window.location.href = d3.select("#"+ id + "select").node().value;
+        var url = hrefurl+"?";
+        var nodevalue = d3.select("#"+ id + "select").node().value;
+        //var selectnodes = d3.selectAll("#"+ id + "select");
+        url += nodevalue;
+	    window.location.href = url;
         // submit on enter
         var selection = d3.select(window),
         kc = 13;

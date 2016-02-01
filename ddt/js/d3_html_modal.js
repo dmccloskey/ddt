@@ -195,7 +195,7 @@ d3_html_modal.prototype.add_footer2modal = function (htmlmodal_I){
         .attr("class","modal-footer")
         .attr("id",id + "modalfooter");
 };
-d3_html_modal.prototype.add_savebutton2modalbodyfooter = function (){
+d3_html_modal.prototype.add_savebutton2modalfooter = function (){
     // add save button to the modal body footer
     var id = this.id;
 
@@ -205,4 +205,15 @@ d3_html_modal.prototype.add_savebutton2modalbodyfooter = function (){
         .attr("id",id+"modalfootersavebutton")
         .attr("type","button")
         .text("Save changes");
+};
+d3_html_modal.prototype.add_submitbutton2modalfooter = function (){
+    // add save button to the modal body footer
+    var id = this.id;
+
+    var modalfootersavebutton = this.htmlmodalfooter
+        .append("button")
+        .attr("class","btn btn-primary")
+        .attr("id",id+"modalfootersubmitbutton")
+        .attr("type","button")
+        .text("Submit");
 };

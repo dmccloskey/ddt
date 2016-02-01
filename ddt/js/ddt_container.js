@@ -372,6 +372,9 @@ ddt_container.prototype.add_jsonexportbutton2container = function (){
 };
 ddt_container.prototype.add_jsonimportbutton2container = function (){
     // add button to import new container from a json data file
+    // TODO: refactor in modal
+    //       E.g.: http://www.jqueryscript.net/form/Drag-Drop-File-Upload-Dialog-with-jQuery-Bootstrap.html
+
     var this_ = this;
     var containerid = this.containerid;
 

@@ -253,29 +253,46 @@ d3_html_form.prototype.add_colorinput2form = function () {
 d3_html_form.prototype.add_rangeinput2form = function () {
     // add range slider for input
 };
-d3_html_form.prototype.add_textinput2form = function (forminput_I) {
+// d3_html_form.prototype.add_textinput2form = function (forminput_I) {
+//     /* add text for input
+//     INPUT:
+// 	forminput_I = 
+//         {labeltext:'sqlquery',inputtype:'text',input:[
+//                  {'inputtext':'sql_query','inputvalue':'','inputtype':'text','inputrows':'3'},
+//                 ]
+//         },
+//     */
+d3_html_form.prototype.add_textinput2form = function (inputarguments_I) {
     /* add text for input
-    INPUT:
-	forminput_I = 
-        {labeltext:'sqlquery',inputtype:'text',input:[
-                 {'inputtext':'sql_query','inputvalue':'','inputtype':'text','inputrows':'3'},
-                ]
-        },
     */
 
-    //TODO: validate the input
-    var forminput = forminput_I;
-    var labeltext = forminput.labeltext;
-    var textinput = forminput.input;
+    // handle the input
+    var inputarguments = new ddt_inputarguments();
+    inputarguments.validate_inputarguments(inputarguments_I)
+    var node = inputarguments.get_node();
+    var input = inputarguments.get_inputarguments();
 
     var id = this.id;
+    var this_ = this;
     var inputtype = 'text';
-    var formgroupid = id + 'form-group' + labeltext;
-    var formlabelid = id + 'formlabel' + labeltext;
+    var formgroupid = id + 'form-group' + input.labeltext;
+    var formlabelid = id + 'formlabel' + input.labeltext;
+
+    function updatefilter(){
+        //update the text
+        this.textContent = this.value;
+        var formgroup = d3.select('#' + id + 'form-group' + input.labeltext);
+        var key = input.labeltext;
+        var values = [this.value];
+        var newfilter = {};
+        newfilter[key]=values;
+        //this_.data.change_filtersinkeys(newfilter);
+        this_.data.change_filters(newfilter); //will add in new filters
+    };
 
     var textinputgroup = d3.select('#'+formgroupid)
         .selectAll("input")
-        .data(textinput);
+        .data(input.input);
 
     textinputgroup.exit().remove();
 
@@ -284,7 +301,7 @@ d3_html_form.prototype.add_textinput2form = function (forminput_I) {
         .attr("type",function(d){return d.inputtype;})
         .text(function(d){return d.inputtext;})
         .attr("value",function(d){return d.inputvalue;})
-        .attr("id", function(d){return id + 'form' + d.inputtype + labeltext + d.inputtext;});
+        .attr("id", function(d){return id + 'form' + d.inputtype + input.labeltext + d.inputtext;});
 
     var textinputgroupenter = textinputgroup.enter()
         .append("input")
@@ -292,7 +309,58 @@ d3_html_form.prototype.add_textinput2form = function (forminput_I) {
         .attr("type",function(d){return d.inputtype;})
         .text(function(d){return d.inputtext;})
         .attr("value",function(d){return d.inputvalue;})
-        .attr("id", function(d){return id + 'form' + d.inputtype + labeltext + d.inputtext;});
+        .attr("id", function(d){return id + 'form' + d.inputtype + input.labeltext + d.inputtext;});
+
+    textinputgroupenter.on("change",updatefilter);
+};
+d3_html_form.prototype.add_passwordinput2form = function (inputarguments_I) {
+    /* add password for input
+    */
+
+    // handle the input
+    var inputarguments = new ddt_inputarguments();
+    inputarguments.validate_inputarguments(inputarguments_I)
+    var node = inputarguments.get_node();
+    var input = inputarguments.get_inputarguments();
+
+    var id = this.id;
+    var this_ = this;
+    var inputtype = 'password';
+    var formgroupid = id + 'form-group' + input.labeltext;
+    var formlabelid = id + 'formlabel' + input.labeltext;
+
+    function updatefilter(){
+        //update the text
+        this.textContent = this.value;
+        var formgroup = d3.select('#' + id + 'form-group' + input.labeltext);
+        var key = input.labeltext;
+        var values = [this.value];
+        var newfilter = {};
+        newfilter[key]=values;
+        //this_.data.change_filtersinkeys(newfilter);
+        this_.data.change_filters(newfilter); //will add in new filters
+    };
+    var passwordinputgroup = d3.select('#'+formgroupid)
+        .selectAll("input")
+        .data(input.input);
+
+    passwordinputgroup.exit().remove();
+
+    passwordinputgroup.transition()
+        .attr("class","form-control")
+        .attr("type",function(d){return d.inputtype;})
+        .text(function(d){return d.inputtext;})
+        .attr("value",function(d){return d.inputvalue;})
+        .attr("id", function(d){return id + 'form' + d.inputtype + input.labeltext + d.inputtext;});
+
+    var passwordinputgroupenter = passwordinputgroup.enter()
+        .append("input")
+        .attr("class","form-control")
+        .attr("type",function(d){return d.inputtype;})
+        .text(function(d){return d.inputtext;})
+        .attr("value",function(d){return d.inputvalue;})
+        .attr("id", function(d){return id + 'form' + d.inputtype + input.labeltext + d.inputtext;});
+    passwordinputgroupenter.on("change",updatefilter);
 };
 d3_html_form.prototype.add_textareainput2form = function (inputarguments_I) {
     // add textarea as input
@@ -841,11 +909,14 @@ d3_html_form.prototype.add_forminput2form = function (inputarguments_I) {
 
     //add individual form input elements
     for (var i=0; i<forminput.length; i++){
-        var nodeid = '#'+this.htmlformgroup[i][0].id
+        var nodeid = '#'+this.htmlformgroup[0][i].id
+        //var nodeid = '#'+this.htmlformgroup[i][0].id
         if (forminput[i].inputtype === 'textarea'){
             this.add_textareainput2form({'node_id':nodeid,'inputarguments':forminput[i]});
         } else if (forminput[i].inputtype === 'text') {
-            this.add_textinput2form(forminput[i]);
+            this.add_textinput2form({'node_id':nodeid,'inputarguments':forminput[i]});
+        } else if (forminput[i].inputtype === 'password') {
+            this.add_passwordinput2form({'node_id':nodeid,'inputarguments':forminput[i]});
         } else if (forminput[i].inputtype === 'radio') {
             this.add_radioinput2form(forminput[i]);
         } else if (forminput[i].inputtype === 'checkbox') {
@@ -1047,10 +1118,16 @@ d3_html_form.prototype.add_postbutton2tile = function (button_idtext_I) {
         .attr("id", function(d){return id + 'posttbutton' + d.id;})
         .text(function(d){return d.text;});
 };
-d3_html_form.prototype.set_postbuttonmethod = function (url_I){
+d3_html_form.prototype.set_postbuttonmethod = function (url_I,authentication_I){
     // add post url and arguments
     //INPUT:
     //url_I = string, base url, e.g., 'SQLQuery'
+    //authentication_I = boolean,
+    if (typeof(authentication_I)!=="undefined"){
+        var authentication = authentication_I;
+    } else {
+        var authentication = false;
+    }
     var id = this.id;
     var tileid = this.tileid;
     var this_ = this;
@@ -1058,28 +1135,137 @@ d3_html_form.prototype.set_postbuttonmethod = function (url_I){
     function post(){
         this_.post_query(url_I);
     };
+    function authenticateAndPost(){
+        // get the target id and associated filter key
+        var targetnode = d3.event.target;
+        //var targetid = targetnode.id;
+        var targetid = targetnode.parentNode.parentNode.id;
+        this_.show_authenticationmodel(targetid,url_I);
+    };
 
-    this.postbuttonenter.on("click",post);
+    if (authentication){
+        this.postbuttonenter.on("click",authenticateAndPost);
+    } else {
+        this.postbuttonenter.on("click",post);
+    }
+    
 };
 d3_html_form.prototype.post_query = function(url_I){
+//d3_html_form.prototype.post_query = function(url_I,options_I){
     // post query
+    // INPUT:
+    // url_I = string, base url
+    // options_I = {}, additional options (key/value pairs) to add to the url
 
     var id = this.id;
     var tileid = this.tileid;
-    var filterstringmenu = [];
-    for (var key in this.data.filters){
-        var filterkey = d3.select("#"+id+'formlabel'+key).text();
-        var filterstring = d3.select("#"+id+'forminput'+key).node().value;
-        filterstringmenu.push({"labeltext":filterkey,"inputvalue":filterstring});
-    };
-    //this.data.convert_stringmenuinput2filter(filterstringmenu);
+//     var filterstringmenu = [];
+//     for (var key in this.data.filters){
+//         var filterkey = d3.select("#"+id+'formlabel'+key).text();
+//         var filterstring = d3.select("#"+id+'forminput'+key).node().value;
+//         filterstringmenu.push({"labeltext":filterkey,"inputvalue":filterstring});
+//     };
+    var filterstringmenu = this.data.convert_filter2forminput();
 
     var url = url_I + '.html';
     url += '?';
+    // add in the data
     for (var i = 0, l = filterstringmenu.length; i < l; i++) {
         if (i > 0) url += '&';
         url += filterstringmenu[i]['labeltext'] + '=' + filterstringmenu[i]['inputvalue'];
     };
+
+//     if (typeof(options_I)!=="undefined"){var options = options_I;}
+//     else{var options = null;}
+//     // add in additional options
+//     if (options){
+//         for (var key in options){
+//             url += '&';
+//             url+= key + "=" + options[key];
+//         };
+//     };
+    
     window.location.href = url;
+
+};
+d3_html_form.prototype.show_authenticationmodel = function(targetid_I,url_I){
+    // show_authenticationmodel
+    // INPUT:
+    // targetid_I = string, node id
+    // url_I = string, base url
+
+    var this_ = this;
+    var id = this.id;
+
+    // make the username/password form input
+    var formgroup_I = {};
+    formgroup_I['inputarguments']=[];
+    var forminputrow = {};
+    forminputrow['labeltext']='username';
+    forminputrow['inputvalue']='';
+    forminputrow['inputtype'] = 'text';
+    var input = [];
+    input.push({'inputtype':'text',
+        'inputtext':'username',
+        'inputvalue':'',
+    });
+    forminputrow['input']=input;
+    formgroup_I['inputarguments'].push(forminputrow);
+//     var forminputrow = {};
+//     forminputrow['labeltext']='password';
+//     forminputrow['inputvalue']='';
+//     forminputrow['inputtype'] = 'password';
+//     var input = [];
+//     input.push({'inputtype':'password',
+//         'inputtext':'password',
+//         'inputvalue':'',
+//     });
+//     forminputrow['input']=input;
+//     formgroup_I['inputarguments'].push(forminputrow);
+
+    function submitauthentication(){
+        // retreive the username/password
+//         var username = d3.select("#"+id+'forminput'+'username').node().value;
+//         var password = d3.select("#"+id+'forminput'+'password').node().value;
+//         var options = {'username':username,'password':password};
+        // update the filterstringmenu
+        this_.update_forminput();
+//         var options = this_.data.convert_filter2forminput();
+        // update the filterstringmenu
+        this_.post_query(url_I);
+        // prevent browser default page refresh
+        d3.event.preventDefault();
+        $("#"+modalid+'modal').modal('hide');
+    };
+
+    //instantiate the modal menu object
+    var modaltargetid = "#" + targetid_I;
+    var modalid = id+'authenticationmodal';
+    var menumodal = new d3_html_modal();
+    menumodal.add_data([this.data]);
+    menumodal.set_id(modalid);
+    menumodal.set_tileid(id);
+    menumodal.add_modal2tile(modaltargetid);
+    menumodal.add_header2modal();
+    menumodal.add_closebutton2modalheader();
+    menumodal.add_title2modalheader('Re-enter username/password'); //order matters (add title after close button)
+    menumodal.add_body2modal();
+    menumodal.add_form2modalbody();
+    menumodal.add_footer2modal();
+    menumodal.add_submitbutton2modalfooter();
+    menumodal.add_content2modalbodyform = function (){
+        // add content to the modal body form
+        var id = this.id;
+        var formid = id + "modalbodyform";
+        formgroup_I['node_id']='#'+formid;
+
+        this.add_forminput2form(formgroup_I);
+
+        d3.select('#'+id+"modalfootersubmitbutton").on("click",submitauthentication)
+    };
+    menumodal.add_content2modalbodyform();
+
+    // show the modal
+    $("#"+modalid+'modal').modal('show');
 
 };

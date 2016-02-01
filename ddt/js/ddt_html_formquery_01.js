@@ -61,7 +61,7 @@ ddt_html_formquery_01.prototype.make_html = function(data_I,parameters_I){
     if (parameters_I.htmlkeymap){this.set_datakeymap(parameters_I.htmlkeymap);}
     
 	this.ddthtml.add_postbutton2tile(parameters_I.formpostbuttonidtext);
-	this.ddthtml.set_postbuttonmethod(parameters_I.formurl)
+	this.ddthtml.set_postbuttonmethod(parameters_I.formurl,parameters_I.formpostauthentication);
 	this.ddthtml.add_jsonimportandexportbutton2tile();
 
 	// html specific properties
