@@ -294,30 +294,37 @@ d3_html_form.prototype.add_textinput2form = function (forminput_I) {
         .attr("value",function(d){return d.inputvalue;})
         .attr("id", function(d){return id + 'form' + d.inputtype + labeltext + d.inputtext;});
 };
-d3_html_form.prototype.add_textareainput2form = function (forminput_I) {
-    /* add text area for input
-    INPUT:
-	forminput_I = 
-        {labeltext:'sqlquery',inputtype:'textarea',input:[
-                 {'inputtext':'sql_query','inputvalue':'','inputtype':'textarea','inputrows':'3'},
-                ]
-        },
-    */
+d3_html_form.prototype.add_textareainput2form = function (inputarguments_I) {
+    // add textarea as input
 
-    //TODO: validate the input
-    var forminput = forminput_I;
-    var labeltext = forminput.labeltext;
-    var textareainput = forminput.input;
+    // handle the input
+    var inputarguments = new ddt_inputarguments();
+    inputarguments.validate_inputarguments(inputarguments_I)
+    var node = inputarguments.get_node();
+    var input = inputarguments.get_inputarguments();
 
+    // default variables
     var id = this.id;
+    var this_ = this;
     var inputtype = 'textarea';
-    var formgroupid = id + 'form-group' + labeltext;
-    var formlabelid = id + 'formlabel' + labeltext;
+    var formgroupid = id + 'form-group' + input.labeltext;
+    var formlabelid = id + 'formlabel' + input.labeltext;
 
+    function updatefilter(){
+        //update the text
+        this.textContent = this.value;
+        var formgroup = d3.select('#' + id + 'form-group' + input.labeltext);
+        var textarea = formgroup.selectAll("textarea");
+        var key = input.labeltext;
+        var values = [this.value];
+        var newfilter = {};
+        newfilter[key]=values;
+        this_.data.change_filtersinkeys(newfilter);
+    };
 
     var textareainputgroup = d3.select('#'+formgroupid)
         .selectAll("textarea")
-        .data(textareainput);
+        .data(input.input);
 
     textareainputgroup.exit().remove();
 
@@ -328,7 +335,7 @@ d3_html_form.prototype.add_textareainput2form = function (forminput_I) {
         .text(function(d){return d.inputtext;})
         .attr("value",function(d){return d.inputvalue;})
         //.attr("id", function(d){return id + 'form' + d.inputtype + labeltext + d.inputtext;});
-        .attr("id", function(d){return id + 'forminput' + labeltext;});
+        .attr("id", function(d){return id + 'forminput' + input.labeltext;});
 
     var textareainputgroupenter = textareainputgroup.enter()
         .append("textarea")
@@ -340,7 +347,9 @@ d3_html_form.prototype.add_textareainput2form = function (forminput_I) {
             })
         .text(function(d){return d.inputtext;})
         .attr("value",function(d){return d.inputvalue;})
-        .attr("id", function(d){return id + 'forminput' + labeltext;});
+        .attr("id", function(d){return id + 'forminput' + input.labeltext;});
+
+    textareainputgroupenter.on("change",updatefilter);
 };
 d3_html_form.prototype.add_form = function(textarea_valuetext_I){
     // add form to tile
@@ -862,8 +871,13 @@ d3_html_form.prototype.add_input2form = function (textarea_valuetext_I) {
     //TODO: refactor into a general function to call individual
     //      input elements, e.g., text, ...
     //      http://www.w3schools.com/tags/att_input_type.asp
-    if (typeof texarea_valuetext_I !== "undefined"){var textarea_valuetext = textarea_valuetext_I;}
-    else{var textarea_valuetext = this.data.convert_filter2stringmenuinput();};
+    if (typeof texarea_valuetext_I !== "undefined"){
+        var textarea_valuetext = textarea_valuetext_I;
+        }
+    //else{var textarea_valuetext = this.data.convert_filter2stringmenuinput();};
+    else{
+        var textarea_valuetext = this.data.convert_filter2forminput();
+    };    
 
     var id = this.id;
 

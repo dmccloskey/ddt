@@ -68,7 +68,14 @@ ddt_html_formquery_01.prototype.make_html = function(data_I,parameters_I){
     this.ddthtml.render = function(){
         this.add_html2tile();
         this.add_form();
-        this.add_input2form();
+        this.add_formgroup2form();
+        this.add_label2formgroup();
+        this.add_filterbuttongroup2formgroup();
+        this.add_filterbutton2filterbuttongroup();
+        //this.add_searchbutton2filterbuttongroup();
+        this.add_sortbybutton2filterbuttongroup();
+        this.add_textinput2formgroup();
+        //this.add_input2form();
 //         this.add_forminput2form(); //Testing in progress...
         if(typeof(parameters_I.htmlalert)!=='undefined' && parameters_I.htmlalert){alert(parameters_I.htmlalert);}
 //         this.add_formgroup2form();

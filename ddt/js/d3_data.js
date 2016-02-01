@@ -664,6 +664,16 @@ d3_data.prototype.convert_filter2forminput = function(filters_I){
                             'inputvalue':d,  
                 });
             });
+            forminputrow['input']=input;
+        } else if (typeof(this.filters[key][0])==='boolean'){
+            forminputrow['inputtype'] = 'radio';
+            var input = [];
+            this.filters[key].forEach(function(d){
+                input.push({'inputtype':'radio',
+                            'inputtext':d,
+                            'inputvalue':d,  
+                });
+            });
             forminputrow['input']=input; 
         } else {
             console.log('filter data type not recognized.')
