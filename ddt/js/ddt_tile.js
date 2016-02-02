@@ -63,6 +63,7 @@ ddt_tile_svg.prototype.make_tile = function(data_I,parameters_I){
     this.tile.add_header2tile();
     this.tile.add_navigationmenu2header();
     this.tile.add_resize2header();
+    this.tile.add_tilemenubutton2header();
     this.tile.add_removebutton2header();
     this.tile.add_duplicatebutton2header();
     this.tile.add_title2header(header_I);

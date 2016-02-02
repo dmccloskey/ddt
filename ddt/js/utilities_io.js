@@ -118,22 +118,18 @@ function csv_converter(csv_rows) {
     /** Convert data from a csv file to json-style data.
      File must include a header row.
      */
-    // count rows
-    var c = csv_rows[0].length,
-        converted = [];
-    if (c < 2 || c > 3)
-        throw new Error('CSV file must have 2 or 3 columns');
-    // set up rows
-    for (var i = 1; i < c; i++) {
-        converted[i - 1] = {};
-    }
-    // fill
-    csv_rows.slice(1).forEach(function(row) {
-        for (var i = 1, l = row.length; i < l; i++) {
-            converted[i - 1][row[0]] = row[i];
-        }
-    });
-    return converted;
+    // count columns
+    var ncols = csv_rows[0].length;
+    var listdata = [];
+    // convert csv to listdata
+    for (var i = 1; i < csv_rows.length; i++) {
+        var row = {};
+        for (var j=1; j<ncols; j++){
+            row[csv_rows[0][j]] = csv_rows[i][j];
+        };
+        listdata.push(row);
+    };
+    return listdata;
 };
 function download_json(json, name) {
     /** Download json file in a blob.

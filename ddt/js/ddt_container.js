@@ -57,6 +57,16 @@ ddt_container.prototype.add_tile = function(tile_I,pos_I){
         this.tile.push(tile_I);
     };
 };
+ddt_container.prototype.update_data = function(data_I,index_I){
+    // update data in the container
+    //INPUT:
+    // data_I = [{data:[],datakeys:[],datanestkeys:[]},...]
+
+    var d3data = this.data[index_I];
+    d3data.set_listdata(data_I,d3data.nestkey);
+    d3data.add_usedkey2listdata(); //ensure a used_ key in each data object
+    d3data.reset_filters();
+};
 ddt_container.prototype.add_data = function(data_I){
     // add data to container
     //INPUT:
@@ -349,6 +359,7 @@ ddt_container.prototype.add_header2container = function(){
     this.add_jsonexportbutton2container();
     this.add_encryptionbutton2container();
     //TODO: this.add_newtilebutton2continer();
+    this.add_updatelistdatabutton2container();
 
 };
 ddt_container.prototype.add_jsonexportbutton2container = function (){
@@ -675,63 +686,18 @@ ddt_container.prototype.check_containerencryption = function(){
     } else if (this.password && currentbuttoncolor=="red"){
         encrypted_O=true;
     } else{
-        encrypted=false;
+        encrypted_O=false;
         console.log("password and button color mismatch.");
-    }
-    ;
+    };
     return encrypted_O;
-}
-ddt_container.prototype.add_encryptionbutton2container = function(){
-    // add data incryption when downloading a container json file
+};
+ddt_container.prototype.show_encryptionmodal = function(){
+    // show the encryption modal
     // dependencies: https://bitwiseshiftleft.github.io/sjcl/
-
-    // add button to export all json data from the container to file
     var this_ = this;
     var containerid = this.containerid;
     var password = this.password;
 
-    //html alert version start
-    //------------------------
-//     function setpassword(){
-//         var currentbuttoncolor = this_.jsonencryptionbutton.node().style['color'];
-//         if (!this_.password && currentbuttoncolor==""){
-//             // encrypt
-//             // get user password:
-//             var password = prompt("enter your password to lock the container");
-//             this_.set_password(password); //necessary to pass svg as "this"
-//             // change the button color
-//             this_.jsonencryptionbutton.style({"color": "red"});
-//             alert("input data will now be decrypted and output data will be encrypted")
-//         } else if (this_.password && currentbuttoncolor=="red"){
-//             // decrypt
-//             // get user password:
-//             var password = prompt("enter your password to unlock the container");
-//             if (password===this_.password){
-//                 this_.password = null;
-//                 this_.jsonencryptionbutton.style({"color": ""});
-//             } else {
-//                 alert("invalid password provided");
-//             };
-            
-//         };
-//     };
-//     this.jsonencryptionbutton = this.containerheader
-//         .append("div")
-//         .attr("class","glyphicon glyphicon-certificate pull-left ui-btn ui-btn-inline")
-//         .attr("id", containerid + 'jsonencryptionbutton')
-//         .style({"cursor":"pointer"})
-//         .attr("data-toggle","tooltip")
-//         .attr("title","encrypt container");
-//     this.jsonencryptionbutton.on("click", setpassword);
-//     // ensure that the button is colored red if the container is password protected
-//     if (this.password){
-//         this.jsonencryptionbutton.style({"color": "red"});
-//     };
-    //html alert version end
-    //----------------------
-
-    //bootstrap modal version start
-    //-----------------------------
     function getpassword_modal(){
         //get the container password
         var encrypted = this_.check_containerencryption();
@@ -739,12 +705,12 @@ ddt_container.prototype.add_encryptionbutton2container = function(){
             // encrypt
             // get user password:
             menumodal.update_modalheadertitle('Encrypt container');
-            $("#"+containerid + "modal").modal('show');
+            $("#"+modalid + "modal").modal('show');
         } else {
             // decrypt
             // get user password:
             menumodal.update_modalheadertitle('Decrypt container');
-            $("#"+containerid + "modal").modal('show');
+            $("#"+modalid + "modal").modal('show');
         };
     };
     function setpassword_modal(){
@@ -772,31 +738,15 @@ ddt_container.prototype.add_encryptionbutton2container = function(){
         };
         // prevent browser default page refresh
         d3.event.preventDefault();
-        $("#"+containerid + "modal").modal('hide');
-    };
-    this.jsonencryptionbutton = this.containerheader
-        .append("div")
-        .attr("id", containerid + 'jsonencryptionbutton')
-        .attr("class","pull-left")
-        .style({"cursor":"pointer"})
-        .attr("data-toggle","tooltip")
-        .attr("title","encrypt container")
-    this.jsonencryptionbuttontrigger = this.jsonencryptionbutton
-        .append("span")
-        .attr("class","glyphicon glyphicon-certificate pull-left ui-btn ui-btn-inline")
-        .attr("aria-hidden","true")
-        .attr("data-toggle","modal")
-        .attr("data-target",containerid + "modal")
-    // ensure that the button is colored red if the container is password protected
-    if (this.password){
-        this.jsonencryptionbutton.style({"color": "red"});
+        $("#"+modalid + "modal").modal('hide');
     };
 
     //add the modal menu object
+    var modalid = containerid + 'modal' + 'jsonencryptionbutton';
     var modaltargetid = "#" + containerid + 'jsonencryptionbutton';
     //var modaltargetid = "body";
     var menumodal = new d3_html_modal();
-    menumodal.set_id(containerid);
+    menumodal.set_id(modalid);
     menumodal.set_tileid(containerid);
     menumodal.add_modal2tile(modaltargetid);
     menumodal.add_header2modal();
@@ -805,6 +755,7 @@ ddt_container.prototype.add_encryptionbutton2container = function(){
     menumodal.add_form2modalbody();
     menumodal.add_footer2modal();
     menumodal.add_title2modalheader('');
+    menumodal.add_submitbutton2modalfooter();
     menumodal.add_content2modalbodyform = function (){
         // add content to the modal body form
         var id = this.id;
@@ -822,19 +773,40 @@ ddt_container.prototype.add_encryptionbutton2container = function(){
             .attr("id",id+"modalbodyformpasswordinput")
             .attr("placeholder","Password");
 
-        var modalbodyformbutton = this.modalbodyform
-            .append("button")
-            .attr("class","btn btn-default")
-            .attr("id",id+"modalbodyformbutton")
-            .text("Submit");
-
-        modalbodyformbutton.on("click",setpassword_modal)
+        d3.select('#'+id+"modalfootersubmitbutton").on("click",setpassword_modal);
     };
     menumodal.add_content2modalbodyform();
+    getpassword_modal();
 
-    this.jsonencryptionbuttontrigger.on("click", getpassword_modal);
-    //bootstrap modal version end
-    //-----------------------------
+}
+ddt_container.prototype.add_encryptionbutton2container = function(){
+    // add data incryption when downloading a container json file
+    // dependencies: https://bitwiseshiftleft.github.io/sjcl/
+
+    var this_ = this;
+    var containerid = this.containerid;
+    var password = this.password;
+
+    function showencryptionmodal(){
+        this_.show_encryptionmodal();
+    };
+
+    this.jsonencryptionbutton = this.containerheader
+        .append("div")
+        .attr("id", containerid + 'jsonencryptionbutton')
+        .attr("class","pull-left")
+        .style({"cursor":"pointer"})
+        .attr("data-toggle","tooltip")
+        .attr("title","encrypt container")
+    this.jsonencryptionbuttontrigger = this.jsonencryptionbutton
+        .append("span")
+        .attr("class","glyphicon glyphicon-certificate pull-left ui-btn ui-btn-inline");
+    // ensure that the button is colored red if the container is password protected
+    if (this.password){
+        this.jsonencryptionbutton.style({"color": "red"});
+    };
+
+    this.jsonencryptionbuttontrigger.on("click", showencryptionmodal);
 
 //     var jsonencryptionbutton = this.containerheader
 //         .append("div")
@@ -914,57 +886,58 @@ ddt_container.prototype.add_newtilebutton2container = function(){
     //  c. make the tile
     //  d. add the new tile to the container
     //TODO:
-};ddt_container.prototype.add_replacelistdatabutton2container = function(){
-    // add a replace listdata button to the container
+};
+ddt_container.prototype.show_updatelistdatamodal = function(){
+    // show the update listdata modal
 
-    // add button to export all json data from the container to file
     var this_ = this;
     var containerid = this.containerid;
+    var mindataindex = 0;
+    var maxdataindex = this.data.length;
 
     function updateData(e,d){
-        //update the input with the name of the text file
-        var input = d3.select("#" + id + 'inputgroupinput');
-        input.val(d);  
-        //replace the data object
-        this.data=d;
+        // check for an error
+        if (e){
+            alert(e);
+        } else {
+            //get the data index
+            var index_str = d3.select("#" + modalid + 'modalbodyformdataindexinput').node().value;
+            var index = parseInt(index_str);
+            //update the data object
+            this_.update_data(d,index);
+        };
     };
     
     function readFile(){
-        var file1 = this.files[0];
-
+        //retrieve the file
+        var file1 = d3.select("#" + modalid + 'inputbuttongroupinputfile').node().files[0];
+        //var file1 = this.files[0];
+        //read in the file
         if (!file1) {
             alert("Failed to load file");
         } else if (!file1.type.match('')) {
             alert(file1.name + " is not a valid text file.");
         } else {
-            load_json_or_csv(f, csv_converter, updateData);
+            load_json_or_csv(file1, csv_converter, updateData);
         };
     };
 
     function updatelistdata_modal(){
+        //read the file
+        readFile();
         //update the listdata
-        menumodal.update_modalheadertitle('Update list data');
-        $("#"+containerid + "modal").modal('show');
-    };
-    function replacelistdata_modal(){
-        //update the data
-        var data_index = d3.select("#"+containerid+"modalbodyformdataindexinput").node().value;
-        var listdata = d3.select("#"+containerid+"modalbodyformpasswordinput").node().value;
-        if (data_index && listdata){
-            this_.password = null;
-            this_.jsonencryptionbuttontrigger.style({"color": ""});
-        } else {
-            alert("data index or data file not provided.");
-        };
+
         // prevent browser default page refresh
         d3.event.preventDefault();
-        $("#"+containerid + "modal").modal('hide');
+        $("#"+modalid + "modal").modal('hide');
     };
 
     //add the modal menu object
-    var modaltargetid = "#" + containerid + 'jsonencryptionbutton';
+    var modalid = containerid + 'modal' + 'updatelistdatabutton';
+    var modaltargetid = "#" + containerid + 'updatelistdatabutton';
     //var modaltargetid = "body";
     var menumodal = new d3_html_modal();
+    menumodal.set_id(modalid);
     menumodal.set_tileid(containerid);
     menumodal.add_modal2tile(modaltargetid);
     menumodal.add_header2modal();
@@ -972,53 +945,77 @@ ddt_container.prototype.add_newtilebutton2container = function(){
     menumodal.add_body2modal();
     menumodal.add_form2modalbody();
     menumodal.add_footer2modal();
-    menumodal.add_title2modalheader('');
+    menumodal.add_title2modalheader('Update list data');
+    menumodal.add_submitbutton2modalfooter();
     menumodal.add_content2modalbodyform = function (){
         // add content to the modal body form
-        var tileid = this.tileid;
+        var id = this.id;
 
+        //model like E.g.: http://www.jqueryscript.net/form/Drag-Drop-File-Upload-Dialog-with-jQuery-Bootstrap.html
+        
+        // data index
         var modalbodyformdataindex = this.modalbodyform
             .append("div")
             .attr("class","form-group")
-            .attr("id",tileid+"modalbodyformdataindex")
+            .attr("id",id+"modalbodyformdataindex")
             .append("label")
-            .attr("for",tileid+"modalbodyformdataindexinput")
+            .attr("for",id+"modalbodyformdataindexlabel")
             .text("data index")
             .append("input")
             .attr("type","number")
             .attr("class", "form-control")
-            .attr("id",tileid+"modalbodyformdataindexinput")
-            .attr("placeholder","Password");
+            .attr("id",id+"modalbodyformdataindexinput")
+            .attr("min",mindataindex)
+            .attr("max",maxdataindex);
+            //.attr("placeholder","Password");
 
+        // file input button
         var modalbodyinputgroup = this.modalbodyform
             .append("div")
             .attr("class","input-group")
             .attr("id",id + 'input-group');
-
         var modalbodyinputbutton = modalbodyinputgroup.append("span")
             .attr("class","input-group-btn")
             .append("span")
             .attr("class","btn btn-primary btn-file")
-            .text(button_text)
             .append("input")
-            .attr("id",id + 'inputbuttongroupinput')
+            .attr("id",id + 'inputbuttongroupinputfile')
             .attr("type","file")
-            .on("change",readFile);
+            //.on("change",readFile);
 
-        var modalbodyinputgroupinput = modalbodyinputgroup.append("input")
-            .attr("class","form-control")
-            .attr("id",id + 'inputgroupinput')
-            .attr("type","text");
+        // file drag and drop
 
-        var modalbodyformbutton = this.modalbodyform
-            .append("button")
-            .attr("class","btn btn-default")
-            .attr("id",tileid+"modalbodyformbutton")
-            .text("Submit");
+        // remove file button, file name(s), upload progress bar
 
-        modalbodyformbutton.on("click",replacelistdata_modal);
+        d3.select('#'+id+"modalfootersubmitbutton").on("click",updatelistdata_modal);
     };
     menumodal.add_content2modalbodyform();
 
-    this.jsonencryptionbuttontrigger.on("click", updatelistdata_modal);
+    //show the modal
+    $("#"+modalid + "modal").modal('show');
+
+};
+ddt_container.prototype.add_updatelistdatabutton2container = function(){
+    // add an update listdata button to the container
+
+    // add button to export all json data from the container to file
+    var this_ = this;
+    var containerid = this.containerid;
+
+    function showupdatelistdatamodal(){
+        this_.show_updatelistdatamodal();
+    };
+
+    this.updatelistdatabutton = this.containerheader
+        .append("div")
+        .attr("id", containerid + 'updatelistdatabutton')
+        .attr("class","pull-left")
+        .style({"cursor":"pointer"})
+        .attr("data-toggle","tooltip")
+        .attr("title","update data")
+    this.updatelistdatabuttontrigger = this.updatelistdatabutton
+        .append("span")
+        .attr("class","glyphicon glyphicon-upload pull-left ui-btn ui-btn-inline");
+
+    this.updatelistdatabuttontrigger.on("click", showupdatelistdatamodal);
 };

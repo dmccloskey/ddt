@@ -805,6 +805,73 @@ d3_tile.prototype.add_duplicatebutton2header = function (){
         .attr("title","duplicate");
     duplicatetilebutton.on("click",duplicatetile);
 };
+d3_tile.prototype.show_tilemenumodal = function(){
+    // show the tile menu options modal
+    var this_ = this;
+    var tileid = this.tileid;
+
+    function updatetileparameters(){
+        // update the tile parameters
+        
+        // prevent browser default page refresh
+        d3.event.preventDefault();
+        $("#"+modalid+'modal').modal('hide');
+    };
+
+    //add the modal menu object
+    var modalid = tileid + "tilemenubuttonmodal";
+    var modaltargetid = "#" + tileid + 'tilemenubutton';
+    //var modaltargetid = "body";
+    var menumodal = new d3_html_modal();
+    //menumodal.add_data([this.data]);
+    menumodal.set_id(modalid);
+    menumodal.set_tileid(tileid);
+    menumodal.add_modal2tile(modaltargetid);
+    menumodal.add_header2modal();
+    menumodal.add_closebutton2modalheader();
+    menumodal.add_body2modal();
+    menumodal.add_form2modalbody();
+    menumodal.add_footer2modal();
+    menumodal.add_title2modalheader('Tile Options');
+    menumodal.add_submitbutton2modalfooter();
+    menumodal.add_content2modalbodyform = function (){
+        // add content to the modal body form
+        var id = this.id;
+
+        // TODO:...
+        // form to change tile size and position
+        // form to change tile content (plot, table, etc.)
+
+        d3.select('#'+id+"modalfootersubmitbutton").on("click",updatetileparameters)
+    };
+    // show the modal
+    $("#"+modalid+'modal').modal('show');
+};
+d3_tile.prototype.add_tilemenubutton2header = function (){
+    // add tile menu button to header
+
+    var tileid = this.tileid;
+    var this_ = this;
+
+    function showtilemenumodal(){
+        this_.show_tilemenumodal();
+    };
+
+    var tilemenubutton = this.tileheader.append("div")
+        .attr("class","pull-right")
+        .style({"cursor":"pointer"})
+        .attr("data-toggle","tooltip")
+        .attr("title","tile options menu")
+        .attr("id", tileid + 'tilemenubutton');
+
+    var tilemenubuttontrigger = tilemenubutton
+        .append("span")
+        .attr("class","glyphicon  glyphicon glyphicon-wrench pull-right")
+        .attr("id", tileid + 'tilemenubuttonglyphicon')
+        .attr("aria-hidden","true");
+
+    tilemenubuttontrigger.on("click",showtilemenumodal);
+};
 d3_tile.prototype.enable_touch = function (){
     // all touch features
     this.add_touchpan();

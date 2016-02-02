@@ -209,7 +209,17 @@ d3_svg.prototype.draw = function () {
 
     //your code here...
 };
-d3_svg.prototype.add_resizebuttons2footer = function(){
+d3_svg.prototype.add_optionsbuttongroup2footer = function(){
+    // add options button group to footer
+
+    var id = this.id;
+
+    this.svgresizemenubutton = d3.select('#'+this.tileid+"panel-footer")
+        .append("div")
+        .attr("class","btn-group pull-right")
+        .attr("id", id + 'svgoptionsbuttongroup');
+}
+d3_svg.prototype.add_resizebuttons2optionsbuttongroup = function(){
     // add svg resize
     // expand tile col width 1 increment
 
@@ -230,7 +240,8 @@ d3_svg.prototype.add_resizebuttons2footer = function(){
         this_.shrink_svgvertical();
     };
 
-    var svgresizemenubutton = d3.select('#'+this.tileid+"panel-footer").append("div");
+    //var svgresizemenubutton = d3.select('#'+this.tileid+"panel-footer").append("div");
+    var svgresizemenubutton = this.svgresizemenubutton;
 
 
     var svgshrinkbuttonhorizontal = svgresizemenubutton.append("div")
@@ -354,48 +365,27 @@ d3_svg.prototype.add_navtabs2tile = function(navtabs_I){
             return d["litext"];
         });
 };
-//TODO: re-implement using tabs
-d3_svg.prototype.add_svgmenubutton2tile = function (){
-    //add a menu button to the footer of the chart
-    var tileid = this.tileid;
+d3_svg.prototype.show_svgmenumodal = function(){
+    // show the svg menu options modal
     var this_ = this;
+    var id = this.id;
+    var tileid = this.tileid;
 
-    var svgmenubutton = d3.select('#'+this.tileid+"panel-footer").append("div");
+    function updatesvgparameters(){
+        // update the svg parameters
 
-    function showsvgmenu(){
-        console.log("showsvgmenu triggered");
-        $("#"+tileid + "modal").modal('show');
-        //$("#"+tileid + "modal").modal('hide');
+        // prevent browser default page refresh
+        d3.event.preventDefault();
+        $("#"+modalid+'modal').modal('hide');
     };
 
-    svgmenubutton
-        .attr("class","pull-right")
-        .style({"cursor":"pointer"})
-        .attr("data-toggle","tooltip")
-        .attr("title","svg options menu")
-        .attr("id", tileid + 'svgmenubutton')
-        //a version (works, but limited in programmability)
-//         .append("a")
-//         .attr("href","#"+tileid + "modal")
-//         .attr("data-toggle","modal")
-        //button version (does no twork)
-//         .append("button")
-//         .attr("class","btn btn-default")
-//         .attr("data-toggle","modal")
-//         .attr("data-target",tileid + "modal")
-    var svgmenubuttontrigger = svgmenubutton
-        .append("span")
-        .attr("class","glyphicon  glyphicon glyphicon-menu-hamburger")
-        .attr("aria-hidden","true")
-        //prefered version
-        .attr("data-toggle","modal")
-        .attr("data-target",tileid + "modal")
-        ;
-
     //add the modal menu object
-    var modaltargetid = "#" + tileid + 'svgmenubutton';
+    var modalid = id + "svgmenubuttonmodal";
+    var modaltargetid = "#" + id + 'svgmenubutton';
     //var modaltargetid = "body";
     var menumodal = new d3_html_modal();
+    //menumodal.add_data([this.data]);
+    menumodal.set_id(modalid);
     menumodal.set_tileid(tileid);
     menumodal.add_modal2tile(modaltargetid);
     menumodal.add_header2modal();
@@ -404,25 +394,46 @@ d3_svg.prototype.add_svgmenubutton2tile = function (){
     menumodal.add_form2modalbody();
     menumodal.add_footer2modal();
     menumodal.add_title2modalheader('SVG Options');
+    menumodal.add_submitbutton2modalfooter();
     menumodal.add_content2modalbodyform = function (){
         // add content to the modal body form
-        var tileid = this.tileid;
+        var id = this.id;
 
-        var modalbodyformusername = this.modalbodyform
-            .append("div")
-            .attr("class","form-group")
-            .attr("id",tileid+"modalbodyformusername")
-            .append("label")
-            .attr("for",tileid+"modalbodyformusernameinput")
-            .text("Username")
-            .append("input")
-            .attr("type","text")
-            .attr("class", "form-control")
-            .attr("id",tileid+"modalbodyformusernameinput")
-            .attr("placeholder","Username");
+        // TODO:...
+        // form to change svg parameters including height, width, labels, label styling, etc.
+
+        d3.select('#'+id+"modalfootersubmitbutton").on("click",updatesvgparameters)
+    };
+    // show the modal
+    $("#"+modalid+'modal').modal('show');
+}
+d3_svg.prototype.add_svgmenubutton2optionsbuttongroup = function (){
+    //add a menu button to the footer of the chart
+    //TODO: re-implement using tabs
+    var id = this.id;
+    var tileid = this.tileid;
+    var this_ = this;
+
+    var svgmenubutton = this.svgresizemenubutton.append("div");
+
+    function showsvgmenumodal(){
+        this_.show_svgmenumodal();
     };
 
-    svgmenubuttontrigger.on("click",showsvgmenu);
+    svgmenubutton
+        .attr("class","pull-right")
+        .style({"cursor":"pointer"})
+        .attr("data-toggle","tooltip")
+        .attr("title","svg options menu")
+        .attr("id", id + 'svgmenubutton')
+
+    var svgmenubuttontrigger = svgmenubutton
+        .append("span")
+        .attr("class","glyphicon  glyphicon glyphicon-menu-hamburger pull-right")
+        .attr("id", id + 'svgmenubuttonglyphicon')
+        .attr("aria-hidden","true");
+
+    svgmenubuttontrigger.on("click",showsvgmenumodal);
 
 };
 d3_svg.prototype.make_colorscale = function(color_start_I,color_end_I,length_I){

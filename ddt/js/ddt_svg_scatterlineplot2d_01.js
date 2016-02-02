@@ -64,7 +64,9 @@ ddt_svg_scatterlineplot2d_01.prototype.make_svg = function(data_I,parameters_I){
     this.ddtsvg.set_height(parameters_I.svgheight);
     this.ddtsvg.set_colorscale(); //color for series_label will remain consistent
     this.ddtsvg.add_svgexportbutton2tile();
-    this.ddtsvg.add_resizebuttons2footer();
+    this.ddtsvg.add_optionsbuttongroup2footer();
+    this.ddtsvg.add_svgmenubutton2optionsbuttongroup();
+    this.ddtsvg.add_resizebuttons2optionsbuttongroup();
     //this.ddtsvg.set_tooltip();
     //this.ddtsvg.set_tooltipstyle();
     this.ddtsvg.set_zoom();
@@ -99,8 +101,8 @@ ddt_svg_scatterlineplot2d_01.prototype.make_svg = function(data_I,parameters_I){
         this.set_x1andy1axesstyle();
         this.set_x1andy1axestickstyle();
         this.set_pointsstyle();
-        this.add_x1axislabel(parameters_I.svgx1axislabel);
-        this.add_y1axislabel(parameters_I.svgy1axislabel);
+        this.add_x1axislabel(parameters_I.svgx1axislabel); // update_x1axislabel
+        this.add_y1axislabel(parameters_I.svgy1axislabel); // update_y1axislabel
         this.set_x1andy1axeslabelstyle();
         // add line
 		this.set_linedata2("linear");

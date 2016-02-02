@@ -609,7 +609,7 @@ d3_html_form.prototype.show_filterbuttonmodal = function (targetid_I,key_I) {
     menumodal.add_body2modal();
     menumodal.add_form2modalbody();
     menumodal.add_footer2modal();
-    menumodal.add_title2modalheader('');
+    menumodal.add_submitbutton2modalfooter();
     menumodal.add_content2modalbodyform = function (){
         // add content to the modal body form
         var id = this.id;
@@ -617,14 +617,8 @@ d3_html_form.prototype.show_filterbuttonmodal = function (targetid_I,key_I) {
         formgroup_I['node_id']='#'+formid;
 
         this.add_forminput2form(formgroup_I);
-
-        var modalbodyformbutton = this.modalbodyform
-            .append("button")
-            .attr("class","btn btn-default")
-            .attr("id",id+"modalbodyformbutton")
-            .text("Submit");
-
-        modalbodyformbutton.on("click",updatetextinput)
+            
+        d3.select('#'+id+"modalfootersubmitbutton").on("click",updatetextinput)
     };
     menumodal.add_content2modalbodyform();
 
