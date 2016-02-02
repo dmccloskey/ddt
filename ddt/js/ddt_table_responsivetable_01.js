@@ -37,6 +37,8 @@ ddt_table_responsivetable_01.prototype.make_table = function(data_I,parameters_I
     if (parameters_I.tableheaders){this.ddttable.set_tableheaders(parameters_I.tableheaders);}
     else {this.ddttable.extract_tableheaders();};
     this.ddttable.add_csvandjsonexportbutton2tile();
+    this.ddttable.add_optionsbuttongroup2footer();
+    this.ddttable.add_tablemenubutton2optionsbuttongroup();
     this.ddttable.render = function () {
     	// permanent filter on the data
     	if (parameters_I.tablefilters){
@@ -52,5 +54,6 @@ ddt_table_responsivetable_01.prototype.make_table = function(data_I,parameters_I
 		this.set_headerstyle();
 		this.set_cellstyle();
 		this.add_tablesort(parameters_I.tablesort);
+		this.add_tablecolumnoptions();
     };
 }

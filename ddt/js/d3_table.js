@@ -536,3 +536,194 @@ d3_table.prototype.show_headerpopover = function (targetid_I,key_I) {
         }
     });
 };
+d3_table.prototype.show_tablemenumodal = function(){
+    // show the table menu options modal
+    var this_ = this;
+    var id = this.id;
+    var tileid = this.tileid;
+
+    function updatetableparameters(){
+        // update the table parameters
+
+        // prevent browser default page refresh
+        d3.event.preventDefault();
+        $("#"+modalid+'modal').modal('hide');
+    };
+
+    //add the modal menu object
+    var modalid = id + "tablemenubuttonmodal";
+    var modaltargetid = "#" + id + 'tablemenubutton';
+    var menumodal = new d3_html_modal();
+    //menumodal.add_data([this.data]);
+    menumodal.set_id(modalid);
+    menumodal.set_tileid(tileid);
+    menumodal.add_modal2tile(modaltargetid);
+    menumodal.add_header2modal();
+    menumodal.add_closebutton2modalheader();
+    menumodal.add_body2modal();
+    menumodal.add_form2modalbody();
+    menumodal.add_footer2modal();
+    menumodal.add_title2modalheader('Table Options');
+    menumodal.add_submitbutton2modalfooter();
+    menumodal.add_content2modalbodyform = function (){
+        // add content to the modal body form
+        var id = this.id;
+
+        // TODO:...
+        // form to change table parameters including height, width, labels, label styling, etc.
+
+        d3.select('#'+id+"modalfootersubmitbutton").on("click",updatetableparameters)
+    };
+    menumodal.add_content2modalbodyform();
+    // show the modal
+    $("#"+modalid+'modal').modal('show');
+}
+d3_table.prototype.add_tablemenubutton2optionsbuttongroup = function (){
+    //add a menu button to the footer of the chart
+    //TODO: re-implement using tabs
+    var id = this.id;
+    var tileid = this.tileid;
+    var this_ = this;
+
+    var tablemenubutton = this.tableoptionsbuttongroup.append("div");
+
+    function showtablemenumodal(){
+        this_.show_tablemenumodal();
+    };
+
+    tablemenubutton
+        .attr("class","pull-right")
+        .style({"cursor":"pointer"})
+        .attr("data-toggle","tooltip")
+        .attr("title","table options menu")
+        .attr("id", id + 'tablemenubutton')
+
+    var tablemenubuttontrigger = tablemenubutton
+        .append("span")
+        .attr("class","glyphicon  glyphicon glyphicon-menu-hamburger pull-right")
+        .attr("id", id + 'tablemenubuttonglyphicon')
+        .attr("aria-hidden","true");
+
+    tablemenubuttontrigger.on("click",showtablemenumodal);
+
+};
+d3_table.prototype.add_optionsbuttongroup2footer = function(){
+    // add options button group to footer
+
+    var id = this.id;
+
+    this.tableoptionsbuttongroup = d3.select('#'+this.tileid+"panel-footer")
+        .append("div")
+        .attr("class","btn-group pull-right")
+        .attr("id", id + 'tableoptionsbuttongroup');
+};
+d3_table.prototype.add_tablecolumnoptions = function(){
+    // sort the data
+    // DESCRIPTION:
+    // single click: sort in ascending order
+    // double click: sort in descenting order
+    // TODO:
+    // add tooltip
+    // add popover with sort asc and desc
+    var id = this.id;
+    var this_ = this;
+
+    function showcolumnoptionsmenumodal(){
+        this_.show_columnoptionsmenumodal(id+"table");
+    };
+
+    this.theadenter
+        .style({"cursor":"pointer"})
+        .attr("data-toggle","tooltip")
+        .attr("title","column options")
+        .on('click', showcolumnoptionsmenumodal);
+};
+d3_table.prototype.show_columnoptionsmenumodal = function(targetid_I){
+    // show the column menu options modal
+    var this_ = this;
+    var id = this.id;
+    var tileid = this.tileid;
+    var tableheadersd3data = this.convert_tableheaders2d3data();
+
+    function changetablecolumns(){
+        //...
+    };
+
+    function updatetablecolumns(){
+        // update the table columns
+        this.update_forminput();
+        var tableheaders = this.data.filters['column_name'];
+        this_.set_tableheaders(tableheaders);
+        this_.render();
+        // prevent browser default page refresh
+        d3.event.preventDefault();
+        $("#"+modalid+'modal').modal('hide');
+    };
+
+    //add the modal menu object
+    var modalid = id + "columnmenumodal";
+    var modaltargetid = "#" + targetid_I;
+    var menumodal = new d3_html_modal();
+
+    menumodal.add_data([tableheadersd3data]);
+    menumodal.set_id(modalid);
+    menumodal.set_tileid(tileid);
+    menumodal.add_modal2tile(modaltargetid);
+    menumodal.add_header2modal();
+    menumodal.add_closebutton2modalheader();
+    menumodal.add_body2modal();
+    menumodal.add_form2modalbody();
+    menumodal.add_footer2modal();
+    menumodal.add_title2modalheader('Column Options');
+    menumodal.add_submitbutton2modalfooter();
+    menumodal.add_content2modalbodyform = function (){
+        // add content to the modal body form
+        var id = this.id;
+
+        var formgroup_I = {};
+        formgroup_I['inputarguments']=this.data.convert_filter2forminput();
+
+        var formid = id + "modalbodyform";
+        formgroup_I['node_id']='#'+formid;
+
+        this.add_forminput2form(formgroup_I);
+
+        d3.select('#'+id+"modalfootersubmitbutton").on("click",updatetablecolumns.bind(this))
+    };
+    menumodal.add_content2modalbodyform();
+    // show the modal
+    $("#"+modalid+'modal').modal('show');
+};
+d3_table.prototype.convert_tableheaders2listdata = function(){
+    // convert table headers to listdata
+    var tableheaders = this.tableheaders;
+    
+    var tableheaderslistdata = [];
+    tableheaders.forEach(function(d){
+        tableheaderslistdata.push({'column_name':d});
+    });
+    return tableheaderslistdata;
+};
+d3_table.prototype.convert_tableheaderslistdata2tableheaders = function(tableheaderslistdata_I){
+    // convert table headers to listdata
+    var tableheaderslistdata = tableheaderslistdata_I;
+    var tableheaders = [];
+    
+    tableheaderslistdata.forEach(function(d){
+        tableheaders.push(d['column_name']);
+    });
+    return tableheaders;
+};
+d3_table.prototype.convert_tableheaders2d3data = function(){
+    //convert tableheaders to d3_data
+    var tableheaderslistdata = this.convert_tableheaders2listdata();
+    var tablekeys = ['column_name'];
+    var tablenestkeys = ['column_name'];
+    var d3data = new d3_data();
+    d3data.set_keys(tablekeys);
+    d3data.set_listdata(tableheaderslistdata,tablenestkeys);
+    d3data.add_usedkey2listdata(); //ensure a used_ key in each data object
+    d3data.reset_filters();
+    return d3data;
+};
+

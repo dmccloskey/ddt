@@ -148,7 +148,7 @@ d3_html_form.prototype.add_checkboxinput2form = function (inputarguments_I) {
             var formgroup = d3.select('#' + id + 'form-group' + input.labeltext);
             var checkboxes = formgroup.selectAll("input");
             checkboxes[0].forEach(function(d){d.checked=true;});
-            //remove all data from filters
+            //add all data to filters
             for (var i=0;i<input.input.length;i++){
                 this_.data.add_element2FiltersByKey(input.labeltext,input.input[i]['inputvalue']);                
             };
@@ -158,7 +158,8 @@ d3_html_form.prototype.add_checkboxinput2form = function (inputarguments_I) {
             var formgroup = d3.select('#' + id + 'form-group' + input.labeltext);
             var checkboxes = formgroup.selectAll("input");
             checkboxes[0].forEach(function(d){d.checked=false;});
-            //add all data to filters
+            
+            //remove all data from filters
             for (var i=0;i<input.input.length;i++){
                 this_.data.remove_elementFromFiltersByKey(input.labeltext,input.input[i]['inputvalue']);
             };
@@ -169,7 +170,13 @@ d3_html_form.prototype.add_checkboxinput2form = function (inputarguments_I) {
         } else {
             this_.data.remove_elementFromFiltersByKey(input.labeltext,this.value);
             // uncheck toggle all
-
+            var formgroup = d3.select('#' + id + 'form-group' + input.labeltext);
+            var checkboxes = formgroup.selectAll("input");
+            checkboxes[0].forEach(function(d){
+                if (d.value === "toggle all"){
+                    d.checked=false;
+                    }
+                });
         };
     };
 
@@ -617,7 +624,7 @@ d3_html_form.prototype.show_filterbuttonmodal = function (targetid_I,key_I) {
         formgroup_I['node_id']='#'+formid;
 
         this.add_forminput2form(formgroup_I);
-            
+
         d3.select('#'+id+"modalfootersubmitbutton").on("click",updatetextinput)
     };
     menumodal.add_content2modalbodyform();

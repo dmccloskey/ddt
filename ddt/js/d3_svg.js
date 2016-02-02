@@ -218,7 +218,7 @@ d3_svg.prototype.add_optionsbuttongroup2footer = function(){
         .append("div")
         .attr("class","btn-group pull-right")
         .attr("id", id + 'svgoptionsbuttongroup');
-}
+};
 d3_svg.prototype.add_resizebuttons2optionsbuttongroup = function(){
     // add svg resize
     // expand tile col width 1 increment
@@ -404,6 +404,7 @@ d3_svg.prototype.show_svgmenumodal = function(){
 
         d3.select('#'+id+"modalfootersubmitbutton").on("click",updatesvgparameters)
     };
+    menumodal.add_content2modalbodyform();
     // show the modal
     $("#"+modalid+'modal').modal('show');
 }
