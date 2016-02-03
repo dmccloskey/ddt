@@ -914,7 +914,7 @@ ddt_container.prototype.show_updatelistdatamodal = function(){
         //var file1 = this.files[0];
         //read in the file
         if (!file1) {
-            alert("Failed to load file");
+            alert("Failed to load file or no file chosen.");
         } else if (!file1.type.match('')) {
             alert(file1.name + " is not a valid text file.");
         } else {
