@@ -68,7 +68,7 @@ ddt_html_formquery_02.prototype.make_html = function(data_I,parameters_I){
     if (parameters_I.htmlkeymap){this.set_datakeymap(parameters_I.htmlkeymap);}
     
 	this.ddthtml.add_postbutton2tile(parameters_I.formpostbuttonidtext);
-	this.ddthtml.set_postbuttonmethod(parameters_I.formurl)
+	this.ddthtml.set_posturlbuttonmethod(parameters_I.formurl,parameters_I.formpostauthentication)
 	this.ddthtml.add_jsonimportandexportbutton2tile();
 
 	// html specific properties
@@ -77,13 +77,7 @@ ddt_html_formquery_02.prototype.make_html = function(data_I,parameters_I){
         this.add_form();
         this.add_formgroup2form();
         this.add_label2formgroup();
-        this.add_filterbuttongroup2formgroup();
-        this.add_filterbutton2filterbuttongroup();
-        //this.add_searchbutton2filterbuttongroup();
-        this.add_sortbybutton2filterbuttongroup();
-        this.add_textinput2formgroup();
-        //this.add_input2form();
-//         this.add_forminput2form(); //Testing in progress...
+        this.add_selectlistinput2formgroup();
         if(typeof(parameters_I.htmlalert)!=='undefined' && parameters_I.htmlalert){alert(parameters_I.htmlalert);}
         this.update_forminput();
     };

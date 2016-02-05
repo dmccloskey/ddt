@@ -218,7 +218,6 @@ ddt_container.prototype.add_datafiltermenusubmitbutton = function (tileid_I,html
         });
         tiledataindex.forEach(function(d){
             for (var key in this_.data[d].filters){
-    //         for (var key in this_.data[tiledataindex].filters){
                 var filterkey = d3.select("#"+htmlid+'formlabel'+key).text();
                 var filterstring = d3.select("#"+htmlid+'forminput'+key).node().value;
                 filterstringmenu.push({"labeltext":filterkey,"inputvalue":filterstring});
@@ -229,8 +228,6 @@ ddt_container.prototype.add_datafiltermenusubmitbutton = function (tileid_I,html
             //this_.data[cnt].reset_usedkey(); //check reset_usedkey
             this_.data[cnt].filter_listdata();
         };
-//         this_.tiles[tileindex].data[0].convert_stringmenuinput2filter(filterstringmenu);
-//         this_.tiles[tileindex].data[0].filter_listdata();
         this_.update_container();  
     };
 

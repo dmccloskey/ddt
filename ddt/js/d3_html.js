@@ -896,7 +896,7 @@ d3_html.prototype.add_headeranddatalist_href = function(){
     this.option.exit().remove();
 };
 d3_html.prototype.add_headeranddatalistsubmit_href = function(){
-    // add submit button trigger even for header and datalist html
+    // add submit button trigger event for header and datalist html
 
     var button_idtext = this.button_idtext;
     var id = this.id;
