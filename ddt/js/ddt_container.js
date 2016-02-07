@@ -58,9 +58,11 @@ ddt_container.prototype.add_tile = function(tile_I,pos_I){
     };
 };
 ddt_container.prototype.update_data = function(data_I,index_I){
-    // update data in the container
-    //INPUT:
-    // data_I = [{data:[],datakeys:[],datanestkeys:[]},...]
+    /* update data in the container
+    INPUT:
+    data_I = [{data:[],datakeys:[],datanestkeys:[]},...]
+    index_I = integer, data index to update
+    */
 
     var d3data = this.data[index_I];
     d3data.set_listdata(data_I,d3data.nestkey);
@@ -78,6 +80,36 @@ ddt_container.prototype.add_data = function(data_I){
         d3data.add_usedkey2listdata(); //ensure a used_ key in each data object
         d3data.reset_filters();
         this.data.push(d3data);
+    };
+};
+ddt_container.prototype.get_tileidsBydataindex = function(index_I){
+    /*get a list of tile ids associated with the data index
+    INPUT:
+    index_I = integer, data index 
+    */
+    var tileids_O = [];
+    for (var key in this.tile2datamap){
+        if (this.tile2datamap[key].indexOf(index_I) > -1){
+            tileids_O.push(key);
+        };
+    };
+    return tileids_O;
+};
+ddt_container.prototype.update_containertilesdata = function(data_I,index_I){
+    /*update container tiles
+    INPUT:
+    data_I = [{data:[],datakeys:[],datanestkeys:[]},...]
+    index_I = integer, data index to update
+    */
+
+    // get tileids by data index
+    var tileids = this.get_tileidsBydataindex(index_I);
+    for (var i=0; i<tileids.length; i++){
+        for (var j=0; j<this.tiles.length; j++){
+            if (this.tiles[j].tile.tileid === tileids[i]){
+                this.tiles[j].update_tile(data_I);
+            };
+        };
     };
 };
 ddt_container.prototype.add_containertiles = function(){
@@ -890,7 +922,7 @@ ddt_container.prototype.show_updatelistdatamodal = function(){
     var this_ = this;
     var containerid = this.containerid;
     var mindataindex = 0;
-    var maxdataindex = this.data.length;
+    var maxdataindex = this.data.length-1;
 
     function updateData(e,d){
         // check for an error
@@ -902,6 +934,8 @@ ddt_container.prototype.show_updatelistdatamodal = function(){
             var index = parseInt(index_str);
             //update the data object
             this_.update_data(d,index);
+            //update the tiles
+            this_.update_containertilesdata(d,index);
         };
     };
     
@@ -922,8 +956,6 @@ ddt_container.prototype.show_updatelistdatamodal = function(){
     function updatelistdata_modal(){
         //read the file
         readFile();
-        //update the listdata
-
         // prevent browser default page refresh
         d3.event.preventDefault();
         $("#"+modalid + "modal").modal('hide');

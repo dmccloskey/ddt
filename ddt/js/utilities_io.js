@@ -121,10 +121,10 @@ function csv_converter(csv_rows) {
     // count columns
     var ncols = csv_rows[0].length;
     var listdata = [];
-    // convert csv to listdata
-    for (var i = 1; i < csv_rows.length; i++) {
+    // convert csv to listdata (skipping the first row)
+    for (var i=1; i < csv_rows.length; i++) {
         var row = {};
-        for (var j=1; j<ncols; j++){
+        for (var j=0; j<ncols; j++){
             row[csv_rows[0][j]] = csv_rows[i][j];
         };
         listdata.push(row);

@@ -410,15 +410,6 @@ d3_data.prototype.remove_listdata = function(){
     });
     this.listdata = listdata_O;
 };
-d3_data.prototype.convert_listdatafiltered2crosstable = function(){
-    // donvert list data to cross table
-    var id = this.id;
-    var tileid = this.tileid;
-    var datalistdatafiltered = this.listdatafiltered;
-    var tableheaders = this.tableheaders;
-    var x_data = this.data1keymap.xdata;
-    var y_data = this.data1keymap.ydata;
-};
 d3_data.prototype.group_listdatafiltered = function(groups_I){
     // group list data
     // INPUT:
@@ -587,7 +578,6 @@ d3_data.prototype.order_nestdatafiltered = function(order_I){
         };
     });
 };
-//TODO:
 d3_data.prototype.convert_filter2forminput = function(filters_I){
     /* convert filter list to form input based on the type of the filter elements
     OPTIONAL INPUT:
@@ -688,4 +678,73 @@ d3_data.prototype.convert_filter2forminput = function(filters_I){
         forminput.push(forminputrow);
         };
     return forminput;
+};
+d3_data.prototype.make_httprequest_listdata = function(method_I,url_I,async_I){
+    /*get listdata or post listdata using ajax
+    e.g., updating or streaming data
+    INPUT:
+    method_I = "GET" or "POST"
+    url_I = base url string
+    async_I = boolean, default=true (asynchronous)
+    */
+
+    //onreadystatechange (todo: update the listdata)
+    function alertContents() {
+      try {
+        if (httpRequest.readyState === XMLHttpRequest.DONE) {
+          if (httpRequest.status === 200) {
+            alert(httpRequest.responseText);
+          } else {
+            alert('There was a problem with the request.');
+          };
+        };
+      }
+      catch( e ) {
+        alert('Caught Exception: ' + e.description);
+      };
+    };
+
+//     //get the filter menu data
+//     var filterstringmenu = this.data.convert_filter2forminput();
+
+    //get the data
+    var listdatafiltered = this.get_listdatafiltered();
+    var jsondatastr = JSON.stringify(listdatafiltered)
+    
+    // construct the HTTP request
+    var httpRequest = new XMLHttpRequest();
+    httpRequest.onreadystatechange = alertContents;
+    httpRequest.open(method_I,url_I);
+    httpRequest.setRequestHeader('Content-Type', 'application/json; charset=UTF-8');
+    
+    // send the collected data as JSON
+    httpRequest.send(jsondatastr);
+};
+d3_data.prototype.make_httprequest_d3data = function (method_I,url_I,async_I){
+    /*get or post d3data using ajax
+    INPUT:
+    method_I = "GET" or "POST"
+    url_I = base url string
+    async_I = boolean, default=true (asynchronous)
+    */
+
+    //get the data
+    var jsondata = this.get_datajson();
+    var jsondatastr = JSON.stringify(data)
+};
+d3_data.prototype.set_d3data = function(data_I){
+    /*set the d3 data object
+    INPUT:
+    data_I = {}
+    where {
+        'datakeys':keys_I,
+        'datanestkeys':nestkeys_I,
+        'data':data_I
+        };
+    */
+
+    this.set_keys(data_I.datakeys);
+    this.set_listdata(data_I.data,data_I.datanestkeys);
+    this.add_usedkey2listdata(); //ensure a used_ key in each data object
+    this.reset_filters();
 };

@@ -1228,7 +1228,7 @@ d3_html_form.prototype.set_posturlbuttonmethod = function (url_I,authentication_
     var this_ = this;
 
     function posturl(){
-        this_.posturl_query(url_I);
+        this_.post_url(url_I);
     };
     function authenticateAndPostUrl(){
         // get the target id and associated filter key
@@ -1245,7 +1245,7 @@ d3_html_form.prototype.set_posturlbuttonmethod = function (url_I,authentication_
     }
     
 };
-d3_html_form.prototype.posturl_query = function(url_I){
+d3_html_form.prototype.post_url = function(url_I){
 //d3_html_form.prototype.post_query = function(url_I,options_I){
     // post query
     // INPUT:
@@ -1327,7 +1327,7 @@ d3_html_form.prototype.show_authenticationmodel = function(targetid_I,url_I){
         this_.update_forminput();
 //         var options = this_.data.convert_filter2forminput();
         // update the filterstringmenu
-        this_.posturl_query(url_I);
+        this_.post_url(url_I);
         // prevent browser default page refresh
         d3.event.preventDefault();
         $("#"+modalid+'modal').modal('hide');
@@ -1362,5 +1362,46 @@ d3_html_form.prototype.show_authenticationmodel = function(targetid_I,url_I){
 
     // show the modal
     $("#"+modalid+'modal').modal('show');
+};
+d3_html_form.prototype.make_httprequest = function(method_I,url_I,async_I){
+    /*post data using ajax
+    INPUT:
+    method_I = "GET" or "POST"
+    url_I = base url string
+    async_I = boolean, default=true (asynchronous)
+    */
 
+    //default variables
+    var id = this.id;
+    var tileid = this.tileid;
+
+    //onreadystatechange
+    function alertContents() {
+      try {
+        if (httpRequest.readyState === XMLHttpRequest.DONE) {
+          if (httpRequest.status === 200) {
+            alert(httpRequest.responseText);
+          } else {
+            alert('There was a problem with the request.');
+          };
+        };
+      }
+      catch( e ) {
+        alert('Caught Exception: ' + e.description);
+      };
+    };
+    var filterstringmenu = this.data.convert_filter2forminput();
+
+    //get the data
+    var listdatafiltered = this.data.get_listdatafiltered;
+
+    
+    // construct the HTTP request
+    var httpRequest = new XMLHttpRequest();
+    httpRequest.onreadystatechange = alertContents;
+    httpRequest.open(method_I,url_I);
+    httpRequest.setRequestHeader('Content-Type', 'application/json; charset=UTF-8');
+    
+    // send the collected data as JSON
+    httpRequest.send(JSON.stringify(data));
 };
