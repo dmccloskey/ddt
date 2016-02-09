@@ -369,6 +369,9 @@ d3_html_form.prototype.add_checkboxinput2formgroupnode = function (inputargument
 
     checkboxinputgroup.exit().remove();
 
+    checkboxinputgroup.transition()
+        .attr("class","checkbox");
+
     var checkboxinputgroupenter = checkboxinputgroup.enter()
         .append("div")
         .attr("class","checkbox");
@@ -433,7 +436,8 @@ d3_html_form.prototype.add_checkboxinput2formgroupnode = function (inputargument
                 return false;
             };
             });
-    checkboxinputenter.on("click",updatefilter);
+//     checkboxinputenter.on("click",updatefilter);
+    checkboxinput.on("click",updatefilter);
 };
 d3_html_form.prototype.add_colorinput2formgroupnode = function () {
     // add color pallet for input
@@ -755,7 +759,8 @@ d3_html_form.prototype.add_filterbutton2filterbuttongroup = function (){
         .attr("data-toggle","tooltip")
         .attr("title","filter data");
 
-    this.htmlformfilterbuttonenter.on("click", showfilterbuttonmodal);
+    //this.htmlformfilterbuttonenter.on("click", showfilterbuttonmodal);
+    this.htmlformfilterbutton.on("click", showfilterbuttonmodal);
 };
 d3_html_form.prototype.show_filterbuttonmodal = function (targetid_I,key_I) {
     // show the filter button modal element
@@ -777,11 +782,14 @@ d3_html_form.prototype.show_filterbuttonmodal = function (targetid_I,key_I) {
         $("#"+modalid+'modal').modal('hide');
     };
 
-    //instantiate the modal menu object
     var modaltargetid = "#" + targetid_I;
     var modalid = id+key_I;
     var menumodal = new d3_html_modal();
-    menumodal.add_data([this.data]);
+    //remove the previous modal
+    d3.select("#"+modalid+'modal').remove();
+    
+    //instantiate the modal menu object
+    menumodal.add_data([this_.data]);
     menumodal.set_id(modalid);
     menumodal.set_tileid(id);
     menumodal.add_modal2tile(modaltargetid);
@@ -1254,13 +1262,13 @@ d3_html_form.prototype.post_url = function(url_I){
 
     var id = this.id;
     var tileid = this.tileid;
-//     var filterstringmenu = [];
-//     for (var key in this.data.filters){
-//         var filterkey = d3.select("#"+id+'formlabel'+key).text();
-//         var filterstring = d3.select("#"+id+'forminput'+key).node().value;
-//         filterstringmenu.push({"labeltext":filterkey,"inputvalue":filterstring});
-//     };
-    var filterstringmenu = this.data.convert_filter2forminput();
+    var filterstringmenu = [];
+    for (var key in this.data.filters){
+        var filterkey = d3.select("#"+id+'formlabel'+key).text();
+        var filterstring = d3.select("#"+id+'forminput'+key).node().value;
+        filterstringmenu.push({"labeltext":filterkey,"inputvalue":filterstring});
+    };
+    //var filterstringmenu = this.data.convert_filter2forminput();
 
     var url = url_I + '.html';
     url += '?';

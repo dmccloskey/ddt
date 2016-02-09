@@ -35,12 +35,15 @@ d3_html_modal.prototype.add_modal2tile = function (nodeid_I){
     var id = this.id;
     var this_ = this;
 
+    //get the node to append the modal to
     if (typeof(nodeid_I)!=="undefined"){
         //var tile = d3.select("#"+nodeid_I);
         var tile = d3.select(nodeid_I);
     } else if (this.html===null){
         var tile = this.html;
     };
+
+    //append the modal
     this.htmlmodal = tile.append("div")
         .attr("class","modal fade")
         .attr("id",id + "modal")
