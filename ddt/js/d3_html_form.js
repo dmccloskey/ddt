@@ -1358,6 +1358,9 @@ d3_html_form.prototype.show_authenticationmodel = function(targetid_I,url_I){
     //instantiate the modal menu object
     var modaltargetid = "#" + targetid_I;
     var modalid = id+'authenticationmodal';
+    //remove the previous modal
+    d3.select("#"+modalid+'modal').remove();
+    //make the new modal
     var menumodal = new d3_html_modal();
     menumodal.add_data([this.data]);
     menumodal.set_id(modalid);

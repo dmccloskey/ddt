@@ -661,8 +661,10 @@ d3_table.prototype.show_columnoptionsmenumodal = function(targetid_I){
     };
 
     //add the modal menu object
-    var modalid = id + "columnmenumodal";
+    var modalid = id + "columnmenu";
     var modaltargetid = "#" + targetid_I;
+    //remove the previous modal
+    d3.select("#"+modalid+'modal').remove();
     var menumodal = new d3_html_modal();
 
     menumodal.add_data([tableheadersd3data]);
