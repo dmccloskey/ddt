@@ -1277,11 +1277,11 @@ d3_html_form.prototype.post_url = function(url_I){
     var id = this.id;
     var tileid = this.tileid;
     var filterstringmenu = [];
-    for (var key in this.data.filters){
-        var filterkey = d3.select("#"+id+'formlabel'+key).text();
-        var filterstring = d3.select("#"+id+'forminput'+key).node().value;
-        filterstringmenu.push({"labeltext":filterkey,"inputvalue":filterstring});
-    };
+//     for (var key in this.data.filters){
+//         var filterkey = d3.select("#"+id+'formlabel'+key).text();
+//         var filterstring = d3.select("#"+id+'forminput'+key).node().value;
+//         filterstringmenu.push({"labeltext":filterkey,"inputvalue":filterstring});
+//     };
     var filterstringmenu = this.data.convert_filter2forminput();
 
     var url = url_I + '.html';
