@@ -1022,7 +1022,19 @@ d3_html_form.prototype.add_textinput2formgroup = function () {
     // add text input to the form groups
 
     var id = this.id;
+    var this_ = this;
 
+    function updatetextinput(){
+        //this.textContent = this.value;
+        var key = this.parentNode.childNodes[0].textContent;
+        var values = [this.value];
+        var newfilter = {};
+        newfilter[key]=values;
+        this_.data.change_filtersinkeys(newfilter);
+        // update the filterstringmenu
+        this_.update_forminput();
+    };
+    
     this.htmlforminput = this.htmlformgroupenter.selectAll("input")
 //     this.htmlforminput = this.htmlformgroup.selectAll("input")
         .data(function(row){
@@ -1049,6 +1061,8 @@ d3_html_form.prototype.add_textinput2formgroup = function () {
             return d.inputvalue;
             })
         .attr("id", function(d){return id + 'forminput' + d.labeltext;});
+
+    this.htmlforminputenter.on("change",updatetextinput)
 };
 d3_html_form.prototype.add_forminput2form = function (inputarguments_I) {
     /* add text area for input
@@ -1268,7 +1282,7 @@ d3_html_form.prototype.post_url = function(url_I){
         var filterstring = d3.select("#"+id+'forminput'+key).node().value;
         filterstringmenu.push({"labeltext":filterkey,"inputvalue":filterstring});
     };
-    //var filterstringmenu = this.data.convert_filter2forminput();
+    var filterstringmenu = this.data.convert_filter2forminput();
 
     var url = url_I + '.html';
     url += '?';
@@ -1334,8 +1348,8 @@ d3_html_form.prototype.show_authenticationmodel = function(targetid_I,url_I){
         // update the filterstringmenu
         this_.update_forminput();
 //         var options = this_.data.convert_filter2forminput();
-        // update the filterstringmenu
-        this_.post_url(url_I);
+//         this_.post_url(url_I);
+        this_.make_httprequest('POST',url_I,true);
         // prevent browser default page refresh
         d3.event.preventDefault();
         $("#"+modalid+'modal').modal('hide');
@@ -1382,6 +1396,7 @@ d3_html_form.prototype.make_httprequest = function(method_I,url_I,async_I){
     //default variables
     var id = this.id;
     var tileid = this.tileid;
+    var url = url_I + '.html';
 
     //onreadystatechange
     function alertContents() {
@@ -1398,18 +1413,55 @@ d3_html_form.prototype.make_httprequest = function(method_I,url_I,async_I){
         alert('Caught Exception: ' + e.description);
       };
     };
-    var filterstringmenu = this.data.convert_filter2forminput();
-
     //get the data
-    var listdatafiltered = this.data.get_listdatafiltered;
+    var filterstringmenu = {};
+    for (var key in this.data.filters){
+        var filterkey = d3.select("#"+id+'formlabel'+key).text();
+        var filterstring = d3.select("#"+id+'formselect'+key).node().value;
+        filterstringmenu[filterkey]=filterstring;
+    };
+    var listdatafiltered = this.data.get_listdatafiltered();
 
-    
     // construct the HTTP request
     var httpRequest = new XMLHttpRequest();
     httpRequest.onreadystatechange = alertContents;
-    httpRequest.open(method_I,url_I);
+    httpRequest.open(method_I,url);
     httpRequest.setRequestHeader('Content-Type', 'application/json; charset=UTF-8');
     
     // send the collected data as JSON
-    httpRequest.send(JSON.stringify(data));
+    httpRequest.send(JSON.stringify(filterstringmenu));
+};
+d3_html_form.prototype.set_posthttprequestbuttonmethod = function (url_I,authentication_I){
+    /* add post url and arguments
+    INPUT:
+    url_I = string, base url, e.g., 'SQLQuery'
+    authentication_I = boolean
+    */
+
+    if (typeof(authentication_I)!=="undefined"){
+        var authentication = authentication_I;
+    } else {
+        var authentication = false;
+    }
+    var id = this.id;
+    var tileid = this.tileid;
+    var this_ = this;
+
+    function makehttprequest(){
+        this_.make_httprequest(url_I);
+    };
+    function authenticateAndMakehttprequest(){
+        // get the target id and associated filter key
+        var targetnode = d3.event.target;
+        //var targetid = targetnode.id;
+        var targetid = targetnode.parentNode.parentNode.id;
+        this_.show_authenticationmodel(targetid,url_I);
+    };
+
+    if (authentication){
+        this.postbuttonenter.on("click",authenticateAndMakehttprequest);
+    } else {
+        this.postbuttonenter.on("click",makehttprequest);
+    }
+    
 };
