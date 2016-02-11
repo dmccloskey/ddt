@@ -12,7 +12,7 @@ d3_html_form.prototype.add_form2tile = function(){
     var id = this.id;
     var tileid = this.tileid;
     var formclass = this.formclass;
-    var listdatafiltered = this.data.listdatafiltered;
+    var listdatafiltered = this.get_formdata().listdatafiltered;
 
     this.formelement = d3.select('#'+tileid+"panel-body").selectAll(".form-responsive")
         .data([listdatafiltered]);
@@ -33,36 +33,12 @@ d3_html_form.prototype.set_formclass = function(formclass_I){
     // set the formid
     this.formclass = formclass_I;
 };
-d3_html_form.prototype.set_id = function(formid_I){
-    // set the formid
-    this.id = formid_I;
-};
-d3_html_form.prototype.set_tileid = function(formtileid_I){
-    // set the form tileid
-    this.tileid = formtileid_I;
-};
-d3_html_form.prototype.add_data = function(data_I){
-    // add data to tile
-    this.data = data_I[0];
-};
-d3_html_form.prototype.set_datakeymap = function(datakeymap_I){
-    // set form data key map
-    this.datakeymap = datakeymap_I[0];  
-};
-d3_html_form.prototype.add_ndata = function(data_I){
-    // add data to tile
-    this.data = data_I;
-};
-d3_html_form.prototype.set_ndatakeymap = function(datakeymap_I){
-    // set form data key map
-    this.datakeymap = datakeymap_I;  
-};
 d3_html_form.prototype.get_formdata = function(){
     /* get the form data
     data displayed on the form will always be index 0
     all other data will be index 1 to n indices
     */
-    return this.data[0]
+    return this.data[0];
 }
 d3_html_form.prototype.set_formstyle = function () {
     // predefined css style for form header rows
@@ -179,8 +155,8 @@ d3_html_form.prototype.add_selectlistinput2formgroup = function (){
         var values = [this.value];
         var newfilter = {};
         newfilter[key]=values;
-        this_.data.change_filtersinkeys(newfilter);
-        //this_.data.change_filters(newfilter); //will add in new filters
+        this_.get_formdata().change_filtersinkeys(newfilter);
+        //this_.get_formdata().change_filters(newfilter); //will add in new filters
     };
 
     // select div
@@ -269,8 +245,8 @@ d3_html_form.prototype.add_selectlistinput2formgroupnode = function (inputargume
         var values = [this.value];
         var newfilter = {};
         newfilter[key]=values;
-        //this_.data.change_filtersinkeys(newfilter);
-        this_.data.change_filters(newfilter); //will add in new filters
+        //this_.get_formdata().change_filtersinkeys(newfilter);
+        this_.get_formdata().change_filters(newfilter); //will add in new filters
     };
 
     // select div
@@ -325,7 +301,7 @@ d3_html_form.prototype.add_checkboxinput2formgroupnode = function (inputargument
     var id = this.id;
     var this_ = this;
     var inputtype = 'checkbox';
-    var labeltextdata = this.data.get_uniquevaluesFromlistdata(input.labeltext);
+    var labeltextdata = this.get_formdata().get_uniquevaluesFromlistdata(input.labeltext);
     var checkboxoptions = [
         {'inputtype':'checkbox','inputvalue':'toggle all','inputtext':'toggle all',}
         ]; 
@@ -338,7 +314,7 @@ d3_html_form.prototype.add_checkboxinput2formgroupnode = function (inputargument
             checkboxes[0].forEach(function(d){d.checked=true;});
             //add all data to filters
             for (var i=0;i<input.input.length;i++){
-                this_.data.add_element2FiltersByKey(input.labeltext,input.input[i]['inputvalue']);                
+                this_.get_formdata().add_element2FiltersByKey(input.labeltext,input.input[i]['inputvalue']);                
             };
 
         } else if (this.value==="toggle all"){
@@ -349,14 +325,14 @@ d3_html_form.prototype.add_checkboxinput2formgroupnode = function (inputargument
             
             //remove all data from filters
             for (var i=0;i<input.input.length;i++){
-                this_.data.remove_elementFromFiltersByKey(input.labeltext,input.input[i]['inputvalue']);
+                this_.get_formdata().remove_elementFromFiltersByKey(input.labeltext,input.input[i]['inputvalue']);
             };
             
         }
         if (this.checked){
-            this_.data.add_element2FiltersByKey(input.labeltext,this.value);
+            this_.get_formdata().add_element2FiltersByKey(input.labeltext,this.value);
         } else {
-            this_.data.remove_elementFromFiltersByKey(input.labeltext,this.value);
+            this_.get_formdata().remove_elementFromFiltersByKey(input.labeltext,this.value);
             // uncheck toggle all
             var formgroup = d3.select('#' + id + 'form-group' + input.labeltext);
             var checkboxes = formgroup.selectAll("input");
@@ -478,8 +454,8 @@ d3_html_form.prototype.add_textinput2formgroupnode = function (inputarguments_I)
         var values = [this.value];
         var newfilter = {};
         newfilter[key]=values;
-        //this_.data.change_filtersinkeys(newfilter);
-        this_.data.change_filters(newfilter); //will add in new filters
+        //this_.get_formdata().change_filtersinkeys(newfilter);
+        this_.get_formdata().change_filters(newfilter); //will add in new filters
     };
 
     var textinputgroup = d3.select('#'+formgroupid)
@@ -531,8 +507,8 @@ d3_html_form.prototype.add_passwordinput2formgroupnode = function (inputargument
         var values = [this.value];
         var newfilter = {};
         newfilter[key]=values;
-        //this_.data.change_filtersinkeys(newfilter);
-        this_.data.change_filters(newfilter); //will add in new filters
+        //this_.get_formdata().change_filtersinkeys(newfilter);
+        this_.get_formdata().change_filters(newfilter); //will add in new filters
     };
     var passwordinputgroup = d3.select('#'+formgroupid)
         .selectAll("input")
@@ -584,7 +560,7 @@ d3_html_form.prototype.add_textareainput2formgroupnode = function (inputargument
         var values = [this.value];
         var newfilter = {};
         newfilter[key]=values;
-        this_.data.change_filtersinkeys(newfilter);
+        this_.get_formdata().change_filtersinkeys(newfilter);
     };
 
     var textareainputgroup = d3.select('#'+formgroupid)
@@ -619,7 +595,7 @@ d3_html_form.prototype.add_textareainput2formgroupnode = function (inputargument
 d3_html_form.prototype.add_form = function(textarea_valuetext_I){
     // add form to tile
     if (typeof texarea_valuetext_I !== "undefined"){var textarea_valuetext = textarea_valuetext_I;}
-    else{var textarea_valuetext = this.data.listdatafiltered;}
+    else{var textarea_valuetext = this.get_formdata().listdatafiltered;}
     var id = this.id;
 
     this.htmlform = this.html.selectAll("form")
@@ -643,7 +619,7 @@ d3_html_form.prototype.add_formgroup2form = function (inputarguments_I) {
         }
     else{
         var node = this.htmlform;
-        var forminput = this.data.convert_filter2forminput();
+        var forminput = this.get_formdata().convert_filter2forminput();
     };
     
     var id = this.id;
@@ -674,7 +650,7 @@ d3_html_form.prototype.add_label2formgroup = function (inputarguments_I) {
     else{
         //var node = this.htmlformgroup;
         var node = this.htmlformgroupenter;
-        var forminput = this.data.convert_filter2forminput();
+        var forminput = this.get_formdata().convert_filter2forminput();
     };
 
     var id = this.id;
@@ -779,7 +755,7 @@ d3_html_form.prototype.show_filterbuttonmodal = function (targetid_I,key_I) {
     var id = this.id;
 
     var formgroup_I = {};
-    formgroup_I['inputarguments']=this_.data.convert_filter2forminput([key_I]);
+    formgroup_I['inputarguments']=this_.get_formdata().convert_filter2forminput([key_I]);
 
     function updatetextinput(){
         // update the filterstringmenu
@@ -796,7 +772,7 @@ d3_html_form.prototype.show_filterbuttonmodal = function (targetid_I,key_I) {
     d3.select("#"+modalid+'modal').remove();
     
     //instantiate the modal menu object
-    menumodal.add_data([this_.data]);
+    menumodal.add_ndata([this_.get_formdata()]);
     menumodal.set_id(modalid);
     menumodal.set_tileid(id);
     menumodal.add_modal2tile(modaltargetid);
@@ -880,7 +856,7 @@ d3_html_form.prototype.show_searchbuttonpopover = function (targetid_I,key_I) {
     var id = this.id;
 
     var formgroup_I = {};
-    formgroup_I['inputarguments']=this_.data.convert_filter2forminput([key_I]);
+    formgroup_I['inputarguments']=this_.get_formdata().convert_filter2forminput([key_I]);
 
     function updatetextinput(){
         // update the filterstringmenu
@@ -894,7 +870,7 @@ d3_html_form.prototype.show_searchbuttonpopover = function (targetid_I,key_I) {
     var popovertargetid = "#" + targetid_I;
     var popoverid = id+key_I;
     var menupopover = new d3_html_popover();
-    menupopover.add_data([this.data]);
+    menupopover.add_data([this.get_formdata()]);
     menupopover.set_id(popoverid);
     menupopover.set_tileid(id);
     menupopover.add_popover2tile(popovertargetid);
@@ -946,10 +922,10 @@ d3_html_form.prototype.add_sortbybutton2filterbuttongroup = function (){
         var key_dir = {};
         key_dir[key]='asc';
         order.push(key_dir);
-        this_.data.order_listdatafiltered(order);
-        this_.data.order_nestdatafiltered(order);
-        this_.data.order_filters(order);
-        //var textarea_valuetext_I = this_.data.convert_filter2stringmenuinput([key]);
+        this_.get_formdata().order_listdatafiltered(order);
+        this_.get_formdata().order_nestdatafiltered(order);
+        this_.get_formdata().order_filters(order);
+        //var textarea_valuetext_I = this_.get_formdata().convert_filter2stringmenuinput([key]);
         //this_.update_forminput(textarea_valuetext_I);
         this_.update_forminput();
     };
@@ -990,10 +966,10 @@ d3_html_form.prototype.add_sortbybutton2filterbuttongroup = function (){
         var key_dir = {};
         key_dir[key]='desc';
         order.push(key_dir);
-        this_.data.order_listdatafiltered(order);
-        this_.data.order_nestdatafiltered(order);
-        this_.data.order_filters(order);
-        //var textarea_valuetext_I = this_.data.convert_filter2stringmenuinput([key]);
+        this_.get_formdata().order_listdatafiltered(order);
+        this_.get_formdata().order_nestdatafiltered(order);
+        this_.get_formdata().order_filters(order);
+        //var textarea_valuetext_I = this_.get_formdata().convert_filter2stringmenuinput([key]);
         //this_.update_forminput(textarea_valuetext_I);
         this_.update_forminput();
     };
@@ -1037,7 +1013,7 @@ d3_html_form.prototype.add_textinput2formgroup = function () {
         var values = [this.value];
         var newfilter = {};
         newfilter[key]=values;
-        this_.data.change_filtersinkeys(newfilter);
+        this_.get_formdata().change_filtersinkeys(newfilter);
         // update the filterstringmenu
         this_.update_forminput();
     };
@@ -1099,7 +1075,7 @@ d3_html_form.prototype.add_forminput2form = function (inputarguments_I) {
         }
     else{
         var node = this.htmlformenter;
-        var forminput = this.data.convert_filter2forminput();
+        var forminput = this.get_formdata().convert_filter2forminput();
     };
 
     var id = this.id;
@@ -1144,8 +1120,8 @@ d3_html_form.prototype.add_forminput2form = function (inputarguments_I) {
 d3_html_form.prototype.update_forminput = function(textarea_valuetext_I){
     // update the form
     if (typeof texarea_valuetext_I !== "undefined"){var textarea_valuetext = textarea_valuetext_I;}
-    //else{var textarea_valuetext = this.data.convert_filter2stringmenuinput();};
-    else{var textarea_valuetext = this.data.convert_filter2forminput();};
+    //else{var textarea_valuetext = this.get_formdata().convert_filter2stringmenuinput();};
+    else{var textarea_valuetext = this.get_formdata().convert_filter2forminput();};
     var id = this.id;
 
     for (var i=0;i<textarea_valuetext.length;i++){
@@ -1284,12 +1260,12 @@ d3_html_form.prototype.post_url = function(url_I){
     var id = this.id;
     var tileid = this.tileid;
     var filterstringmenu = [];
-//     for (var key in this.data.filters){
+//     for (var key in this.get_formdata().filters){
 //         var filterkey = d3.select("#"+id+'formlabel'+key).text();
 //         var filterstring = d3.select("#"+id+'forminput'+key).node().value;
 //         filterstringmenu.push({"labeltext":filterkey,"inputvalue":filterstring});
 //     };
-    var filterstringmenu = this.data.convert_filter2forminput();
+    var filterstringmenu = this.get_formdata().convert_filter2forminput();
 
     var url = url_I + '.html';
     url += '?';
@@ -1354,7 +1330,7 @@ d3_html_form.prototype.show_authenticationmodel = function(targetid_I,url_I){
 //         var options = {'username':username,'password':password};
         // update the filterstringmenu
         this_.update_forminput();
-//         var options = this_.data.convert_filter2forminput();
+//         var options = this_.get_formdata().convert_filter2forminput();
 //         this_.post_url(url_I);
         this_.make_httprequest('POST',url_I,true);
         // prevent browser default page refresh
@@ -1369,7 +1345,7 @@ d3_html_form.prototype.show_authenticationmodel = function(targetid_I,url_I){
     d3.select("#"+modalid+'modal').remove();
     //make the new modal
     var menumodal = new d3_html_modal();
-    menumodal.add_data([this.data]);
+    menumodal.add_ndata([this.get_formdata()]);
     menumodal.set_id(modalid);
     menumodal.set_tileid(id);
     menumodal.add_modal2tile(modaltargetid);
@@ -1424,8 +1400,8 @@ d3_html_form.prototype.make_httprequest = function(method_I,url_I,async_I){
       };
     };
     //get the data
-    var filterstringmenu = this.data.convert_filter2forminput();
-    var listdatafiltered = this.data.get_listdatafiltered();
+    var filterstringmenu = this.get_formdata().convert_filter2forminput();
+    var listdatafiltered = this.data[1].get_listdatafiltered();
 
     //format the data into the http package
     var data_O = {};

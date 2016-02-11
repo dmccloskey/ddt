@@ -25,3 +25,11 @@ ddt_html.prototype.set_datakeymap = function(datakeymap_I){
     // add data to ddthtml
     this.ddthtml.set_datakeymap(datakeymap_I);
 };
+ddt_html.prototype.add_ndata = function(data_I){
+    // add data to ddthtml
+    this.ddthtml.add_ndata(data_I);
+};
+ddt_html.prototype.set_ndatakeymap = function(datakeymap_I){
+    // add data to ddthtml
+    this.ddthtml.set_ndatakeymap(datakeymap_I);
+};

@@ -823,7 +823,7 @@ d3_tile.prototype.show_tilemenumodal = function(){
     var modaltargetid = "#" + tileid + 'tilemenubutton';
     //var modaltargetid = "body";
     var menumodal = new d3_html_modal();
-    //menumodal.add_data([this.data]);
+    //menumodal.add_ndata([this.data]);
     menumodal.set_id(modalid);
     menumodal.set_tileid(tileid);
     menumodal.add_modal2tile(modaltargetid);

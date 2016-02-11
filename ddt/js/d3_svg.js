@@ -384,7 +384,7 @@ d3_svg.prototype.show_svgmenumodal = function(){
     var modaltargetid = "#" + id + 'svgmenubutton';
     //var modaltargetid = "body";
     var menumodal = new d3_html_modal();
-    //menumodal.add_data([this.data]);
+    //menumodal.add_ndata([this.data]);
     menumodal.set_id(modalid);
     menumodal.set_tileid(tileid);
     menumodal.add_modal2tile(modaltargetid);

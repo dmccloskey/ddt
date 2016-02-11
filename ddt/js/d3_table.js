@@ -652,7 +652,7 @@ d3_table.prototype.show_columnoptionsmenumodal = function(targetid_I){
     function updatetablecolumns(){
         // update the table columns
         this.update_forminput();
-        var tableheaders = this.data.filters['column_name'];
+        var tableheaders = this.get_formdata().filters['column_name'];
         this_.set_tableheaders(tableheaders);
         this_.render();
         // prevent browser default page refresh
@@ -667,7 +667,7 @@ d3_table.prototype.show_columnoptionsmenumodal = function(targetid_I){
     d3.select("#"+modalid+'modal').remove();
     var menumodal = new d3_html_modal();
 
-    menumodal.add_data([tableheadersd3data]);
+    menumodal.add_ndata([tableheadersd3data]);
     menumodal.set_id(modalid);
     menumodal.set_tileid(tileid);
     menumodal.add_modal2tile(modaltargetid);
@@ -683,7 +683,7 @@ d3_table.prototype.show_columnoptionsmenumodal = function(targetid_I){
         var id = this.id;
 
         var formgroup_I = {};
-        formgroup_I['inputarguments']=this.data.convert_filter2forminput();
+        formgroup_I['inputarguments']=this.get_formdata().convert_filter2forminput();
 
         var formid = id + "modalbodyform";
         formgroup_I['node_id']='#'+formid;
