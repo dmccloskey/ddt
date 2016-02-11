@@ -57,6 +57,13 @@ d3_html_form.prototype.set_ndatakeymap = function(datakeymap_I){
     // set form data key map
     this.datakeymap = datakeymap_I;  
 };
+d3_html_form.prototype.get_formdata = function(){
+    /* get the form data
+    data displayed on the form will always be index 0
+    all other data will be index 1 to n indices
+    */
+    return this.data[0]
+}
 d3_html_form.prototype.set_formstyle = function () {
     // predefined css style for form header rows
     var formselector = "#" + this.tileid + " .form-responsive";
@@ -1417,13 +1424,15 @@ d3_html_form.prototype.make_httprequest = function(method_I,url_I,async_I){
       };
     };
     //get the data
-    var filterstringmenu = {};
-    for (var key in this.data.filters){
-        var filterkey = d3.select("#"+id+'formlabel'+key).text();
-        var filterstring = d3.select("#"+id+'formselect'+key).node().value;
-        filterstringmenu[filterkey]=filterstring;
-    };
+    var filterstringmenu = this.data.convert_filter2forminput();
     var listdatafiltered = this.data.get_listdatafiltered();
+
+    //format the data into the http package
+    var data_O = {};
+    for (var i=0; i<filterstringmenu.length; i++){
+        data_O[filterstringmenu[i]['labeltext']]=filterstringmenu[i]['inputvalue'];
+    };
+    data_O['data']=listdatafiltered;
 
     // construct the HTTP request
     var httpRequest = new XMLHttpRequest();
@@ -1432,7 +1441,7 @@ d3_html_form.prototype.make_httprequest = function(method_I,url_I,async_I){
     httpRequest.setRequestHeader('Content-Type', 'application/json; charset=UTF-8');
     
     // send the collected data as JSON
-    httpRequest.send(JSON.stringify(filterstringmenu));
+    httpRequest.send(JSON.stringify(data_O));
 };
 d3_html_form.prototype.set_posthttprequestbuttonmethod = function (url_I,authentication_I){
     /* add post url and arguments

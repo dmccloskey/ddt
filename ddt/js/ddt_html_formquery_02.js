@@ -66,6 +66,8 @@ ddt_html_formquery_02.prototype.make_html = function(data_I,parameters_I){
 	this.set_ddthtml()
     this.add_data(data_I);
     if (parameters_I.htmlkeymap){this.set_datakeymap(parameters_I.htmlkeymap);}
+//     this.add_ndata(data_I);
+//     if (parameters_I.htmlkeymap){this.set_ndatakeymap(parameters_I.htmlkeymap);}
     
 	this.ddthtml.add_postbutton2tile(parameters_I.formpostbuttonidtext);
 	this.ddthtml.set_posthttprequestbuttonmethod(parameters_I.formurl,parameters_I.formpostauthentication)
