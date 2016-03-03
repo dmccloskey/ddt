@@ -1401,7 +1401,11 @@ d3_html_form.prototype.make_httprequest = function(method_I,url_I,async_I){
     };
     //get the data
     var filterstringmenu = this.get_formdata().convert_filter2forminput();
-    var listdatafiltered = this.data[1].get_listdatafiltered();
+    if (this.data.length>1){
+        var listdatafiltered = this.data[1].get_listdatafiltered();
+    } else {
+        var listdatafiltered = null;
+    }
 
     //format the data into the http package
     var data_O = {};
