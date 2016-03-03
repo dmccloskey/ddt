@@ -728,4 +728,41 @@ d3_table.prototype.convert_tableheaders2d3data = function(){
     d3data.reset_filters();
     return d3data;
 };
-
+d3_table.prototype.add_tablecellszoom = function (){
+	/*add table row zoom on row hover
+	TODO: maintain column width on fontSize change
+	*/
+	this.tablecells
+	   .on("mouseover",function(d){
+            //Change cell font size
+            d3.event.target.style['fontSize']='14px';
+        })
+        .on("mouseout", function (d) {
+            //Change cell font size
+            d3.event.target.style['fontSize']='8px';
+        });
+};
+d3_table.prototype.add_tablerowszoom = function (){
+	/*add table row zoom on row hover
+	TODO: maintain column width on fontSize change
+	*/
+	var fontsizezoom = '14px';
+	var fontsizeoriginal = '8px';
+	this.tablerowsenter
+	   .on("mouseover",function(d){
+            //Change row font size
+            var cell = d3.event.target;
+            var cells = cell.parentNode.children;
+            for (var i=0; i<cells.length; i++){
+               cells[i].style['fontSize']=fontsizezoom;
+            };
+        })
+        .on("mouseout", function (d) {
+            //Change row font size
+            var cell = d3.event.target;
+            var cells = cell.parentNode.children;
+            for (var i=0; i<cells.length; i++){
+               cells[i].style['fontSize']=fontsizeoriginal;
+            };
+        });
+};
