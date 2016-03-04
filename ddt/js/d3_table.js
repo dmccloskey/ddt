@@ -844,28 +844,37 @@ d3_table.prototype.set_tablecellseditor = function (options_I){
     var this_ = this;
 
 	//split #1
-// 	this.tablecells
-// 	   .on("click",function(d){
-//             //Change cell font size
-//             var cell = d3.event.target;
-//             cell.contentEditable="true";
-//         });
-	//split #2
-    function tablecellseditorpopover(d){
-//         // get the target id and associated filter key
-         var targetnode = d3.event.target;
-         var targetid = targetnode.id;
-         this_.show_tablecellseditorpopover(targetid,d);
-    };
+	this.tablecells
+	   .on("click",function(d){
+            //Change cell font size
+            var cell = d3.event.target;
+            cell.contentEditable="true";
+        })
+        .on("blur",function(d){
+            var cell = d3.event.target;
+            var cellupdate = {};
+            cellupdate[d.column]=cell.innerHTML;
+            //cellupdate[d.column]=d.value;
+            this_.data.update_listdata(cellupdate,d.index_);
 
-    this.tablecells
-        .attr("data-toggle","popover")
-        .attr("data-placement","top")
-        .attr("data-html","true")
-        .attr("data-trigger","focus")
-        .on('click', function(d){
-            tablecellseditorpopover(d);
-            });
+		})
+		;
+	//split #2
+//     function tablecellseditorpopover(d){
+// //         // get the target id and associated filter key
+//          var targetnode = d3.event.target;
+//          var targetid = targetnode.id;
+//          this_.show_tablecellseditorpopover(targetid,d);
+//     };
+
+//     this.tablecells
+//         .attr("data-toggle","popover")
+//         .attr("data-placement","top")
+//         .attr("data-html","true")
+//         .attr("data-trigger","focus")
+//         .on('click', function(d){
+//             tablecellseditorpopover(d);
+//             });
 };
 d3_table.prototype.show_tablecellseditorpopover = function (targetid_I,d_I) {
     /* show the search button popover element
