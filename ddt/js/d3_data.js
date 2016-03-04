@@ -376,18 +376,21 @@ d3_data.prototype.update_listdata = function(key_values_I,index__I){
 	};
 
     for (var i = 0; i < this.listdata.length; i++) {
-        if (this.listdata[i]["used_"] 
-            && index_
-            && this.listdata[i]["index_"]===index_){ //apply update to filtered data
-            for (var key in key_values_I){
-                if (typeof(this.listdata[i][key])!=="undefined"){ //do not add in new keys not presents
-                    this.listdata[i][key] = key_values_I[key];
+        if (index_){
+            if (this.listdata[i]["used_"] 
+                && this.listdata[i]["index_"]===index_){ //apply update to filtered data
+                for (var key in key_values_I){
+                    if (typeof(this.listdata[i][key])!=="undefined"){ //do not add in new keys not presents
+                        this.listdata[i][key] = key_values_I[key];
+                    };
                 };
             };
-        } else if (this.listdata[i]["used_"]){ //apply update to filtered data
-            for (var key in key_values_I){
-                if (typeof(this.listdata[i][key])!=="undefined"){ //do not add in new keys not presents
-                    this.listdata[i][key] = key_values_I[key];
+        } else{
+            if (this.listdata[i]["used_"]){ //apply update to filtered data
+                for (var key in key_values_I){
+                    if (typeof(this.listdata[i][key])!=="undefined"){ //do not add in new keys not presents
+                        this.listdata[i][key] = key_values_I[key];
+                    };
                 };
             };
         };
