@@ -43,16 +43,8 @@ d3_html_popover.prototype.add_popover2tile = function (nodeid_I){
     this.htmlpopover = tile.append("div")
         .attr("class","popover")
         .attr("id",id + "popover")
-        //.attr("tabindex","-1")
-        //.attr("role","dialog")
         .attr("aria-labelledby",id + "popover")
-//         .attr("data-toggle","popover")
-//         .attr("data-html","true")
-        //.style({"display": "block"})
-        //.append("div")
-        //.attr("class","popover-dialog")
-        //.append("div")
-        //.attr("class","popover-content")
+        .attr("tabindex","0")
         ;
 };
 d3_html_popover.prototype.add_header2popover = function (htmlpopover_I){
@@ -115,4 +107,33 @@ d3_html_popover.prototype.add_content2popoverbodyform = function (){
         .append("div")
         .attr("class","form-group");  
     // your code...
+};
+d3_html_popover.prototype.add_buttongroup2popoverbodyform = function (){
+    // add button group to the popover body form
+    var id = this.id;
+    this.popoverbodyformbuttongroup = this.popoverbodyform
+        .append("div")
+        .attr("class","btn-group")
+};
+d3_html_popover.prototype.add_savebutton2popoverbodyformbuttongroup = function (){
+    // add save button to the popover body
+    var id = this.id;
+
+    this.popoverbodysavebutton = this.popoverbodyformbuttongroup
+        .append("button")
+        .attr("class","btn")
+        .attr("id",id+"popoverbodysavebutton")
+        .attr("type","button")
+        .text("Save");
+};
+d3_html_popover.prototype.add_discardbutton2popoverbodyformbuttongroup = function (){
+    // add discard button to the popover body
+    var id = this.id;
+
+    this.popoverbodydiscardbutton = this.popoverbodyformbuttongroup
+        .append("button")
+        .attr("class","btn")
+        .attr("id",id+"popoverbodydiscardbutton")
+        .attr("type","button")
+        .text("Discard");
 };

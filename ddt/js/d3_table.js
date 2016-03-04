@@ -131,13 +131,14 @@ d3_table.prototype.add_tablebody = function(){
     this.tablerows.exit().remove();
 
     this.tablerowsenter = this.tablerows.enter()
-        .append("tr");
+        .append("tr")
+        .attr('id',function (d,i) { return id+'tr'+i.toString(); });
 
     //this.tablecells = this.tablerowsenter.selectAll("td")
     this.tablecells = this.tablerows.selectAll("td")
         .data(function(row) {
             return tableheaders.map(function(column) {
-                return {column: column, value: row[column]};
+                return {column: column, value: row[column], index_: row['index_']};
             });
         });
 
@@ -145,9 +146,14 @@ d3_table.prototype.add_tablebody = function(){
 
     this.tablecellsenter = this.tablecells.enter();
     this.tablecellsenter.append("td")
-        .html(function(d) { return d.value; });
+        .html(function(d) { return d.value; })
+        .attr('id',function (d) {
+        	return id+'td'+d.index_.toString()+d.column;
+        	});
 
-    this.tablecells.html(function(d) { return d.value; });
+    this.tablecells
+    	.html(function(d) { return d.value; })
+        .attr('id',function (d) { return id+'td'+d.index_.toString()+d.column; });
 
 };
 d3_table.prototype.set_id = function(tableid_I){
@@ -343,15 +349,45 @@ d3_table.prototype.set_cellstyle = function () {
 d3_table.prototype.set_tablestyle = function () {
     // predefined css style for table header rows
     var tableselector = "#" + this.tileid + " .table-responsive";
+    //var tableselector = "#" + this.tileid + " table";
     var tablestyle = {
         //'table-layout': 'fixed',
+    	//'display': 'block',
         'width': '100%',
-        'margin-bottom': '15px',
-        'overflow-y': 'hidden',
+        'height': '500px',
+        'overflow-y': 'scroll',
+        //'overflow-y': 'hidden',
         'overflow-x': 'scroll',
+        'margin-bottom': '15px',
         '-ms-overflow-style': '-ms-autohiding-scrollbar',
         //'border': '1px solid #ddd',
-        '-webkit-overflow-scrolling': 'touch'
+        '-webkit-overflow-scrolling': 'touch',
+    };
+    var selectorstyle = [{ 'selection': tableselector, 'style': tablestyle }]
+    this.set_d3css(selectorstyle);
+};
+d3_table.prototype.set_tablebodystyle = function () {
+    // predefined css style for table header rows
+    var tableselector = "#" + this.tileid + " tbody";
+    var tablestyle = {
+    	'display': 'block',
+    	'position': 'absolute', 
+        'width': '100%',
+        'height': '500px',
+        'overflow-y': 'scroll',
+        '-ms-overflow-style': '-ms-autohiding-scrollbar',
+        '-webkit-overflow-scrolling': 'touch',
+    };
+    var selectorstyle = [{ 'selection': tableselector, 'style': tablestyle }]
+    this.set_d3css(selectorstyle);
+};
+d3_table.prototype.set_tablerowstyle = function () {
+    // predefined css style for table rows
+    var tableselector = "#" + this.tileid + " tr";
+    var tablestyle = {
+        'width': '100%',
+    	'display': 'inline-table', 
+		'table-layout': 'fixed',
     };
     var selectorstyle = [{ 'selection': tableselector, 'style': tablestyle }]
     this.set_d3css(selectorstyle);
@@ -728,26 +764,53 @@ d3_table.prototype.convert_tableheaders2d3data = function(){
     d3data.reset_filters();
     return d3data;
 };
-d3_table.prototype.add_tablecellszoom = function (){
+d3_table.prototype.set_tablecellszoom = function (fontsizezoom_I,fontsizeoriginal_I){
 	/*add table row zoom on row hover
+	INPUT:
+	fontsizezoom_I = string, fontsize zoom (e.g. default = '14px')
+	fontsizeoriginal_I = string, fontsize original (e.g. default = '8px')
 	TODO: maintain column width on fontSize change
 	*/
+
+	if (typeof(fontsizezoom_I)!=="undefined"){
+	    var fontsizezoom = fontsizezoom_I;
+	} else {
+	    var fontsizezoom = '14px';
+	};
+	if (typeof(fontsizeoriginal_I)!=="undefined"){
+	    var fontsizeoriginal = fontsizeoriginal_I;
+	} else {
+	    var fontsizeoriginal = '8px';
+	};
+
 	this.tablecells
 	   .on("mouseover",function(d){
             //Change cell font size
-            d3.event.target.style['fontSize']='14px';
+            d3.event.target.style['fontSize']=fontsizezoom;
         })
         .on("mouseout", function (d) {
             //Change cell font size
-            d3.event.target.style['fontSize']='8px';
+            d3.event.target.style['fontSize']=fontsizeoriginal;
         });
 };
-d3_table.prototype.add_tablerowszoom = function (){
+d3_table.prototype.set_tablerowszoom = function (fontsizezoom_I,fontsizeoriginal_I){
 	/*add table row zoom on row hover
+	fontsizezoom_I = string, fontsize zoom (e.g. default = '14px')
+	fontsizeoriginal_I = string, fontsize original (e.g. default = '8px')
 	TODO: maintain column width on fontSize change
 	*/
-	var fontsizezoom = '14px';
-	var fontsizeoriginal = '8px';
+
+	if (typeof(fontsizezoom_I)!=="undefined"){
+	    var fontsizezoom = fontsizezoom_I;
+	} else {
+	    var fontsizezoom = '14px';
+	};
+	if (typeof(fontsizeoriginal_I)!=="undefined"){
+	    var fontsizeoriginal = fontsizeoriginal_I;
+	} else {
+	    var fontsizeoriginal = '8px';
+	};
+
 	this.tablerowsenter
 	   .on("mouseover",function(d){
             //Change row font size
@@ -765,4 +828,123 @@ d3_table.prototype.add_tablerowszoom = function (){
                cells[i].style['fontSize']=fontsizeoriginal;
             };
         });
+};
+d3_table.prototype.set_tablecellseditor = function (options_I){
+	/*add table row zoom on row hover
+	INPUT:
+	*/
+
+	if (typeof(options_I)!=="undefined"){
+	    var options = options_I;
+	} else {
+	    var options = null;
+	};
+
+    var id = this.id;
+    var this_ = this;
+
+	//split #1
+// 	this.tablecells
+// 	   .on("click",function(d){
+//             //Change cell font size
+//             var cell = d3.event.target;
+//             cell.contentEditable="true";
+//         });
+	//split #2
+    function tablecellseditorpopover(d){
+//         // get the target id and associated filter key
+         var targetnode = d3.event.target;
+         var targetid = targetnode.id;
+         this_.show_tablecellseditorpopover(targetid,d);
+    };
+
+    this.tablecells
+        .attr("data-toggle","popover")
+        .attr("data-placement","top")
+        .attr("data-html","true")
+        .attr("data-trigger","focus")
+        .on('click', function(d){
+            tablecellseditorpopover(d);
+            });
+};
+d3_table.prototype.show_tablecellseditorpopover = function (targetid_I,d_I) {
+    /* show the search button popover element
+    INPUT:
+    targetid_I = event node button id
+    d_I = associated cell data
+    TODO: fix bugs to allow modal to close
+    TODO: add in functions to update the data
+    */ 
+
+    var this_ = this;
+    var id = this.id;
+
+    function savetextinput(){
+    	// update the data by index and key
+
+        // prevent browser default page refresh
+        d3.event.preventDefault();
+    };
+		
+    function discardtextinput(){
+        // prevent browser default page refresh
+        d3.event.preventDefault();
+		$(popovertargetid).popover('hide');
+    };
+
+	//make the popover data
+	//var data_I = {'data':[{"value":d_I.value}],'datakeys':Object.keys(d_I),'datanestkeys':Object.keys(d_I)[0]}
+	var data_I = {'data':[{"value":d_I.value}],'datakeys':["value"],'datanestkeys':["value"]}
+	var d3data = new d3_data();
+	d3data.set_keys(data_I.datakeys);
+	d3data.set_listdata(data_I.data,data_I.datanestkeys);
+	d3data.add_usedkey2listdata(); //ensure a used_ key in each data object
+	d3data.add_indexkey2listdata(); //ensure a index_ key in each data object
+	d3data.reset_filters();
+
+    //instantiate the popover menu object
+    var popovertargetid = "#" + targetid_I;
+    var popoverid = id+d_I.column;
+    //remove the previous modal
+    d3.select("#"+popoverid+'popover').remove();
+    var menupopover = new d3_html_popover();
+
+    menupopover.add_ndata([d3data]);
+    menupopover.set_id(popoverid);
+    menupopover.set_tileid(id);
+    menupopover.add_popover2tile(popovertargetid);
+    menupopover.add_header2popover();
+    menupopover.add_title2popoverheader('Edit cell');
+    menupopover.add_body2popover();
+    menupopover.add_form2popoverbody();
+    menupopover.add_content2popoverbodyform = function (){
+        // add content to the popover body form
+        var id = this.id;
+        var formid = id + "popoverbodyform";
+
+        var formgroup_I = {};
+        formgroup_I['inputarguments']=this.get_formdata().convert_filter2forminput();
+        formgroup_I['node_id']='#'+formid;
+
+        this.add_forminput2form(formgroup_I);
+        this.add_buttongroup2popoverbodyform();
+		this.add_savebutton2popoverbodyformbuttongroup();
+		this.add_discardbutton2popoverbodyformbuttongroup();
+
+        this.popoverbodysavebutton.on("click",savetextinput.bind(this));
+        this.popoverbodydiscardbutton.on("click",discardtextinput);
+    };
+    menupopover.add_content2popoverbodyform();
+
+    // show the popover
+    $(popovertargetid).popover({
+        html: true,
+        title: function () {
+            return $("#"+popoverid+'popoverheader').html();
+        },
+        content: function () {
+            return $("#"+popoverid+'popoverbody').html();
+        }
+    })
+    $(popovertargetid).popover('show');
 };

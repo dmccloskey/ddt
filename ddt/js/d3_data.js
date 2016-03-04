@@ -46,13 +46,26 @@ d3_data.prototype.convert_list2nestmap = function (data_I,key_I) {
     return nesteddata_O;
 };
 d3_data.prototype.add_usedkey2listdata = function (){
-    // add used_ key to listdata
-    // should be done once to ensure that here is a used_ key
+    /* add used_ key to listdata
+    should be done once to ensure that there is a 'used_' key
+    */
     
     //set _used to false:
     for (var i = 0; i < this.listdata.length; i++) {
         if (typeof(this.listdata[i]["used_"])==="undefined"){
             this.listdata[i]['used_'] = true;
+        };
+    };
+};
+d3_data.prototype.add_indexkey2listdata = function (){
+    /* add index_ key to listdata
+    should be done once to ensure that there is a 'index_' key
+    */
+    
+    //set _used to false:
+    for (var i = 0; i < this.listdata.length; i++) {
+        if (typeof(this.listdata[i]["index_"])==="undefined"){
+            this.listdata[i]['index_'] = i;
         };
     };
 };
@@ -251,9 +264,10 @@ d3_data.prototype.format_keyvalues2namechildren = function(lastchild_I){
     this.nestdatafiltered.forEach(rename);
 };
 d3_data.prototype.convert_filter2stringmenuinput = function(filters_I){
-    // convert filter list to filter string list
-    // OPTIONAL INPUT:
-    // filters_I = [], specific list of keys to convert
+    /* convert filter list to filter string list
+    OPTIONAL INPUT: 
+    filters_I = [], specific list of keys to convert
+    */
 
     if (typeof(filters_I)!=='undefined'){
         var filters = filters_I
@@ -347,13 +361,30 @@ d3_data.prototype.get_nestdatafiltered = function(){
     // retrieve filtered rows from nestdatafiltered
     return this.nestdatafiltered;
 };
-d3_data.prototype.update_listdata = function(key_values_I){
-    // update rows in listdata that are used_
-    //INPUT:
-    //key_values_I = {"key":"new value",...};
+d3_data.prototype.update_listdata = function(key_values_I,index__I){
+    /* update rows in listdata that are used_
+    INPUT:
+    key_values_I = {"key":"new value",...};
+    OPTIONAL INPUT:
+    index__I = int, 
+    */
     
+	if (typeof(index__I)!=="undefined"){
+	    var index_ = index__I;
+	} else {
+	    var index_ = null;
+	};
+
     for (var i = 0; i < this.listdata.length; i++) {
-        if (this.listdata[i]["used_"]){ //apply update to filtered data
+        if (this.listdata[i]["used_"] 
+            && index_
+            && this.listdata[i]["index_"]===index_){ //apply update to filtered data
+            for (var key in key_values_I){
+                if (typeof(this.listdata[i][key])!=="undefined"){ //do not add in new keys not presents
+                    this.listdata[i][key] = key_values_I[key];
+                };
+            };
+        } else if (this.listdata[i]["used_"]){ //apply update to filtered data
             for (var key in key_values_I){
                 if (typeof(this.listdata[i][key])!=="undefined"){ //do not add in new keys not presents
                     this.listdata[i][key] = key_values_I[key];
@@ -632,6 +663,16 @@ d3_data.prototype.convert_filter2forminput = function(filters_I){
                             'inputtext':d,
                             'inputvalue':d,
                             'inputrows':inputrows,   
+                });
+            });
+            forminputrow['input']=input; 
+        } else if (typeof(this.filters[key][0])==='string' && this.filters[key].length === 1 && this.filters[key][0].length === 1){
+            forminputrow['inputtype'] = 'text';
+            var input = [];
+            this.filters[key].forEach(function(d){
+                input.push({'inputtype':'text',
+                            'inputtext':d,
+                            'inputvalue':d,  
                 });
             });
             forminputrow['input']=input; 

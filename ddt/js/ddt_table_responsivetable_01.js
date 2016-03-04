@@ -50,12 +50,15 @@ ddt_table_responsivetable_01.prototype.make_table = function(data_I,parameters_I
 		this.set_tablebody();
 		this.add_tableheader();
 		this.add_tablebody();
-		this.set_tablestyle();
 		this.set_headerstyle();
+		//this.set_tablerowstyle();
+		this.set_tablestyle();
 		this.set_cellstyle();
+		//this.set_tablebodystyle();
 		this.add_tablesort(parameters_I.tablesort);
 		this.add_tablecolumnoptions();
-		// this.add_tablecellszoom();
-		this.add_tablerowszoom();
+		// this.set_tablecellszoom();
+		//this.set_tablerowszoom();
+		//this.set_tablecellseditor();
     };
 };

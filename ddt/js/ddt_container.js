@@ -67,6 +67,7 @@ ddt_container.prototype.update_data = function(data_I,index_I){
     var d3data = this.data[index_I];
     d3data.set_listdata(data_I,d3data.nestkey);
     d3data.add_usedkey2listdata(); //ensure a used_ key in each data object
+    d3data.add_indexkey2listdata(); //ensure a index_ key in each data object
     d3data.reset_filters();
 };
 ddt_container.prototype.add_data = function(data_I){
@@ -78,6 +79,7 @@ ddt_container.prototype.add_data = function(data_I){
         d3data.set_keys(data_I[cnt].datakeys);
         d3data.set_listdata(data_I[cnt].data,data_I[cnt].datanestkeys);
         d3data.add_usedkey2listdata(); //ensure a used_ key in each data object
+        d3data.add_indexkey2listdata(); //ensure a index_ key in each data object
         d3data.reset_filters();
         this.data.push(d3data);
     };
