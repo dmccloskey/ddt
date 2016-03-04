@@ -55,7 +55,7 @@ ddt_table_responsivetable_01.prototype.make_table = function(data_I,parameters_I
 		this.set_tablestyle();
 		this.set_cellstyle();
 		//this.set_tablebodystyle();
-		this.add_tablesort(parameters_I.tablesort);
+		//this.add_tablesort(parameters_I.tablesort);
 		this.add_tablecolumnoptions();
 		// this.set_tablecellszoom();
 		//this.set_tablerowszoom();
