@@ -928,7 +928,7 @@ d3_html.prototype.export_filtermenujson = function () {
 
     var a = document.createElement('a');
     a.download ="filter" + '.json'; // file name
-    var j = JSON.stringify(this.data.filters);
+    var j = JSON.stringify(this.data[0].filters);
     a.setAttribute("href-lang", "application/json");
     a.href = 'data:text/json;charset=utf-8,' + j;
     // <a> constructed, simulate mouse click on it
@@ -1068,8 +1068,8 @@ d3_html.prototype.add_jsonimportbutton2tile = function () {
                     // Get the data file
                     var result = e.target.result;
                     var filtermenu = JSON.parse(result);
-                    this_.data.filters = filtermenu;
-                    this_.data.filter_listdata();
+                    this_.data[0].filters = filtermenu;
+                    this_.data[0].filter_listdata();
                     this_.render();
                 };
             })(file1);
