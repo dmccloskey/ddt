@@ -243,26 +243,34 @@ ddt_container.prototype.add_datafiltermenusubmitbutton = function (tileid_I,html
     function submit(){
         var filterstringmenu = [];
         var tileindex = 0;
-//         var tiledataindex = 0;
-//         this_.tiles.forEach(function(d,i){
-//             if (d.parameters.tileid === tileid){
-//                 tileindex=i;
-//                 tiledataindex = this_.tile2datamap[d.parameters.tileid];
-//             };
-//         });
-//         tiledataindex.forEach(function(d){
-//             for (var key in this_.data[d].filters){
-//                 var filterkey = d3.select("#"+htmlid+'formlabel'+key).text();
-//                 var filterstring = d3.select("#"+htmlid+'forminput'+key).node().value;
-//                 filterstringmenu.push({"labeltext":filterkey,"inputvalue":filterstring});
-//             };
-//         });
+
+        //Apply a global filter to all keys in the container
+        var tiledataindex = 0;
+        this_.tiles.forEach(function(d,i){
+            if (d.parameters.tileid === tileid){
+                tileindex=i;
+                tiledataindex = this_.tile2datamap[d.parameters.tileid];
+            };
+        });
+        tiledataindex.forEach(function(d){
+            for (var key in this_.data[d].filters){
+                var filterkey = d3.select("#"+htmlid+'formlabel'+key).text();
+                var filterstring = d3.select("#"+htmlid+'forminput'+key).node().value;
+                filterstringmenu.push({"labeltext":filterkey,"inputvalue":filterstring});
+            };
+        });
         for (var cnt=0;cnt<this_.data.length;cnt++){
-            //this_.data[cnt].convert_stringmenuinput2filter(filterstringmenu);
-            //this_.data[cnt].reset_usedkey(); //check reset_usedkey
+            this_.data[cnt].convert_stringmenuinput2filter(filterstringmenu);
+            this_.data[cnt].reset_usedkey(); //check reset_usedkey
             this_.data[cnt].filter_listdata();
         };
         this_.update_container();  
+
+//         //TODO: filter only objects associated with the filter menu?
+//         for (var cnt=0;cnt<this_.data.length;cnt++){
+//             this_.data[cnt].filter_listdata();
+//         };
+//         this_.update_container(); 
     };
 
     this.submitbutton = d3.select("#"+tileid+'submitbutton'+submitbuttonid)

@@ -231,9 +231,10 @@ d3_data.prototype.change_filters = function (filter_I) {
     };
 };
 d3_data.prototype.change_filtersinkeys = function (filter_I) {
-    // modify the filter according to the new filter
-    // Behavior: 
-    // 1. update existing filters that are in the keys
+    /* modify the filter according to the new filter
+    Behavior:
+    1. update existing filters that are in the keys
+    */
     
     for (var key in filter_I) {
         if (Object.keys(this.filters).indexOf(key) > -1){
