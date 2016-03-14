@@ -8,13 +8,15 @@ function d3_data() {
 
 
     this.keys = []; // list of columns that can be applied as nest keys and filters
-    this.nestkey = ''; // key to apply to nest
+    this.nestkey = []; // key to apply to nest
     this.filters = {}; // {key1:[string1,string2,...],...}
                        //NOTE: only string filters and string filtering is supported
                        //TODO: support filtering on boolean, numeric, date and time, and custom functions
     this.listdata = []; // data in database table form (must contain a column "used_");
     this.listdatafiltered = []; // data in database table form
     this.nestdatafiltered = []; // data in nested form
+    this.cfdata = {}; //crossfilter object
+    this.cffilters = {}; // filter objects
 };
 d3_data.prototype.add_nestkey = function(key_I){
     //closure to add additional nest keys within a loop
@@ -48,6 +50,7 @@ d3_data.prototype.convert_list2nestmap = function (data_I,key_I) {
 d3_data.prototype.add_usedkey2listdata = function (){
     /* add used_ key to listdata
     should be done once to ensure that there is a 'used_' key
+    DEPRECATED
     */
     
     //set _used to false:
@@ -60,6 +63,7 @@ d3_data.prototype.add_usedkey2listdata = function (){
 d3_data.prototype.add_indexkey2listdata = function (){
     /* add index_ key to listdata
     should be done once to ensure that there is a 'index_' key
+    DEPRECATED
     */
     
     //set _used to false:
@@ -69,8 +73,34 @@ d3_data.prototype.add_indexkey2listdata = function (){
         };
     };
 };
+d3_data.prototype.check_listdata = function (){
+    /* check each row of the list data
+    1. add index_ key to listdata
+    2. add used_ key to listdata
+    3. replace any null values
+    */
+    
+    //set _used to false:
+    for (var i = 0; i < this.listdata.length; i++) {
+        if (typeof(this.listdata[i]["index_"])==="undefined"){
+            this.listdata[i]['index_'] = i;
+        };
+        if (typeof(this.listdata[i]["used_"])==="undefined"){
+            this.listdata[i]['used_'] = true;
+        };
+        for (var key in this.listdata[i]){
+            if (typeof(this.listdata[i][key])==='null'){
+                this.listdata[i][key]=undefined;
+            } else if (typeof(this.listdata[i][key])==='NaN'){
+                this.listdata[i][key]=undefined;                
+            };
+        };
+    };
+};
 d3_data.prototype.reset_usedkey = function (){
-    // reset used_ to true on listdata
+    /* reset used_ to true on listdata
+    TODO_CF: may not be needed
+    */
     
     //set _used to false:
     for (var i = 0; i < this.listdata.length; i++) {
@@ -78,9 +108,11 @@ d3_data.prototype.reset_usedkey = function (){
     };
 };
 d3_data.prototype.add_keysandvalues2listdata = function (key_values_I){
-    // add a new key and default value to list data
-    //INPUT:
-    //key_values_I = {"key":"value",...}
+    /* add a new key and default value to list data
+    INPUT:
+    key_values_I = {"key":"value",...}
+    TODO_CF: will break...
+    */
     
     for (var i = 0; i < this.listdata.length; i++) {
         for (var key in key_values_I){
@@ -91,9 +123,11 @@ d3_data.prototype.add_keysandvalues2listdata = function (key_values_I){
     };
 };
 d3_data.prototype.remove_keysfromlistdata = function (key_I){
-    // remove a key from list data
-    //INPUT:
-    //key_I = string
+    /* remove a key from list data
+    INPUT:
+    key_I = string
+    TODO_CF: will break...
+    */
     
     for (var i = 0; i < this.listdata.length; i++) {
         for(var k in key_I){
@@ -128,53 +162,82 @@ d3_data.prototype.filter_listdata = function () {
 d3_data.prototype.filter_stringdata = function () {
     // apply filters to listdata
 
-    // NOTE: changes made to listdatacopy are applied to this.listdata
-    var listdatacopy = this.listdata;
-    var listdatafiltered_O = this.listdatafiltered;
 
-    //pass each row through the filter
-    for (var i = 0; i < listdatacopy.length; i++) {
-        for (var filter in this.filters) {
-            //console.log(filter);
-            if (typeof listdatacopy[i][filter] !== "undefined"){
-                if (listdatacopy[i][filter]){
-                    var str_compare = listdatacopy[i][filter].toString(); //ensure that the value is a string
-                    var lst_filters = [];
-                    this.filters[filter].forEach(function(d){
-                        var str_d = '^';
-                        str_d += escapeRegExp(d);
-                        str_d += '$';
-                        lst_filters.push(str_d);
-                    });
-                    var str_filter = lst_filters.join('|');
-                    //NOTES: need to check for an array (arrays will break)
-                    if (!str_compare.match(str_filter)) {
-                        listdatacopy[i]['used_'] = false;
-                    };
-                };
-            };
-        };
+    /* generate a cross filter for each key in keys
+    */
+
+    //SPLIT 2
+    var filters = this.filters;
+    for (var filter in this.filters) {
+        //this.cffilters[filter].filter(this.filters[filter]);
+        this.cffilters[filter].filter(function(d){
+            var value = d.toString();
+            return filters[filter].indexOf(value) > -1;
+        });
     };
+    this.set_listdatafiltered(); 
 
-    // add in the filtered data
-    listdatacopy.forEach(function (d) {
-        if (d['used_']) {
-            listdatafiltered_O.push(d)
-        };
-    });
+//     //SPLIT 1
+//     // NOTE: changes made to listdatacopy are applied to this.listdata
+//     var listdatacopy = this.listdata;
+//     var listdatafiltered_O = this.listdatafiltered;
+
+//     //pass each row through the filter
+//     for (var i = 0; i < listdatacopy.length; i++) {
+//         for (var filter in this.filters) {
+//             //console.log(filter);
+//             if (typeof listdatacopy[i][filter] !== "undefined"){
+//                 if (listdatacopy[i][filter]){
+//                     var str_compare = listdatacopy[i][filter].toString(); //ensure that the value is a string
+//                     var lst_filters = [];
+//                     this.filters[filter].forEach(function(d){
+//                         var str_d = '^';
+//                         str_d += escapeRegExp(d);
+//                         str_d += '$';
+//                         lst_filters.push(str_d);
+//                     });
+//                     var str_filter = lst_filters.join('|');
+//                     //NOTES: need to check for an array (arrays will break)
+//                     if (!str_compare.match(str_filter)) {
+//                         listdatacopy[i]['used_'] = false;
+//                     };
+//                 };
+//             };
+//         };
+//     };
+
+//     // add in the filtered data
+//     listdatacopy.forEach(function (d) {
+//         if (d['used_']) {
+//             listdatafiltered_O.push(d)
+//         };
+//     });
 };
 d3_data.prototype.set_listdata = function (listdata_I,nestkey_I) {
     // set list data and initialize filtered data
     this.nestkey = nestkey_I;
     this.listdata = listdata_I;
-    this.listdatafiltered = listdata_I;
-    this.nestdatafiltered = this.convert_list2nestlist(listdata_I,this.nestkey);
+    this.check_listdata();
+    this.set_crossFilterData();
+    this.set_crossFilterFilters();
+    this.set_listdatafiltered();
+    //this.listdatafiltered = listdata_I;
+    this.set_nestdatafiltered();
+    //this.nestdatafiltered = this.convert_list2nestlist(listdata_I,this.nestkey);
 };
 d3_data.prototype.set_keys = function (keys_I) {
-    // set the keys
-    //INPUT:
-    //keys_I = list of strings
+    /* set the keys
+    INPUT:
+    keys_I = list of strings
+    */
     this.keys = keys_I;
+};
+d3_data.prototype.set_nestkeys = function (nestkeys_I) {
+    /* set the keys
+    INPUT:
+    nestkeys_I = list of strings
+    */
+    this.nestkey = nestkeys_I;
 };
 d3_data.prototype.add_keys = function (keys_I) {
     // add keys
@@ -349,6 +412,10 @@ d3_data.prototype.clear_data = function () {
     this.listdata = [];
     this.listdatafiltered = [];
     this.nestdatafiltered = [];
+    this.cfdata = {};
+    this.cffilters = {};
+    this.nestkey = [];
+    this.keys = [];
 };
 d3_data.prototype.get_listdata = function(){
     // retrieve rows from listdata
@@ -789,7 +856,55 @@ d3_data.prototype.set_d3data = function(data_I){
     */
 
     this.set_keys(data_I.datakeys);
+    this.set_nestkeys(data_I.datanestkeys);
     this.set_listdata(data_I.data,data_I.datanestkeys);
-    this.add_usedkey2listdata(); //ensure a used_ key in each data object
+//     this.add_usedkey2listdata(); //ensure a used_ key in each data object
+//     this.add_indexkey2listdata(); //ensure a index_ key in each data object
     this.reset_filters();
+};
+d3_data.prototype.set_crossFilterData = function(){
+    /*set the cross filter data object
+    BEHAVIOR:
+    this.cfdata points to this.listdata in memory
+    changes made to this.listdata affect this.cfdata and viceversa
+    */
+
+    this.cfdata = crossfilter(this.listdata);
+};
+d3_data.prototype.set_crossFilterFilters = function(){
+    /*set the cross filter filters
+    BEHAVIOR:
+    this.listdatafiltered points to the updated this.cffilters filter
+    */
+    var cfdata = this.cfdata;
+    var cffilters = {};
+    //make crossfilter filters for keys
+    this.keys.forEach(function(k){
+        cffilters[k]=cfdata.dimension(function(d){
+            return d[k]})
+            });
+    //make crossfilter filters for used_ and index_
+    var filters = ['used_','index_'];
+    filters.forEach(function(k){
+        cffilters[k]=cfdata.dimension(function(d){
+            return d[k]})
+            });
+    //return 
+    this.cffilters = cffilters;
+};
+d3_data.prototype.set_listdatafiltered = function(){
+    /*set the view of the filtered list data
+    BEHAVIOR:
+    this.listdatafiltered points to the updated this.cffilters filter
+    */
+    //store the view of the latest filtered data
+    this.listdatafiltered = this.cffilters['index_'].top(Infinity);
+};
+d3_data.prototype.set_nestdatafiltered = function(){
+    /*set the view of the filtered list data in nest form
+    BEHAVIOR:
+    this.listdatafiltered points to the updated this.cffilters filter
+    */
+    //store the view of the latest filtered data
+    this.nestdatafiltered = this.convert_list2nestlist(this.listdatafiltered,this.nestkey);
 };

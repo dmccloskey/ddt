@@ -76,11 +76,7 @@ ddt_container.prototype.add_data = function(data_I){
     // data_I = [{data:[],datakeys:[],datanestkeys:[]},...]
     for (var cnt=0;cnt<data_I.length;cnt++){
         var d3data = new d3_data();
-        d3data.set_keys(data_I[cnt].datakeys);
-        d3data.set_listdata(data_I[cnt].data,data_I[cnt].datanestkeys);
-        d3data.add_usedkey2listdata(); //ensure a used_ key in each data object
-        d3data.add_indexkey2listdata(); //ensure a index_ key in each data object
-        d3data.reset_filters();
+        d3data.set_d3data(data_I[cnt]);
         this.data.push(d3data);
     };
 };
@@ -168,7 +164,7 @@ ddt_container.prototype.update_container = function(){
 ddt_container.prototype.reset_containerdata = function(){
     // reset data filters and call all tile update functions
     for (cnt=0;cnt<this.data.length;cnt++){ 
-        this.data[cnt].reset_usedkey(); //check reset_usedkey
+        //this.data[cnt].reset_usedkey(); //check reset_usedkey
         this.data[cnt].reset_filters();
     };
     var data = this.data;
