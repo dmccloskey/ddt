@@ -116,11 +116,20 @@ d3_table.prototype.set_tablebody = function(){
     this.tbodyelement.exit().remove();
 
 };
-d3_table.prototype.add_tablebody = function(){
-    // add the table body
+d3_table.prototype.add_tablebody = function(maxrows_I){
+    /* add the table body
+    INPUT:
+    nrows_I = integer, number of rows to limit the table
+    */
+	if (typeof(maxrows_I)!=="undefined"){
+		var maxrows = maxrows_I;
+	} else {
+		var maxrows = 100;
+	};
+
     var id = this.id;
     var tileid = this.tileid;
-    var datalistdatafiltered = this.data.listdatafiltered;
+    var datalistdatafiltered = this.data.listdatafiltered.slice(0,maxrows);
     var tableheaders = this.tableheaders;
         
     //table body

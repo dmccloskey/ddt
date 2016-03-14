@@ -66,8 +66,6 @@ ddt_container.prototype.update_data = function(data_I,index_I){
 
     var d3data = this.data[index_I];
     d3data.set_listdata(data_I,d3data.nestkey);
-    d3data.add_usedkey2listdata(); //ensure a used_ key in each data object
-    d3data.add_indexkey2listdata(); //ensure a index_ key in each data object
     d3data.reset_filters();
 };
 ddt_container.prototype.add_data = function(data_I){
@@ -257,7 +255,7 @@ ddt_container.prototype.add_datafiltermenusubmitbutton = function (tileid_I,html
         });
         for (var cnt=0;cnt<this_.data.length;cnt++){
             this_.data[cnt].convert_stringmenuinput2filter(filterstringmenu);
-            this_.data[cnt].reset_usedkey(); //check reset_usedkey
+            //this_.data[cnt].reset_usedkey(); //check reset_usedkey
             this_.data[cnt].filter_listdata();
         };
         this_.update_container();  
@@ -286,7 +284,7 @@ ddt_container.prototype.add_datafiltermenuresetbutton = function (tileid_I,reset
     function reset(){
         // reset data filters and call all tile update functions
         for (var cnt=0;cnt<this_.data.length;cnt++){
-            this_.data[cnt].reset_usedkey(); //check reset_usedkey
+            //this_.data[cnt].reset_usedkey(); //check reset_usedkey
             this_.data[cnt].reset_filters();
             this_.data[cnt].filter_listdata();
         };

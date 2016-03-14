@@ -80,7 +80,6 @@ d3_data.prototype.check_listdata = function (){
     3. replace any null values
     */
     
-    //set _used to false:
     for (var i = 0; i < this.listdata.length; i++) {
         if (typeof(this.listdata[i]["index_"])==="undefined"){
             this.listdata[i]['index_'] = i;
@@ -89,9 +88,9 @@ d3_data.prototype.check_listdata = function (){
             this.listdata[i]['used_'] = true;
         };
         for (var key in this.listdata[i]){
-            if (typeof(this.listdata[i][key])==='null'){
-                this.listdata[i][key]=undefined;
-            } else if (typeof(this.listdata[i][key])==='NaN'){
+            if (this.listdata[i][key]===null){
+                this.listdata[i][key]='';
+            } else if (typeof(this.listdata[i][key])==="number" && isNaN(this.listdata[i][key])){
                 this.listdata[i][key]=undefined;                
             };
         };
@@ -171,8 +170,10 @@ d3_data.prototype.filter_stringdata = function () {
     for (var filter in this.filters) {
         //this.cffilters[filter].filter(this.filters[filter]);
         this.cffilters[filter].filter(function(d){
-            var value = d.toString();
-            return filters[filter].indexOf(value) > -1;
+            if (typeof(d)!=="undefined"){
+                var value = d.toString();
+                return filters[filter].indexOf(value) > -1;
+            };
         });
     };
     this.set_listdatafiltered(); 

@@ -49,7 +49,7 @@ ddt_table_responsivetable_01.prototype.make_table = function(data_I,parameters_I
         this.set_tableheader();
 		this.set_tablebody();
 		this.add_tableheader();
-		this.add_tablebody();
+		this.add_tablebody(parameters_I.maxrows);
 		this.set_headerstyle();
 		//this.set_tablerowstyle();
 		this.set_tablestyle();
