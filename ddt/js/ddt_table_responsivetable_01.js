@@ -39,6 +39,7 @@ ddt_table_responsivetable_01.prototype.make_table = function(data_I,parameters_I
     this.ddttable.add_csvandjsonexportbutton2tile();
     this.ddttable.add_optionsbuttongroup2footer();
     this.ddttable.add_tablemenubutton2optionsbuttongroup();
+    this.ddttable.set_ntablerows(parameters_I.ntablerows);
     this.ddttable.render = function () {
     	// permanent filter on the data
     	if (parameters_I.tablefilters){
@@ -49,7 +50,7 @@ ddt_table_responsivetable_01.prototype.make_table = function(data_I,parameters_I
         this.set_tableheader();
 		this.set_tablebody();
 		this.add_tableheader();
-		this.add_tablebody(parameters_I.maxrows);
+		this.add_tablebody();
 		this.set_headerstyle();
 		//this.set_tablerowstyle();
 		this.set_tablestyle();
