@@ -571,11 +571,12 @@ d3_data.prototype.get_uniquevaluesFromlistdatafiltered = function(key_I){
     return uniquevalues_O;
 };
 d3_data.prototype.order_filters = function(order_I){
-    // group list data
-    // INPUT:
-    // order_I = [{key:direction},...] e.g. [{'analysis_id':'asc'}]
-    //      where direction = 'asc' ascending
-    //                      = 'desc' descending
+    /* group list data
+    INPUT:
+    order_I = [{key:direction},...] e.g. [{'analysis_id':'asc'}]
+          where direction = 'asc' ascending
+                          = 'desc' descending
+    */
 
     var filters = this.filters;
 
@@ -608,11 +609,12 @@ d3_data.prototype.order_filters = function(order_I){
     });
 };
 d3_data.prototype.order_listdatafiltered = function(order_I){
-    // group list data
-    // INPUT:
-    // order_I = [{key:direction},...] e.g. [{'analysis_id':'asc'}]
-    //      where direction = 'asc' ascending
-    //                      = 'desc' descending
+    /* group list data
+    INPUT:
+    order_I = [{key:direction},...] e.g. [{'analysis_id':'asc'}]
+          where direction = 'asc' ascending
+                          = 'desc' descending
+    */
 
     var listdatafiltered =this.listdatafiltered;
 
@@ -645,11 +647,12 @@ d3_data.prototype.order_listdatafiltered = function(order_I){
     });
 };
 d3_data.prototype.order_nestdatafiltered = function(order_I){
-    // group list data
-    // INPUT:
-    // order_I = [{key:direction},...] e.g. [{'analysis_id':'asc'}]
-    //      where direction = 'asc' ascending
-    //                      = 'desc' descending
+    /* group list data
+    INPUT:
+    order_I = [{key:direction},...] e.g. [{'analysis_id':'asc'}]
+          where direction = 'asc' ascending
+                          = 'desc' descending
+    */
 
     var nestdatafiltered =this.nestdatafiltered;
 
@@ -893,13 +896,30 @@ d3_data.prototype.set_crossFilterFilters = function(){
     //return 
     this.cffilters = cffilters;
 };
-d3_data.prototype.set_listdatafiltered = function(){
+d3_data.prototype.set_listdatafiltered = function(order_I){
     /*set the view of the filtered list data
+    INPUT:
+    order_I = [{key:direction},...] e.g. [{'analysis_id':'asc'}]
+          where direction = 'asc' ascending
+                          = 'desc' descending
     BEHAVIOR:
     this.listdatafiltered points to the updated this.cffilters filter
     */
+
+    if (typeof(order_I)!=="undefined"){
+        var order = order_I;
+    } else {
+        var order = [{'index_':"asc"}];        
+    };
+    var order_key = Object.keys(order[0])[0];
+    var order_sort = order[0][order_key];
+
     //store the view of the latest filtered data
-    this.listdatafiltered = this.cffilters['index_'].top(Infinity);
+    if (order_sort === 'desc'){
+        this.listdatafiltered = this.cffilters[order_key].top(Infinity);
+    } else if (order_sort === 'asc'){
+        this.listdatafiltered = this.cffilters[order_key].bottom(Infinity);
+    };
 };
 d3_data.prototype.set_nestdatafiltered = function(){
     /*set the view of the filtered list data in nest form
