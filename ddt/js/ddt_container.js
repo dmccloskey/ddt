@@ -66,8 +66,6 @@ ddt_container.prototype.update_data = function(data_I,index_I){
 
     var d3data = this.data[index_I];
     d3data.set_listdata(data_I,d3data.nestkey);
-    d3data.add_usedkey2listdata(); //ensure a used_ key in each data object
-    d3data.add_indexkey2listdata(); //ensure a index_ key in each data object
     d3data.reset_filters();
 };
 ddt_container.prototype.add_data = function(data_I){
@@ -76,11 +74,7 @@ ddt_container.prototype.add_data = function(data_I){
     // data_I = [{data:[],datakeys:[],datanestkeys:[]},...]
     for (var cnt=0;cnt<data_I.length;cnt++){
         var d3data = new d3_data();
-        d3data.set_keys(data_I[cnt].datakeys);
-        d3data.set_listdata(data_I[cnt].data,data_I[cnt].datanestkeys);
-        d3data.add_usedkey2listdata(); //ensure a used_ key in each data object
-        d3data.add_indexkey2listdata(); //ensure a index_ key in each data object
-        d3data.reset_filters();
+        d3data.set_d3data(data_I[cnt]);
         this.data.push(d3data);
     };
 };
@@ -150,9 +144,11 @@ ddt_container.prototype.make_container = function(){
     this.add_containertiles();
     for (var cnt=0;cnt<this.tiles.length;cnt++){
         var tiledataindex = this.tile2datamap[this.parameters[cnt].tileid];
-        var tiledata = [];
-        tiledataindex.forEach(function(d){tiledata.push(data[d]);});
-        this.tiles[cnt].make_tile(tiledata,this.parameters[cnt]);
+        if (typeof(tiledataindex)!=="undefined"){
+            var tiledata = [];
+            tiledataindex.forEach(function(d){tiledata.push(data[d]);});
+            this.tiles[cnt].make_tile(tiledata,this.parameters[cnt]);
+        };
     };
 };
 ddt_container.prototype.update_container = function(){
@@ -168,7 +164,7 @@ ddt_container.prototype.update_container = function(){
 ddt_container.prototype.reset_containerdata = function(){
     // reset data filters and call all tile update functions
     for (cnt=0;cnt<this.data.length;cnt++){ 
-        this.data[cnt].reset_usedkey(); //check reset_usedkey
+        //this.data[cnt].reset_usedkey(); //check reset_usedkey
         this.data[cnt].reset_filters();
     };
     var data = this.data;
@@ -261,7 +257,7 @@ ddt_container.prototype.add_datafiltermenusubmitbutton = function (tileid_I,html
         });
         for (var cnt=0;cnt<this_.data.length;cnt++){
             this_.data[cnt].convert_stringmenuinput2filter(filterstringmenu);
-            this_.data[cnt].reset_usedkey(); //check reset_usedkey
+            //this_.data[cnt].reset_usedkey(); //check reset_usedkey
             this_.data[cnt].filter_listdata();
         };
         this_.update_container();  
@@ -290,7 +286,7 @@ ddt_container.prototype.add_datafiltermenuresetbutton = function (tileid_I,reset
     function reset(){
         // reset data filters and call all tile update functions
         for (var cnt=0;cnt<this_.data.length;cnt++){
-            this_.data[cnt].reset_usedkey(); //check reset_usedkey
+            //this_.data[cnt].reset_usedkey(); //check reset_usedkey
             this_.data[cnt].reset_filters();
             this_.data[cnt].filter_listdata();
         };

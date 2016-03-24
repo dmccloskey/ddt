@@ -10,6 +10,7 @@ function d3_table(){
     this.data = null;  
     this.tableheaders = [];
     this.datakeymap = null;
+    this.ntablerows = 100;
 };
 d3_table.prototype.add_table2tile = function(){
     // set the table
@@ -117,10 +118,12 @@ d3_table.prototype.set_tablebody = function(){
 
 };
 d3_table.prototype.add_tablebody = function(){
-    // add the table body
+    /* add the table body
+    */
+
     var id = this.id;
     var tileid = this.tileid;
-    var datalistdatafiltered = this.data.listdatafiltered;
+    var datalistdatafiltered = this.data.listdatafiltered.slice(0,this.ntablerows);
     var tableheaders = this.tableheaders;
         
     //table body
@@ -956,4 +959,20 @@ d3_table.prototype.show_tablecellseditorpopover = function (targetid_I,d_I) {
         }
     })
     $(popovertargetid).popover('show');
+};
+d3_table.prototype.set_ntablerows = function(ntablerows_I){
+	/*set the default number of table rows displayed
+	INPUT:
+	ntablerows_I = integer
+	*/
+	if (typeof(ntablerows_I)!=="undefined"){
+		var ntablerows = ntablerows_I;
+	} else {
+		var ntablerows = 100;
+	};
+};
+d3_table.prototype.get_ntablerows = function(){
+	/*return the default number of table rows displayed
+	*/
+	return this.ntablerows;
 };
