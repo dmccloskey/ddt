@@ -144,9 +144,11 @@ ddt_container.prototype.make_container = function(){
     this.add_containertiles();
     for (var cnt=0;cnt<this.tiles.length;cnt++){
         var tiledataindex = this.tile2datamap[this.parameters[cnt].tileid];
-        var tiledata = [];
-        tiledataindex.forEach(function(d){tiledata.push(data[d]);});
-        this.tiles[cnt].make_tile(tiledata,this.parameters[cnt]);
+        if (typeof(tiledataindex)!=="undefined"){
+            var tiledata = [];
+            tiledataindex.forEach(function(d){tiledata.push(data[d]);});
+            this.tiles[cnt].make_tile(tiledata,this.parameters[cnt]);
+        };
     };
 };
 ddt_container.prototype.update_container = function(){
