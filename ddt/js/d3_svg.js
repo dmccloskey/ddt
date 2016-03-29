@@ -451,3 +451,46 @@ d3_svg.prototype.make_colorscale = function(color_start_I,color_end_I,length_I){
               .range([d3.rgb(color_start_I), d3.rgb(color_end_I)]);
     return color_scale_O;
 };
+d3_chart2d.prototype.set_arc = function(outerradius_I,innerradius_I){
+    //set the pie arc outer and inner radii
+    //INPUT:
+    //outerradius_I = float, outer radius
+    //innerradius_I = float, inner radius (set to >0 to make a donut chart)
+    //TODO:
+    //scale radius?
+
+    var top = this.margin.top;
+    if (typeof(outerradius_I)!=="undefined"){
+        var outerradius = outerradius_I;
+    } else {
+        var outerradius = this.radius-top;
+    };
+    if (typeof(innterradius_I)!=="undefined"){
+        var innerradius = innerradius_I;
+    } else {
+        var innerradius = outerradius/4.0;
+    };
+
+    this.arc = d3.svg.arc()
+        .outerRadius(outerradius)
+        .innerRadius(innerradius); 
+};
+d3_chart2d.prototype.set_arclabel = function(outerradiuslabel_I,innerradiuslabel_I){
+    //set the pie arc outer and inner label radii
+    //INPUT:
+    //outerradiuslabel_I = float, outer radius
+    //innerradiuslabel_I = float, inner radius
+    if (typeof(outerradiuslabel_I)!=="undefined"){
+        var outerradiuslabel = outerradiuslabel_I;
+    } else {
+        var outerradiuslabel = this.radius-40.0;
+    };
+    if (typeof(innterradiuslabel_I)!=="undefined"){
+        var innerradiuslabel = innerradiuslabel_I;
+    } else {
+        var innerradiuslabel = this.radius-40.0;
+    };
+    this.arclabel = d3.svg.arc()
+        .outerRadius(outerradiuslabel)
+        .innerRadius(innerradiuslabel);
+};
