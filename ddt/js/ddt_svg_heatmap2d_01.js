@@ -90,5 +90,6 @@ ddt_svg_heatmap_01.prototype.make_svg = function(data_I,parameters_I){
         this.add_heatmapdata1datalist(parameters_I.svgdatalisttileid);
         this.add_heatmapdata1tooltipandfill();
         this.set_heatmapdata1css();
+        this.order_heatmapdata1();
     };
 };

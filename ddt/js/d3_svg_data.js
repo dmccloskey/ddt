@@ -194,6 +194,8 @@ d3_svg_data.prototype.set_colorscale = function (colorscale_I,colorcategory_I,co
             .domain([d3.min(listdatafiltered, function (d) { return d[colordatalabel_I]; }),
             d3.max(listdatafiltered, function (d) { return d[colordatalabel_I]; })])
             .range(blue2red64);
+    }else if (colorscale_I==='quantile' && colordomain_I && colordatalabel_I && colorcategory_I==='blue2gold64RBG'){
+            this.colorscale = d3.scale.quantile().domain(colordomain_I).range(blue2gold64RBG);
     }else if (colorscale_I==='quantile' && colordomain_I && colorcategory_I==='colorbrewer'){
         this.colorscale = d3.scale.quantile().domain(colordomain_I).range(colorbrewer.YlGnBu[9]);
     }else if (colorscale_I==='quantile' && colordomain_I && colorcategory_I==='category10c'){
@@ -210,6 +212,8 @@ d3_svg_data.prototype.set_colorscale = function (colorscale_I,colorcategory_I,co
         this.colorscale = d3.scale.quantile().domain(colordomain_I).range(heatmap10);
     }else if (colorscale_I==='quantile' && colordomain_I && colorcategory_I==='heatmap21'){
         this.colorscale = d3.scale.quantile().domain(colordomain_I).range(heatmap21);
+    }else if (colorscale_I==='quantile' && colordomain_I && colorcategory_I==='blue2gold64HSV'){
+        this.colorscale = d3.scale.quantile().domain(colordomain_I).range(blue2gold64HSV);
     }else if (colorscale_I==='quantile' && colorcategory_I==='colorbrewer'){
         this.colorscale = d3.scale.quantile().range(colorbrewer.YlGnBu[10]);
     }else if (colorscale_I==='quantile' && colorcategory_I==='category10c'){

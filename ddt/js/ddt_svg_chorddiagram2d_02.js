@@ -49,7 +49,7 @@ ddt_svg_chorddiagram2d_01.prototype.make_svg = function(data_I,parameters_I){
 		this.set_chordmatrix();
 		this.set_arc(parameters_I.svgouterradius,parameters_I.svginnerradius);
 		this.set_arclabel();
-
+        
 		this.set_chordpath(parameters_I.svginnerradius);
 		this.add_chordgroupsdata1(parameters_I.svginnerradius)
         this.add_chordsdata1();

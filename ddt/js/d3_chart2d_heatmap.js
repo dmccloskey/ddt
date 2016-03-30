@@ -632,6 +632,21 @@ d3_chart2d.prototype.add_heatmapdata1legend = function(orientation_I){
         };
 
 };
+d3_chart2d.prototype.order_heatmapdata1 = function (tileid_I,value_I='hclust'){
+    // add data list (menu) to tile for the heatmap
+    var tileid = this.tileid;
+    var heatmaporder = this.heatmaporder;
+    var svgg = this.svgg;
+   
+    var columnsindex = this.data1keymap.columnsindex;
+    var rowsindex = this.data1keymap.rowsindex;
+    var cellsize = this.cellsize;
+    var columnleavesordered = this.columnleavesordered;
+    var rowleavesordered = this.rowleavesordered;
+    heatmaporder(cellsize,value_I,
+        rowsindex,columnsindex,
+        rowleavesordered, columnleavesordered,svgg);
+};
 d3_chart2d.prototype.add_heatmapdata1drowpdownmenu = function (tileid_I){
     // add data list (menu) to tile for the heatmap
     var tileid = this.tileid;

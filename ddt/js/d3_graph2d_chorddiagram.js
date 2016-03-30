@@ -18,11 +18,17 @@ d3_graph2d.prototype.set_chord = function(padding_I=0.5,sortSubgroups_I='desc'){
     if (sortSubgroups_I==='desc'){
         this.chord = d3.layout.chord()
             .padding(padding_I)
-            .sortSubgroups_I(d3.descending);
+            .sortGroups(d3.descending)
+            .sortSubgroups(d3.descending)
+            .sortChords(d3.descending)
+            ;
     } else if (sortSubgroups_I==='asc'){
         this.chord = d3.layout.chord()
             .padding(padding_I)
-            .sortSubgroups_I(d3.ascending);
+            .sortGroups(d3.ascending)
+            .sortSubgroups(d3.ascending)
+            .sortChords(d3.ascending)
+            ;
     };
 };
 d3_graph2d.prototype.set_chordmatrix = function(){
@@ -36,7 +42,7 @@ d3_graph2d.prototype.set_chordmatrix = function(){
     var y_data = this.data1keymap.ydata;
     var listdatafiltered = this.data1.listdatafiltered;
 
-    this.chordmatrix = matrix = chordMatrix()
+    this.chordmatrix = chordMatrix()
         .layout(chord)
         .filter(function (item, r, c) {
         return (item[x_data_label] === r.name && item[y_data_label] === c.name) ||
@@ -60,7 +66,7 @@ d3_graph2d.prototype.set_chordmatrix = function(){
 
    this.chordmatrix.data(listdatafiltered)
         .resetKeys()
-        .addKeys(['x_data_label', 'y_data_label'])
+        .addKeys([x_data_label, y_data_label])
         .update();
 };
 d3_graph2d.prototype.set_chordpath = function(innerradius_I){
@@ -69,17 +75,37 @@ d3_graph2d.prototype.set_chordpath = function(innerradius_I){
     innerradius_I = float
     */
 
+    if (typeof(innerradius_I)!=="undefined"){
+        var innerradius = innerradius_I;
+    } else {
+        var innerradius = (this.radius-this.margin.top)/4
+    }
+
     this.chordpath = d3.svg.chord()
-        .radius(innerradius_I);
+        .radius(innerradius);
 };
-d3_graph2d.prototype.add_chordgroupsdata1 = function(){
+d3_graph2d.prototype.add_chordgroupsdata1 = function(innerradius_I){
     /*Add the chordgroups
     INPUT:
+    innerradius_I = float
     */
+
+    if (typeof(innerradius_I)!=="undefined"){
+        var innerradius = innerradius_I;
+    } else {
+        var innerradius = (this.radius-this.margin.top)/4
+    }
+
     var matrix = this.chordmatrix;
-    var x_data_label = this.data1keymap.xdatalabel;
-    var y_data_label = this.data1keymap.ydatalabel;
     var colors = this.colorscale;
+    var opacity_min = 0.;
+    var opacity_max = 0.9;
+    var chord_select_duration = 2000;
+    var chord_exit_duration = 1000;
+    var arc = this.arc;
+    var this_ = this;
+    var width = this.width+this.margin.left;
+    var height = this.height+this.margin.top;
 
     function groupClick(d) {
         d3.event.preventDefault();
@@ -90,7 +116,7 @@ d3_graph2d.prototype.add_chordgroupsdata1 = function(){
     function dimChords(d) {
         d3.event.preventDefault();
         d3.event.stopPropagation();
-        container.selectAll("path.chord").style("opacity", function (p) {
+        this_.svgg.selectAll("path.chord").style("opacity", function (p) {
             if (d.source) { // COMPARE CHORD IDS
                 return (p._id === d._id) ? 0.9: 0.1;
             } else { // COMPARE GROUP IDS
@@ -102,42 +128,46 @@ d3_graph2d.prototype.add_chordgroupsdata1 = function(){
     function resetChords() {
         d3.event.preventDefault();
         d3.event.stopPropagation();
-        container.selectAll("path.chord").style("opacity",0.9);
+        this_.svgg.selectAll("path.chord").style("opacity",opacity_max);
     }
 
     this.chordgroupsdata1 = this.svgg.selectAll(".group")
         .data(matrix.groups());
 
-    this.chordgroupsdata1enter = groups.enter()
+    this.chordgroupsdata1enter = this.chordgroupsdata1.enter()
         .append("g")
+        .attr("transform", "translate(" + width/2 + "," + height/2 + ")")
         .attr("class", "group");
 
-    chordgroupsdata1enter.append("path")
+    this.chordgroupsdata1enter.append("path")
         .style("pointer-events", "none")
+        //.attr("transform", "translate(" + width/2 + "," + height/2 + ")")
         .style("fill", function (d) { return colors(d._id); })
         .attr("d", arc);
 
-    chordgroupsdata1enter.append("text")
+    this.chordgroupsdata1enter.append("text")
         .attr("dy", ".35em")
+        //.attr("transform", "translate(" + width/2 + "," + height/2 + ")")
         .on("click", groupClick)
         .on("mouseover", dimChords)
         .on("mouseout", resetChords)
         .text(function (d) {
-        return d._id;
+            return d._id;
         });
 
     this.chordgroupsdata1.select("path")
-        .transition().duration(2000)
+        .transition().duration(chord_select_duration)
+        //.attr("transform", "translate(" + width/2 + "," + height/2 + ")")
         .attrTween("d", matrix.groupTween(arc));
 
     this.chordgroupsdata1.select("text")
         .transition()
-        .duration(2000)
+        .duration(chord_select_duration)
         .attr("transform", function (d) {
             d.angle = (d.startAngle + d.endAngle) / 2;
             var r = "rotate(" + (d.angle * 180 / Math.PI - 90) + ")";
-            var t = " translate(" + (innerRadius + 26) + ")";
-            return r + t + (d.angle > Math.PI ? " rotate(180)" : " rotate(0)"); 
+            var t = " translate(" + (innerradius + 26) + ")";
+            return r + t + (d.angle > Math.PI ? " rotate(180)" : " rotate(0)");  
         })
         .attr("text-anchor", function (d) {
             return d.angle > Math.PI ? "end" : "begin";
@@ -146,30 +176,36 @@ d3_graph2d.prototype.add_chordgroupsdata1 = function(){
     this.chordgroupsdata1.exit().select("text").attr("fill", "orange");
     this.chordgroupsdata1.exit().select("path").remove();
 
-    this.chordgroupsdata1.exit().transition().duration(1000)
-        .style("opacity", 0).remove();
+    this.chordgroupsdata1.exit().transition().duration(chord_exit_duration)
+        .style("opacity", opacity_min).remove();
 };
 d3_graph2d.prototype.add_chordsdata1 = function(){
     /*
     */
 
+    var colorscale = this.colorscale;
     var matrix = this.chordmatrix;
     var path = this.chordpath;
-    var x_data_label = this.data1keymap.xdatalabel;
-    var y_data_label = this.data1keymap.ydatalabel;
+    var this_ = this;
+    var width = this.width+this.margin.left;
+    var height = this.height+this.margin.top;
+
+    var opacity_min = 0.;
+    var opacity_max = 0.9;
+    var chord_select_duration = 2000;
 
     function hideTooltip() {
         d3.event.preventDefault();
         d3.event.stopPropagation();
         //TODO:
-        d3.select("#tooltip").style("opacity", 0);
+        //d3.select("#tooltip").style("opacity", opacity_min);
         resetChords();
     };
 
     function dimChords(d) {
         d3.event.preventDefault();
         d3.event.stopPropagation();
-        container.selectAll("path.chord").style("opacity", function (p) {
+        this_.svgg.selectAll("path.chord").style("opacity", function (p) {
             if (d.source) { // COMPARE CHORD IDS
                 return (p._id === d._id) ? 0.9: 0.1;
             } else { // COMPARE GROUP IDS
@@ -181,31 +217,31 @@ d3_graph2d.prototype.add_chordsdata1 = function(){
     function resetChords() {
         d3.event.preventDefault();
         d3.event.stopPropagation();
-        container.selectAll("path.chord").style("opacity",0.9);
+        this_.svgg.selectAll("path.chord").style("opacity",opacity_max);
     }
     function chordMouseover(d) {
         d3.event.preventDefault();
         d3.event.stopPropagation();
         dimChords(d);
         //TODO:
-        d3.select("#tooltip").style("opacity", 1);
-        //TODO:
-        //$scope.updateTooltip(matrix.read(d));
+        //d3.select("#tooltip").style("opacity", 1);
     }
 
-    this.chordsdata1 = container.selectAll("path.chord")
+    this.chordsdata1 = this.svgg.selectAll("path.chord")
         .data(matrix.chords(), function (d) { return d._id; });
 
-    this.chordsdata1enter = chordsdata1.enter().append("path")
+    this.chordsdata1enter = this.chordsdata1.enter().append("path")
         .attr("class", "chord")
+        .attr("transform", "translate(" + width/2 + "," + height/2 + ")")
         .style("fill", function (d) {
-          return colors(d.source._id);
+          return colorscale(d.source._id);
         })
         .attr("d", path)
         .on("mouseover", chordMouseover)
         .on("mouseout", hideTooltip);
 
-    this.chordsdata1.transition().duration(2000)
+    this.chordsdata1.transition().duration(chord_select_duration)
+        .attr("transform", "translate(" + width/2 + "," + height/2 + ")")
         .attrTween("d", matrix.chordTween(path));
 
     this.chordsdata1.exit().remove()
@@ -281,6 +317,8 @@ var chordMatrix = function () {
     var _matrix = [], dataStore = [], _id = 0;
     var matrixIndex = [], indexHash = {};
     var chordLayout, layoutCache;
+
+    var objs,entry; //added
 
     var filter = function () {};
     var reduce = function () {};

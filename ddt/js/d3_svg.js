@@ -34,7 +34,7 @@ d3_svg.prototype.set_height = function (height_I) {
 d3_svg.prototype.set_radius = function (radius_I){
     // set the radius property
     if (typeof(radius_I)!=="undefined"){
-        this.radius = Math.min(width_I, height_I) / 2;
+        this.radius = radius_I;
     } else {
         this.radius = Math.min(this.width, this.height) / 2;
     };
@@ -451,13 +451,14 @@ d3_svg.prototype.make_colorscale = function(color_start_I,color_end_I,length_I){
               .range([d3.rgb(color_start_I), d3.rgb(color_end_I)]);
     return color_scale_O;
 };
-d3_chart2d.prototype.set_arc = function(outerradius_I,innerradius_I){
-    //set the pie arc outer and inner radii
-    //INPUT:
-    //outerradius_I = float, outer radius
-    //innerradius_I = float, inner radius (set to >0 to make a donut chart)
-    //TODO:
-    //scale radius?
+d3_svg.prototype.set_arc = function(outerradius_I,innerradius_I){
+    /*set the pie arc outer and inner radii
+    INPUT:
+    outerradius_I = float, outer radius
+    innerradius_I = float, inner radius (set to >0 to make a donut chart)
+    TODO:
+    scale radius?
+    */
 
     var top = this.margin.top;
     if (typeof(outerradius_I)!=="undefined"){
@@ -465,7 +466,7 @@ d3_chart2d.prototype.set_arc = function(outerradius_I,innerradius_I){
     } else {
         var outerradius = this.radius-top;
     };
-    if (typeof(innterradius_I)!=="undefined"){
+    if (typeof(innerradius_I)!=="undefined"){
         var innerradius = innerradius_I;
     } else {
         var innerradius = outerradius/4.0;
@@ -475,11 +476,12 @@ d3_chart2d.prototype.set_arc = function(outerradius_I,innerradius_I){
         .outerRadius(outerradius)
         .innerRadius(innerradius); 
 };
-d3_chart2d.prototype.set_arclabel = function(outerradiuslabel_I,innerradiuslabel_I){
-    //set the pie arc outer and inner label radii
-    //INPUT:
-    //outerradiuslabel_I = float, outer radius
-    //innerradiuslabel_I = float, inner radius
+d3_svg.prototype.set_arclabel = function(outerradiuslabel_I,innerradiuslabel_I){
+    /*set the pie arc outer and inner label radii
+    INPUT:
+    outerradiuslabel_I = float, outer radius
+    innerradiuslabel_I = float, inner radius
+    */
     if (typeof(outerradiuslabel_I)!=="undefined"){
         var outerradiuslabel = outerradiuslabel_I;
     } else {
