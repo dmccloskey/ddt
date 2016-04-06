@@ -167,12 +167,13 @@ d3_data.prototype.filter_stringdata = function () {
 
     //SPLIT 2
     var filters = this.filters;
-    for (var filter in this.filters) {
+    for (var filter in filters) {
         //this.cffilters[filter].filter(this.filters[filter]);
         this.cffilters[filter].filter(function(d){
             if (typeof(d)!=="undefined"){
                 var value = d.toString();
-                return filters[filter].indexOf(value) > -1;
+                var index = filters[filter].indexOf(value);
+                return index > -1
             };
         });
     };
