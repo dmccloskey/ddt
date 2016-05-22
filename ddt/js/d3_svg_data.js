@@ -195,7 +195,9 @@ d3_svg_data.prototype.set_colorscale = function (colorscale_I,colorcategory_I,co
             d3.max(listdatafiltered, function (d) { return d[colordatalabel_I]; })])
             .range(blue2red64);
     }else if (colorscale_I==='quantile' && colordomain_I && colordatalabel_I && colorcategory_I==='blue2gold64RBG'){
-            this.colorscale = d3.scale.quantile().domain(colordomain_I).range(blue2gold64RBG);
+        this.colorscale = d3.scale.quantile().domain(colordomain_I).range(blue2gold64RBG);
+    } else if (colorscale_I === 'quantile' && colordomain_I && colordatalabel_I && colorcategory_I === 'blue2red64RBG') {
+        this.colorscale = d3.scale.quantile().domain(colordomain_I).range(blue2red64RBG);
     }else if (colorscale_I==='quantile' && colordomain_I && colorcategory_I==='colorbrewer'){
         this.colorscale = d3.scale.quantile().domain(colordomain_I).range(colorbrewer.YlGnBu[9]);
     }else if (colorscale_I==='quantile' && colordomain_I && colorcategory_I==='category10c'){

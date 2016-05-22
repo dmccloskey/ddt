@@ -21,18 +21,30 @@ d3_chart2d.prototype.set_heatmapdata1 = function (cellsize_I) {
         collabelsset.add(Math.round(d[columnsindex]));
         rowlabelsset.add(Math.round(d[rowsindex]));
         });
-    var colindexmin = Math.round(d3.min(collabelsset.values()));
-    var rowindexmin = Math.round(d3.min(rowlabelsset.values()));
-    var colindexmax = collabelsset.values().length-1;
-    var rowindexmax = rowlabelsset.values().length-1;
-    var collabelsordered = [];
-    var rowlabelsordered = [];
-    for (var i=colindexmin;i<=colindexmax;i++){
-        collabelsordered.push(i);
-    };
-    for (i=rowindexmin;i<=rowindexmax;i++){
-        rowlabelsordered.push(i);
-    };
+
+    //convert to integer explicitly //[added]
+    var collabelsset_values = collabelsset.values();
+    for(var i=0; i<collabelsset_values.length; i++) { collabelsset_values[i] = parseInt(collabelsset_values[i], 10); } 
+    var rowlabelsset_values = rowlabelsset.values();
+    for(var i=0; i<rowlabelsset_values.length; i++) { rowlabelsset_values[i] = parseInt(rowlabelsset_values[i], 10); } 
+    
+    //sort from min to maxvalue
+    var collabelsordered = collabelsset_values.sort(function(a, b) {return a - b;});
+    var rowlabelsordered = rowlabelsset_values.sort(function(a, b) {return a - b;});
+
+//     var colindexmin = Math.round(d3.min(collabelsset_values)); //[changed]
+//     var rowindexmin = Math.round(d3.min(rowlabelsset_values)); //[changed]
+//     var colindexmax = collabelsset_values.length-1; //[added]
+//     var rowindexmax = rowlabelsset_values.length-1; //[added]
+//     var collabelsordered = [];
+//     var rowlabelsordered = [];
+//     for (var i=colindexmin;i<=colindexmax;i++){
+//         collabelsordered.push(i);
+//     };
+//     for (var i=rowindexmin;i<=rowindexmax;i++){
+//         rowlabelsordered.push(i);
+//     };
+
     var columnleavesordered = [];
     var rowleavesordered = [];
     for (var i=0;i<collabelsordered.length;i++){
