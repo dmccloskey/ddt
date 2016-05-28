@@ -331,7 +331,7 @@ d3_table.prototype.set_headerstyle = function () {
     // predefined css style for table header rows
     var headerselector = ' th';
     var headerstyle = {
-        'font-size': '10px',
+        'font-size': '14px',
         'word-wrap':'break-word',
         'text-align': 'center'
         };
@@ -342,7 +342,7 @@ d3_table.prototype.set_cellstyle = function () {
     // predefined css style table cells
     var cellselector = ' td';
     var cellstyle = {
-        'font-size': '8px',
+        'font-size': '12px',
         'word-wrap':'break-word',
         'text-align': 'center'
     };
@@ -783,7 +783,7 @@ d3_table.prototype.set_tablecellszoom = function (fontsizezoom_I,fontsizeorigina
 	if (typeof(fontsizeoriginal_I)!=="undefined"){
 	    var fontsizeoriginal = fontsizeoriginal_I;
 	} else {
-	    var fontsizeoriginal = '8px';
+	    var fontsizeoriginal = '12px';
 	};
 
 	this.tablecells
@@ -811,7 +811,7 @@ d3_table.prototype.set_tablerowszoom = function (fontsizezoom_I,fontsizeoriginal
 	if (typeof(fontsizeoriginal_I)!=="undefined"){
 	    var fontsizeoriginal = fontsizeoriginal_I;
 	} else {
-	    var fontsizeoriginal = '8px';
+	    var fontsizeoriginal = '12px';
 	};
 
 	this.tablerowsenter
