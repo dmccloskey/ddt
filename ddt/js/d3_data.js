@@ -327,7 +327,11 @@ d3_data.prototype.format_keyvalues2namechildren = function(lastchild_I){
             delete d.values;
         };
     };
-    this.nestdatafiltered.forEach(rename);
+    //this.nestdatafiltered.forEach(rename);
+    //var nestdatafiltered = this.nestdatafiltered.slice();
+    var nestdatafiltered = jQuery.extend(true, [], this.nestdatafiltered);
+    nestdatafiltered.forEach(rename);
+    this.nestdatafiltered = nestdatafiltered;
 };
 d3_data.prototype.convert_filter2stringmenuinput = function(filters_I){
     /* convert filter list to filter string list

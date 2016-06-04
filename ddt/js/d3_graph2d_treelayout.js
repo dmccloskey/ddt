@@ -41,7 +41,10 @@ d3_graph2d.prototype.set_treelayoutdata1nodes = function(){
     this.treelayoutnodes = this.treelayouttree.nodes(root).reverse();
 
     //normalize for fixed depth
-    this.treelayoutnodes.forEach(function(d) { d.y = d.depth * 180; });
+    var node_scale = this.height/(this.data1.nestkey.length+1);
+    this.treelayoutnodes.forEach(function(d) {
+        d.y = d.depth * node_scale; }
+        );
 };
 d3_graph2d.prototype.set_treelayoutdata1links = function(){
     // compute treelayout links
@@ -175,7 +178,7 @@ d3_graph2d.prototype.set_treelayoutdata1css = function () {
     };
     var selector3 = '#' + this.id + ' .node text';
     var style3 = {
-        'font': '10px sans-serif'
+        'font': '10px Arial'
     };
     var selector4 = '#' + this.id + ' .link';
     var style4 = {
