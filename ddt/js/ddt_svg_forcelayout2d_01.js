@@ -1,6 +1,11 @@
 "use strict";
 function ddt_svg_forcelayout2d_01() {
 
+	/*
+	Description: collapsible force layout as an alternative to a tree layout
+	Todo: buggy node and link updates betweet submit/reset
+	*/
+
     ddt_svg.call(this);
 };
 ddt_svg_forcelayout2d_01.prototype = Object.create(ddt_svg.prototype);
@@ -28,22 +33,18 @@ ddt_svg_forcelayout2d_01.prototype.make_svg = function(data_I,parameters_I){
     this.ddtsvg.add_resizebuttons2optionsbuttongroup();
     //this.ddtsvg.set_tooltip();
     //this.ddtsvg.set_tooltipstyle();
-//     this.ddtsvg.set_forcelayoutdata1force();
-//     this.ddtsvg.add_forcelayoutdata1tick();
-//     this.ddtsvg.add_forcelayoutdata1drag();
     this.ddtsvg.render = function () {
  		this.data1.format_keyvalues2namechildren(parameters_I.datalastchild); //new!
-		this.set_forcelayoutdata1nodeorigin(0);
         this.add_graph2d2tile();
         this.set_svgstyle();
         this.set_forcelayoutdata1root();
-//         this.set_forcelayoutnode();
-//         this.set_forcelayoutlink();
-
 		this.set_forcelayoutdata1force();
-		//this.add_forcelayoutdata1tick();
 		this.add_forcelayoutdata1drag();
-        //this.collapse_forcelayoutroot();
+        //this.collapse_forcelayoutroot(); //TODO: buggy behavior...
         this.update_forcelayout();
+//         //add zoom and pan
+//         //todo: click interferes with collapse
+//     	this.set_zoom();
+//     	this.add_zoom();
     };
 };

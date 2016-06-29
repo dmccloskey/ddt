@@ -1,4 +1,6 @@
-    "use strict";
+"use strict";
+// Collapsible tree
+// http://bl.ocks.org/mbostock/1062288
 // Force directed graph
 // http://bl.ocks.org/mbostock/4062045
 // pan/zoom/multi-drag http://bl.ocks.org/pkerpedjiev/0389e39fad95e1cf29ce
@@ -26,12 +28,8 @@ d3_graph2d.prototype.set_forcelayoutdata1root = function(forcelayoutroot_I){
     //set tree layout root
     if (forcelayoutroot_I){this.forcelayoutroot = forcelayoutroot_I;}
     else {this.forcelayoutroot=this.data1.nestdatafiltered[0]};  
-    this.forcelayoutroot.x0 = this.height/2;
-    this.forcelayoutroot.y0 = this.width/2;  
-};
-d3_graph2d.prototype.set_forcelayoutdata1nodeorigin = function(nodeorigin_I){
-    //set tree layout node origin
-    this.forcelayoutnodeorigin = nodeorigin_I;
+//     this.forcelayoutroot.x0 = this.height/2;
+//     this.forcelayoutroot.y0 = this.width/2;  
 };
 d3_graph2d.prototype.set_forcelayoutdata1force = function(charge_I,linkDistance_I){
     /*
@@ -72,8 +70,10 @@ d3_graph2d.prototype.add_forcelayoutdata1tick = function(){
             .attr("x2", function(d) { return d.target.x; })
             .attr("y2", function(d) { return d.target.y; });
 
-        this_.forcelayoutnode.attr("cx", function(d) { return d.x; })
-            .attr("cy", function(d) { return d.y; });
+        this_.forcelayoutnode
+//             .attr("cx", function(d) { return d.x; })
+//             .attr("cy", function(d) { return d.y; })
+            .attr("transform", function(d) { return "translate(" + d.x + "," + d.y + ")"; });
     }
 
     this.forcelayoutdata1force
@@ -181,6 +181,9 @@ d3_graph2d.prototype.collapse_forcelayoutroot = function(){
 d3_graph2d.prototype.set_forcelayoutdata1nodes = function(){
     // compute forcelayout nodes
     var root = this.forcelayoutroot
+    
+    //this.forcelayoutdata1nodes = this.forcelayoutdata1force.nodes(root);
+    //TODO: compute d.x and d.y
     var nodes = [];
     var i = 0;
 
@@ -192,6 +195,7 @@ d3_graph2d.prototype.set_forcelayoutdata1nodes = function(){
 
     recurse(root);
     this.forcelayoutdata1nodes = nodes;
+
 };
 d3_graph2d.prototype.set_forcelayoutdata1links_tree = function(){
     // compute forcelayout links
@@ -215,95 +219,100 @@ d3_graph2d.prototype.set_forcelayoutlink = function(){
     */
     this.forcelayoutlink = this.svgg.selectAll(".link");
 };
-d3_graph2d.prototype.add_forcelayoutdata1node = function(source_I){
+d3_graph2d.prototype.add_forcelayoutdata1node = function(){
     // add tree layout nodes
-    var i = this.forcelayoutnodeorigin;
+    //var i = this.forcelayoutnodeorigin;
     var nodes = this.forcelayoutdata1nodes;
-    var source = source_I;
+    //var source = source_I;
     var click = this.togglechildren_forcelayout;
     var _this = this;
-    var duration= this.duration;
+    //var duration= this.duration;
     var force = this.forcelayoutdata1force;
 
     function color(d) {
-        return d._children ? "#3182bd" : d.children ? "#c6dbef" : "#fd8d3c";
+        return d._children ? "#3182bd" // collapsed package
+        : d.children ? "#c6dbef" // expanded package
+        : "#fd8d3c"; // leaf node
     }
 
     this.forcelayoutnode = this.svgg.selectAll(".node")
     //this.forcelayoutnode
-        .data(nodes, function(d) { return d.id || (d.id = ++i); });
-
-    // update node origin
-    this.set_forcelayoutdata1nodeorigin(i);
+        .data(nodes, function(d) { return d.id;});
 
     // Enter any new nodes at the parent's previous position.
-    this.forcelayoutnodeenter = this.forcelayoutnode.enter();
-
-    this.forcelayoutnodeenter.append("circle")
+    this.forcelayoutnodeenter = this.forcelayoutnode.enter()
+        .append("g")
         .attr("class", "node")
-        //.attr("transform", function(d) { return "translate(" + source.y0 + "," + source.x0 + ")"; })
-        .attr("cx", function(d) { return d.x; })
-        .attr("cy", function(d) { return d.y; })
-        .attr("r", function(d) {
-            //return 10;
-            return Math.sqrt(d.size) / 10 || 4.5; 
-            })
-        //TODO change color based on value
-        //.style("fill", function(d) { return d._children ? "lightsteelblue" : "#fff"; });
-        .style("fill", color)
-        .on("click", click)
+        .on("click", click(_this))
         .call(force.drag);
 
+    this.forcelayoutnodeenter.append("circle")
+        //.attr("class", "node")
+//         .attr("cx", function(d) {return d.x; })
+//         .attr("cy", function(d) {return d.y;  })
+        .attr("r", function(d) {
+            return 10;
+            //return Math.sqrt(d.size) / 10 || 4.5; 
+            })
+        //.attr("transform", function(d) { return "translate(" + d.x + "," + d.y + ")"; })
+        //TODO change color based on value
+        //.style("fill", function(d) { return d._children ? "lightsteelblue" : "#fff"; });
+        .style("fill", color);
+//         .on("click", click)
+//         .call(force.drag);
+
     this.forcelayoutnodeenter.append("text")
-        .attr("x", function(d) { return d.children || d._children ? -10 : 10; })
+        //.attr("x", function(d) { return d.children || d._children ? -10 : 10; })
+        //.attr("text-anchor", function(d) { return d.children || d._children ? "end" : "start"; })
         .attr("dy", ".35em")
-        .attr("text-anchor", function(d) { return d.children || d._children ? "end" : "start"; })
         .text(function(d) { return d.name; })
-        .style("fill-opacity", 1e-6);
+        .style("fill-opacity", 1);
 
     // Transition nodes to their new position.
     this.forcelayoutnodeupdate = this.forcelayoutnode.transition()
-        .duration(duration)
+        //.duration(duration)
         //.attr("transform", function(d) { return "translate(" + d.y + "," + d.x + ")"; })
         ;
 
-    this.forcelayoutnodeupdate.select("circle")
-        .attr("cx", function(d) { return d.x; })
-        .attr("cy", function(d) { return d.y; })
+    this.forcelayoutnodeupdate.select("node.circle")
+//         .attr("cx", function(d) { return d.x; })
+//         .attr("cy", function(d) { return d.y; })
         .attr("r", function(d) {
-            //return 10;
-            return Math.sqrt(d.size) / 10 || 4.5; 
+            return 10;
+            //return Math.sqrt(d.size) / 10 || 4.5; 
             })
+        //.attr("transform", function(d) { return "translate(" + d.x + "," + d.y + ")"; })
         //.style("fill", function(d) { return d._children ? "lightsteelblue" : "#fff"; });
         .style("fill", color);
 
-    this.forcelayoutnodeupdate.select("text")
+    this.forcelayoutnodeupdate.select("node.text")
         .style("fill-opacity", 1);
 
     // Transition exiting nodes to the parent's new position.
-    this.forcelayoutnodeexit = this.forcelayoutnode.exit().transition()
-        .duration(duration)
+    this.forcelayoutnodeexit = this.forcelayoutnode.exit()
+        //.transition()
+        //.duration(duration)
         //.attr("transform", function(d) { return "translate(" + source.y + "," + source.x + ")"; })
         .remove();
 
-    this.forcelayoutnodeexit.select("circle")
-        .attr("cx", function(d) { return d.x; })
-        .attr("cy", function(d) { return d.y; })
-        .attr("r", function(d) {
-            //return 10;
-            return Math.sqrt(d.size) / 10 || 4.5; 
-            });
+//     this.forcelayoutnodeexit.select("node.circle")
+// //         .attr("cx", function(d) { return d.x; })
+// //         .attr("cy", function(d) { return d.y; })
+//         .attr("r", function(d) {
+//             //return 10;
+//             return Math.sqrt(d.size) / 10 || 4.5; 
+//             });
 
-    this.forcelayoutnodeexit.select("text")
-        .style("fill-opacity", 1e-6);
+//     this.forcelayoutnodeexit.select("node.text")
+//         .style("fill-opacity", 1e-6);
 };
-d3_graph2d.prototype.add_forcelayoutdata1link = function(source_I){
+d3_graph2d.prototype.add_forcelayoutdata1link = function(){
     // add tree layout links
-    var i = this.forcelayoutnodeorigin;
-    var nodes = this.forcelayoutdata1nodes;
+//     var i = this.forcelayoutnodeorigin;
+//     var source = source_I;
+//     var nodes = this.forcelayoutdata1nodes;
     var links = this.forcelayoutdata1links;
-    var source = source_I;
-    var duration= this.duration;
+    //var duration= this.duration;
 
     // Update the links…
     this.forcelayoutlink = this.svgg.selectAll(".link")
@@ -312,27 +321,29 @@ d3_graph2d.prototype.add_forcelayoutdata1link = function(source_I){
 
     // Enter any new links at the parent's previous position.
     this.forcelayoutlink.enter().insert("line", ".node")
-        .attr("class", "link")
-        .attr("x1", function(d) { return d.source.x; })
-        .attr("y1", function(d) { return d.source.y; })
-        .attr("x2", function(d) { return d.target.x; })
-        .attr("y2", function(d) { return d.target.y; }); 
+        .attr("class", "link");
+//         .attr("x1", function(d) { return d.source.x; })
+//         .attr("y1", function(d) { return d.source.y; })
+//         .attr("x2", function(d) { return d.target.x; })
+//         .attr("y2", function(d) { return d.target.y; }); 
 
     // Transition links to their new position.
     this.forcelayoutlink.transition()
-        .duration(duration)
-        .attr("x1", function(d) { return d.source.x; })
-        .attr("y1", function(d) { return d.source.y; })
-        .attr("x2", function(d) { return d.target.x; })
-        .attr("y2", function(d) { return d.target.y; }); 
-
-    // Transition exiting nodes to the parent's new position.
-    this.forcelayoutlink.exit().transition()
-        .duration(duration)
+        //.duration(duration)
         .attr("x1", function(d) { return d.source.x; })
         .attr("y1", function(d) { return d.source.y; })
         .attr("x2", function(d) { return d.target.x; })
         .attr("y2", function(d) { return d.target.y; })
+        ; 
+
+    // Transition exiting nodes to the parent's new position.
+    this.forcelayoutlink.exit()
+//         //.transition()
+//         //.duration(duration)
+//         .attr("x1", function(d) { return d.source.x; })
+//         .attr("y1", function(d) { return d.source.y; })
+//         .attr("x2", function(d) { return d.target.x; })
+//         .attr("y2", function(d) { return d.target.y; })
         .remove();
 };
 d3_graph2d.prototype.togglechildren_forcelayout = function(_this_I){
@@ -348,7 +359,7 @@ d3_graph2d.prototype.togglechildren_forcelayout = function(_this_I){
                 d._children = null;
             };
            //_this_I.render(d);
-           _this_I.update_forcelayout(d);
+           _this_I.update_forcelayout();
         };
     };
 };
@@ -361,7 +372,7 @@ d3_graph2d.prototype.set_forcelayoutdata1css = function () {
     };
     var selector2 = '#' + this.id + ' .node circle';
     var style2= {
-        'fill': '#fff',
+//         'fill': '#fff',
         'stroke': 'steelblue',
         'stroke-width': '1.5px'
     };
@@ -382,13 +393,13 @@ d3_graph2d.prototype.set_forcelayoutdata1css = function () {
     this.set_svggcss(selectorstyle);
 };
 
-d3_graph2d.prototype.update_forcelayout = function (source_I) {
+d3_graph2d.prototype.update_forcelayout = function () {
     // update force layout
-    if (source_I){
-        var source = source_I;
-    } else {
-        var source = this.data1.nestdatafiltered[0];
-    };
+//     if (source_I){
+//         var source = source_I;
+//     } else {
+//         var source = this.data1.nestdatafiltered[0];
+//     };
 
     this.set_forcelayoutdata1nodes();
     this.set_forcelayoutdata1links_tree();
@@ -399,9 +410,12 @@ d3_graph2d.prototype.update_forcelayout = function (source_I) {
     this.forcelayoutdata1force
         .nodes(nodes)
         .links(links)
-        .start()
+        .start();
 
-    this.add_forcelayoutdata1link(source)
-    this.add_forcelayoutdata1node(source)
+//     this.add_forcelayoutdata1node(source);
+//     this.add_forcelayoutdata1link(source);
+    this.add_forcelayoutdata1node();
+    this.add_forcelayoutdata1link();
+    this.add_forcelayoutdata1tick();
     this.set_forcelayoutdata1css();
 };

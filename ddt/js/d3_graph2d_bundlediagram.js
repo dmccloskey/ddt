@@ -1,13 +1,14 @@
 "use strict";
+//Example: http://bl.ocks.org/mbostock/7607999
 d3_graph2d.prototype.set_bundlediagramdata1root = function(bundlediagramroot_I){
     //set tree layout root
     if (bundlediagramroot_I){this.bundlediagramroot = bundlediagramroot_I;}
     else {
-        this.bundlediagramroot=this.data1.nestdatafiltered[0];
+        this.bundlediagramroot={'name':"",'children':this.data1.nestdatafiltered};
         //this.bundlediagramroot=d3.layout.hierarchy(this.data1.nestdatafiltered)
         };  
-    this.bundlediagramroot.x0 = this.height/2;
-    this.bundlediagramroot.y0 = 0;  
+//     this.bundlediagramroot.x0 = this.height/2;
+//     this.bundlediagramroot.y0 = 0;  
 };
 d3_graph2d.prototype.set_bundlediagramline = function(interpolate_I,tension_I){
     /*
@@ -27,11 +28,31 @@ d3_graph2d.prototype.set_bundlediagramline = function(interpolate_I,tension_I){
         .radius(function(d) { return d.y; })
         .angle(function(d) { return d.x / 180 * Math.PI; });
 };
+d3_graph2d.prototype.set_bundlediagramdata1linkstyle = function () {
+    // predefined css style for x1 and y1 axis
+    var lineselector = 'g.link';
+    var style = {
+        'stroke': 'steelblue',
+        'stroke-opacity': '.4',
+        'fill': 'none',
+        'pointer-events': 'none',
+    };
+    var selectorstyle = [{ 'selection': lineselector, 'style': style }]
+    this.set_svggcss(selectorstyle);
+};
 // update
 d3_graph2d.prototype.set_bundlediagramdata1nodes = function(){
     // compute bundlediagram nodes
     var root = this.bundlediagramroot;
     this.bundlediagramnodes = this.cluster.nodes(root);
+    //TODO: d.y=NaN.  How to fix this?
+    
+//     //normalize for fixed depth
+//     var node_scale = this.height/(this.data1.nestkey.length+1);
+//     this.bundlediagramnodes.forEach(function(d) {
+//         d.y = node_scale; }
+//         d.y = d.depth * node_scale; }
+//         );
 };
 d3_graph2d.prototype.set_bundlediagramdata1links = function(){
     // compute bundlediagram links
@@ -42,6 +63,9 @@ d3_graph2d.prototype.add_bundlediagramdata1node = function(){
     // add tree layout nodes
     var nodes = this.bundlediagramnodes;
     var duration= this.duration;
+    var width = this.width;
+    var height = this.height;
+    var radius = this.radius;
 
     this.bundlediagramnode = this.svgg.selectAll("g.node")
         .data(nodes.filter(function(n) { return !n.children; }));
@@ -52,16 +76,22 @@ d3_graph2d.prototype.add_bundlediagramdata1node = function(){
     this.bundlediagramnodeenter.append("text")
         .attr("class", "node")
         .attr("dy", ".31em")
-        .attr("transform", function(d) { return "rotate(" + (d.x - 90) + ")translate(" + (d.y + 8) + ",0)" + (d.x < 180 ? "" : "rotate(180)"); })
+        .attr("transform", function(d) {
+            return "rotate(" + (d.x - radius/5) + ")translate(" + (d.y + 8) + ",0)" + (d.x < 180 ? "" : "rotate(180)"); 
+//             //return "rotate(" + (d.x) + ")translate(" + (d.y) + ",0)" + (d.x < 180 ? "" : "rotate(180)")+"translate(" + width + ","+height+")"; 
+//             return "rotate(" + (d.x) + ")translate(" + (d.y) + ",0)" + (d.x < 180 ? "" : "rotate(180)")+"translate(" + width + ","+height+")"; 
+            })
         .style("text-anchor", function(d) { return d.x < 180 ? "start" : "end"; })
-        .text(function(d) { return d.key; })
+        .text(function(d) { 
+            return d.name; 
+            })
         ;
 //         .on("mouseover", mouseovered)
 //         .on("mouseout", mouseouted);
 
     // Transition nodes to their new position.
     this.bundlediagramnodeupdate = this.bundlediagramnode.transition()
-        .duration(duration)
+        //.duration(duration)
         .attr("transform", function(d) { return "rotate(" + (d.x - 90) + ")translate(" + (d.y + 8) + ",0)" + (d.x < 180 ? "" : "rotate(180)"); });
 
     this.bundlediagramnodeupdate.select("text")
@@ -69,7 +99,7 @@ d3_graph2d.prototype.add_bundlediagramdata1node = function(){
 
     // Transition exiting nodes to the parent's new position.
     this.bundlediagramnodeexit = this.bundlediagramnode.exit().transition()
-        .duration(duration)
+        //.duration(duration)
         .attr("transform", function(d) { return "rotate(" + (d.x - 90) + ")translate(" + (d.y + 8) + ",0)" + (d.x < 180 ? "" : "rotate(180)"); })
         .remove();
 
@@ -85,22 +115,25 @@ d3_graph2d.prototype.add_bundlediagramdata1link = function(){
 
     // Update the links…
     this.bundlediagramlink = this.svgg.selectAll("g.link")
-        .data(links, function(d) { return d.target.id; });
+        //.data(links);
+        .data(bundle(links));
 
     // Enter any new links at the parent's previous position.
     this.bundlediagramlink.enter().append("path")
-        .each(function(d) { d.source = d[0], d.target = d[d.length - 1]; })
+        .each(function(d) {
+            d.source = d[0], d.target = d[d.length - 1];
+            })
         .attr("class", "link")
         .attr("d", line); 
 
     // Transition links to their new position.
     this.bundlediagramlink.transition()
-        .duration(duration)
+        //.duration(duration)
         .attr("d", line);
 
     // Transition exiting nodes to the parent's new position.
     this.bundlediagramlink.exit().transition()
-        .duration(duration)
+        //.duration(duration)
         .remove();
 };
 

@@ -34,7 +34,6 @@ ddt_svg_chorddiagram2d_01.prototype.make_svg = function(data_I,parameters_I){
     this.ddtsvg.add_optionsbuttongroup2footer();
     this.ddtsvg.add_svgmenubutton2optionsbuttongroup();
     this.ddtsvg.add_resizebuttons2optionsbuttongroup();
-    this.ddtsvg.set_zoom();
     this.ddtsvg.render = function () {
     	// permanent filter on the data
     	if (parameters_I.svgfilters){

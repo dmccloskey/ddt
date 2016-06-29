@@ -2,7 +2,10 @@
 d3_graph2d.prototype.set_treelayoutdata1root = function(treelayoutroot_I){
     //set tree layout root
     if (treelayoutroot_I){this.treelayoutroot = treelayoutroot_I;}
-    else {this.treelayoutroot=this.data1.nestdatafiltered[0]};  
+    else {
+        //this.treelayoutroot={'name':"",'children':this.data1.nestdatafiltered};
+        this.treelayoutroot=this.data1.nestdatafiltered[0];
+        };  
     this.treelayoutroot.x0 = this.height/2;
     this.treelayoutroot.y0 = 0;  
 };
@@ -37,7 +40,7 @@ d3_graph2d.prototype.collapse_treelayoutroot = function(){
 // update
 d3_graph2d.prototype.set_treelayoutdata1nodes = function(){
     // compute treelayout nodes
-    var root = this.treelayoutroot
+    var root = this.treelayoutroot;
     this.treelayoutnodes = this.treelayouttree.nodes(root).reverse();
 
     //normalize for fixed depth

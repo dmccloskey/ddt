@@ -6,6 +6,10 @@ function ddt_svg_bundlediagram2d_01() {
 
     addapted from
     http://bl.ocks.org/mbostock/7607999
+
+    TODO:
+    issue with formatting the data to match cluster.nodes(root) root input
+    need to add css calls to highlight nodes/links on mousever
     */
 
     ddt_svg.call(this);
@@ -52,6 +56,12 @@ ddt_svg_bundlediagram2d_01.prototype.make_svg = function(data_I,parameters_I){
 		this.set_bundlediagramdata1links();
 		this.add_bundlediagramdata1node();
 		this.add_bundlediagramdata1link();
-		// add ...
+		// add styles
+		this.set_bundlediagramdata1linkstyle();
+		// add zoom and pan
+    	this.set_zoom();
+    	this.add_zoom();
+    	this.set_drag();
+    	this.add_drag();
     };
 };
