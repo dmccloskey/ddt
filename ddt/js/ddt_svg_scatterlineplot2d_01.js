@@ -69,7 +69,6 @@ ddt_svg_scatterlineplot2d_01.prototype.make_svg = function(data_I,parameters_I){
     this.ddtsvg.add_resizebuttons2optionsbuttongroup();
     //this.ddtsvg.set_tooltip();
     //this.ddtsvg.set_tooltipstyle();
-    this.ddtsvg.set_zoom();
     this.ddtsvg.render = function () {
         this.add_chart2d2tile();
         this.set_svgstyle();
@@ -87,7 +86,10 @@ ddt_svg_scatterlineplot2d_01.prototype.make_svg = function(data_I,parameters_I){
         this.set_x1axisticktextstyle(parameters_I.svgx1axisticktextstyle)
         //this.set_x1axiszoom();
         //this.set_y1axiszoom();
-        //this.add_zoom();
+    	this.set_zoom();
+    	this.add_zoom();
+    	this.set_drag();
+    	this.add_drag();
         // use the same x1/y1 scales for x2/y2
         this.copy_x1scalestox2scales();
         this.copy_y1scalestoy2scales();

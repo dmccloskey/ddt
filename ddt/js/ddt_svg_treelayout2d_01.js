@@ -78,9 +78,6 @@ ddt_svg_treelayout2d_01.prototype.make_svg = function(data_I,parameters_I){
     this.ddtsvg.add_resizebuttons2optionsbuttongroup();
     //this.ddtsvg.set_tooltip();
     //this.ddtsvg.set_tooltipstyle();
-    this.ddtsvg.set_zoom();
-//     this.ddtsvg.data1.format_keyvalues2namechildren(data_I.datalastchild); //new!
-//     this.ddtsvg.set_treelayoutdata1nodeorigin(0);
     this.ddtsvg.set_treelayoutdata1tree();
     this.ddtsvg.set_treelayoutdata1diagonal();
     this.ddtsvg.render = function () {
@@ -93,5 +90,9 @@ ddt_svg_treelayout2d_01.prototype.make_svg = function(data_I,parameters_I){
         this.set_treelayoutdata1root();
         this.collapse_treelayoutroot();
         this.update_treelayout();
+    	this.set_zoom();
+    	this.add_zoom();
+    	this.set_drag();
+    	this.add_drag();
     };
 };

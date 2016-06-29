@@ -188,16 +188,47 @@ d3_svg.prototype.set_zoom = function (){
     //add zoom
     var draw = this.draw;
     var render = this.render;
+    var svgg = this.svgg;
+    function zoomed() {
+        svgg.attr("transform", "translate(" + d3.event.translate + ")scale(" + d3.event.scale + ")");
+    };
+
     this.zoom = d3.behavior.zoom()
-        .scaleExtent([1,10])
+        .scaleExtent([.1,10])
         //.on("zoom", render);
-        .on("zoom", draw);
+        .on("zoom", zoomed);
 };
 d3_svg.prototype.add_zoom = function(){
     //add zoom to svg
     var zoom = this.zoom;
     this.svgg.call(zoom);
     //this.zoom(svgelement);
+};
+d3_svg.prototype.set_drag = function(){
+    // set drag
+    function dragstarted(d) {
+      d3.event.sourceEvent.stopPropagation();
+      d3.select(this).classed("dragging", true);
+    }
+
+    function dragged(d) {
+      d3.select(this).attr("cx", d.x = d3.event.x).attr("cy", d.y = d3.event.y);
+    }
+
+    function dragended(d) {
+      d3.select(this).classed("dragging", false);
+    }
+
+    this.drag = d3.behavior.drag()
+        .origin(function(d) { return d; })
+        .on("dragstart", dragstarted)
+        .on("drag", dragged)
+        .on("dragend", dragended);
+};
+d3_svg.prototype.add_drag = function(){
+    //add zoom to svg
+    var drag = this.drag;
+    this.svgg.call(drag);
 };
 d3_svg.prototype.render = function () {
     //render the svg

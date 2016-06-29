@@ -65,3 +65,35 @@ d3_graph2d.prototype.remove_title = function () {
     this.title.remove();
     this.title = null;
 };
+d3_graph2d.prototype.set_cluster = function(width_I,height_I,sort_I){
+    /*set d3 cluster
+    INPUT:
+    width_I = width or 360 for circle
+    height_I = height or inner radius for circle
+    sort_I = sort
+    */
+
+    if (width_I){var width = width_I;}
+    else {var width=360};  
+
+    if (this.radius){
+        var innerradius = this.radius/4.0;
+    } else {
+        var innerradius = this.height/4.0;
+    };
+    if (height_I){var height = height_I;}
+    else {var height=this.innerradius}; 
+
+    if (sort_I){var sort = sortI;}
+    else {var sort=null}; 
+
+    this.cluster = d3.layout.cluster()
+        .size([width, height])
+        .sort(sort)
+        .value(function(d) { return d.size; }); 
+};
+d3_graph2d.prototype.set_bundle = function(){
+    /*set d3 bundle
+    */
+    this.bundle = d3.layout.bundle();
+};

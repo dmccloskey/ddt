@@ -307,32 +307,6 @@ d3_data.prototype.change_filtersinkeys = function (filter_I) {
         };
     };
 };
-d3_data.prototype.format_keyvalues2namechildren = function(lastchild_I){
-    // format nest key/values to name/children for use with layouts and clusters
-    function rename(d){
-        if (d.key){
-            d['name']=d.key;
-            delete d.key;
-        } else {
-            var lastchild = d[lastchild_I];
-            for(var key in d){delete d[key];}; //remove all object properties
-                                           //needed for proper rendering of data for d3 layouts
-            d['name']=lastchild;
-            //test
-            d['size']=1;
-        };
-        if (d.values){
-            d['children'] = d.values;
-            d['children'].forEach(rename);
-            delete d.values;
-        };
-    };
-    //this.nestdatafiltered.forEach(rename);
-    //var nestdatafiltered = this.nestdatafiltered.slice();
-    var nestdatafiltered = jQuery.extend(true, [], this.nestdatafiltered);
-    nestdatafiltered.forEach(rename);
-    this.nestdatafiltered = nestdatafiltered;
-};
 d3_data.prototype.convert_filter2stringmenuinput = function(filters_I){
     /* convert filter list to filter string list
     OPTIONAL INPUT: 
@@ -934,3 +908,40 @@ d3_data.prototype.set_nestdatafiltered = function(){
     //store the view of the latest filtered data
     this.nestdatafiltered = this.convert_list2nestlist(this.listdatafiltered,this.nestkey);
 };
+d3_data.prototype.format_keyvalues2namechildren = function(lastchild_I){
+    // format nest key/values to name/children for use with layouts and clusters
+    function rename(d){
+        if (d.key){
+            d['name']=d.key;
+            delete d.key;
+        } else {
+            var lastchild = d[lastchild_I];
+            for(var key in d){delete d[key];}; //remove all object properties
+                                           //needed for proper rendering of data for d3 layouts
+            d['name']=lastchild;
+            //test
+            d['size']=1;
+        };
+        if (d.values){
+            d['children'] = d.values;
+            d['children'].forEach(rename);
+            delete d.values;
+        };
+    };
+    //this.nestdatafiltered.forEach(rename);
+    //var nestdatafiltered = this.nestdatafiltered.slice();
+    var nestdatafiltered = jQuery.extend(true, [], this.nestdatafiltered);
+    nestdatafiltered.forEach(rename);
+    this.nestdatafiltered = nestdatafiltered;
+};
+// d3_data.prototype.format_keyvalues2root = function(){
+//     // format nest key/values to hierarchical root for use with layouts and clusters
+//     var nestdatafiltered = jQuery.extend(true, [], this.nestdatafiltered);
+//     nestdatafiltered.forEach(rename);
+//     this.nestdatafiltered = nestdatafiltered;
+//     var root = d3.stratify()
+//         .id(function(d) { return d.name; })
+//         .parentId(function(d) { return d.parent; })
+//         (table);
+//     return root;
+// };

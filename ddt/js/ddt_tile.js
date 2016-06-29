@@ -125,6 +125,8 @@ ddt_tile_svg.prototype.get_svg = function(svgtype_I){
         return new ddt_svg_verticalpieschart2d_01();
     } else if (svgtype_I=='chorddiagram2d_01'){
         return new ddt_svg_chorddiagram2d_01();
+    } else if (svgtype_I=='bundlediagram2d_01'){
+        return new ddt_svg_bundlediagram2d_01();
     } else {
         return null;
     };
