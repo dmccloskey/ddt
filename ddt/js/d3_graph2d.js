@@ -77,12 +77,12 @@ d3_graph2d.prototype.set_cluster = function(width_I,height_I,sort_I){
     else {var width=360};  
 
     if (this.radius){
-        var innerradius = this.radius/4.0;
+        var innerradius = this.radius-this.radius/4.0;
     } else {
         var innerradius = this.height/4.0;
     };
     if (height_I){var height = height_I;}
-    else {var height=this.innerradius}; 
+    else {var height=innerradius}; 
 
     if (sort_I){var sort = sortI;}
     else {var sort=null}; 
@@ -97,3 +97,47 @@ d3_graph2d.prototype.set_bundle = function(){
     */
     this.bundle = d3.layout.bundle();
 };
+d3_graph2d.prototype.set_treelayouttree = function(width_I,height_I){
+    // set the layout tree
+
+    if (width_I){var width = width_I;}
+    else {var width=360};  
+
+    if (this.radius){
+        var innerradius = this.radius-this.radius/4.0;
+    } else {
+        var innerradius = this.height/4.0;
+    };
+    if (height_I){var height = height_I;}
+    else {var height=innerradius}; 
+    
+    this.treelayouttree = d3.layout.tree()
+        .size([width,height]);
+};
+d3_graph2d.prototype.set_treelayoutdiagonal = function(){
+    // set the layout diagonal
+    this.treelayoutdiagonal = d3.svg.diagonal()
+        .projection(function(d) { return [d.y, d.x]; });
+};
+d3_graph2d.prototype.set_radiallayoutprojection = function(){
+    // analogous to d3.svg.diagnol except for a radial layout
+    var innerradius = this.radius-this.radius/4.0;
+    var radius = this.radius;
+    this.radiallayoutprojection = function project(x, y) {
+        var angle = (x - 90) / 180 * Math.PI, radius = y;
+        return [radius * Math.cos(angle), radius * Math.sin(angle)];
+        };
+};
+d3_graph2d.prototype.set_radiallayoutstep = function(){
+    // analogous to d3.svg.diagonal.radial but with square corners
+    
+    this.radiallayoutstep = function step(startAngle, startRadius, endAngle, endRadius) {
+      var c0 = Math.cos(startAngle = (startAngle - 90) / 180 * Math.PI),
+          s0 = Math.sin(startAngle),
+          c1 = Math.cos(endAngle = (endAngle - 90) / 180 * Math.PI),
+          s1 = Math.sin(endAngle);
+      return "M" + startRadius * c0 + "," + startRadius * s0
+          + (endAngle === startAngle ? "" : "A" + startRadius + "," + startRadius + " 0 0 " + (endAngle > startAngle ? 1 : 0) + " " + startRadius * c1 + "," + startRadius * s1)
+          + "L" + endRadius * c1 + "," + endRadius * s1;
+    }
+}

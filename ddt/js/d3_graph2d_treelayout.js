@@ -1,29 +1,19 @@
 "use strict";
-d3_graph2d.prototype.set_treelayoutdata1root = function(treelayoutroot_I){
+d3_graph2d.prototype.set_treelayoutdata1root = function(treelayoutroot_I,x0_I=this.height/2,y0_I=0){
     //set tree layout root
     if (treelayoutroot_I){this.treelayoutroot = treelayoutroot_I;}
     else {
         //this.treelayoutroot={'name':"",'children':this.data1.nestdatafiltered};
         this.treelayoutroot=this.data1.nestdatafiltered[0];
         };  
-    this.treelayoutroot.x0 = this.height/2;
-    this.treelayoutroot.y0 = 0;  
+//     this.treelayoutroot.x0 = this.height/2;
+//     this.treelayoutroot.y0 = 0;  
+    this.treelayoutroot.x0 = x0_I;
+    this.treelayoutroot.y0 = y0_I;
 };
 d3_graph2d.prototype.set_treelayoutdata1nodeorigin = function(nodeorigin_I){
     //set tree layout nodes
     this.treelayoutnodeorigin = nodeorigin_I;
-};
-d3_graph2d.prototype.set_treelayoutdata1tree = function(){
-    // set the layout tree
-    var height = this.height;
-    var width = this.width;
-    this.treelayouttree = d3.layout.tree()
-        .size([height,width]);
-};
-d3_graph2d.prototype.set_treelayoutdata1diagonal = function(){
-    // set the layout diagonal
-    this.treelayoutdiagonal = d3.svg.diagonal()
-        .projection(function(d) { return [d.y, d.x]; });
 };
 d3_graph2d.prototype.collapse_treelayoutroot = function(){
     // initialize with a collapse root
@@ -38,13 +28,13 @@ d3_graph2d.prototype.collapse_treelayoutroot = function(){
     this.treelayoutroot.children.forEach(collapse);
 };
 // update
-d3_graph2d.prototype.set_treelayoutdata1nodes = function(){
+d3_graph2d.prototype.set_treelayoutdata1nodes = function(node_span_I = this.height){
     // compute treelayout nodes
     var root = this.treelayoutroot;
     this.treelayoutnodes = this.treelayouttree.nodes(root).reverse();
 
     //normalize for fixed depth
-    var node_scale = this.height/(this.data1.nestkey.length+1);
+    var node_scale = node_span_I/(this.data1.nestkey.length+1);
     this.treelayoutnodes.forEach(function(d) {
         d.y = d.depth * node_scale; }
         );

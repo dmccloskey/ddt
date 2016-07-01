@@ -1,6 +1,6 @@
 "use strict";
 //var ddt_svg_scatterlot2d_01 = function () {
-function ddt_svg_treelayout2d_01() {
+function ddt_svg_radialtreelayout2d_01() {
 // 	treelayout
 // 	DESCRIPTION:
 // 	generic treelayout
@@ -39,6 +39,7 @@ function ddt_svg_treelayout2d_01() {
 // 		"svgwidth":1000,
 // 		"svgheight":1000,
 // 		"svgduration":750,
+// 		"svgradius":500,
 // 		"datalastchild":'sample_name',
 // 		//tile parameters
 // 		'tileheader':'Mutations annotated',
@@ -53,9 +54,9 @@ function ddt_svg_treelayout2d_01() {
 
     ddt_svg.call(this);
 };
-ddt_svg_treelayout2d_01.prototype = Object.create(ddt_svg.prototype);
-ddt_svg_treelayout2d_01.prototype.constructor = ddt_svg_treelayout2d_01;
-ddt_svg_treelayout2d_01.prototype.make_svg = function(data_I,parameters_I){
+ddt_svg_radialtreelayout2d_01.prototype = Object.create(ddt_svg.prototype);
+ddt_svg_radialtreelayout2d_01.prototype.constructor = ddt_svg_radialtreelayout2d_01;
+ddt_svg_radialtreelayout2d_01.prototype.make_svg = function(data_I,parameters_I){
 	// treelayout definition
 
 	this.ddtsvg = new d3_graph2d();
@@ -87,11 +88,15 @@ ddt_svg_treelayout2d_01.prototype.make_svg = function(data_I,parameters_I){
 // 		this.set_treelayoutdata1diagonal()
         this.add_graph2d2tile();
         this.set_svgstyle();
-		this.set_treelayouttree(parameters_I.svgwidth,parameters_I.svgheight);
-		this.set_treelayoutdiagonal();
-        this.set_treelayoutdata1root();
+		this.set_radius(parameters_I.svgradius);
+		this.set_treelayouttree();
+		this.set_radiallayoutprojection();
+        this.set_treelayoutdata1root(
+        	this.data1.nestdatafiltered[0],
+        	parameters_I.svgwidth/2,
+        	parameters_I.svgheight/2);
         this.collapse_treelayoutroot();
-        this.update_treelayout();
+        this.update_radialtreelayout();
     	this.set_zoom();
     	this.add_zoom();
     	this.set_drag();

@@ -28,8 +28,7 @@ d3_graph2d.prototype.set_forcelayoutdata1root = function(forcelayoutroot_I){
     //set tree layout root
     if (forcelayoutroot_I){this.forcelayoutroot = forcelayoutroot_I;}
     else {this.forcelayoutroot=this.data1.nestdatafiltered[0]};  
-//     this.forcelayoutroot.x0 = this.height/2;
-//     this.forcelayoutroot.y0 = this.width/2;  
+        //this.treelayoutroot={'name':"",'children':this.data1.nestdatafiltered};
 };
 d3_graph2d.prototype.set_forcelayoutdata1force = function(charge_I,linkDistance_I){
     /*
@@ -204,8 +203,8 @@ d3_graph2d.prototype.set_forcelayoutdata1links_tree = function(){
 };
 d3_graph2d.prototype.set_forcelayoutdata1links_directedgraph = function(){
     // compute forcelayout links
-    var nodes = this.forcelayoutdata1nodes
-    this.forcelayoutdata1links = this.forcelayoutdirectedgraph.links(nodes);
+    var nodes = this.forcelayoutdata1nodes;
+    this.forcelayoutdata1links = this.forcelayoutdata1force.links(nodes);
 };
 d3_graph2d.prototype.set_forcelayoutnode = function(){
     /*
@@ -274,7 +273,7 @@ d3_graph2d.prototype.add_forcelayoutdata1node = function(){
         //.attr("transform", function(d) { return "translate(" + d.y + "," + d.x + ")"; })
         ;
 
-    this.forcelayoutnodeupdate.select("node.circle")
+    this.forcelayoutnodeupdate.select("g.circle")
 //         .attr("cx", function(d) { return d.x; })
 //         .attr("cy", function(d) { return d.y; })
         .attr("r", function(d) {
@@ -285,7 +284,7 @@ d3_graph2d.prototype.add_forcelayoutdata1node = function(){
         //.style("fill", function(d) { return d._children ? "lightsteelblue" : "#fff"; });
         .style("fill", color);
 
-    this.forcelayoutnodeupdate.select("node.text")
+    this.forcelayoutnodeupdate.select("g.text")
         .style("fill-opacity", 1);
 
     // Transition exiting nodes to the parent's new position.
@@ -403,6 +402,7 @@ d3_graph2d.prototype.update_forcelayout = function () {
 
     this.set_forcelayoutdata1nodes();
     this.set_forcelayoutdata1links_tree();
+    //this.set_forcelayoutdata1links_directedgraph();
 
     //re-start the force layout
     var nodes = this.forcelayoutdata1nodes;

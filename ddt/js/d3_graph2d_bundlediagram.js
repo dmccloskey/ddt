@@ -4,11 +4,10 @@ d3_graph2d.prototype.set_bundlediagramdata1root = function(bundlediagramroot_I){
     //set tree layout root
     if (bundlediagramroot_I){this.bundlediagramroot = bundlediagramroot_I;}
     else {
+        //this.bundlediagramroot=this.data1.nestdatafiltered;
         this.bundlediagramroot={'name':"",'children':this.data1.nestdatafiltered};
         //this.bundlediagramroot=d3.layout.hierarchy(this.data1.nestdatafiltered)
         };  
-//     this.bundlediagramroot.x0 = this.height/2;
-//     this.bundlediagramroot.y0 = 0;  
 };
 d3_graph2d.prototype.set_bundlediagramline = function(interpolate_I,tension_I){
     /*
@@ -28,9 +27,9 @@ d3_graph2d.prototype.set_bundlediagramline = function(interpolate_I,tension_I){
         .radius(function(d) { return d.y; })
         .angle(function(d) { return d.x / 180 * Math.PI; });
 };
-d3_graph2d.prototype.set_bundlediagramdata1linkstyle = function () {
+d3_graph2d.prototype.set_bundlediagramdata1linkcss = function () {
     // predefined css style for x1 and y1 axis
-    var lineselector = 'g.link';
+    var lineselector = 'path.link';
     var style = {
         'stroke': 'steelblue',
         'stroke-opacity': '.4',
@@ -45,19 +44,12 @@ d3_graph2d.prototype.set_bundlediagramdata1nodes = function(){
     // compute bundlediagram nodes
     var root = this.bundlediagramroot;
     this.bundlediagramnodes = this.cluster.nodes(root);
-    //TODO: d.y=NaN.  How to fix this?
-    
-//     //normalize for fixed depth
-//     var node_scale = this.height/(this.data1.nestkey.length+1);
-//     this.bundlediagramnodes.forEach(function(d) {
-//         d.y = node_scale; }
-//         d.y = d.depth * node_scale; }
-//         );
 };
 d3_graph2d.prototype.set_bundlediagramdata1links = function(){
     // compute bundlediagram links
     var nodes = this.bundlediagramnodes
     this.bundlediagramlinks = this.cluster.links(nodes);
+    
 };
 d3_graph2d.prototype.add_bundlediagramdata1node = function(){
     // add tree layout nodes
@@ -67,8 +59,20 @@ d3_graph2d.prototype.add_bundlediagramdata1node = function(){
     var height = this.height;
     var radius = this.radius;
 
-    this.bundlediagramnode = this.svgg.selectAll("g.node")
-        .data(nodes.filter(function(n) { return !n.children; }));
+    // node group
+    this.bundlediagramnodegroup = this.svgg.selectAll("g.nodes")
+        .data([nodes]);
+
+    this.bundlediagramnodegroup.exit().remove();
+    this.bundlediagramnodeentergroup = this.bundlediagramnodegroup.enter();
+    this.bundlediagramnodeentergroup.append("g")
+        .attr("class", "nodes")
+        ;
+
+    //nodes
+    this.bundlediagramnode = this.bundlediagramnodegroup.selectAll(".node")
+        .data(nodes);
+        //.data(nodes.filter(function(n) {return !n.children;}));
 
     // Enter any new nodes at the parent's previous position.
     this.bundlediagramnodeenter = this.bundlediagramnode.enter();
@@ -113,21 +117,32 @@ d3_graph2d.prototype.add_bundlediagramdata1link = function(){
     var line = this.bundlediagramline;
     var bundle = this.bundle;
 
+    //link groups
+    this.bundlediagramlinkgroup = this.svgg.selectAll("g.links")
+        .data([links]);
+
+    this.bundlediagramlinkgroup.exit().remove();
+    this.bundlediagramlinkgroupenter = this.bundlediagramlinkgroup.enter();
+    this.bundlediagramlinkgroupenter.append("g")
+        .attr("class", "links");
+
     // Update the links…
-    this.bundlediagramlink = this.svgg.selectAll("g.link")
+    this.bundlediagramlink = this.bundlediagramlinkgroup.selectAll(".link")
         //.data(links);
         .data(bundle(links));
 
     // Enter any new links at the parent's previous position.
-    this.bundlediagramlink.enter().append("path")
+    this.bundlediagramlinkenter = this.bundlediagramlink.enter();
+
+    this.bundlediagramlinkenter.append("path")
+        .attr("class", "link")
         .each(function(d) {
             d.source = d[0], d.target = d[d.length - 1];
             })
-        .attr("class", "link")
         .attr("d", line); 
 
     // Transition links to their new position.
-    this.bundlediagramlink.transition()
+    this.bundlediagramlink.select("path").transition()
         //.duration(duration)
         .attr("d", line);
 
