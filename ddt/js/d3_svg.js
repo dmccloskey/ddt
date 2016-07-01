@@ -193,7 +193,7 @@ d3_svg.prototype.set_zoom = function (){
         svgg.attr("transform", "translate(" + d3.event.translate + ")scale(" + d3.event.scale + ")");
     };
 
-    this.zoom = d3.behavior.zoom()
+    this.zoom = d3.zoom()
         .scaleExtent([.1,10])
         //.on("zoom", render);
         .on("zoom", zoomed);
@@ -219,7 +219,7 @@ d3_svg.prototype.set_drag = function(){
       d3.select(this).classed("dragging", false);
     }
 
-    this.drag = d3.behavior.drag()
+    this.drag = d3.drag()
         .origin(function(d) { return d; })
         .on("dragstart", dragstarted)
         .on("drag", dragged)
@@ -477,7 +477,7 @@ d3_svg.prototype.make_colorscale = function(color_start_I,color_end_I,length_I){
     //OUTPUT:
     //color_scale_O = linear d3 color scale
 
-    var color_scale_O = d3.scale.linear().domain([1,length_I])
+    var color_scale_O = d3.scaleLinear().domain([1,length_I])
               .interpolate(d3.interpolateHcl)
               .range([d3.rgb(color_start_I), d3.rgb(color_end_I)]);
     return color_scale_O;
@@ -503,7 +503,7 @@ d3_svg.prototype.set_arc = function(outerradius_I,innerradius_I){
         var innerradius = outerradius/4.0;
     };
 
-    this.arc = d3.svg.arc()
+    this.arc = d3.arc()
         .outerRadius(outerradius)
         .innerRadius(innerradius); 
 };
@@ -523,7 +523,7 @@ d3_svg.prototype.set_arclabel = function(outerradiuslabel_I,innerradiuslabel_I){
     } else {
         var innerradiuslabel = this.radius-40.0;
     };
-    this.arclabel = d3.svg.arc()
+    this.arclabel = d3.arc()
         .outerRadius(outerradiuslabel)
         .innerRadius(innerradiuslabel);
 };

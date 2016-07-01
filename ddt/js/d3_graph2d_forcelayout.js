@@ -112,7 +112,7 @@ d3_graph2d.prototype.set_forcelayoutdata1zoom = function(scaleExtent_I){
         node.classed("selected", false);
     };
 
-    this.forcelayoutzoom = d3.behavior.zoom()
+    this.forcelayoutzoom = d3.zoom()
         .scaleExtent(scaleExtent)
         .x(x1scale)
         .y(y1scale)
@@ -199,7 +199,7 @@ d3_graph2d.prototype.set_forcelayoutdata1nodes = function(){
 d3_graph2d.prototype.set_forcelayoutdata1links_tree = function(){
     // compute forcelayout links
     var nodes = this.forcelayoutdata1nodes;
-    this.forcelayoutdata1links = d3.layout.tree().links(nodes);
+    this.forcelayoutdata1links = d3.tree().links(nodes);
 };
 d3_graph2d.prototype.set_forcelayoutdata1links_directedgraph = function(){
     // compute forcelayout links

@@ -100,11 +100,11 @@ d3_chart2d.prototype.remove_clippath = function () {
 d3_chart2d.prototype.set_x1range = function (scale_I) {
     // set x1-range of the plot
     if (scale_I === 'linear') {
-        this.x1scale = d3.scale.linear().range([0,this.width]);
+        this.x1scale = d3.scaleLinear().range([0,this.width]);
     } else if (scale_I === 'ordinal') {
-        this.x1scale = d3.scale.ordinal();
+        this.x1scale = d3.scaleOrdinal();
     } else if (scale_I === 'ordinal-rangeRoundBands') {
-        this.x1scale = d3.scale.ordinal().rangeRoundBands([0, this.width], .1);
+        this.x1scale = d3.scaleOrdinal().rangeRound([0, this.width], .1);
     };
 };
 d3_chart2d.prototype.set_y1range = function (scale_I,invert_I) {
@@ -113,34 +113,34 @@ d3_chart2d.prototype.set_y1range = function (scale_I,invert_I) {
     if (typeof invert_I === "undefined"){invert_I=false;}
     if (scale_I === 'linear') {
         if (invert_I){
-            this.y1scale = d3.scale.linear().range([0,this.height]); //starts at the top left
+            this.y1scale = d3.scaleLinear().range([0,this.height]); //starts at the top left
         } else {
-            this.y1scale = d3.scale.linear().range([this.height, 0]); //starts at the bottom left
+            this.y1scale = d3.scaleLinear().range([this.height, 0]); //starts at the bottom left
         };
     } else if (scale_I === 'radial') {
         if (invert_I){
-            this.y1scale = d3.scale.linear().range([0,2*Math.PI]); //starts at the top left
+            this.y1scale = d3.scaleLinear().range([0,2*Math.PI]); //starts at the top left
         } else {
-            this.y1scale = d3.scale.linear().range([2*Math.PI, 0]); //starts at the bottom left
+            this.y1scale = d3.scaleLinear().range([2*Math.PI, 0]); //starts at the bottom left
         };
     } else if (scale_I === 'ordinal') {
-        this.y1scale = d3.scale.ordinal();
+        this.y1scale = d3.scaleOrdinal();
     } else if (scale_I === 'ordinal-rangeRoundBands') {
         if (invert_I){
-            this.y1scale = d3.scale.ordinal().rangeRoundBands([0,this.height], .1); //starts at the top left
+            this.y1scale = d3.scaleOrdinal().rangeRound([0,this.height], .1); //starts at the top left
         } else {
-            this.y1scale = d3.scale.ordinal().rangeRoundBands([this.height, 0], .1); //starts at the bottom left
+            this.y1scale = d3.scaleOrdinal().rangeRound([this.height, 0], .1); //starts at the bottom left
         };
     };
 };
 d3_chart2d.prototype.set_x2range = function (scale_I) {
     // set x2-range of the plot
     if (scale_I === 'linear') {
-        this.x2scale = d3.scale.linear().range([0, this.width])
+        this.x2scale = d3.scaleLinear().range([0, this.width])
     } else if (scale_I === 'ordinal') {
-        this.x2scale = d3.scale.ordinal();
+        this.x2scale = d3.scaleOrdinal();
     } else if (scale_I === 'ordinal-rangeRoundBands') {
-        this.x2scale = d3.scale.ordinal().rangeRoundBands([0, this.width], .1);
+        this.x2scale = d3.scaleOrdinal().rangeRound([0, this.width], .1);
     };
 };
 d3_chart2d.prototype.set_y2range = function (scale_I,invert_I) {
@@ -149,17 +149,17 @@ d3_chart2d.prototype.set_y2range = function (scale_I,invert_I) {
     if (typeof invert_I === "undefined"){invert_I=false;}
     if (scale_I === 'linear') {
         if (invert_I){
-            this.y2scale = d3.scale.linear().range([0,this.height]); //starts at the top left
+            this.y2scale = d3.scaleLinear().range([0,this.height]); //starts at the top left
         } else {
-            this.y2scale = d3.scale.linear().range([this.height, 0]); //starts at the bottom left
+            this.y2scale = d3.scaleLinear().range([this.height, 0]); //starts at the bottom left
         };
     } else if (scale_I === 'ordinal') {
-        this.y2scale = d3.scale.ordinal();
+        this.y2scale = d3.scaleOrdinal();
     } else if (scale_I === 'ordinal-rangeRoundBands') {
         if (invert_I){
-            this.y2scale = d3.scale.ordinal().rangeRoundBands([0,this.height], .1); //starts at the top left
+            this.y2scale = d3.scaleOrdinal().rangeRound([0,this.height], .1); //starts at the top left
         } else {
-            this.y2scale = d3.scale.ordinal().rangeRoundBands([this.height, 0], .1); //starts at the bottom left
+            this.y2scale = d3.scaleOrdinal().rangeRound([this.height, 0], .1); //starts at the bottom left
         };
     };
 };

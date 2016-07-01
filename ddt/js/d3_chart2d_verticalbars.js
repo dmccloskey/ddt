@@ -7,7 +7,7 @@ d3_chart2d.prototype.set_x1x2domain_verticalbarschart = function () {
     this.x1scale.domain(nestdatafiltered.map(function (d) { return d.key; }));
     var x1scale = this.x1scale;
     var series_labels_unique = this.get_uniquelabels(listdatafiltered,series_label);
-    this.x2scale.domain(series_labels_unique).rangeRoundBands([0,x1scale.rangeBand()]);
+    this.x2scale.domain(series_labels_unique).rangeRound([0,x1scale.rangeBand()]);
 };
 d3_chart2d.prototype.add_verticalbarsdata1 = function () {
     //add vertical bars to the chart

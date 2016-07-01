@@ -12,7 +12,7 @@ d3_chart2d.prototype.set_piedata1 = function (sort_I){
         var sort = null;
     };
     var y_data = this.data1keymap.ydata;
-    this.pie = d3.layout.pie()
+    this.pie = d3.pie()
         .sort(sort)
         //.sort(function(a, b) { return b[y_data] - a[y_data]; })
         .value(function(d){return +d[y_data];});
@@ -25,7 +25,7 @@ d3_chart2d.prototype.set_x1x2domain_verticalpieschart = function () {
     this.x1scale.domain(nestdatafiltered.map(function (d) { return d.key; }));
     var x1scale = this.x1scale;
     var series_labels_unique = this.get_uniquelabels(listdatafiltered,series_label);
-    this.x2scale.domain(series_labels_unique).rangeRoundBands([0,x1scale.rangeBand()]);
+    this.x2scale.domain(series_labels_unique).rangeRound([0,x1scale.rangeBand()]);
 };
 d3_chart2d.prototype.add_verticalpiesdata1 = function () {
     //add pies to the chart

@@ -9,8 +9,8 @@ d3_chart2d.prototype.set_y1y2domain_horizontalbarschart = function () {
     var y1scale = this.y1scale;
     var series_labels_unique = this.get_uniquelabels(listdatafiltered,series_label);
     //series_labels_unique.reverse();
-    this.y2scale.domain(series_labels_unique).rangeRoundBands([0,y1scale.rangeBand()]); // orders the data from bottom to top
-    //this.y2scale.domain(series_labels_unique).rangeRoundBands([y1scale.rangeBand(),0]); // orders the data from top to bottom
+    this.y2scale.domain(series_labels_unique).rangeRound([0,y1scale.rangeBand()]); // orders the data from bottom to top
+    //this.y2scale.domain(series_labels_unique).rangeRound([y1scale.rangeBand(),0]); // orders the data from top to bottom
 };
 d3_chart2d.prototype.add_horizontalbarsdata1 = function () {
     //add horizontal bars to the chart

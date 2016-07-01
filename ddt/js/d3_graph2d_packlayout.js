@@ -32,7 +32,7 @@ d3_graph2d.prototype.set_packlayout = function(padding_I){
         var size = 'size';
     };
 
-    this.packlayout = d3.layout.pack()
+    this.packlayout = d3.pack()
         .padding(padding_I)
         .size([width - margin.left - margin.right, height - margin.top - margin.bottom])
         .value(function(d) { return d[size]; })

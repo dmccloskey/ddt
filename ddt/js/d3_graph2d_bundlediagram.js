@@ -21,7 +21,7 @@ d3_graph2d.prototype.set_bundlediagramline = function(interpolate_I,tension_I){
     if (tension_I){var tension = tension_I;}
     else {var tension=0.85};  
 
-    this.bundlediagramline = d3.svg.line.radial()
+    this.bundlediagramline = d3.radialLine()
         .interpolate(interpolate)
         .tension(tension)
         .radius(function(d) { return d.y; })

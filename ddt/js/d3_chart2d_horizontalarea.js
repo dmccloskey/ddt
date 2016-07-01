@@ -15,7 +15,7 @@ d3_chart2d.prototype.set_stackedareadata1 = function () {
     var stackdata1 = this.stackdata1;
     var nestdatafiltered = this.data1.nestdatafiltered
 
-    this.stackedareadata1generator = d3.svg.area()
+    this.stackedareadata1generator = d3.area()
       .x(function(d) {
         //return x1scale(d.x); })
         return x1scale(d[x_data]); })
@@ -37,7 +37,7 @@ d3_chart2d.prototype.set_areadata1 = function () {
     var frequency = this.data1.get_uniquevaluesFromlistdatafiltered(y_data);
     var y0 = Math.min.apply(Math, frequency);
 
-    this.areadata1generator = d3.svg.area()
+    this.areadata1generator = d3.area()
       .x(function(d) {
         return x1scale(d[x_data]); })
       .y0(function(d) {

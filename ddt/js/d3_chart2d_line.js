@@ -6,7 +6,7 @@ d3_chart2d.prototype.set_linedata1 = function (interoplate_I) {
     var x1scale = this.x1scale;
     var y1scale = this.y1scale;
 
-    this.linedata1generator = d3.svg.line()
+    this.linedata1generator = d3.line()
         .interpolate(interoplate_I)
         .x(function (d) { return x1scale(d[x_data]); })
         .y(function (d) { return y1scale(d[y_data]); });
@@ -17,7 +17,7 @@ d3_chart2d.prototype.set_linedata2 = function (interoplate_I) {
     var x2scale = this.x2scale;
     var y2scale = this.y2scale;
 
-    this.linedata2generator = d3.svg.line()
+    this.linedata2generator = d3.line()
         .interpolate(interoplate_I)
         .x(function (d) { return x2scale(d[x_data]); })
         .y(function (d) { return y2scale(d[y_data]); });

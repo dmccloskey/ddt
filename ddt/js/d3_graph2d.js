@@ -87,7 +87,7 @@ d3_graph2d.prototype.set_cluster = function(width_I,height_I,sort_I){
     if (sort_I){var sort = sortI;}
     else {var sort=null}; 
 
-    this.cluster = d3.layout.cluster()
+    this.cluster = d3.cluster()
         .size([width, height])
         .sort(sort)
         .value(function(d) { return d.size; }); 
@@ -111,14 +111,20 @@ d3_graph2d.prototype.set_treelayouttree = function(width_I,height_I,nodeWidth_I=
     if (height_I){var height = height_I;}
     else {var height=innerradius}; 
     
-    this.treelayouttree = d3.layout.tree()
+    this.treelayouttree = d3.tree()
         .size([width,height])
         .nodeSize([nodeWidth_I,nodeHeight_I]);
 };
 d3_graph2d.prototype.set_treelayoutdiagonal = function(){
     // set the layout diagonal
-    this.treelayoutdiagonal = d3.svg.diagonal()
-        .projection(function(d) { return [d.y, d.x]; });
+    //this.treelayoutdiagonal = d3.svg.diagonal()
+    //    .projection(function(d) { return [d.y, d.x]; });
+	this.treelayoutdiagonal=function(d) {
+		  return "M" + d.y + "," + d.x
+			  + "C" + (d.y + d.parent.y) / 2 + "," + d.x
+			  + " " + (d.y + d.parent.y) / 2 + "," + d.parent.x
+			  + " " + d.parent.y + "," + d.parent.x;
+		};
 };
 d3_graph2d.prototype.set_radiallayoutprojection = function(){
     // analogous to d3.svg.diagnol except for a radial layout
