@@ -97,7 +97,7 @@ d3_graph2d.prototype.set_bundle = function(){
     */
     this.bundle = d3.layout.bundle();
 };
-d3_graph2d.prototype.set_treelayouttree = function(width_I,height_I){
+d3_graph2d.prototype.set_treelayouttree = function(width_I,height_I,nodeWidth_I=null,nodeHeight_I=null){
     // set the layout tree
 
     if (width_I){var width = width_I;}
@@ -112,7 +112,8 @@ d3_graph2d.prototype.set_treelayouttree = function(width_I,height_I){
     else {var height=innerradius}; 
     
     this.treelayouttree = d3.layout.tree()
-        .size([width,height]);
+        .size([width,height])
+        .nodeSize([nodeWidth_I,nodeHeight_I]);
 };
 d3_graph2d.prototype.set_treelayoutdiagonal = function(){
     // set the layout diagonal
@@ -130,7 +131,7 @@ d3_graph2d.prototype.set_radiallayoutprojection = function(){
 };
 d3_graph2d.prototype.set_radiallayoutstep = function(){
     // analogous to d3.svg.diagonal.radial but with square corners
-    
+
     this.radiallayoutstep = function step(startAngle, startRadius, endAngle, endRadius) {
       var c0 = Math.cos(startAngle = (startAngle - 90) / 180 * Math.PI),
           s0 = Math.sin(startAngle),

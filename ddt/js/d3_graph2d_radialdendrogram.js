@@ -1,6 +1,6 @@
 "use strict";
 d3_graph2d.prototype.set_radialdendrogramdata1root = function(radialdendrogramroot_I){
-    //set tree layout root
+    //set radialdendrogram root
 
     //add as input?
     var innerRadius = this.radius-this.radius/4.0;
