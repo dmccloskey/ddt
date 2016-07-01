@@ -5,10 +5,12 @@ d3_graph2d.prototype.set_radialdendrogramdata1root = function(radialdendrogramro
     //add as input?
     var innerRadius = this.radius-this.radius/4.0;
 
-    if (radialdendrogramroot_I){this.radialdendrogramroot = radialdendrogramroot_I;}
+    if (radialdendrogramroot_I){var root = radialdendrogramroot_I;}
     else {
-        //this.radialdendrogramroot={'name':"",'children':this.data1.nestdatafiltered};
-        this.radialdendrogramroot=this.data1.nestdatafiltered[0];
+        var root = d3.stratify()
+            .id(function(d) { return d.name; })
+            .parentId(function(d) { return d.parent; })
+            (this.data1.listdatafiltered);
         };  
     // Compute the maximum cumulative length of any node in the tree.
     function maxLength(d) {
@@ -21,14 +23,16 @@ d3_graph2d.prototype.set_radialdendrogramdata1root = function(radialdendrogramro
         if (d.children) d.children.forEach(function(d) { setRadius(d, y0, k); });
     }
 
-    // Set the color of each node by recursively inheriting.
-    function setColor(d) {
-        d.color = color.domain().indexOf(d.name) >= 0 ? color(d.name) : d.parent ? d.parent.color : null;
-        if (d.children) d.children.forEach(setColor);
-    }
+//     // Set the color of each node by recursively inheriting.
+//     function setColor(d) {
+//         d.color = color.domain().indexOf(d.name) >= 0 ? color(d.name) : d.parent ? d.parent.color : null;
+//         if (d.children) d.children.forEach(setColor);
+//     }
 
     setRadius(root, root.length = 0, innerRadius / maxLength(root));
-    setColor(root);
+    //setColor(root);
+
+    this.radialdendrogramroot = root;
 };
 d3_graph2d.prototype.set_radialdendrogramdata1nodes = function(){
     // compute radialdendrogram nodes

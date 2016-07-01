@@ -131,6 +131,8 @@ ddt_tile_svg.prototype.get_svg = function(svgtype_I){
         return new ddt_svg_radialtreelayout2d_01();
     } else if (svgtype_I=='indentedtreelayout2d_01'){
         return new ddt_svg_indentedtreelayout2d_01();
+    } else if (svgtype_I=='radialdendrogram2d_01'){
+        return new ddt_svg_radialdendrogram2d_01();
     } else {
         return null;
     };
