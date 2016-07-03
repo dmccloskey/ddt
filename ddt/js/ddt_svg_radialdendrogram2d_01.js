@@ -58,7 +58,7 @@ ddt_svg_radialdendrogram2d_01.prototype.make_svg = function(data_I,parameters_I)
     	this.add_radialdendrogramdata1linkextension();
 		// add styles
     	this.set_radialdendrogramdata1labelcss();
-		this.set_radialdendrogramdata1linkstyle();
+		this.set_radialdendrogramdata1linkcss();
 		// add zoom and pan
     	this.set_zoom();
     	this.add_zoom();

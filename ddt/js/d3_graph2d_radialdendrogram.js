@@ -7,7 +7,7 @@ d3_graph2d.prototype.set_radialdendrogramdata1root = function(radialdendrogramro
 
     if (radialdendrogramroot_I){var root = radialdendrogramroot_I;}
     else {
-        var root = d3.stratify()
+        var root = stratify()
             .id(function(d) { return d.name; })
             .parentId(function(d) { return d.parent; })
             (this.data1.listdatafiltered);
@@ -42,7 +42,7 @@ d3_graph2d.prototype.set_radialdendrogramdata1nodes = function(){
 d3_graph2d.prototype.set_radialdendrogramdata1links = function(){
     // compute radialdendrogram links
     var nodes = this.radialdendrogramnodes
-    this.radialdendrogramlinks = this.this.cluster.links(nodes);
+    this.radialdendrogramlinks = this.cluster.links(nodes);
 };
 d3_graph2d.prototype.add_radialdendrogramdata1node = function(){
     // add tree layout nodes
@@ -51,11 +51,69 @@ d3_graph2d.prototype.add_radialdendrogramdata1node = function(){
     var duration= this.duration;
     var innerRadius = this.radius-this.radius/4.0;
 
+
+//     function mouseovered(active) {
+//         return function(d) {
+//             d3.select(this)
+//                 .classed("label--active", active);
+//             d3.select(d.linkExtensionNode)
+//                 .classed("link-extension--active", active).
+//                 each(moveToFront);
+//             do d3.select(d.linkNode)
+//                 .classed("link--active", active)
+//                 .each(moveToFront);
+//                 while (d = d.parent);
+//         };
+//     }
     function mouseovered(active) {
         return function(d) {
-            d3.select(this).classed("label--active", active);
-            d3.select(d.linkExtensionNode).classed("link-extension--active", active).each(moveToFront);
-            do d3.select(d.linkNode).classed("link--active", active).each(moveToFront); while (d = d.parent);
+            if (active){
+                d3.select(this)
+                    .style({
+                            'font': '10px Arial',
+                            'font-weight': 'bold',
+                        });
+                d3.select(d.linkExtensionNode)
+                    .style({
+                        'stroke': '#000',
+                        'stroke-opacity': '.6',
+                        'fill': 'none',})
+                    .each(moveToFront);
+                do d3.select(d.linkNode)
+                    .style({
+                        'stroke': '#000 !important',
+                        'stroke-width': '3px',
+                    })
+                    .each(moveToFront);
+                    while (d = d.parent);
+            } else {
+                d3.select(this)
+                    .style({
+                            'font': '10px Arial',
+                            'font-weight': 'normal',
+                        });
+                d3.select(d.linkExtensionNode)
+                    .style({
+                        'stroke': '#000',
+                        'stroke-opacity': '.25',
+                        'fill': 'none',
+                        //'pointer-events': 'none',
+
+                    })
+                    .style("stroke", function(d) { return d.target.data.color; })
+                    .each(moveToFront);
+                do d3.select(d.linkNode)
+                    .style({
+                        'stroke': '#000',
+                        'stroke-opacity':'1',
+                        'fill': 'none',
+                        'stroke-width': '1px',
+                        //'pointer-events': 'none',
+                    })
+                    .style("stroke", function(d) { return d.target.data.color; })
+                    .each(moveToFront);
+                    while (d = d.parent);
+            };
         };
     }
 
@@ -76,16 +134,21 @@ d3_graph2d.prototype.add_radialdendrogramdata1node = function(){
     //nodes
     this.radialdendrogramnode = this.radialdendrogramnodegroup.selectAll("text")
         //.data(nodes);
-        .data(nodes.filter(function(n) {return !n.children;}));
+        .data(nodes.filter(function(n) {
+            return !n.children;
+            }));
 
     // Enter any new nodes at the parent's previous position.
     this.radialdendrogramnodeenter = this.radialdendrogramnode.enter();
 
     this.radialdendrogramnodeenter.append("text")
         .attr("dy", ".31em")
-        .attr("transform", function(d) { return "rotate(" + (d.x - 90) + ")translate(" + (innerRadius + 4) + ",0)" + (d.x < 180 ? "" : "rotate(180)"); })
+        .attr("transform", function(d) {
+            return "rotate(" + (d.x - 90) + ")translate(" + (innerRadius + 4) + ",0)" + (d.x < 180 ? "" : "rotate(180)"); 
+            })
         .style("text-anchor", function(d) { return d.x < 180 ? "start" : "end"; })
-        .text(function(d) { return d.name; })
+        //.text(function(d) { return d.name; })
+        .text(function(d) { return d.id; })
         .on("mouseover", mouseovered(true))
         .on("mouseout", mouseovered(false));
 
@@ -95,7 +158,7 @@ d3_graph2d.prototype.add_radialdendrogramdata1node = function(){
         .attr("dy", ".31em")
         .attr("transform", function(d) { return "rotate(" + (d.x - 90) + ")translate(" + (innerRadius + 4) + ",0)" + (d.x < 180 ? "" : "rotate(180)"); })
         .style("text-anchor", function(d) { return d.x < 180 ? "start" : "end"; })
-        .text(function(d) { return d.name; });
+        .text(function(d) { return d.id; });
 
     // Transition exiting nodes to the parent's new position.
     this.radialdendrogramnodeexit = this.radialdendrogramnode.exit().transition()
@@ -107,7 +170,7 @@ d3_graph2d.prototype.add_radialdendrogramdata1link = function(){
     var links = this.radialdendrogramlinks;
     var duration= this.duration;
     var innerRadius = this.radius-this.radius/4.0;
-    var step = this.set_radiallayoutstep;
+    var step = this.radiallayoutstep;
 
     //link groups
     this.radialdendrogramlinkgroup = this.svgg.selectAll("g.links")
@@ -120,7 +183,10 @@ d3_graph2d.prototype.add_radialdendrogramdata1link = function(){
 
     // Update the links…
     this.radialdendrogramlink = this.radialdendrogramlinkgroup.selectAll("path")
-        .data(links.filter(function(d) { return !d.target.children; }));
+        .data(links);
+//         .data(links.filter(function(d) {
+//             return !d.target.children;
+//             }));
 
     // Enter any new links at the parent's previous position.
     this.radialdendrogramlinkenter = this.radialdendrogramlink.enter();
@@ -128,13 +194,16 @@ d3_graph2d.prototype.add_radialdendrogramdata1link = function(){
     this.radialdendrogramlinkenter.append("path")
         .each(function(d) { d.target.linkNode = this; })
         .attr("d", function(d) { return step(d.source.x, d.source.y, d.target.x, d.target.y) })
-        .style("stroke", function(d) { return d.target.color; });
+        .style("stroke", function(d) {
+            //return d.target.color;
+            return d.target.data.color;
+            });
 
     // Transition links to their new position.
     this.radialdendrogramlink.select("path").transition()
         //.duration(duration)
         .attr("d", function(d) { return step(d.source.x, d.source.y, d.target.x, d.target.y) })
-        .style("stroke", function(d) { return d.target.color; });
+        .style("stroke", function(d) { return d.target.data.color; });
 
     // Transition exiting nodes to the parent's new position.
     this.radialdendrogramlink.exit().transition()
@@ -146,10 +215,10 @@ d3_graph2d.prototype.add_radialdendrogramdata1linkextension = function(){
     var links = this.radialdendrogramlinks;
     var duration= this.duration;
     var innerRadius = this.radius-this.radius/4.0;
-    var step = this.set_radiallayoutstep;
+    var step = this.radiallayoutstep;
 
     //link groups
-    this.radialdendrogramlinkgroup = this.svgg.selectAll("g.link-extensions")
+    this.radialdendrogramlinkextensiongroup = this.svgg.selectAll("g.link-extensions")
         .data([links]);
 
     this.radialdendrogramlinkextensiongroup.exit().remove();
@@ -166,12 +235,14 @@ d3_graph2d.prototype.add_radialdendrogramdata1linkextension = function(){
 
     this.radialdendrogramlinkextensionenter.append("path")
       .each(function(d) { d.target.linkExtensionNode = this; })
-      .attr("d", function(d) { return step(d.target.x, d.target.y, d.target.x, innerRadius); });
+      .attr("d", function(d) { return step(d.target.x, d.target.y, d.target.x, innerRadius); })
+      .style("stroke", function(d) { return d.target.data.color; });
 
     // Transition links to their new position.
     this.radialdendrogramlinkextension.select("path").transition()
         //.duration(duration)
-      .attr("d", function(d) { return step(d.target.x, d.target.y, d.target.x, innerRadius); });
+      .attr("d", function(d) { return step(d.target.x, d.target.y, d.target.x, innerRadius); })
+      .style("stroke", function(d) { return d.target.data.color; });
 
     // Transition exiting nodes to the parent's new position.
     this.radialdendrogramlinkextension.exit().transition()
@@ -183,7 +254,9 @@ d3_graph2d.prototype.set_radialdendrogramdata1linkcss = function () {
     var lineselector1 = '.links';
     var style1 = {
         'stroke': '#000',
+        'stroke-opacity':'1',
         'fill': 'none',
+        'stroke-width': '1px',
         //'pointer-events': 'none',
     };
     var lineselector2 = '.link-extensions';
@@ -200,7 +273,9 @@ d3_graph2d.prototype.set_radialdendrogramdata1linkcss = function () {
     };
     var lineselector4 = '.link-extension--active';
     var style4 = {
+        'stroke': '#000',
         'stroke-opacity': '.6',
+        'fill': 'none',
     };
     var selectorstyle = [
     { 'selection': lineselector1, 'style': style1 },
@@ -215,9 +290,11 @@ d3_graph2d.prototype.set_radialdendrogramdata1labelcss = function () {
     var lineselector1 = '.labels';
     var style1 = {
         'font': '10px Arial',
+        'font-weight': 'normal',
     };
     var lineselector2 = '.label--active';
     var style2 = {
+        'font': '10px Arial',
         'font-weight': 'bold',
     };
     var selectorstyle = [
