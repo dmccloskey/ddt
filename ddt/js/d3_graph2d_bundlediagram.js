@@ -51,6 +51,25 @@ d3_graph2d.prototype.set_bundlediagramdata1links = function(){
     this.bundlediagramlinks = this.cluster.links(nodes);
     
 };
+// d3_graph2d.prototype.set_bundlediagramdata1_nodesandlinks_sourcetarget = function(){
+//     /*
+//     convert nodes and links to bundle diagram input
+
+//     xdata is used as the value
+//     xdatalabel is used as the source
+//     ydatalabel is used as the target
+
+//     */
+//     var listdatafiltered = this.data1.listdatafiltered;
+//     var xdata = this.data1keymap.xdata;
+//     var xdatalabel = this.data1keymap.xdatalabel;
+//     var ydatalabel = this.data1keymap.ydatalabel;
+
+//     var graph = this.set_nodesAndLinks_sourceTarget(listdatafiltered,xdatalabel,ydatalabel,xdata);
+
+//     this.bundlediagramnodes = graph.nodes;
+//     this.bundlediagramlinks = graph.links;
+// };
 d3_graph2d.prototype.add_bundlediagramdata1node = function(){
     // add tree layout nodes
     var nodes = this.bundlediagramnodes;

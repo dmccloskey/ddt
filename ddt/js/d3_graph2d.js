@@ -184,3 +184,39 @@ d3_graph2d.prototype.set_sankeydiagramsankey = function(width_I=this.width,heigh
 
     this.sankeydiagrampath = this.sankeydiagramsankey.link();
 };
+d3_graph2d.prototype.set_nodesAndLinks_sourceTarget = function(data_I,source_I,target_I,value_I){
+    /*
+    set nodes and links for binary acyclic graph
+    adapted from: http://bl.ocks.org/d3noob/c9b90689c1438f57d649
+    */
+
+    var nodes = [];
+    var links = [];
+
+    data_I.forEach(function (d) {
+        nodes.push({ "name": d[source_I] });
+        nodes.push({ "name": d[target_I] });
+        links.push({ "source": d[source_I],
+                         "target": d[target_I],
+                         "value": +d[value_I] });
+    });
+
+    // return only the distinct / unique nodes
+    nodes = d3.keys(d3.nest()
+        .key(function (d) { return d.name; })
+        .map(nodes));
+
+    // loop through each link replacing the text with its index from node
+    links.forEach(function (d, i) {
+        links[i].source = nodes.indexOf(links[i].source);
+        links[i].target = nodes.indexOf(links[i].target);
+    });
+
+    //now loop through each nodes to make nodes an array of objects
+    // rather than an array of strings
+    nodes.forEach(function (d, i) {
+        nodes[i] = { "name": d };
+    });    
+
+    return {'nodes':nodes,'links':links};
+};

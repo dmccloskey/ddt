@@ -54,6 +54,7 @@ ddt_svg_bundlediagram2d_01.prototype.make_svg = function(data_I,parameters_I){
 		this.set_bundlediagramdata1root()
 		this.set_bundlediagramdata1nodes();
 		this.set_bundlediagramdata1links();
+		//this.set_bundlediagramdata1_nodesandlinks_sourcetarget();
 		this.add_bundlediagramdata1node();
 		this.add_bundlediagramdata1link();
 		// add styles

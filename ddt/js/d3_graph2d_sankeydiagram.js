@@ -32,46 +32,16 @@ d3_graph2d.prototype.set_sankeydiagramdata1_nodesandlinks_sourcetarget = functio
     xdatalabel is used as the source
     ydatalabel is used as the target
 
-    adapted from: http://bl.ocks.org/d3noob/c9b90689c1438f57d649
     */
-    var root = this.sankeydiagramroot;
     var listdatafiltered = this.data1.listdatafiltered;
     var xdata = this.data1keymap.xdata;
     var xdatalabel = this.data1keymap.xdatalabel;
     var ydatalabel = this.data1keymap.ydatalabel;
-        //.value(function(d){return d[xdata];});
 
-    //set up graph in same style as original example but empty
-    var nodes = [];
-    var links = [];
+    var graph = this.set_nodesAndLinks_sourceTarget(listdatafiltered,xdatalabel,ydatalabel,xdata);
 
-    listdatafiltered.forEach(function (d) {
-        nodes.push({ "name": d[xdatalabel] });
-        nodes.push({ "name": d[ydatalabel] });
-        links.push({ "source": d[xdatalabel],
-                         "target": d[ydatalabel],
-                         "value": +d[xdata] });
-    });
-
-    // return only the distinct / unique nodes
-    nodes = d3.keys(d3.nest()
-        .key(function (d) { return d.name; })
-        .map(nodes));
-
-    // loop through each link replacing the text with its index from node
-    links.forEach(function (d, i) {
-        links[i].source = nodes.indexOf(links[i].source);
-        links[i].target = nodes.indexOf(links[i].target);
-    });
-
-    //now loop through each nodes to make nodes an array of objects
-    // rather than an array of strings
-    nodes.forEach(function (d, i) {
-        nodes[i] = { "name": d };
-    });
-
-    this.sankeydiagramnodes = nodes;
-    this.sankeydiagramlinks = links;
+    this.sankeydiagramnodes = graph.nodes;
+    this.sankeydiagramlinks = graph.links;
 };
 
 d3_graph2d.prototype.update_sankeydiagramsankey = function(layout_I=32){
