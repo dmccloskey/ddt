@@ -141,4 +141,30 @@ d3_graph2d.prototype.set_radiallayoutstep = function(){
           + (endAngle === startAngle ? "" : "A" + startRadius + "," + startRadius + " 0 0 " + (endAngle > startAngle ? 1 : 0) + " " + startRadius * c1 + "," + startRadius * s1)
           + "L" + endRadius * c1 + "," + endRadius * s1;
     }
-}
+};
+d3_graph2d.prototype.set_verticallayoutstep = function(){
+    // analogous to d3.svg.diagonal but with square corners
+    // TODO: there is either a problem with scaling the lengths for calculating the steps
+
+    this.verticallayoutstep = function step(startX, startY, endX, endY) {
+      return "M" + startX + "," + startY
+          + "L" + startX + "," + endY
+          + "L" + endX + "," + endY;
+    }
+};
+d3_graph2d.prototype.set_treemaplayouttreemap = function(width_I=this.width,height_I=this.height,sticky_I=true){
+    // set the layout treemap
+    
+    this.treemaplayouttreemap = d3.layout.treemap()
+        .size([width_I,height_I])
+        .value(function(d) { return d.size; })
+        .sticky(sticky_I);
+};
+d3_graph2d.prototype.set_partitionlayoutpartition = function(width_I=this.width,height_I=this.height){
+    // set the layout partition
+    
+    this.partitionlayoutpartition = d3.layout.partition()
+        //.value(function(d) { return d.size; })
+        .value(function(d) { return 1; })
+        .size([width_I,height_I]);
+};

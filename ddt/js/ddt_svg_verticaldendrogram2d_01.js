@@ -1,21 +1,21 @@
 "use strict";
-function ddt_svg_radialdendrogram2d_01() {
+function ddt_svg_verticaldendrogram2d_01() {
     /*
     DESCRIPTION:
-    generates a radial dendrogram
+    generates a vertical dendrogram
 
     addapted from
     http://bl.ocks.org/mbostock/c034d66572fd6bd6815a
-
-    TODO: Branches do not appear to be scaled to distance
     
+    TODO: there is either a problem with scaling the lengths for calculating the steps
+
     */
 
     ddt_svg.call(this);
 };
-ddt_svg_radialdendrogram2d_01.prototype = Object.create(ddt_svg.prototype);
-ddt_svg_radialdendrogram2d_01.prototype.constructor = ddt_svg_radialdendrogram2d_01;
-ddt_svg_radialdendrogram2d_01.prototype.make_svg = function(data_I,parameters_I){
+ddt_svg_verticaldendrogram2d_01.prototype = Object.create(ddt_svg.prototype);
+ddt_svg_verticaldendrogram2d_01.prototype.constructor = ddt_svg_verticaldendrogram2d_01;
+ddt_svg_verticaldendrogram2d_01.prototype.make_svg = function(data_I,parameters_I){
 	// piechart definition
 
 	this.ddtsvg = new d3_graph2d();
@@ -46,18 +46,17 @@ ddt_svg_radialdendrogram2d_01.prototype.make_svg = function(data_I,parameters_I)
         this.add_graph2d2tile();
         this.set_svgstyle();
         // add cluster nodes and links
-		this.set_radius(parameters_I.svgradius);
 		this.set_cluster();		
-		this.set_radiallayoutstep();
-		this.set_radialdendrogramdata1root()
-		this.set_radialdendrogramdata1nodes();
-		this.set_radialdendrogramdata1links();
-		this.add_radialdendrogramdata1node();
-		this.add_radialdendrogramdata1link();
-    	this.add_radialdendrogramdata1linkextension();
+		this.set_verticallayoutstep();
+		this.set_verticaldendrogramdata1root()
+		this.set_verticaldendrogramdata1nodes();
+		this.set_verticaldendrogramdata1links();
+		this.add_verticaldendrogramdata1node();
+		this.add_verticaldendrogramdata1link();
+    	//this.add_verticaldendrogramdata1linkextension();
 		// add styles
-    	this.set_radialdendrogramdata1labelcss();
-		this.set_radialdendrogramdata1linkcss();
+    	this.set_verticaldendrogramdata1labelcss();
+		this.set_verticaldendrogramdata1linkcss();
 		// add zoom and pan
     	this.set_zoom();
     	this.add_zoom();

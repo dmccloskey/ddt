@@ -133,6 +133,12 @@ ddt_tile_svg.prototype.get_svg = function(svgtype_I){
         return new ddt_svg_indentedtreelayout2d_01();
     } else if (svgtype_I=='radialdendrogram2d_01'){
         return new ddt_svg_radialdendrogram2d_01();
+    } else if (svgtype_I=='verticaldendrogram2d_01'){
+        return new ddt_svg_verticaldendrogram2d_01();
+    } else if (svgtype_I=='treemaplayout2d_01'){
+        return new ddt_svg_treemaplayout2d_01();
+    } else if (svgtype_I=='partitionlayout2d_01'){
+        return new ddt_svg_partitionlayout2d_01();
     } else {
         return null;
     };

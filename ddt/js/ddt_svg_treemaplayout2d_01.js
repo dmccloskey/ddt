@@ -1,21 +1,22 @@
 "use strict";
-function ddt_svg_radialdendrogram2d_01() {
+function ddt_svg_treemaplayout2d_01() {
     /*
     DESCRIPTION:
-    generates a radial dendrogram
+    generates a treemap
 
     addapted from
-    http://bl.ocks.org/mbostock/c034d66572fd6bd6815a
+    https://bl.ocks.org/mbostock/4063582
 
-    TODO: Branches do not appear to be scaled to distance
+    TODO: add zoom
+    https://bost.ocks.org/mike/treemap/
     
     */
 
     ddt_svg.call(this);
 };
-ddt_svg_radialdendrogram2d_01.prototype = Object.create(ddt_svg.prototype);
-ddt_svg_radialdendrogram2d_01.prototype.constructor = ddt_svg_radialdendrogram2d_01;
-ddt_svg_radialdendrogram2d_01.prototype.make_svg = function(data_I,parameters_I){
+ddt_svg_treemaplayout2d_01.prototype = Object.create(ddt_svg.prototype);
+ddt_svg_treemaplayout2d_01.prototype.constructor = ddt_svg_treemaplayout2d_01;
+ddt_svg_treemaplayout2d_01.prototype.make_svg = function(data_I,parameters_I){
 	// piechart definition
 
 	this.ddtsvg = new d3_graph2d();
@@ -46,18 +47,12 @@ ddt_svg_radialdendrogram2d_01.prototype.make_svg = function(data_I,parameters_I)
         this.add_graph2d2tile();
         this.set_svgstyle();
         // add cluster nodes and links
-		this.set_radius(parameters_I.svgradius);
-		this.set_cluster();		
-		this.set_radiallayoutstep();
-		this.set_radialdendrogramdata1root()
-		this.set_radialdendrogramdata1nodes();
-		this.set_radialdendrogramdata1links();
-		this.add_radialdendrogramdata1node();
-		this.add_radialdendrogramdata1link();
-    	this.add_radialdendrogramdata1linkextension();
+		this.set_treemaplayouttreemap(parameters_I.svgwidth,parameters_I.svgheight);
+		this.set_treemaplayoutdata1root()
+		this.set_treemaplayoutdata1nodes();
+		this.add_treemaplayoutdata1node();
 		// add styles
-    	this.set_radialdendrogramdata1labelcss();
-		this.set_radialdendrogramdata1linkcss();
+    	this.set_treemaplayoutdata1css();
 		// add zoom and pan
     	this.set_zoom();
     	this.add_zoom();
