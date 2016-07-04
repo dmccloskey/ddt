@@ -170,6 +170,17 @@ d3_graph2d.prototype.set_partitionlayoutpartition = function(width_I=this.width,
 
         //.padding(padding_I)
         //.round(round_I)
-        
+
         .size([width_I,height_I]);
+};
+d3_graph2d.prototype.set_sankeydiagramsankey = function(width_I=this.width,height_I=this.height,nodePadding_I = 10,nodeWidth_I=15){
+    /*set the sankey diagram sankey class
+    */
+    
+    this.sankeydiagramsankey = d3.sankey()
+        .nodePadding(nodePadding_I)
+        .nodeWidth(nodeWidth_I)  
+        .size([width_I,height_I]);
+
+    this.sankeydiagrampath = this.sankeydiagramsankey.link();
 };
