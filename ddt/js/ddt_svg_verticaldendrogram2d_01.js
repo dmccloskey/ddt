@@ -46,7 +46,7 @@ ddt_svg_verticaldendrogram2d_01.prototype.make_svg = function(data_I,parameters_
         this.add_graph2d2tile();
         this.set_svgstyle();
         // add cluster nodes and links
-		this.set_cluster();		
+		this.set_cluster(this.width,this.height);		
 		this.set_verticallayoutstep();
 		this.set_verticaldendrogramdata1root()
 		this.set_verticaldendrogramdata1nodes();

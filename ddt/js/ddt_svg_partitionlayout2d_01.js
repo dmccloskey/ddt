@@ -4,7 +4,12 @@ function ddt_svg_partitionlayout2d_01() {
     DESCRIPTION:
     generates a partition
 
-    TODO: add zoom
+    adapted from
+    http://bl.ocks.org/mbostock/2e73ec84221cb9773f4c
+   http://puppydev.com/2015-04-13/d3-js-layout-tutorials-treemap-partition-and-pack
+
+    TODO:
+    switch to d3.stratify
     
     */
 
@@ -44,11 +49,11 @@ ddt_svg_partitionlayout2d_01.prototype.make_svg = function(data_I,parameters_I){
         this.set_svgstyle();
         // add cluster nodes and links
 		this.set_partitionlayoutpartition(parameters_I.svgwidth,parameters_I.svgheight);
-		this.set_partitionlayoutdata1root()
+		this.set_partitionlayoutdata1root();
 		this.set_partitionlayoutdata1nodes();
 		this.add_partitionlayoutdata1node();
 		// add styles
-    	//this.set_partitionlayoutdata1css();
+    	this.set_partitionlayoutdata1css();
 		// add zoom and pan
     	this.set_zoom();
     	this.add_zoom();

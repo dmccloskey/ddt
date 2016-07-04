@@ -2,6 +2,8 @@
 d3_graph2d.prototype.set_verticaldendrogramdata1root = function(verticaldendrogramroot_I){
     //set verticaldendrogram root
     // TODO: there is either a problem with scaling the lengths for calculating the steps
+    //
+    var xdata = this.data1keymap.xdata;
 
     if (verticaldendrogramroot_I){var root = verticaldendrogramroot_I;}
     else {
@@ -13,26 +15,25 @@ d3_graph2d.prototype.set_verticaldendrogramdata1root = function(verticaldendrogr
 
     // Compute the maximum cumulative length of any node in the tree.
     function maxLength(d) {
-        return d.length + (d.children ? d3.max(d.children, maxLength) : 0);
-        //return d.data.distance + (d.children ? d3.max(d.children, maxLength) : 0);
+        //return d.length + (d.children ? d3.max(d.children, maxLength) : 0);
+        return d.data[xdata] + (d.children ? d3.max(d.children, maxLength) : 0);
     }
 
     // Set the distance of each node by recursively summing and scaling the distance from the root.
     function setDistance(d, y0, k) {
-        d.y = (y0 += d.length) * k;
+        d.y = (y0 += d.data[xdata]) * k;
         if (d.children) d.children.forEach(function(d) { setDistance(d, y0, k); });
     }
 
-//     // Set the color of each node by recursively inheriting.
-//     function setColor(d) {
-//         d.color = color.domain().indexOf(d.name) >= 0 ? color(d.name) : d.parent ? d.parent.color : null;
-//         if (d.children) d.children.forEach(setColor);
-//     }
+    // Set the color of each node by recursively inheriting.
+    function setColor(d) {
+        d.color = color.domain().indexOf(d.name) >= 0 ? color(d.name) : d.parent ? d.parent.color : null;
+        if (d.children) d.children.forEach(setColor);
+    }
 
     setDistance(root, root.length = 0, maxLength(root));
     //setColor(root);
 
-    this.radialdendrogramroot = root;
     this.verticaldendrogramroot = root;
 };
 d3_graph2d.prototype.set_verticaldendrogramdata1nodes = function(){

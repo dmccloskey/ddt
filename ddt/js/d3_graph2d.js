@@ -84,7 +84,7 @@ d3_graph2d.prototype.set_cluster = function(width_I,height_I,sort_I){
     if (height_I){var height = height_I;}
     else {var height=innerradius}; 
 
-    if (sort_I){var sort = sortI;}
+    if (sort_I){var sort = sort_I;}
     else {var sort=null}; 
 
     this.cluster = d3.layout.cluster()
@@ -148,7 +148,8 @@ d3_graph2d.prototype.set_verticallayoutstep = function(){
 
     this.verticallayoutstep = function step(startX, startY, endX, endY) {
       return "M" + startX + "," + startY
-          + "L" + startX + "," + endY
+//           + "L" + startX + "," + endY
+          + "L" + endX + "," + startY
           + "L" + endX + "," + endY;
     }
 };
@@ -160,11 +161,15 @@ d3_graph2d.prototype.set_treemaplayouttreemap = function(width_I=this.width,heig
         .value(function(d) { return d.size; })
         .sticky(sticky_I);
 };
-d3_graph2d.prototype.set_partitionlayoutpartition = function(width_I=this.width,height_I=this.height){
+d3_graph2d.prototype.set_partitionlayoutpartition = function(width_I=this.width,height_I=this.height,padding_I = 1,round_I=true){
     // set the layout partition
     
     this.partitionlayoutpartition = d3.layout.partition()
         //.value(function(d) { return d.size; })
-        .value(function(d) { return 1; })
+        //.value(function(d) { return 1; })
+
+        //.padding(padding_I)
+        //.round(round_I)
+        
         .size([width_I,height_I]);
 };

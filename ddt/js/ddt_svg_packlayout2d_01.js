@@ -2,7 +2,8 @@
 function ddt_svg_packlayout2d_01() {
     // packlayout
     // description:
-    // generic packlayout
+    // generic packlayout with zoom
+    // adpated from: http://bl.ocks.org/mbostock/7607535
     // NOTES:
     // 1. data_I.datanestkeys = [] of multiple keys in order
     // 2. data_I.datalastchild = string describing the final child element
