@@ -101,7 +101,8 @@ d3_graph2d.prototype.add_sankeydiagramdata1node = function(){
 //             .on("drag", dragmove));
 
     this.sankeydiagramnodeenter.append("rect")
-        .attr("height", function(d) { return d.dy; })
+        //.attr("height", function(d) { return d.dy; })
+        .attr("height", function(d) { return Math.max(.25,d.dy); })
         .attr("width", sankey.nodeWidth())
         .style("fill", function(d) { return d.color = colorscale(d.name); })
         .style("stroke", function(d) { return d3.rgb(d.color).darker(2); })
@@ -125,7 +126,7 @@ d3_graph2d.prototype.add_sankeydiagramdata1node = function(){
         .attr("transform", function(d) { return "translate(" + d.x + "," + d.y + ")"; });
 
     this.sankeydiagramnodeupdate.select("rect")
-        .attr("height", function(d) { return d.dy; })
+        .attr("height", function(d) { return Math.max(.25,d.dy); })
         .attr("width", sankey.nodeWidth())
         .style("fill", function(d) { return d.color = colorscale(d.name); })
         .style("stroke", function(d) { return d3.rgb(d.color).darker(2); })
@@ -188,7 +189,8 @@ d3_graph2d.prototype.add_sankeydiagramdata1link = function(){
 
     // Transition links to their new position.
     this.sankeydiagramlinkupdate = this.sankeydiagramlink.transition()
-        .duration(duration);
+        .duration(duration)
+        ;
 
     this.sankeydiagramlinkupdate.select("path")
         .attr("class", "link")

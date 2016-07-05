@@ -40,6 +40,7 @@ ddt_svg_sankeydiagram2d_01.prototype.make_svg = function(data_I,parameters_I){
     this.ddtsvg.add_optionsbuttongroup2footer();
     this.ddtsvg.add_svgmenubutton2optionsbuttongroup();
     this.ddtsvg.add_resizebuttons2optionsbuttongroup();
+    this.ddtsvg.set_duration(250);
     this.ddtsvg.render = function () {
     	// permanent filter on the data
     	if (parameters_I.svgfilters){

@@ -158,7 +158,7 @@ d3_svg.prototype.set_svgstyle = function () {
     var selectorstyle = [{ 'selection': selector1, 'style': style1 }];
     this.set_d3css(selectorstyle);
 };
-d3_svg.prototype.set_duration = function(duration_I){
+d3_svg.prototype.set_duration = function(duration_I=250){
     // set the transition duration
     this.duration = duration_I;
 };
