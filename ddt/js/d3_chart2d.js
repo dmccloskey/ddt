@@ -812,11 +812,14 @@ d3_chart2d.prototype.set_x1andy1axestickstyle = function () {
     // predefined css style for x1 and y1 axis
     var x1axisselector = '#' + this.id + 'x1axis' + ' g.tick text';
     var y1axisselector = '#' + this.id + 'y1axis' + ' g.tick text';
-    var style = {
-        'font-size': '12px'
+    var x1axisstyle = {
+        'font-size': '12px',
     };
-    var selectorstyle = [{ 'selection': x1axisselector, 'style': style },
-                     { 'selection': y1axisselector, 'style': style }]
+    var y1axisstyle = {
+        'font-size': '12px',
+    };
+    var selectorstyle = [{ 'selection': x1axisselector, 'style': x1axisstyle },
+                     { 'selection': y1axisselector, 'style': y1axisstyle }]
     this.set_svggcss(selectorstyle);
 };
 d3_chart2d.prototype.set_x1axislabelstyle = function () {

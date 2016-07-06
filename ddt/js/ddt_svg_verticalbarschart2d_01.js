@@ -58,7 +58,6 @@ ddt_svg_verticalbarschart2d_01.prototype.make_svg = function(data_I,parameters_I
     this.ddtsvg.add_resizebuttons2optionsbuttongroup();
     //this.ddtsvg.set_tooltip();
     //this.ddtsvg.set_tooltipstyle();
-    this.ddtsvg.set_zoom();
     this.ddtsvg.render = function () {
     	// permanent filter on the data
     	if (parameters_I.svgfilters){
@@ -84,8 +83,13 @@ ddt_svg_verticalbarschart2d_01.prototype.make_svg = function(data_I,parameters_I
         this.add_verticalbarsdata1tooltipandfill();
         this.add_verticalbarsdata1errorbars();
         this.set_x1andy1axesstyle_verticalbarschart();
-        this.set_x1andy1axestickstyle();
+        this.set_x1andy1axestickstyle_verticalbarschart();
         this.add_y1axislabel(parameters_I.svgy1axislabel);
         this.set_x1andy1axeslabelstyle();
+        // zoom and pan
+    	this.set_zoom();
+    	this.add_zoom();
+    	this.set_drag();
+    	this.add_drag();
     };
 };

@@ -248,6 +248,24 @@ d3_chart2d.prototype.add_verticalbarsdata1errorbars = function () {
         });
 
 };
+d3_chart2d.prototype.set_x1andy1axestickstyle_verticalbarschart = function () {
+    // predefined css style for x1 and y1 axis
+    var x1axisselector = '#' + this.id + 'x1axis' + ' g.tick text';
+    var y1axisselector = '#' + this.id + 'y1axis' + ' g.tick text';
+    var x1axisstyle = {
+        'font-size': '12px',
+        'text-anchor': 'end',
+        '-ms-transform': 'rotate(-90deg)', /* IE 9 */
+        '-webkit-transform': 'rotate(-90deg)', /* Chrome, Safari, Opera */
+        'transform': 'rotate(-90deg)',
+    };
+    var y1axisstyle = {
+        'font-size': '12px',
+    };
+    var selectorstyle = [{ 'selection': x1axisselector, 'style': x1axisstyle },
+                     { 'selection': y1axisselector, 'style': y1axisstyle }]
+    this.set_svggcss(selectorstyle);
+};
 d3_chart2d.prototype.set_x1andy1axesstyle_verticalbarschart = function () {
     // predefined css style for x1 and y1 axis
     var x1axisselector = '#' + this.id + 'x1axis' + ' path';
