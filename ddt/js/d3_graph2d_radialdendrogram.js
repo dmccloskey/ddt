@@ -1,17 +1,15 @@
 "use strict";
-d3_graph2d.prototype.set_radialdendrogramdata1root = function(radialdendrogramroot_I){
+d3_graph2d.prototype.set_radialdendrogramdata1root = function(id_I='name',parentId_I='parent'){
     //set radialdendrogram root
 
     //add as input?
     var innerRadius = this.radius-this.radius/4.0;
 
-    if (radialdendrogramroot_I){var root = radialdendrogramroot_I;}
-    else {
-        var root = stratify()
-            .id(function(d) { return d.name; })
-            .parentId(function(d) { return d.parent; })
-            (this.data1.listdatafiltered);
-        };  
+    var root = stratify()
+        .id(function(d) { return d[id_I]; })
+        .parentId(function(d) { return d[parentId_I]; })
+        (this.data1.listdatafiltered);
+         
     // Compute the maximum cumulative length of any node in the tree.
     function maxLength(d) {
         return d.length + (d.children ? d3.max(d.children, maxLength) : 0);

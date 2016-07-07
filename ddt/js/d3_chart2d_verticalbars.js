@@ -101,10 +101,20 @@ d3_chart2d.prototype.add_verticalbarsdata1tooltipandfill = function () {
     this.tooltip = d3.tip().attr('class', 'd3-tip')
         .html(function(d){
             if(typeof(y_data_lb)==="undefined" || typeof(y_data_ub)==="undefined" || y_data_lb===null || y_data_ub===null){
-                return (d[tooltiplabel] + ': ' + "value: " + d[tooltipdata].toFixed(2));
+                if (!isNaN(d[tooltipdata]) && d[tooltipdata].toString().indexOf('.') != -1){
+                    var tooltipdat = d[tooltipdata].toFixed(2);
+                } else {
+                    var tooltipdat = d[tooltipdata];
+                }
+                return (d[tooltiplabel] + ': ' + "value: " + tooltipdat);
             }
             if(typeof(y_data_lb)==="undefined" || typeof(y_data_ub)==="undefined" || y_data_lb===null || y_data_ub===null){
-                return (d[tooltiplabel] + ': ' + "value: " + d[tooltipdata].toFixed(2));
+                if (!isNaN(value) && value.toString().indexOf('.') != -1){
+                    var tooltipdat = d[tooltipdata].toFixed(2);
+                } else {
+                    var tooltipdat = d[tooltipdata];
+                }
+                return (d[tooltiplabel] + ': ' + "value: " + tooltipdat);
             }
             else{
                 return (d[tooltiplabel] + ': ' + "value: " + d[tooltipdata].toFixed(2) + ', ' + "95% ci: " + d[y_data_lb].toFixed(2) + "/" + d[y_data_ub].toFixed(2));

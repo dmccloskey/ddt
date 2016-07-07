@@ -1,17 +1,14 @@
 "use strict";
-d3_graph2d.prototype.set_verticaldendrogramdata1root = function(verticaldendrogramroot_I){
+d3_graph2d.prototype.set_verticaldendrogramdata1root = function(id_I='name',parentId_I='parent'){
     //set verticaldendrogram root
     // TODO: there is either a problem with scaling the lengths for calculating the steps
     //
     var xdata = this.data1keymap.xdata;
 
-    if (verticaldendrogramroot_I){var root = verticaldendrogramroot_I;}
-    else {
-        var root = stratify()
-            .id(function(d) { return d.name; })
-            .parentId(function(d) { return d.parent; })
-            (this.data1.listdatafiltered);
-        };  
+    var root = stratify()
+        .id(function(d) { return d[id_I]; })
+        .parentId(function(d) { return d[parentId_I]; })
+        (this.data1.listdatafiltered);
 
     // Compute the maximum cumulative length of any node in the tree.
     function maxLength(d) {

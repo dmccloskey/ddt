@@ -49,7 +49,10 @@ ddt_svg_radialdendrogram2d_01.prototype.make_svg = function(data_I,parameters_I)
 		this.set_radius(parameters_I.svgradius);
 		this.set_cluster();		
 		this.set_radiallayoutstep();
-		this.set_radialdendrogramdata1root()
+		this.set_radialdendrogramdata1root(
+			parameters_I.svgstratifyid,
+			parameters_I.svgstratifyparentid
+			);
 		this.set_radialdendrogramdata1nodes();
 		this.set_radialdendrogramdata1links();
 		this.add_radialdendrogramdata1node();

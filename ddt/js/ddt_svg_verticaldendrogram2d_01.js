@@ -41,14 +41,15 @@ ddt_svg_verticaldendrogram2d_01.prototype.make_svg = function(data_I,parameters_
 			this.data1.change_filters(parameters_I.svgfilters);
 			this.data1.filter_listdata();
     	};
- 		this.data1.format_keyvalues2namechildren(parameters_I.datalastchild); //new!
- 		
         this.add_graph2d2tile();
         this.set_svgstyle();
         // add cluster nodes and links
 		this.set_cluster(this.width,this.height);		
 		this.set_verticallayoutstep();
-		this.set_verticaldendrogramdata1root()
+		this.set_verticaldendrogramdata1root(
+			parameters_I.svgstratifyid,
+			parameters_I.svgstratifyparentid
+			);
 		this.set_verticaldendrogramdata1nodes();
 		this.set_verticaldendrogramdata1links();
 		this.add_verticaldendrogramdata1node();
