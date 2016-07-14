@@ -110,10 +110,20 @@ d3_graph2d.prototype.set_treelayouttree = function(width_I,height_I,nodeWidth_I=
     };
     if (height_I){var height = height_I;}
     else {var height=innerradius}; 
-    
-    this.treelayouttree = d3.layout.tree()
-        .size([width,height])
-        .nodeSize([nodeWidth_I,nodeHeight_I]);
+
+//     if (nodeWidth_I){var nodeWidth = nodeWidth_I;}
+//     else {var nodeWidth = width;}
+//     if (nodeHeight_I){var nodeHeight = nodeHeight_I;}
+//     else {var nodeHeight = height;}
+
+    if (nodeWidth_I && nodeHeight_I){
+        this.treelayouttree = d3.layout.tree()
+            .size([width,height])
+            .nodeSize([nodeWidth,nodeHeight]);
+    } else {
+        this.treelayouttree = d3.layout.tree()
+            .size([width,height]);        
+    };
 };
 d3_graph2d.prototype.set_treelayoutdiagonal = function(){
     // set the layout diagonal

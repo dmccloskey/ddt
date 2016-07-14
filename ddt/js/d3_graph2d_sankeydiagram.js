@@ -203,9 +203,15 @@ d3_graph2d.prototype.add_sankeydiagramdata1link = function(){
       .text(function(d) { return d.source.name + " → " + d.target.name + "\n" + format(d.value); });
 
     // Transition exiting nodes to the parent's new position.
-    this.sankeydiagramlink.exit().transition()
+    this.sankeydiagramlinkexit=this.sankeydiagramlink.exit().transition()
         .duration(duration)
         .remove();
+
+//     this.sankeydiagramlinkexit.select("path")
+//         .remove();
+
+//     this.sankeydiagramlinkexit.select("title")
+//         .remove();
 };
 d3_graph2d.prototype.set_sankeydiagramdata1css = function () {
     //set predefined sankeydiagram style
