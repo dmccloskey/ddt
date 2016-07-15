@@ -1,9 +1,6 @@
 "use strict";
-// Collapsible tree
+// Collapsible forcelayout
 // http://bl.ocks.org/mbostock/1062288
-// Force directed graph
-// http://bl.ocks.org/mbostock/4062045
-// pan/zoom/multi-drag http://bl.ocks.org/pkerpedjiev/0389e39fad95e1cf29ce
 
 //NOT USED
 d3_graph2d.prototype.set_forcelayout_dblclick = function(d){
@@ -87,7 +84,8 @@ d3_graph2d.prototype.add_forcelayoutdata1drag = function(){
     }
     
     this.forcelayoutdrag = this.forcelayoutdata1force.drag()
-        .on("dragstart",dragstart)
+        //.on("dragstart",dragstart)
+        ;
 };
 d3_graph2d.prototype.set_forcelayoutdata1zoom = function(scaleExtent_I){
     /*
@@ -203,7 +201,7 @@ d3_graph2d.prototype.set_forcelayoutdata1links_tree = function(){
 };
 d3_graph2d.prototype.set_forceDirectedGraphData1NodesAndLinks = function(){
     // compute forcelayout nodes and links
-    
+
     var graph = this.set_nodesAndLinks();
 
     this.forcelayoutdata1nodes = graph.nodes;
@@ -244,22 +242,16 @@ d3_graph2d.prototype.add_forcelayoutdata1node = function(){
         .append("g")
         .attr("class", "node")
         .on("click", click(_this))
-        .call(force.drag);
+        .call(force.drag)
+        ;
 
     this.forcelayoutnodeenter.append("circle")
-        //.attr("class", "node")
-//         .attr("cx", function(d) {return d.x; })
-//         .attr("cy", function(d) {return d.y;  })
         .attr("r", function(d) {
             return 10;
             //return Math.sqrt(d.size) / 10 || 4.5; 
             })
-        //.attr("transform", function(d) { return "translate(" + d.x + "," + d.y + ")"; })
         //TODO change color based on value
-        //.style("fill", function(d) { return d._children ? "lightsteelblue" : "#fff"; });
         .style("fill", color);
-//         .on("click", click)
-//         .call(force.drag);
 
     this.forcelayoutnodeenter.append("text")
         //.attr("x", function(d) { return d.children || d._children ? -10 : 10; })
@@ -271,46 +263,26 @@ d3_graph2d.prototype.add_forcelayoutdata1node = function(){
     // Transition nodes to their new position.
     this.forcelayoutnodeupdate = this.forcelayoutnode.transition()
         //.duration(duration)
-        //.attr("transform", function(d) { return "translate(" + d.y + "," + d.x + ")"; })
         ;
 
-    this.forcelayoutnodeupdate.select("g.circle")
-//         .attr("cx", function(d) { return d.x; })
-//         .attr("cy", function(d) { return d.y; })
+    this.forcelayoutnodeupdate.select("circle")
         .attr("r", function(d) {
             return 10;
             //return Math.sqrt(d.size) / 10 || 4.5; 
             })
-        //.attr("transform", function(d) { return "translate(" + d.x + "," + d.y + ")"; })
-        //.style("fill", function(d) { return d._children ? "lightsteelblue" : "#fff"; });
         .style("fill", color);
 
-    this.forcelayoutnodeupdate.select("g.text")
+    this.forcelayoutnodeupdate.select("text")
         .style("fill-opacity", 1);
 
     // Transition exiting nodes to the parent's new position.
     this.forcelayoutnodeexit = this.forcelayoutnode.exit()
         //.transition()
         //.duration(duration)
-        //.attr("transform", function(d) { return "translate(" + source.y + "," + source.x + ")"; })
         .remove();
-
-//     this.forcelayoutnodeexit.select("node.circle")
-// //         .attr("cx", function(d) { return d.x; })
-// //         .attr("cy", function(d) { return d.y; })
-//         .attr("r", function(d) {
-//             //return 10;
-//             return Math.sqrt(d.size) / 10 || 4.5; 
-//             });
-
-//     this.forcelayoutnodeexit.select("node.text")
-//         .style("fill-opacity", 1e-6);
 };
 d3_graph2d.prototype.add_forcelayoutdata1link = function(){
     // add tree layout links
-//     var i = this.forcelayoutnodeorigin;
-//     var source = source_I;
-//     var nodes = this.forcelayoutdata1nodes;
     var links = this.forcelayoutdata1links;
     //var duration= this.duration;
 

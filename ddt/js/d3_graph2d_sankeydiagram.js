@@ -9,7 +9,7 @@
 d3_graph2d.prototype.set_sankeydiagramdata1nodes = function(){
     // compute sankeydiagram nodes
     var listdatafiltered = this.data1.listdatafiltered;
-    
+
     this.sankeydiagramnodes = this.sankeydiagramsankey.nodes(root);
 };
 d3_graph2d.prototype.set_sankeydiagramdata1links = function(){
@@ -61,7 +61,12 @@ d3_graph2d.prototype.update_sankeydiagramsankey = function(layout_I=32){
         .layout(layout_I);
 };
 d3_graph2d.prototype.add_sankeydiagramdata1node = function(){
-    // add sankey layout nodes
+    /*
+    add sankey layout nodes
+
+    this.colorscale(d.name) determines the fill
+    */ 
+    
     var nodes = this.sankeydiagramnodes;
     var duration= this.duration;
     var sankey = this.sankeydiagramsankey;
@@ -71,7 +76,7 @@ d3_graph2d.prototype.add_sankeydiagramdata1node = function(){
     //var serieslabel = this.data1keymap.serieslabel;
 
     var formatNumber = d3.format(",.0f");
-    var format = function(d) { return formatNumber(d) + " TWh"; };
+    var format = function(d) { return formatNumber(d); };
     
 //     //TODO: make into a seperate function; drag hehavior is not responding correctly;
 //     var link = this.sankeydiagramlink;
@@ -155,7 +160,14 @@ d3_graph2d.prototype.add_sankeydiagramdata1node = function(){
         .remove();
 };
 d3_graph2d.prototype.add_sankeydiagramdata1link = function(){
-    // add sankey layout links
+    /*
+    add sankey layout links
+
+    d.value property determines the path and stroke
+    d.dy property determines the stoke-width
+    */ 
+
+
     var links = this.sankeydiagramlinks;
     var duration= this.duration;
     var sankey = this.sankeydiagramsankey;

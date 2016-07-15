@@ -238,6 +238,11 @@ d3_graph2d.prototype.set_nodesAndLinks = function(){
     adapted from: http://bl.ocks.org/d3noob/c9b90689c1438f57d649
     nestkeys are used to determine the linkages
     xdata is used as the value
+
+    OUTPUT:
+    nodes: .name attribute required for sankey
+            .id attribute required for forcelayout
+    links: .value attribute required for sankey
     */
 
     var listdatafiltered = this.data1.listdatafiltered;
