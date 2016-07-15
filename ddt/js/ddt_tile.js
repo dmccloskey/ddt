@@ -141,6 +141,8 @@ ddt_tile_svg.prototype.get_svg = function(svgtype_I){
         return new ddt_svg_partitionlayout2d_01();
     } else if (svgtype_I=='sankeydiagram2d_01'){
         return new ddt_svg_sankeydiagram2d_01();
+    } else if (svgtype_I=='forcedirectedgraph2d_01'){
+        return new ddt_svg_forcedirectedgraph2d_01();
     } else {
         return null;
     };

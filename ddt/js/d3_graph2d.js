@@ -230,3 +230,53 @@ d3_graph2d.prototype.set_nodesAndLinks_sourceTarget = function(data_I,source_I,t
 
     return {'nodes':nodes,'links':links};
 };
+d3_graph2d.prototype.set_nodesAndLinks = function(){
+    /*
+    set nodes and links for binary acyclic graph
+
+    NOTES:
+    adapted from: http://bl.ocks.org/d3noob/c9b90689c1438f57d649
+    nestkeys are used to determine the linkages
+    xdata is used as the value
+    */
+
+    var listdatafiltered = this.data1.listdatafiltered;
+    var nestkey = this.data1.nestkey;
+    var xdata = this.data1keymap.xdata;
+
+    var nodes = [];
+    var links = [];
+
+    // loop through each row and return
+    // all nodes and links
+    listdatafiltered.forEach(function (d) {
+        for (var i=0;i<nestkey.length;i++){
+            nodes.push({ "name": d[nestkey[i]] });
+            if (i>0){
+                links.push({ "source": d[nestkey[i-1]],
+                         "target": d[nestkey[i]],
+                         "value": +d[xdata] });
+            }
+
+        }
+    });        
+
+    // return only the distinct / unique nodes
+    nodes = d3.keys(d3.nest()
+        .key(function (d) { return d.name; })
+        .map(nodes));
+
+    // loop through each link replacing the text with its index from node
+    links.forEach(function (d, i) {
+        links[i].source = nodes.indexOf(links[i].source);
+        links[i].target = nodes.indexOf(links[i].target);
+    });
+
+    //now loop through each nodes to make nodes an array of objects
+    // rather than an array of strings
+    nodes.forEach(function (d, i) {
+        nodes[i] = { "name": d,"id":d };
+    });    
+
+    return {'nodes':nodes,'links':links};
+};

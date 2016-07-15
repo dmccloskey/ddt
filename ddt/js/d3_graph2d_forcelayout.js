@@ -182,7 +182,6 @@ d3_graph2d.prototype.set_forcelayoutdata1nodes = function(){
     var root = this.forcelayoutroot
     
     //this.forcelayoutdata1nodes = this.forcelayoutdata1force.nodes(root);
-    //TODO: compute d.x and d.y
     var nodes = [];
     var i = 0;
 
@@ -199,12 +198,16 @@ d3_graph2d.prototype.set_forcelayoutdata1nodes = function(){
 d3_graph2d.prototype.set_forcelayoutdata1links_tree = function(){
     // compute forcelayout links
     var nodes = this.forcelayoutdata1nodes;
+    //this.forcelayoutdata1links = this.forcelayoutdata1force.links(nodes);
     this.forcelayoutdata1links = d3.layout.tree().links(nodes);
 };
-d3_graph2d.prototype.set_forcelayoutdata1links_directedgraph = function(){
-    // compute forcelayout links
-    var nodes = this.forcelayoutdata1nodes;
-    this.forcelayoutdata1links = this.forcelayoutdata1force.links(nodes);
+d3_graph2d.prototype.set_forceDirectedGraphData1NodesAndLinks = function(){
+    // compute forcelayout nodes and links
+    
+    var graph = this.set_nodesAndLinks();
+
+    this.forcelayoutdata1nodes = graph.nodes;
+    this.forcelayoutdata1links = graph.links;
 };
 d3_graph2d.prototype.set_forcelayoutnode = function(){
     /*
@@ -220,9 +223,7 @@ d3_graph2d.prototype.set_forcelayoutlink = function(){
 };
 d3_graph2d.prototype.add_forcelayoutdata1node = function(){
     // add tree layout nodes
-    //var i = this.forcelayoutnodeorigin;
     var nodes = this.forcelayoutdata1nodes;
-    //var source = source_I;
     var click = this.togglechildren_forcelayout;
     var _this = this;
     //var duration= this.duration;
@@ -357,7 +358,6 @@ d3_graph2d.prototype.togglechildren_forcelayout = function(_this_I){
                 d.children = d._children;
                 d._children = null;
             };
-           //_this_I.render(d);
            _this_I.update_forcelayout();
         };
     };
@@ -414,6 +414,24 @@ d3_graph2d.prototype.update_forcelayout = function () {
 
 //     this.add_forcelayoutdata1node(source);
 //     this.add_forcelayoutdata1link(source);
+    this.add_forcelayoutdata1node();
+    this.add_forcelayoutdata1link();
+    this.add_forcelayoutdata1tick();
+    this.set_forcelayoutdata1css();
+};
+d3_graph2d.prototype.update_forceDirectedGraph = function () {
+    // update force directed graph
+
+    this.set_forceDirectedGraphData1NodesAndLinks();
+
+    //re-start the force layout
+    var nodes = this.forcelayoutdata1nodes;
+    var links = this.forcelayoutdata1links;
+    this.forcelayoutdata1force
+        .nodes(nodes)
+        .links(links)
+        .start();
+
     this.add_forcelayoutdata1node();
     this.add_forcelayoutdata1link();
     this.add_forcelayoutdata1tick();

@@ -47,7 +47,6 @@ ddt_svg_sankeydiagram2d_01.prototype.make_svg = function(data_I,parameters_I){
 			this.data1.change_filters(parameters_I.svgfilters);
 			this.data1.filter_listdata();
     	};
- 		this.data1.format_keyvalues2namechildren(parameters_I.datalastchild); //new!
  		
         this.add_graph2d2tile();
         this.set_svgstyle();
@@ -57,10 +56,11 @@ ddt_svg_sankeydiagram2d_01.prototype.make_svg = function(data_I,parameters_I){
 								parameters_I.svgcolordatalabel);
         // add cluster nodes and links
 		this.set_sankeydiagramsankey(parameters_I.svgwidth,parameters_I.svgheight);
-		this.set_sankeydiagramdata1root()
-// 		this.set_sankeydiagramdata1nodes();
+		//this.set_sankeydiagramdata1root()
+//  		this.set_sankeydiagramdata1nodes();
 // 		this.set_sankeydiagramdata1links();
-		this.set_sankeydiagramdata1_nodesandlinks_sourcetarget();
+// 		this.set_sankeydiagramdata1_nodesandlinks_sourcetarget();
+		this.set_sankeydiagramdata1_nodesandlinks();
 		this.update_sankeydiagramsankey();
 		this.add_sankeydiagramdata1link();
 		this.add_sankeydiagramdata1node();

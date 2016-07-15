@@ -6,17 +6,10 @@
 //1. use the root to compute the nodes/links for greater generalizability
 //2. add in other data to nodes/links
 
-d3_graph2d.prototype.set_sankeydiagramdata1root = function(sankeydiagramroot_I){
-    //set sankey layout root
-    if (sankeydiagramroot_I){this.sankeydiagramroot = sankeydiagramroot_I;}
-    else {
-        //this.sankeydiagramroot={'name':"",'children':this.data1.nestdatafiltered};
-        this.sankeydiagramroot=this.data1.nestdatafiltered[0];
-        };  
-};
-d3_graph2d.prototype.set_sankeydiagramdata1nodes = function(node_span_I = this.height){
+d3_graph2d.prototype.set_sankeydiagramdata1nodes = function(){
     // compute sankeydiagram nodes
-    var root = this.sankeydiagramroot;
+    var listdatafiltered = this.data1.listdatafiltered;
+    
     this.sankeydiagramnodes = this.sankeydiagramsankey.nodes(root);
 };
 d3_graph2d.prototype.set_sankeydiagramdata1links = function(){
@@ -39,6 +32,18 @@ d3_graph2d.prototype.set_sankeydiagramdata1_nodesandlinks_sourcetarget = functio
     var ydatalabel = this.data1keymap.ydatalabel;
 
     var graph = this.set_nodesAndLinks_sourceTarget(listdatafiltered,xdatalabel,ydatalabel,xdata);
+
+    this.sankeydiagramnodes = graph.nodes;
+    this.sankeydiagramlinks = graph.links;
+};
+d3_graph2d.prototype.set_sankeydiagramdata1_nodesandlinks = function(){
+    /*
+    convert nodes and links to sankey diagram input
+
+    xdata is used as the value
+    */
+
+    var graph = this.set_nodesAndLinks();
 
     this.sankeydiagramnodes = graph.nodes;
     this.sankeydiagramlinks = graph.links;
