@@ -10,17 +10,6 @@ d3_graph2d.prototype.set_forcelayout_dblclick = function(d){
         d3.select(this).classed("fixed", d.fixed = false);
     };
 };
-d3_graph2d.prototype.set_forcelayout_dragstart = function(d){
-    /*
-    */
-    
-};
-d3_graph2d.prototype.set_forcelayout_tick = function(d){
-    /*
-    */
-    
-};
-
 d3_graph2d.prototype.set_forcelayoutdata1root = function(forcelayoutroot_I){
     //set tree layout root
     if (forcelayoutroot_I){this.forcelayoutroot = forcelayoutroot_I;}
@@ -38,21 +27,10 @@ d3_graph2d.prototype.set_forcelayoutdata1force = function(charge_I,linkDistance_
     var width = this.width;
     var height = this.height;
 
-//     function tick(){
-//         link.attr("x1", function(d) { return d.source.x; })
-//             .attr("y1", function(d) { return d.source.y; })
-//             .attr("x2", function(d) { return d.target.x; })
-//             .attr("y2", function(d) { return d.target.y; });
-
-//         node.attr("cx", function(d) { return d.x; })
-//             .attr("cy", function(d) { return d.y; });
-//     }
-
     this.forcelayoutdata1force = d3.layout.force()
         .size([width,height])
         .charge(charge)
         .linkDistance(linkDistance);
-        //.on("tick",tick)
 };
 d3_graph2d.prototype.add_forcelayoutdata1tick = function(){
     /*
@@ -82,10 +60,36 @@ d3_graph2d.prototype.add_forcelayoutdata1drag = function(){
     function dragstart(d) {
         d3.select(this).classed("fixed", d.fixed = true);
     }
+
+    function dragstarted(d) {
+        if (!d3.event.active) simulation.alphaTarget(0.3).restart();
+            d.fx = d.x;
+            d.fy = d.y;
+    }
+    function dragged(d) {
+        d.fx = d3.event.x;
+        d.fy = d3.event.y;
+    }
+    function dragended(d) {
+        if (!d3.event.active) simulation.alphaTarget(0);
+            d.fx = null;
+            d.fy = null;
+    }
     
     this.forcelayoutdrag = this.forcelayoutdata1force.drag()
-        //.on("dragstart",dragstart)
+        // sticky nodes
+        .on("dragstart",dragstart)
+//         // dragable nodes (v4)
+//         .on("start", dragstarted)
+//         .on("drag", dragged)
+//         .on("end", dragended)
         ;
+        
+        //needed for v4
+//     var simulation = d3.forceSimulation()
+//         .force("link", d3.forceLink().id(function(d) { return d.id; }))
+//         .force("charge", d3.forceManyBody())
+//         .force("center", d3.forceCenter(width / 2, height / 2));
 };
 d3_graph2d.prototype.set_forcelayoutdata1zoom = function(scaleExtent_I){
     /*
@@ -198,14 +202,6 @@ d3_graph2d.prototype.set_forcelayoutdata1links_tree = function(){
     var nodes = this.forcelayoutdata1nodes;
     //this.forcelayoutdata1links = this.forcelayoutdata1force.links(nodes);
     this.forcelayoutdata1links = d3.layout.tree().links(nodes);
-};
-d3_graph2d.prototype.set_forceDirectedGraphData1NodesAndLinks = function(){
-    // compute forcelayout nodes and links
-
-    var graph = this.set_nodesAndLinks();
-
-    this.forcelayoutdata1nodes = graph.nodes;
-    this.forcelayoutdata1links = graph.links;
 };
 d3_graph2d.prototype.set_forcelayoutnode = function(){
     /*
@@ -386,24 +382,6 @@ d3_graph2d.prototype.update_forcelayout = function () {
 
 //     this.add_forcelayoutdata1node(source);
 //     this.add_forcelayoutdata1link(source);
-    this.add_forcelayoutdata1node();
-    this.add_forcelayoutdata1link();
-    this.add_forcelayoutdata1tick();
-    this.set_forcelayoutdata1css();
-};
-d3_graph2d.prototype.update_forceDirectedGraph = function () {
-    // update force directed graph
-
-    this.set_forceDirectedGraphData1NodesAndLinks();
-
-    //re-start the force layout
-    var nodes = this.forcelayoutdata1nodes;
-    var links = this.forcelayoutdata1links;
-    this.forcelayoutdata1force
-        .nodes(nodes)
-        .links(links)
-        .start();
-
     this.add_forcelayoutdata1node();
     this.add_forcelayoutdata1link();
     this.add_forcelayoutdata1tick();
