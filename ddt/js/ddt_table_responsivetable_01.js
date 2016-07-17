@@ -47,6 +47,7 @@ ddt_table_responsivetable_01.prototype.make_table = function(data_I,parameters_I
 			this.data.filter_listdata();
     	};
         this.add_table2tile();
+        this.set_ntablerows(parameters_I.ntablerows)
         this.set_tableheader();
 		this.set_tablebody();
 		this.add_tableheader();

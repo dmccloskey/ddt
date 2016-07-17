@@ -3,6 +3,57 @@
 // http://bl.ocks.org/mbostock/4062045
 // pan/zoom/multi-drag http://bl.ocks.org/pkerpedjiev/0389e39fad95e1cf29ce
 // arrows http://bl.ocks.org/mbostock/1153292
+
+d3_graph2d.prototype.get_forceDirectedGraph_linkLine = function(){
+    /*
+    return linkLine function to compute a striaght line
+    */
+    return function linkLine(d) {
+        return "M" + d.source.x + "," + d.source.y + "L" + d.target.x + "," + d.target.y;
+    };
+};
+d3_graph2d.prototype.get_forceDirectedGraph_linkArc = function(){
+    /*
+    return linkArc function to compute a curved line
+    */
+    return function linkArc(d) {
+        var dx = d.target.x - d.source.x,
+        dy = d.target.y - d.source.y,
+        dr = Math.sqrt(dx * dx + dy * dy);
+        return "M" + d.source.x + "," + d.source.y + "A" + dr + "," + dr + " 0 0,1 " + d.target.x + "," + d.target.y;
+    };
+};
+d3_graph2d.prototype.add_forceDirectedGraphData1Tick = function(){
+    /*
+    add tick to forcelayout force
+    */
+    var this_ = this;
+    var linkPath = this.get_forceDirectedGraph_linkLine();
+    //var linkPath = this.get_forceDirectedGraph_linkArc();
+
+    function transform(d) {
+        return "translate(" + d.x + "," + d.y + ")";
+    };
+
+    function tick(){
+        this_.forcelayoutlink
+//             .attr("d",linkLine)
+            .attr("d",linkPath)
+//             .attr("x1", function(d) { return d.source.x; })
+//             .attr("y1", function(d) { return d.source.y; })
+//             .attr("x2", function(d) { return d.target.x; })
+//             .attr("y2", function(d) { return d.target.y; })
+            ;
+
+        this_.forcelayoutnode
+//             .attr("cx", function(d) { return d.x; })
+//             .attr("cy", function(d) { return d.y; })
+            .attr("transform", transform);
+    }
+
+    this.forcelayoutdata1force
+        .on("tick",tick)
+};
 d3_graph2d.prototype.set_forceDirectedGraphData1NodesAndLinks = function(){
     // compute forcelayout nodes and links
 
@@ -84,19 +135,29 @@ d3_graph2d.prototype.add_forceDirectedGraphData1Link = function(){
 
     var links = this.forcelayoutdata1links;
     //var duration= this.duration;
+    var colorscale = this.colorscale;
     var ydata = this.data1keymap.ydata;
     var ydatalabel = this.data1keymap.ydatalabel;
-    var svgid = this.svgid;
+    var id = this.id;
+    var linkPath = this.get_forceDirectedGraph_linkLine();
+    //var linkPath = this.get_forceDirectedGraph_linkArc();
 
     // Update the links…
+    //this.forcelayoutlink = this.svgg.selectAll("path")
     this.forcelayoutlink = this.svgg.selectAll(".link")
         .data(links);
 
     // Enter any new links at the parent's previous position.
-    this.forcelayoutlink.enter().insert("line", ".node")
+//     this.forcelayoutlink.enter().insert("line", ".node")
+//         .attr("class", "link")
+    this.forcelayoutlink.enter().append("path")
         .attr("class", "link")
+        //TODO: class each link dynamically
+        //      then use css to set solid/broken, etc.
+        //.attr("class", function(d) { return "link " + d.type; })
+        .style("stroke", function(d) {return colorscale(d.color);})
         .attr("stroke-width", function(d) { return Math.sqrt(d.value); })
-        .attr("marker-end", function(d) { return "url(#" + svgid + "marker" + d.marker + ")"; });
+        .attr("marker-end", function(d) { return "url(#" + id + "marker" + d.marker + ")"; })
 //         .attr("x1", function(d) { return d.source.x; })
 //         .attr("y1", function(d) { return d.source.y; })
 //         .attr("x2", function(d) { return d.target.x; })
@@ -106,21 +167,20 @@ d3_graph2d.prototype.add_forceDirectedGraphData1Link = function(){
     // Transition links to their new position.
     this.forcelayoutlink.transition()
         //.duration(duration)
-        .attr("x1", function(d) { return d.source.x; })
-        .attr("y1", function(d) { return d.source.y; })
-        .attr("x2", function(d) { return d.target.x; })
-        .attr("y2", function(d) { return d.target.y; })
+//         .attr("x1", function(d) { return d.source.x; })
+//         .attr("y1", function(d) { return d.source.y; })
+//         .attr("x2", function(d) { return d.target.x; })
+//         .attr("y2", function(d) { return d.target.y; })
+        .attr("d",linkPath)
+        .style("stroke", function(d) {return colorscale(d.color);})
         .attr("stroke-width", function(d) { return Math.sqrt(d.value); })
+        .attr("marker-end", function(d) { return "url(#" + id + "marker" + d.marker + ")"; })
         ; 
 
     // Transition exiting nodes to the parent's new position.
     this.forcelayoutlink.exit()
 //         //.transition()
 //         //.duration(duration)
-//         .attr("x1", function(d) { return d.source.x; })
-//         .attr("y1", function(d) { return d.source.y; })
-//         .attr("x2", function(d) { return d.target.x; })
-//         .attr("y2", function(d) { return d.target.y; })
         .remove();
 };
 d3_graph2d.prototype.set_forceDirectedGraphData1css = function () {
@@ -159,12 +219,22 @@ d3_graph2d.prototype.add_forceDirectedGraphData1Marker = function(){
 
     d.data[ydata] controls the stroke-width
     d.data[ydatalabel] controls the stroke color
+
+    TODO dynamically change the color
+    TODO dynamically change the marker style
     */ 
 
     //var duration= this.duration;
     var zdata = this.data1keymap.zdata;
     var zdatalabel = this.data1keymap.zdatalabel;
-    var svgid = this.svgid;
+    var id = this.id;
+
+    //straight line
+    var refX = 15;
+    var refY = 0;
+//     //curved line
+//     var refX = 15;
+//     var refY = -1.5;
 
     var markers = this.data1.get_uniquevaluesFromlistdata(zdata);
 
@@ -175,14 +245,16 @@ d3_graph2d.prototype.add_forceDirectedGraphData1Marker = function(){
 
     this.forcedirectedgraphmarkerenter = this.forcedirectedgraphmarker.enter()
         .append("marker")
-        .attr("id", function(d) { return svgid + "marker" + d; })
+        .attr("id", function(d) { return id + "marker" + d; })
         .attr("viewBox", "0 -5 10 10")
-        .attr("refX", 15)
-        .attr("refY", -1.5)
+        .attr("refX",refX)
+        .attr("refY", refY)
         .attr("markerWidth", 6)
         .attr("markerHeight", 6)
         .attr("orient", "auto")
-      .append("path")
+        //TODO dynamically change the color
+        .style("fill", function(d) {return '#ccc';})
+        .append("path")
         .attr("d", "M0,-5L10,0L0,5");
 
 };

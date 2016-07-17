@@ -1,4 +1,5 @@
 "use strict";
+//https://developer.mozilla.org/en-US/docs/Web/SVG/Element
 //var d3_svg = function () {
 function d3_svg() {
     // generic svg element
@@ -526,4 +527,20 @@ d3_svg.prototype.set_arclabel = function(outerradiuslabel_I,innerradiuslabel_I){
     this.arclabel = d3.svg.arc()
         .outerRadius(outerradiuslabel)
         .innerRadius(innerradiuslabel);
+};
+d3_svg.prototype.set_defs = function(){
+    /*
+    set defs
+    https://developer.mozilla.org/en-US/docs/Web/SVG/Element/defs
+    */
+
+    this.defs = this.svgg.append("defs");
+};
+d3_svg.prototype.set_symbol = function(){
+    /*
+    set symbol
+    https://developer.mozilla.org/en-US/docs/Web/SVG/Element/symbol
+    */
+
+    this.symbol = this.svgg.append("symbol");
 };

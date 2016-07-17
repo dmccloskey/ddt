@@ -38,16 +38,29 @@ d3_graph2d.prototype.add_forcelayoutdata1tick = function(){
     */
     var this_ = this;
 
+    function linkArc(d) {
+        var dx = d.target.x - d.source.x,
+        dy = d.target.y - d.source.y,
+        dr = Math.sqrt(dx * dx + dy * dy);
+        return "M" + d.source.x + "," + d.source.y + "A" + dr + "," + dr + " 0 0,1 " + d.target.x + "," + d.target.y;
+    };
+
+    function transform(d) {
+        return "translate(" + d.x + "," + d.y + ")";
+    };
+
     function tick(){
-        this_.forcelayoutlink.attr("x1", function(d) { return d.source.x; })
+        this_.forcelayoutlink
+            .attr("x1", function(d) { return d.source.x; })
             .attr("y1", function(d) { return d.source.y; })
             .attr("x2", function(d) { return d.target.x; })
-            .attr("y2", function(d) { return d.target.y; });
+            .attr("y2", function(d) { return d.target.y; })
+            ;
 
         this_.forcelayoutnode
 //             .attr("cx", function(d) { return d.x; })
 //             .attr("cy", function(d) { return d.y; })
-            .attr("transform", function(d) { return "translate(" + d.x + "," + d.y + ")"; });
+            .attr("transform", transform);
     }
 
     this.forcelayoutdata1force
@@ -84,7 +97,7 @@ d3_graph2d.prototype.add_forcelayoutdata1drag = function(){
 //         .on("drag", dragged)
 //         .on("end", dragended)
         ;
-        
+
         //needed for v4
 //     var simulation = d3.forceSimulation()
 //         .force("link", d3.forceLink().id(function(d) { return d.id; }))

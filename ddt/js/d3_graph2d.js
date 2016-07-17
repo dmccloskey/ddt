@@ -158,7 +158,6 @@ d3_graph2d.prototype.set_verticallayoutstep = function(){
 
     this.verticallayoutstep = function step(startX, startY, endX, endY) {
       return "M" + startX + "," + startY
-//           + "L" + startX + "," + endY
           + "L" + endX + "," + startY
           + "L" + endX + "," + endY;
     }
@@ -248,6 +247,7 @@ d3_graph2d.prototype.set_nodesAndLinks = function(){
     var listdatafiltered = this.data1.listdatafiltered;
     var nestkey = this.data1.nestkey;
     var ydata = this.data1keymap.ydata;
+    var ydatalabel = this.data1keymap.ydatalabel;
     var zdata = this.data1keymap.zdata;
 
     var nodes = [];
@@ -263,8 +263,9 @@ d3_graph2d.prototype.set_nodesAndLinks = function(){
             if (i>0){
                 links.push({ "source": d[nestkey[i-1]],
                          "target": d[nestkey[i]],
-                         "value": +d[ydata],
-                         "marker":+d[zdata]}
+                         "value":  d[ydata],
+                         "color":  d[ydatalabel],
+                         "marker": d[zdata]}
                          );
             }
 

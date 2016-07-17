@@ -57,17 +57,6 @@ d3_html_form.prototype.set_formstyle = function () {
     var selectorstyle = [{ 'selection': formselector, 'style': formstyle }]
     this.set_d3css(selectorstyle);
 };
-d3_html_form.prototype.set_d3css = function (selectionstyle_I) {
-    //set custom css style to d3
-    //Input:
-    // selectionstyle_I = [{selection: string e.g., '.axis line, .axis path'
-    //                      style: key:value strings e.g., {'fill': 'none', 'stroke': '#000',
-    //                                                      'shape-rendering': 'crispEdges'}}]
-    for (var i = 0; i < selectionstyle_I.length; i++) {
-        d3.selectAll(selectionstyle_I[i].selection)
-            .style(selectionstyle_I[i].style);
-    };
-};
 d3_html_form.prototype.add_draganddropinput2formgroupnode = function () {
     // add file drag and drop for input
 };

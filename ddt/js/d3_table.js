@@ -584,6 +584,8 @@ d3_table.prototype.show_tablemenumodal = function(){
     function updatetableparameters(){
         // update the table parameters
 
+        // re-render the table
+
         // prevent browser default page refresh
         d3.event.preventDefault();
         $("#"+modalid+'modal').modal('hide');
@@ -966,9 +968,9 @@ d3_table.prototype.set_ntablerows = function(ntablerows_I){
 	ntablerows_I = integer
 	*/
 	if (typeof(ntablerows_I)!=="undefined"){
-		var ntablerows = ntablerows_I;
+		this.ntablerows = ntablerows_I;
 	} else {
-		var ntablerows = 100;
+		this.ntablerows = 100;
 	};
 };
 d3_table.prototype.get_ntablerows = function(){

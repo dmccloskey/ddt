@@ -45,9 +45,10 @@ ddt_svg_forcedirectedgraph2d_01.prototype.make_svg = function(data_I,parameters_
 			.links(links)
 			.start();
 		this.add_forceDirectedGraphData1Marker();
-		this.add_forceDirectedGraphData1Node();
 		this.add_forceDirectedGraphData1Link();
-		this.add_forcelayoutdata1tick();
+		this.add_forceDirectedGraphData1Tick();
+		this.add_forceDirectedGraphData1Node();
+		//this.add_forcelayoutdata1tick();
 		this.set_forceDirectedGraphData1css();
 		//add zoom and pan (zoom interferes with node drag)
 //     	this.set_zoom();
