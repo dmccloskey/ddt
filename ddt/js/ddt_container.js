@@ -71,7 +71,7 @@ ddt_container.prototype.update_data = function(data_I,index_I){
 ddt_container.prototype.add_data = function(data_I){
     // add data to container
     //INPUT:
-    // data_I = [{data:[],datakeys:[],datanestkeys:[]},...]
+    // data_I = [{data:[],datakeys:[],datanestkeys:[],metadata:{}},...]
     for (var cnt=0;cnt<data_I.length;cnt++){
         var d3data = new d3_data();
         d3data.set_d3data(data_I[cnt]);

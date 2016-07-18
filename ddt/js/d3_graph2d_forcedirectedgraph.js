@@ -93,8 +93,9 @@ d3_graph2d.prototype.add_forceDirectedGraphData1Node = function(){
             //return Math.sqrt(d.size) / 10 || 4.5; 
             })
         //TODO change color based on value
-       .style("fill", function(d) {return colorscale(d.data[xdatalabel]);});
-        //.style("fill", function(d) {return "#c6dbef";});
+       //.style("fill", function(d) {return colorscale(d.data[xdatalabel]);})
+//         .style("fill", function(d) {return "#c6dbef";})
+        ;
 
     this.forcelayoutnodeenter.append("text")
         //.attr("x", function(d) { return d.children || d._children ? -10 : 10; })
@@ -113,8 +114,9 @@ d3_graph2d.prototype.add_forceDirectedGraphData1Node = function(){
             return 5;
             //return Math.sqrt(d.size) / 10 || 4.5; 
             })
-       .style("fill", function(d) {return colorscale(d.data[xdatalabel]);});
-//         .style("fill", function(d) {return "#c6dbef";});
+//        .style("fill", function(d) {return colorscale(d.data[xdatalabel]);})
+//          .style("fill", function(d) {return "#c6dbef";})
+;
 
     this.forcelayoutnodeupdate.select("text")
         .style("fill-opacity", 1);
@@ -155,22 +157,18 @@ d3_graph2d.prototype.add_forceDirectedGraphData1Link = function(){
         //TODO: class each link dynamically
         //      then use css to set solid/broken, etc.
         //.attr("class", function(d) { return "link " + d.type; })
-        .style("stroke", function(d) {return colorscale(d.color);})
-        .attr("stroke-width", function(d) { return Math.sqrt(d.value); })
+        .style("stroke", function(d) {
+            return colorscale(d.color);
+            })
+        .attr("stroke-width", function(d) { 
+            return Math.sqrt(d.value); 
+            })
         .attr("marker-end", function(d) { return "url(#" + id + "marker" + d.marker + ")"; })
-//         .attr("x1", function(d) { return d.source.x; })
-//         .attr("y1", function(d) { return d.source.y; })
-//         .attr("x2", function(d) { return d.target.x; })
-//         .attr("y2", function(d) { return d.target.y; })
         ; 
 
     // Transition links to their new position.
     this.forcelayoutlink.transition()
         //.duration(duration)
-//         .attr("x1", function(d) { return d.source.x; })
-//         .attr("y1", function(d) { return d.source.y; })
-//         .attr("x2", function(d) { return d.target.x; })
-//         .attr("y2", function(d) { return d.target.y; })
         .attr("d",linkPath)
         .style("stroke", function(d) {return colorscale(d.color);})
         .attr("stroke-width", function(d) { return Math.sqrt(d.value); })
@@ -186,22 +184,22 @@ d3_graph2d.prototype.add_forceDirectedGraphData1Link = function(){
 d3_graph2d.prototype.set_forceDirectedGraphData1css = function () {
     //set predefined forcelayout style
 
-    var selector1 = '#' + this.id + ' .node';
+    var selector1 = '#' + this.id + ' g.node';
     var style1 = {
         'cursor': 'pointer'
     };
-    var selector2 = '#' + this.id + ' .node circle';
+    var selector2 = '#' + this.id + ' circle';
     var style2= {
-//         'fill': '#fff',
+         'fill': '#ccc',
          'stroke': 'none',
 //         'stroke': 'steelblue',
 //         'stroke-width': '1.5px'
     };
-    var selector3 = '#' + this.id + ' .node text';
+    var selector3 = '#' + this.id + ' text';
     var style3 = {
         'font': '10px Arial'
     };
-    var selector4 = '#' + this.id + ' .link';
+    var selector4 = '#' + this.id + ' path.link';
     var style4 = {
         'fill': 'none',
         'stroke': '#ccc',

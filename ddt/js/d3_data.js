@@ -12,6 +12,8 @@ function d3_data() {
     this.filters = {}; // {key1:[string1,string2,...],...}
                        //NOTE: only string filters and string filtering is supported
                        //TODO: support filtering on boolean, numeric, date and time, and custom functions
+    this.metadata = []; // data about the data types and data attributes
+                        // {key1:{datatype:"string",...},....}
     this.listdata = []; // data in database table form (must contain a column "used_");
     this.listdatafiltered = []; // data in database table form
     this.nestdatafiltered = []; // data in nested form
@@ -215,6 +217,21 @@ d3_data.prototype.filter_stringdata = function () {
 //         };
 //     });
 };
+d3_data.prototype.set_metadata = function (metadata_I) {
+    /* set metadata
+    INPUT:
+    metadata_I = dict of objects
+    */
+    if (typeof(metadata_I)!=='undefined'){
+        var metadata = metadata_I;
+    } else {
+        var metadata = {};
+        this.keys.forEach(function(d){metadata[d]={'datatype':'string'};});
+    }
+    var metadata_I = typeof metadata_I !== 'undefined' ?  metadata_I : {};
+
+    this.metadata = metadata;
+};
 d3_data.prototype.set_listdata = function (listdata_I,nestkey_I) {
     // set list data and initialize filtered data
     this.nestkey = nestkey_I;
@@ -370,6 +387,7 @@ d3_data.prototype.get_datajson = function(filtereddataonly_I){
 
     var keys_O = this.keys;
     var nestkeys_O = this.nestkey;
+    var metadata_O = this.metadata;
 
     if (filtereddataonly){
         var data_O = this.listdatafiltered;
@@ -379,7 +397,8 @@ d3_data.prototype.get_datajson = function(filtereddataonly_I){
 
     var datajson_O = {'datakeys':keys_O,
                     'datanestkeys':nestkeys_O,
-                    'data':data_O};
+                    'data':data_O,
+                    'metadata':metadata_O};
 
     return datajson_O;
 };
@@ -396,6 +415,7 @@ d3_data.prototype.clear_data = function () {
     this.cffilters = {};
     this.nestkey = [];
     this.keys = [];
+    this.metadata = {};
 };
 d3_data.prototype.get_listdata = function(){
     // retrieve rows from listdata
@@ -408,6 +428,10 @@ d3_data.prototype.get_listdatafiltered = function(){
 d3_data.prototype.get_nestdatafiltered = function(){
     // retrieve filtered rows from nestdatafiltered
     return this.nestdatafiltered;
+};
+d3_data.prototype.get_metadata = function () {
+    // return metadata
+    return this.metadata;
 };
 d3_data.prototype.update_listdata = function(key_values_I,index__I){
     /* update rows in listdata that are used_
@@ -835,11 +859,13 @@ d3_data.prototype.set_d3data = function(data_I){
         'datakeys':keys_I,
         'datanestkeys':nestkeys_I,
         'data':data_I
+        'metadata':metadata_I
         };
     */
 
     this.set_keys(data_I.datakeys);
     this.set_nestkeys(data_I.datanestkeys);
+    this.set_metadata(data_I.metadata);
     this.set_listdata(data_I.data,data_I.datanestkeys);
 //     this.add_usedkey2listdata(); //ensure a used_ key in each data object
 //     this.add_indexkey2listdata(); //ensure a index_ key in each data object
@@ -934,14 +960,3 @@ d3_data.prototype.format_keyvalues2namechildren = function(lastchild_I){
     nestdatafiltered.forEach(rename);
     this.nestdatafiltered = nestdatafiltered;
 };
-// d3_data.prototype.format_keyvalues2root = function(){
-//     // format nest key/values to hierarchical root for use with layouts and clusters
-//     var nestdatafiltered = jQuery.extend(true, [], this.nestdatafiltered);
-//     nestdatafiltered.forEach(rename);
-//     this.nestdatafiltered = nestdatafiltered;
-//     var root = d3.stratify()
-//         .id(function(d) { return d.name; })
-//         .parentId(function(d) { return d.parent; })
-//         (table);
-//     return root;
-// };

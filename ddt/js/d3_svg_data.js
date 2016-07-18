@@ -233,7 +233,7 @@ d3_svg_data.prototype.set_colorscale = function (colorscale_I,colorcategory_I,co
     }else if (typeof(customcolorrange_I)!=="undefined"){
         this.colorscale = d3.scale.linear().range(customcolorrange_I);
     }else{
-        this.colorscale = d3.scale.category20c();
+        this.colorscale = d3.scale.category20();
     };
 };
 d3_svg_data.prototype.add_data = function(data_I){
