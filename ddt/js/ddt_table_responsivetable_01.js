@@ -40,26 +40,36 @@ ddt_table_responsivetable_01.prototype.make_table = function(data_I,parameters_I
     this.ddttable.add_optionsbuttongroup2footer();
     this.ddttable.add_refreshbutton2optionsbuttongroup();
     this.ddttable.add_tablemenubutton2optionsbuttongroup();
-    this.ddttable.set_ntablerows(parameters_I.ntablerows);
     this.ddttable.render = function () {
     	// permanent filter on the data
     	if (parameters_I.tablefilters){
 			this.data.change_filters(parameters_I.tablefilters);
 			this.data.filter_listdata();
     	};
+		// add table navigation bar
+		// responsive navgar that moves independent of the table
+		this.add_tablenavbar2tile();
+        this.set_tablenavbarelements();
+		this.set_tablenavbar();
+		this.add_tablenavbar();
+		this.add_tablepagination2tablenavbar();
+		this.add_tablerowlimit2tablenavbar();
+        // add table to the tile
         this.add_table2tile();
-        this.set_ntablerows(parameters_I.ntablerows)
         this.set_tableheader();
-		this.set_tablebody();
 		this.add_tableheader();
+		this.set_tablebody();
 		this.add_tablebody();
+// 		this.set_tablefooter();
+// 		this.add_tablefooter();
+		// set css style
 		this.set_headerstyle();
 		//this.set_tablerowstyle();
 		this.set_tablestyle();
 		this.set_cellstyle();
 		//this.set_tablebodystyle();
 		this.add_tablesort(parameters_I.tablesort);
-		//this.add_tablecolumnoptions();
+		//this.add_tablecolumnoptions(); //broken (move to tablemenubutton)
 		//this.set_tablecellszoom();
 		//this.set_tablerowszoom();
 		this.set_tablecellseditor();
