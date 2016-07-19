@@ -469,6 +469,28 @@ d3_svg.prototype.add_svgmenubutton2optionsbuttongroup = function (){
     svgmenubuttontrigger.on("click",showsvgmenumodal);
 
 };
+d3_svg.prototype.add_refreshbutton2optionsbuttongroup = function (){
+    // add refresh button to the footer of the chart
+
+    var id = this.id;
+    var tileid = this.tileid;
+    var this_ = this;
+
+    function refreshtile(){
+        //refresh the tile
+        this_.render();        
+    };
+
+    var svgrefreshbutton = this.svgresizemenubutton.append("div");
+
+    svgrefreshbutton
+        .attr("class","glyphicon glyphicon glyphicon-refresh pull-right")
+        .attr("id", tileid + 'refreshtile')
+        .style({"cursor":"pointer"})
+        .attr("data-toggle","tooltip")
+        .attr("title","refresh");
+    svgrefreshbutton.on("click",refreshtile);
+};
 d3_svg.prototype.make_colorscale = function(color_start_I,color_end_I,length_I){
     //make a custom color scale
     //INPUT:

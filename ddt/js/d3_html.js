@@ -101,14 +101,22 @@ d3_html.prototype.set_d3css = function (selectionstyle_I) {
     };
 };
 d3_html.prototype.add_progressbar = function(){
-    // add progress bar
-    //E.g.,
+    /*
+    add progress bar
+    */ 
+//     E.g.,
+//     http://www.w3schools.com/bootstrap/bootstrap_progressbars.asp
 //     <div class="progress">
 //       <div class="progress-bar" role="progressbar" aria-valuenow="70"
 //       aria-valuemin="0" aria-valuemax="100" style="width:70%">
 //         70%
 //       </div>
 //     </div>
+}
+d3_html.prototype.update_progressbar = function(){
+    /*
+    update the progress bar value
+    */ 
 }
 d3_html.prototype.add_checkbox = function () {
     // add checkbox for input
@@ -247,8 +255,93 @@ d3_html.prototype.add_color = function () {
 d3_html.prototype.add_range = function () {
     // add range slider for input
 };
-d3_html.prototype.add_text = function () {
-    // add text area
+d3_html.prototype.add_form = function(inputarguments_I) {
+    /* add form to tile
+    INPUT:
+    inputarguments_I
+    */
+
+    // handle the input
+    if (typeof(inputarguments_I)!=="undefined"){
+        var inputarguments = new ddt_inputarguments();
+        inputarguments.validate_inputarguments(inputarguments_I)
+        var node = inputarguments.get_node();
+        var input = inputarguments.get_inputarguments();
+    } else {
+        var node = this.html;
+        var input = this.html.get_htmldata1();
+    };
+
+    var id = this.id;
+
+    this.htmlform = node.selectAll("form")
+        .data([input]);
+
+    this.htmlformenter = this.htmlform.enter()
+        .append("form")
+        .attr("id", id + 'form');
+
+    this.htmlform.exit().remove();
+};
+d3_html.prototype.add_textarea = function (inputarguments_I) {
+    /* add textarea as input
+    INPUT:
+    inputarguments_I
+    */
+
+    // handle the input
+    //SPLIT 1
+    if (typeof(inputarguments_I)!=="undefined"){
+        var inputarguments = new ddt_inputarguments();
+        inputarguments.validate_inputarguments(inputarguments_I)
+        var node = inputarguments.get_node();
+        var input = inputarguments.get_inputarguments();
+    } else {
+        var node = this.html;
+        var input = this.html.get_htmldata1();
+    };
+//     //SPLIT 2
+//     if (typeof(node_I)!=="undefined"){
+//         var node = node_I;
+//     } else {
+//         var node = this.html;
+//     };
+//     if (typeof(listdatafiltered_I)!=="undefined"){
+//         var listdatafiltered = listdatafiltered_I;
+//     } else {
+//         var listdatafiltered = this.html.get_htmldata1().listdatafiltered;
+//     };
+
+    // default variables
+    var id = this.id;
+    var this_ = this;
+    var inputtype = 'textarea';
+
+    this.htmltextareagroup = node.selectAll("textarea")
+//         .data(listdatafiltered,function(d){
+//             if(typeof(d.inputtype)!=="undefined" && d.inputtype==="textarea"){
+//                 return d;
+//                 };
+//             });
+        .data(input);
+
+    this.htmltextareagroup.exit().remove();
+
+    this.htmltextareagroup.transition()
+        .attr("class","form-control")
+        //.attr("rows",function(d){return d.inputrows;})
+        .text(function(d){return d.inputtext;})
+        .attr("value",function(d){return d.inputvalue;})
+        .attr("id", function(d){return id + 'textarea' + input.labeltext;});
+
+    this.htmltextareagroupenter = this.htmltextareagroup.enter()
+        .append("textarea")
+        .attr("class","form-control")
+        .attr("type",function(d){return d.inputtype;})
+        //.attr("rows",function(d){return d.inputrows;})
+        .text(function(d){return d.inputtext;})
+        .attr("value",function(d){return d.inputvalue;})
+        .attr("id", function(d){return id + 'textarea' + input.labeltext;});
 };
 d3_html.prototype.add_search = function(){
     // add search feature
@@ -655,11 +748,60 @@ d3_html.prototype.add_mediasvg = function(){
         .text(function(d){return d[mediaparagraph];});
         
 };
-d3_html.prototype.add_iphrame = function(){
-    // add an iphrame to tile body
+d3_html.prototype.add_iframe = function(){
+    // add an iframe to tile body
     // todo:
-    var iphrameclass = this.datakeymap.htmliphrameclass;
-    var iphramehref = this.datakeymap.htmliphramehref;
+    var iframeclass = this.datakeymap.htmliframeclass;
+    var iframehref = this.datakeymap.htmliframehref;
+    var listdatafiltered = this.get_htmldata1().listdatafiltered;
+    var id = this.id;
+
+    this.htmliframe = this.html.selectAll("iframe")
+        .data([listdatafiltered])
+        .append("div")
+        .attr("class",'iframewrapper')
+        .attr("id",id + 'iframewrapper');
+
+    this.htmliframeenter = this.htmliframe.enter()
+        .append("iframe")
+        .attr("class","iframe-responsive")
+        .attr("frameborder",0)
+        .attr("src",iframehref)
+        .attr("id",id+"iframe");
+
+    this.htmliframe.transition()
+        .attr("class","iframe-responsive")
+        .attr("frameborder",0)
+        .attr("src",iframehref)
+        .attr("id",id+"iframe");
+    
+    this.htmliframe.exit().remove();
+};
+d3_html.prototype.add_document2iframeContentWindow = function(iframesrcid_I,iframesrclabeltex_I){
+    // add iframe text document to tile body
+    
+    var iframesrcid = this.datakeymap.iframesrcid;
+    var iframesrclabeltext = this.datakeymap.iframesrclabeltext;
+    var document = document_I;
+    var id = this.id;
+
+    var text = document.getElementById(iframesrcid + 'textarea' + iframesrclabeltext).value;
+    var ifr = document.createElement("iframe");
+    ifr.setAttribute("frameborder", "0");
+    ifr.setAttribute("id", id+"iframe");  
+    document.getElementById(id + 'iframewrapper').innerHTML = "";
+    document.getElementById(id + 'iframewrapper').appendChild(ifr);
+    var ifrw = (ifr.contentWindow) ? ifr.contentWindow : (ifr.contentDocument.document) ? ifr.contentDocument.document : ifr.contentDocument;
+    ifrw.document.open();
+    ifrw.document.write(text);  
+    ifrw.document.close();
+    //23.02.2016: contentEditable is set to true, to fix text-selection (bug) in firefox.
+    //(and back to false to prevent the content from being editable)
+    //(To reproduce the error: Select text in the result window with, and without, the contentEditable statements below.)  
+    if (ifrw.document.body && !ifrw.document.body.isContentEditable) {
+        ifrw.document.body.contentEditable = true;
+        ifrw.document.body.contentEditable = false;
+    }
 };
 d3_html.prototype.add_escher = function(escherdataindex_I,escherembeddedcss_I,escheroptions_I){
     // add escher map to tile body
@@ -1026,19 +1168,38 @@ d3_html.prototype.add_jsonexportbutton2tile = function () {
         .attr("title","save filter");
     jsonexportbutton.on("click", exportfiltermenujson);
 };
-d3_html.prototype.add_jsonimportandexportbutton2tile = function (htmlfooter_I) {
-    // add import and export buttons to tileid
+// d3_html.prototype.add_jsonimportandexportbutton2tile = function (htmlfooter_I) {
+//     // add import and export buttons to tileid
+//     var tileid = this.tileid;
+
+//     // necessary to encapsolate import/export functions
+//     if (typeof(htmlfooter_I)!=="undefined"){
+//         this.htmlfooter = htmlfooter_I;
+//     } else if (this.htmlfooter===null){
+//         this.add_htmlfooter2tile();
+//     };
+    
+//     this.add_jsonexportbutton2tile();
+//     this.add_jsonimportbutton2tile();
+// };
+d3_html.prototype.add_refreshbutton2tile = function (htmlfooter_I) {
+    // add refresh button to tile
+    var this_ = this;
     var tileid = this.tileid;
 
-    // necessary to encapsolate import/export functions
-    if (typeof(htmlfooter_I)!=="undefined"){
-        this.htmlfooter = htmlfooter_I;
-    } else if (this.htmlfooter===null){
-        this.add_htmlfooter2tile();
+    function refresh(){
+        this_.render();
     };
-    
-    this.add_jsonexportbutton2tile();
-    this.add_jsonimportbutton2tile();
+
+    var refreshbutton = this.htmlfooter
+        .append("div")
+        .attr("class","glyphicon glyphicon-refresh pull-right")
+        .attr("id", tileid + 'jsonexportbutton')
+        .style({"cursor":"pointer"})
+        .attr("data-toggle","tooltip")
+        .attr("title","refresh");
+    refreshbutton.on("click", refresh);
+
 };
 //TODO: convert import closure to seperate function
 d3_html.prototype.import_filtermenujson = function(){
@@ -1229,4 +1390,9 @@ d3_html.prototype.set_formsubmitbuttonidtext = function(button_idtext_I) {
     //e.g. {'id':'submit1','text':'submit'};
     if (!button_idtext_I){this.button_idtext = {'id':'submit1','text':'submit'};}
     else{this.button_idtext = button_idtext_I;}
+};
+d3_html.prototype.get_htmldata1 = function(){
+    /* get the html data1
+    */
+    return this.data[0];
 };

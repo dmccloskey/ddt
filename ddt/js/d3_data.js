@@ -228,7 +228,6 @@ d3_data.prototype.set_metadata = function (metadata_I) {
         var metadata = {};
         this.keys.forEach(function(d){metadata[d]={'datatype':'string'};});
     }
-    var metadata_I = typeof metadata_I !== 'undefined' ?  metadata_I : {};
 
     this.metadata = metadata;
 };

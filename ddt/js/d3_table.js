@@ -11,6 +11,9 @@ function d3_table(){
     this.tableheaders = [];
     this.datakeymap = null;
     this.ntablerows = 100;
+    this.tablepagination = true;
+    this.tablesearch = true;
+
 };
 d3_table.prototype.add_table2tile = function(){
     // set the table
@@ -86,11 +89,13 @@ d3_table.prototype.add_tableheader = function(){
         .data(tableheaders);
 
     this.tableheaderenter = this.tableheader.enter();
-    this.tableheaderenter.append("th")
+    this.tableheaderenter
+    	.append("th")
         .attr('id',function (d) { return id+'th'+d; })
         .text(function (d) { return d; });
 
-    this.tableheader.transition()
+    this.tableheaderupdate = this.tableheader.transition();
+    this.tableheaderupdate.select("th")
         .attr('id',function (d) { return id+'th'+d; })
         .text(function (d) { return d; });
 
@@ -157,6 +162,72 @@ d3_table.prototype.add_tablebody = function(){
     this.tablecells
     	.html(function(d) { return d.value; })
         .attr('id',function (d) { return id+'td'+d.index_.toString()+d.column; });
+
+};
+
+d3_table.prototype.set_tablefooter = function(){
+    // set the table footer
+    var id = this.id;
+    var listdatafiltered = this.data.listdatafiltered;
+
+    this.tfootelement = this.table.selectAll("tfoot")
+        .data([listdatafiltered]);
+
+    this.tfootenter = this.tfootelement.enter()
+        .append("tfoot")
+        .attr("id",id+"tablefooter");
+
+    this.tfoot = this.table.select("tfoot");
+    //this.tfoot = this.tfootelement.select("tfoot");
+
+    this.tfootelement.exit().remove();
+
+};
+d3_table.prototype.add_tablefooter = function(){
+    /* add the table footer
+
+    todo...
+    ntablerows input span
+    pagination buttons span
+    search bar span
+    */
+
+    var id = this.id;
+    var tileid = this.tileid;
+    var datalistdatafiltered = this.data.listdatafiltered.slice(0,this.ntablefooterrows);
+    var tableheaders = this.tableheaders;
+        
+    //table footer
+
+    this.tablefooterrows = this.tfoot.selectAll("tr")
+        .data(datalistdatafiltered);
+
+    this.tablefooterrows.exit().remove();
+
+    this.tablefooterrowsenter = this.tablefooterrows.enter()
+        .append("tr")
+        .attr('id',function (d,i) { return id+'trfooter'+i.toString(); });
+
+    //this.tablefootercells = this.tablefooterrowsenter.selectAll("td")
+    this.tablefootercells = this.tablefooterrows.selectAll("td")
+        .data(function(row) {
+            return tableheaders.map(function(column) {
+                return {column: column, value: row[column], index_: row['index_']};
+            });
+        });
+
+    this.tablefootercells.exit().remove();
+
+    this.tablefootercellsenter = this.tablefootercells.enter();
+    this.tablefootercellsenter.append("td")
+        .html(function(d) { return d.value; })
+        .attr('id',function (d) {
+        	return id+'tdfooter'+d.index_.toString()+d.column;
+        	});
+
+    this.tablefootercells
+    	.html(function(d) { return d.value; })
+        .attr('id',function (d) { return id+'tdfooter'+d.index_.toString()+d.column; });
 
 };
 d3_table.prototype.set_id = function(tableid_I){
@@ -457,17 +528,80 @@ d3_table.prototype.set_datakeymaps = function(keymaps_I){
     } else {console.warn("more data found than what is currently supported");
     };
 };
-// d3_table.prototype.add_tablesort = function(sort_settings_I){
-//     // sort the data
-//     // DESCRIPTION:
-//     // single click: sort in ascending order
-//     // double click: sort in descenting order
-//     // TODO:
-//     // add tooltip
-//     // add popover with sort asc and desc
-//     var id = this.id;
-//     var this_ = this;
+d3_table.prototype.add_tablesort = function(sort_settings_I){
+    // sort the data
+    // DESCRIPTION:
+    // single click: sort in ascending order
+    // double click: sort in descenting order
+    // TODO:
+    // add tooltip
+    // add popover with sort asc and desc
+    var id = this.id;
+    var this_ = this;
+    var tableheaders = this.tableheaders;
 
+	var tableheadersortgroup = this.tableheader.data(tableheaders)
+    var tableheadersortgroupenter = tableheadersortgroup.enter()
+		.append("div")
+        .attr("class","sort-groups");
+	tableheadersortgroup.transition().attr("class","sort-groups");
+	tableheadersortgroup.exit().remove();
+
+	var tableheadersortasc = tableheadersortgroup.selectAll('.glyphicon-arrow-up')
+		.data([0]);
+
+	tableheadersortasc.exit().remove();
+	tableheadersortasc.transition()
+        .attr("class","glyphicon glyphicon-arrow-up")
+        .attr("id", id + 'tableheadersortasc')
+        .style({"cursor":"pointer"})
+        .attr("data-toggle","tooltip")
+        .attr("title","sort ascending");
+
+	var tableheadersortascenter = tableheadersortasc.enter()
+		.append("div")
+        .attr("class","glyphicon glyphicon-arrow-up")
+        .attr("id", id + 'tableheadersortasc')
+        .style({"cursor":"pointer"})
+        .attr("data-toggle","tooltip")
+        .attr("title","sort ascending");
+    tableheadersortascenter.on("click", function (d, i) {
+            var order = [];
+            var key_dir = {};
+            key_dir[d]='asc';
+            order.push(key_dir);
+            this_.data.order_listdatafiltered(order);
+            this_.data.order_nestdatafiltered(order);
+            this_.render();
+        });
+
+	var tableheadersortdesc = tableheadersortgroup.selectAll('.glyphicon-arrow-down')
+		.data([0]);
+
+	tableheadersortdesc.exit().remove();
+	tableheadersortdesc.transition()
+        .attr("class","glyphicon glyphicon-arrow-down")
+        .attr("id", id + 'tableheadersortdesc')
+        .style({"cursor":"pointer"})
+        .attr("data-toggle","tooltip")
+        .attr("title","sort descending");
+
+	var tableheadersortdescenter = tableheadersortdesc.enter()
+		.append("div")
+        .attr("class","glyphicon glyphicon-arrow-down")
+        .attr("id", id + 'tableheadersortdesc')
+        .style({"cursor":"pointer"})
+        .attr("data-toggle","tooltip")
+        .attr("title","sort descending");
+    tableheadersortdescenter.on("click", function (d, i) {
+            var order = [];
+            var key_dir = {};
+            key_dir[d]='desc';
+            order.push(key_dir);
+            this_.data.order_listdatafiltered(order);
+            this_.data.order_nestdatafiltered(order);
+            this_.render();
+        });
 //     this.tableheader
 //         .on('click', function (d, i) {
 //             var order = [];
@@ -496,34 +630,34 @@ d3_table.prototype.set_datakeymaps = function(keymaps_I){
 //         });
 
 
-// };
-d3_table.prototype.add_tablesort = function(sort_settings_I){
-    // sort the data
-    // DESCRIPTION:
-    // single click: sort in ascending order
-    // double click: sort in descenting order
-    // TODO:
-    // add tooltip
-    // add popover with sort asc and desc
-    var id = this.id;
-    var this_ = this;
-
-    function showheaderpopover(key){
-//         // get the target id and associated filter key
-         var targetnode = d3.event.target;
-         var targetid = targetnode.id;
-         this_.show_headerpopover(targetid,key);
-    };
-
-    this.tableheader
-        .attr("data-toggle","popover")
-        .attr("data-placement","top")
-        .attr("data-html","true")
-        .attr("data-trigger","focus")
-        .on('click', function(d){
-            showheaderpopover(d);
-            });
 };
+// d3_table.prototype.add_tablesort = function(sort_settings_I){
+//     // sort the data
+//     // DESCRIPTION:
+//     // single click: sort in ascending order
+//     // double click: sort in descenting order
+//     // TODO:
+//     // add tooltip
+//     // add popover with sort asc and desc
+//     var id = this.id;
+//     var this_ = this;
+
+//     function showheaderpopover(key){
+// //         // get the target id and associated filter key
+//          var targetnode = d3.event.target;
+//          var targetid = targetnode.id;
+//          this_.show_headerpopover(targetid,key);
+//     };
+
+//     this.tableheader
+//         .attr("data-toggle","popover")
+//         .attr("data-placement","top")
+//         .attr("data-html","true")
+//         .attr("data-trigger","focus")
+//         .on('click', function(d){
+//             showheaderpopover(d);
+//             });
+// };
 d3_table.prototype.show_headerpopover = function (targetid_I,key_I) {
     // show the search button popover element
     // INPUT:
@@ -977,4 +1111,26 @@ d3_table.prototype.get_ntablerows = function(){
 	/*return the default number of table rows displayed
 	*/
 	return this.ntablerows;
+};
+d3_table.prototype.add_refreshbutton2optionsbuttongroup = function (){
+    // add refresh button to the footer of the chart
+
+    var id = this.id;
+    var tileid = this.tileid;
+    var this_ = this;
+
+    function refreshtile(){
+        //refresh the tile
+        this_.render();        
+    };
+
+    var tablerefreshbutton = this.tableoptionsbuttongroup.append("div");
+
+    tablerefreshbutton
+        .attr("class","glyphicon glyphicon glyphicon-refresh pull-right")
+        .attr("id", tileid + 'refreshtile')
+        .style({"cursor":"pointer"})
+        .attr("data-toggle","tooltip")
+        .attr("title","refresh");
+    tablerefreshbutton.on("click",refreshtile);
 };

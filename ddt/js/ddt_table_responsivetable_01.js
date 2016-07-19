@@ -38,6 +38,7 @@ ddt_table_responsivetable_01.prototype.make_table = function(data_I,parameters_I
     else {this.ddttable.extract_tableheaders();};
     this.ddttable.add_csvandjsonexportbutton2tile();
     this.ddttable.add_optionsbuttongroup2footer();
+    this.ddttable.add_refreshbutton2optionsbuttongroup();
     this.ddttable.add_tablemenubutton2optionsbuttongroup();
     this.ddttable.set_ntablerows(parameters_I.ntablerows);
     this.ddttable.render = function () {
@@ -57,9 +58,9 @@ ddt_table_responsivetable_01.prototype.make_table = function(data_I,parameters_I
 		this.set_tablestyle();
 		this.set_cellstyle();
 		//this.set_tablebodystyle();
-		//this.add_tablesort(parameters_I.tablesort);
-		this.add_tablecolumnoptions();
-		this.set_tablecellszoom();
+		this.add_tablesort(parameters_I.tablesort);
+		//this.add_tablecolumnoptions();
+		//this.set_tablecellszoom();
 		//this.set_tablerowszoom();
 		this.set_tablecellseditor();
     };
