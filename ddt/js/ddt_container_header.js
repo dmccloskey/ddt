@@ -45,6 +45,7 @@ ddt_container.prototype.add_header2container = function(){
     this.add_encryptionbutton2container();
     //TODO: this.add_newtilebutton2container();
     //TODO: this.add_tilelayoutbutton2container();
+    this.add_newHTMLEditorButton2Container();
     this.add_updatelistdatabutton2container();
 
 };

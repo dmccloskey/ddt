@@ -269,7 +269,7 @@ d3_html.prototype.add_form = function(inputarguments_I) {
         var input = inputarguments.get_inputarguments();
     } else {
         var node = this.html;
-        var input = this.html.get_htmldata1();
+        var input = this.get_htmldata1();
     };
 
     var id = this.id;
@@ -332,7 +332,7 @@ d3_html.prototype.add_textarea = function (inputarguments_I) {
         //.attr("rows",function(d){return d.inputrows;})
         .text(function(d){return d.inputtext;})
         .attr("value",function(d){return d.inputvalue;})
-        .attr("id", function(d){return id + 'textarea' + input.labeltext;});
+        .attr("id", function(d){return id + 'textarea' + d.inputlabel;});
 
     this.htmltextareagroupenter = this.htmltextareagroup.enter()
         .append("textarea")
@@ -341,7 +341,7 @@ d3_html.prototype.add_textarea = function (inputarguments_I) {
         //.attr("rows",function(d){return d.inputrows;})
         .text(function(d){return d.inputtext;})
         .attr("value",function(d){return d.inputvalue;})
-        .attr("id", function(d){return id + 'textarea' + input.labeltext;});
+        .attr("id", function(d){return id + 'textarea' + d.inputlabel;});
 };
 d3_html.prototype.add_search = function(){
     // add search feature
@@ -748,60 +748,96 @@ d3_html.prototype.add_mediasvg = function(){
         .text(function(d){return d[mediaparagraph];});
         
 };
-d3_html.prototype.add_iframe = function(){
+d3_html.prototype.add_iframe = function(iframeclass_I="iframe-responsive",iframehref_I='',iframeborder_I=0){
     // add an iframe to tile body
     // todo:
-    var iframeclass = this.datakeymap.htmliframeclass;
-    var iframehref = this.datakeymap.htmliframehref;
+    var iframeclass = iframeclass_I;
+    var iframehref = iframehref_I;
+    var iframeborder = iframeborder_I;
     var listdatafiltered = this.get_htmldata1().listdatafiltered;
     var id = this.id;
 
-    this.htmliframe = this.html.selectAll("iframe")
-        .data([listdatafiltered])
+    this.htmliframewrapper = this.html.selectAll(".iframewrapper")
+        .data([listdatafiltered]);
+
+    this.htmliframewrapper.exit().remove();
+    this.htmliframewrapper.transition()
+        .attr("class",'iframewrapper')
+        .attr("id",id + 'iframewrapper');
+    this.htmliframewrapperenter = this.htmliframewrapper.enter()
         .append("div")
         .attr("class",'iframewrapper')
         .attr("id",id + 'iframewrapper');
 
+    this.htmliframe = this.htmliframewrapper.selectAll("iframe")
+        .data([listdatafiltered]);
+
     this.htmliframeenter = this.htmliframe.enter()
         .append("iframe")
-        .attr("class","iframe-responsive")
-        .attr("frameborder",0)
+        .attr("class",iframeclass)
+        .attr("frameborder",iframeborder)
         .attr("src",iframehref)
         .attr("id",id+"iframe");
 
     this.htmliframe.transition()
-        .attr("class","iframe-responsive")
-        .attr("frameborder",0)
+        .attr("class",iframeclass)
+        .attr("frameborder",iframeborder)
         .attr("src",iframehref)
         .attr("id",id+"iframe");
     
     this.htmliframe.exit().remove();
 };
-d3_html.prototype.add_document2iframeContentWindow = function(iframesrcid_I,iframesrclabeltex_I){
+d3_html.prototype.set_iframestyle = function () {
+    // predefined css style for iframe
+    var htmlselector = "#" + this.tileid + " iframe";
+    var htmlstyle = {
+        'width': '100%',
+        'height': '100%',
+        'overflow-y': 'scroll',
+        //'overflow-y': 'hidden',
+        'overflow-x': 'scroll',
+        //'margin-bottom': '15px',
+        '-ms-overflow-style': '-ms-autohiding-scrollbar',
+        //'border': '1px solid #ddd',
+        '-webkit-overflow-scrolling': 'touch',
+    };
+    var selectorstyle = [{ 'selection': htmlselector, 'style': htmlstyle }]
+    this.set_d3css(selectorstyle);
+};
+d3_html.prototype.add_document2iframeContentWindow = function(iframesrcid_I,iframesrclabeltex_I,document_I=null){
     // add iframe text document to tile body
-    
-    var iframesrcid = this.datakeymap.iframesrcid;
-    var iframesrclabeltext = this.datakeymap.iframesrclabeltext;
-    var document = document_I;
+
+    var iframesrcid = iframesrcid_I;
+    var iframesrclabeltext = iframesrclabeltex_I;
     var id = this.id;
 
-    var text = document.getElementById(iframesrcid + 'textarea' + iframesrclabeltext).value;
-    var ifr = document.createElement("iframe");
-    ifr.setAttribute("frameborder", "0");
-    ifr.setAttribute("id", id+"iframe");  
-    document.getElementById(id + 'iframewrapper').innerHTML = "";
-    document.getElementById(id + 'iframewrapper').appendChild(ifr);
-    var ifrw = (ifr.contentWindow) ? ifr.contentWindow : (ifr.contentDocument.document) ? ifr.contentDocument.document : ifr.contentDocument;
-    ifrw.document.open();
-    ifrw.document.write(text);  
-    ifrw.document.close();
-    //23.02.2016: contentEditable is set to true, to fix text-selection (bug) in firefox.
-    //(and back to false to prevent the content from being editable)
-    //(To reproduce the error: Select text in the result window with, and without, the contentEditable statements below.)  
-    if (ifrw.document.body && !ifrw.document.body.isContentEditable) {
-        ifrw.document.body.contentEditable = true;
-        ifrw.document.body.contentEditable = false;
-    }
+    if (document_I){var text = document_I}
+    else {var text = document.getElementById(iframesrcid + 'textarea' + iframesrclabeltext).value;};
+
+    //SPLIT 1:
+    var ifrw = this.htmliframe[0][0].contentDocument;
+    ifrw.clear();
+    ifrw.open();
+    ifrw.write(text);  
+    ifrw.close();
+
+    //SPLIT 2: from the web
+//     var ifr = document.createElement("iframe");
+//     ifr.setAttribute("frameborder", "0");
+//     ifr.setAttribute("id", id+"iframe");  
+//     document.getElementById(id + 'iframewrapper').innerHTML = "";
+//     document.getElementById(id + 'iframewrapper').appendChild(ifr);
+//     var ifrw = (ifr.contentWindow) ? ifr.contentWindow : (ifr.contentDocument.document) ? ifr.contentDocument.document : ifr.contentDocument;
+//     ifrw.document.open();
+//     ifrw.document.write(text);  
+//     ifrw.document.close();
+//     //23.02.2016: contentEditable is set to true, to fix text-selection (bug) in firefox.
+//     //(and back to false to prevent the content from being editable)
+//     //(To reproduce the error: Select text in the result window with, and without, the contentEditable statements below.)  
+//     if (ifrw.document.body && !ifrw.document.body.isContentEditable) {
+//         ifrw.document.body.contentEditable = true;
+//         ifrw.document.body.contentEditable = false;
+//     }
 };
 d3_html.prototype.add_escher = function(escherdataindex_I,escherembeddedcss_I,escheroptions_I){
     // add escher map to tile body

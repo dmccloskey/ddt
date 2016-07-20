@@ -12,7 +12,7 @@ function d3_data() {
     this.filters = {}; // {key1:[string1,string2,...],...}
                        //NOTE: only string filters and string filtering is supported
                        //TODO: support filtering on boolean, numeric, date and time, and custom functions
-    this.metadata = []; // data about the data types and data attributes
+    this.metadata = {}; // data about the data types and data attributes
                         // {key1:{datatype:"string",...},....}
     this.listdata = []; // data in database table form (must contain a column "used_");
     this.listdatafiltered = []; // data in database table form

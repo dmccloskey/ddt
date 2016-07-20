@@ -108,13 +108,34 @@ ddt_container.prototype.update_containertilesdata = function(data_I,index_I){
         };
     };
 };
-ddt_container.prototype.add_containertiles = function(){
-    // get all container tiles based on parameters
-    // tiles will be added in the same order as the parameters
-    for (var i=0;i<this.parameters.length;i++){
+ddt_container.prototype.add_containertiles = function(start_index_I=0){
+    /*
+    get all container tiles based on parameters
+    tiles will be added in the same order as the parameters
+    INPUT:
+    start_index_I = int, starting parameter index
+    */ 
+    // 
+    for (var i=start_index_I;i<this.parameters.length;i++){
         var tiletype = this.parameters[i].tiletype
         var tile = this.get_tile(tiletype);
         this.tiles.push(tile);
+    };
+};
+ddt_container.prototype.append_containertiles = function(start_index_I=0){
+    /*
+    append tiles to the container
+    INPUT:
+    start_index_I = int, starting parameter index
+    */ 
+    var data = this.data;
+    for (var cnt=start_index_I;cnt<this.tiles.length;cnt++){
+        var tiledataindex = this.tile2datamap[this.parameters[cnt].tileid];
+        if (typeof(tiledataindex)!=="undefined"){
+            var tiledata = [];
+            tiledataindex.forEach(function(d){tiledata.push(data[d]);});
+            this.tiles[cnt].make_tile(tiledata,this.parameters[cnt]);
+        };
     };
 };
 ddt_container.prototype.get_containertilebytileid = function(tileid_I){
@@ -140,16 +161,8 @@ ddt_container.prototype.get_containertilebytileid = function(tileid_I){
 };
 ddt_container.prototype.make_container = function(){
     // call all tile make functions
-    var data = this.data;
     this.add_containertiles();
-    for (var cnt=0;cnt<this.tiles.length;cnt++){
-        var tiledataindex = this.tile2datamap[this.parameters[cnt].tileid];
-        if (typeof(tiledataindex)!=="undefined"){
-            var tiledata = [];
-            tiledataindex.forEach(function(d){tiledata.push(data[d]);});
-            this.tiles[cnt].make_tile(tiledata,this.parameters[cnt]);
-        };
-    };
+    this.append_containertiles();
 };
 ddt_container.prototype.update_container = function(){
     // call all tile update functions

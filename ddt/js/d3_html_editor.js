@@ -1,13 +1,13 @@
 "use strict";
-function d3_htmleditor() {
+function d3_html_editor() {
     // bootstrap html htmleditor element
     d3_html.call(this);
     // htmleditor specific properties
     this.htmleditorclass = null;
 };
-d3_htmleditor.prototype = Object.create(d3_html.prototype);
-d3_htmleditor.prototype.constructor = d3_htmleditor;
-d3_htmleditor.prototype.add_htmleditor2tile = function(){
+d3_html_editor.prototype = Object.create(d3_html.prototype);
+d3_html_editor.prototype.constructor = d3_html_editor;
+d3_html_editor.prototype.add_htmleditor2tile = function(){
     // set the htmleditor
     var id = this.id;
     var tileid = this.tileid;
@@ -29,18 +29,18 @@ d3_htmleditor.prototype.add_htmleditor2tile = function(){
     this.htmleditor.exit().remove();
 
 };
-d3_htmleditor.prototype.set_htmleditorclass = function(htmleditorclass_I){
+d3_html_editor.prototype.set_htmleditorclass = function(htmleditorclass_I){
     // set the htmleditorid
     this.htmleditorclass = htmleditorclass_I;
 };
-d3_htmleditor.prototype.set_htmleditorstyle = function () {
+d3_html_editor.prototype.set_htmleditorstyle = function () {
     // predefined css style for htmleditor header rows
     var htmleditorselector = "#" + this.tileid + " .htmleditor-responsive";
     var htmleditorstyle = {
         //'table-layout': 'fixed',
     	//'display': 'block',
         'width': '100%',
-        'height': '500px',
+        'height': '100%',
         'overflow-y': 'scroll',
         //'overflow-y': 'hidden',
         'overflow-x': 'scroll',
@@ -52,7 +52,7 @@ d3_htmleditor.prototype.set_htmleditorstyle = function () {
     var selectorstyle = [{ 'selection': htmleditorselector, 'style': htmleditorstyle }]
     this.set_d3css(selectorstyle);
 };
-d3_htmleditor.prototype.add_pdfexportbutton2tile = function () {
+d3_html_editor.prototype.add_pdfexportbutton2tile = function () {
     /*add button to export the htmleditor element
     https://github.com/Xportability/css-to-pdf
     http://www.cloudformatter.com/css2pdf
@@ -66,15 +66,19 @@ d3_htmleditor.prototype.add_pdfexportbutton2tile = function () {
     xepFormatOptions.push({render:'download'});
 
     // Export div
-    var export_div = this.id+"htmleditor";
+    var export_div = this.id+"iframe";
+//     var export_div = this.id + 'iframewrapper';
 
     var pdfexportbutton = this.htmlfooter.append("input");
     
     pdfexportbutton.attr("type", "button")
         .attr("value", "Download PDF");
-    //pdfexportbutton.on("click", "return xepOnline.Formatter.Format('Usage');");
-    pdfexportbutton.on("click", xepOnline.Formatter.Format('Usage',
-        {pageWidth:'216mm', pageHeight:'279mm'},
-        {render:'download'}
-        ));
+    pdfexportbutton.on("click", function(d){
+        return xepOnline.Formatter.Format(export_div,
+        {pageWidth:'216mm', pageHeight:'279mm',
+        render:'download',
+        //srctype:'#document'
+        srctype:'html'
+        })
+        });
 };

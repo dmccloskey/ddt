@@ -281,7 +281,11 @@ ddt_tile_html.prototype.get_html = function(htmltype_I){
     } else if (htmltype_I=='formquery_01'){
         return new ddt_html_formquery_01();
     } else if (htmltype_I=='formquery_02'){
-        return new ddt_html_formquery_02();
+        return new ddt_html_formquery_02();        
+    } else if (htmltype_I=='iframe_01'){
+        return new ddt_html_iframe_01();
+    } else if (htmltype_I=='editor_01'){
+        return new ddt_html_editor_01();
     } else {
         return null;
     };

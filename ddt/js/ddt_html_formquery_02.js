@@ -77,7 +77,10 @@ ddt_html_formquery_02.prototype.make_html = function(data_I,parameters_I){
     
 	this.ddthtml.add_postbutton2tile(parameters_I.formpostbuttonidtext);
 	this.ddthtml.set_posthttprequestbuttonmethod(parameters_I.formurl,parameters_I.formpostauthentication)
-	this.ddthtml.add_jsonimportandexportbutton2tile();
+	
+    this.ddthtml.add_htmlfooter2tile();
+	this.ddthtml.add_jsonexportbutton2tile();
+    this.ddthtml.add_jsonimportbutton2tile()
 
 	// html specific properties
     this.ddthtml.render = function(){

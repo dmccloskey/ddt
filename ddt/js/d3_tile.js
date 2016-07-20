@@ -665,6 +665,24 @@ d3_tile.prototype.convert_colid2int = function(colid_I){
     };
     return colidint_O;
 };
+d3_tile.prototype.convert_rowid2int = function(rowid_I){
+    //convert a row id string to an integer
+    var rowidint_O = 0;
+    if (typeof(rowid_I)!=="undefined"){
+        var rowidstr = rowid_I;
+    } else {
+        console.log("no rowid provided");
+        return rowidint_O;
+    };
+
+    if (rowidstr.indexOf('row')===0){
+        rowidint_O = parseInt(rowidstr.replace('row',''));
+    } else {
+        console.log("invalid rowid provided");
+        return rowidint_O;
+    };
+    return rowidint_O;
+};
 d3_tile.prototype.make_colidfromint = function(colidint_I){
     //convert a column id int to a string
     var colid_O = 'col0';
@@ -676,6 +694,18 @@ d3_tile.prototype.make_colidfromint = function(colidint_I){
     };
     colid_O = 'col' + colidint.toString();
     return colid_O;
+};
+d3_tile.prototype.make_rowidfromint = function(rowidint_I){
+    //convert a row id int to a string
+    var rowid_O = 'row0';
+    if (typeof(rowidint_I)!=="undefined"){
+        var rowidint = rowidint_I;
+    } else {
+        console.log("no rowid provided");
+        return rowid_O;
+    };
+    rowid_O = 'row' + rowidint.toString();
+    return rowid_O;
 };
 d3_tile.prototype.get_colnode = function(tileid_I){
     //get column node by the tileid
