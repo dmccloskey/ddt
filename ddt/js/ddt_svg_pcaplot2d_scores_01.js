@@ -53,6 +53,7 @@ ddt_svg_pcaplot2d_scores_01.prototype.make_svg = function(data_I,parameters_I){
     this.ddtsvg.set_colorscale(); //color for series_label will remain consistent
     this.ddtsvg.add_svgexportbutton2tile();
     this.ddtsvg.add_optionsbuttongroup2footer();
+    this.ddtsvg.add_refreshbutton2optionsbuttongroup();
     this.ddtsvg.add_svgmenubutton2optionsbuttongroup();
     this.ddtsvg.add_resizebuttons2optionsbuttongroup();
     //this.ddtsvg.set_tooltip();

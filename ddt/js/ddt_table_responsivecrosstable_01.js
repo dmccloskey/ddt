@@ -66,6 +66,9 @@ ddt_table_responsivecrosstable_01.prototype.make_table = function(data_I,paramet
 	// table specific properties
     this.ddttable.set_tableclass("table table-hover");
     this.ddttable.add_crosstablecsvandjsonexportbutton2tile();
+    this.ddttable.add_optionsbuttongroup2footer();
+    this.ddttable.add_refreshbutton2optionsbuttongroup();
+    this.ddttable.add_tablemenubutton2optionsbuttongroup();
     this.ddttable.render = function () {
     	// permanent filter on the data
     	if (parameters_I.tablefilters){

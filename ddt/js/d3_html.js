@@ -804,11 +804,11 @@ d3_html.prototype.set_iframestyle = function () {
     var selectorstyle = [{ 'selection': htmlselector, 'style': htmlstyle }]
     this.set_d3css(selectorstyle);
 };
-d3_html.prototype.add_document2iframeContentWindow = function(iframesrcid_I,iframesrclabeltex_I,document_I=null){
+d3_html.prototype.add_document2iframeContentWindow = function(iframesrcid_I,iframesrclabeltext_I,document_I=null){
     // add iframe text document to tile body
 
     var iframesrcid = iframesrcid_I;
-    var iframesrclabeltext = iframesrclabeltex_I;
+    var iframesrclabeltext = iframesrclabeltext_I;
     var id = this.id;
 
     if (document_I){var text = document_I}

@@ -32,6 +32,7 @@ ddt_html_editor_01.prototype.make_html = function(data_I,parameters_I){
         	);
         //add css
 		this.set_htmlstyle();
+		//this.convert_textarea2codeeditor();
     };
 };
 ddt_html_editor_01.prototype.update_html = function(data_I){

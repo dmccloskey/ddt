@@ -160,8 +160,9 @@ d3_graph2d.prototype.add_forceDirectedGraphData1Link = function(){
         .style("stroke", function(d) {
             return colorscale(d.color);
             })
-        .attr("stroke-width", function(d) { 
-            return Math.sqrt(d.value); 
+        .style("stroke-width", function(d) { 
+            var value = Math.sqrt(d.value)*1.5;
+            return value.toString()+"px"; 
             })
         .attr("marker-end", function(d) { return "url(#" + id + "marker" + d.marker + ")"; })
         ; 
@@ -171,7 +172,10 @@ d3_graph2d.prototype.add_forceDirectedGraphData1Link = function(){
         //.duration(duration)
         .attr("d",linkPath)
         .style("stroke", function(d) {return colorscale(d.color);})
-        .attr("stroke-width", function(d) { return Math.sqrt(d.value); })
+        .style("stroke-width", function(d) { 
+            var value = Math.sqrt(d.value)*1.5;
+            return value.toString()+"px"; 
+            })
         .attr("marker-end", function(d) { return "url(#" + id + "marker" + d.marker + ")"; })
         ; 
 

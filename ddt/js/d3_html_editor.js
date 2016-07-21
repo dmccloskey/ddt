@@ -66,6 +66,7 @@ d3_html_editor.prototype.add_pdfexportbutton2tile = function () {
     xepFormatOptions.push({render:'download'});
 
     // Export div
+//     var export_div = "DownloadPDF";
     var export_div = this.id+"iframe";
 //     var export_div = this.id + 'iframewrapper';
 
@@ -78,7 +79,20 @@ d3_html_editor.prototype.add_pdfexportbutton2tile = function () {
         {pageWidth:'216mm', pageHeight:'279mm',
         render:'download',
         //srctype:'#document'
-        srctype:'html'
+        //srctype:'html'
         })
         });
+};
+d3_html_editor.prototype.convert_textarea2codeeditor = function (mode_I='htmlmixed') {
+    /*convert textarea to code editor
+    https://codemirror.net/index.html
+
+    TODO add input to allow for changing to and from the editor
+    */ 
+    var inputlabel = this.get_htmldata1().listdatafiltered[0].inputlabel;
+    var id = this.id;
+
+    this.htmleditorCodeMirror = CodeMirror.fromTextArea(
+        document.getElementById(id + 'textarea' + inputlabel),
+	   {lineNumbers: true, mode:mode_I});
 };
