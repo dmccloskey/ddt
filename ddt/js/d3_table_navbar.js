@@ -103,7 +103,7 @@ d3_table.prototype.add_tablerowlimit2tablenavbar = function(){
 };
 d3_table.prototype.add_tablepagination2tablenavbar = function(npagesmax_I=4){
     /* add the table pagination input
-	TODO: page numbers are not updating...
+	TODO: fix bug to remove page buttons when rows changes
     */
 	var this_ = this;
 	var id = this.id;
@@ -124,9 +124,19 @@ d3_table.prototype.add_tablepagination2tablenavbar = function(npagesmax_I=4){
 		if (pagesend-pagesstart < npagesmax-1){
 			npagesmax = pagesend-pagesstart;
 			get_pagesStartAndEnd(npagesmax,currentpage,lastpage);
+		} else if (pagesstart < 1){ 
+		    pagesstart = 1;
+			pagesend = pagesstart + npagesmax - 1;
+			if (pagesend >= lastpage){
+                pagesend = lastpage;
+			};
+			return {pagesstart:pagesstart,pagesend:pagesend};
 		} else if (pagesend >= lastpage){ 
 		    pagesend = lastpage;
 			pagesstart = lastpage - npagesmax + 1;
+			if (pagesstart < 1){ 
+                pagesstart = 1;
+			};
 			return {pagesstart:pagesstart,pagesend:pagesend};
 // 		} else if (pagesstart === 1){
 // 			pagesend = pagesstart + npagesmax;
@@ -165,12 +175,17 @@ d3_table.prototype.add_tablepagination2tablenavbar = function(npagesmax_I=4){
     var pages = get_pages(npagesmax,currentpage,lastpage);
 
     //TODO: move code block to new function?
+    //TODO: fix button updates when changing the # of rows
     function update_pageButtons(){
         var pagesAndColors = get_pagesAndColors(npagesmax,this_.get_tablecurrentpage(),this_.get_tablelastpage());
         var pageButtons = d3.select("#" + id + 'btn-group-pages').node().children;
 		for (var i=0;i<pageButtons.length;i++){   
-            pageButtons[i].style.color=pagesAndColors[i].color;
-		    pageButtons[i].textContent=pagesAndColors[i].value;
+		    if (i>=pagesAndColors.length){
+		        //pageButtons[i].remove();
+		    } else {
+                pageButtons[i].style.color=pagesAndColors[i].color;
+                pageButtons[i].textContent=pagesAndColors[i].value;
+		    };
 		};
     };
 
@@ -359,9 +374,10 @@ d3_table.prototype.add_tablepagination2tablenavbar = function(npagesmax_I=4){
 	});
 	
 	//tablefooterpagination middle pages
+	//TODO: fix update/transition/exit to add/remove buttons
 	var tablefooterpaginationbuttonsgroup = tablefooterpaginationtoolbar
-		.selectAll('btn-group pages')
-		.data([0]);
+		.selectAll('.btn-group pages')
+		.data([pages]);
 	var tablefooterpaginationbuttonsgroupenter = tablefooterpaginationbuttonsgroup.enter()
 		.append("div")
 		.attr('class','btn-group pages')
@@ -408,7 +424,6 @@ d3_table.prototype.add_tablepagination2tablenavbar = function(npagesmax_I=4){
 	    update_pageButtons();
 		this_.render();
 	});
-
 
 	//tablefooterpagination right arrows
 	var tablefooterpaginationrightarrows = tablefooterpaginationtoolbar

@@ -82,26 +82,24 @@ d3_table.prototype.add_tableheader = function(){
     this.tableheaderrow = this.thead.selectAll("tr")
         .data([tableheaders]);
 
+    this.tableheaderrow.exit().remove();
     this.tableheaderrowenter = this.tableheaderrow.enter()
         .append("tr");
 
     this.tableheader = this.tableheaderrow.selectAll("th")
         .data(tableheaders);
 
-    this.tableheaderenter = this.tableheader.enter();
-    this.tableheaderenter
-    	.append("th")
-        .attr('id',function (d) { return id+'th'+d; })
-        .text(function (d) { return d; });
-
+    this.tableheader.exit().remove();
     this.tableheaderupdate = this.tableheader.transition();
     this.tableheaderupdate.select("th")
         .attr('id',function (d) { return id+'th'+d; })
         .text(function (d) { return d; });
 
-    this.tableheader.exit().remove();
-
-    this.tableheaderrow.exit().remove();
+    this.tableheaderenter = this.tableheader.enter();
+    this.tableheaderenter
+    	.append("th")
+        .attr('id',function (d) { return id+'th'+d; })
+        .text(function (d) { return d; });
 
 };
 d3_table.prototype.set_tablebody = function(){
@@ -276,6 +274,10 @@ d3_table.prototype.extract_tableheaders = function(){
 d3_table.prototype.set_tableheaders = function(headers_I){
     // set headers
     this.tableheaders = headers_I;
+};
+d3_table.prototype.get_tableheaders = function(){
+    // return headers
+    return this.tableheaders;
 };
 d3_table.prototype.add_tablecellfilter = function(){
     //filter the data on click
@@ -533,21 +535,32 @@ d3_table.prototype.set_datakeymaps = function(keymaps_I){
     } else {console.warn("more data found than what is currently supported");
     };
 };
-d3_table.prototype.add_tablesort = function(sort_settings_I){
-    // sort the data
-    // DESCRIPTION:
+d3_table.prototype.set_tableheaderoptionsgroup = function(){
+	/*set the row to append buttons
+	that manipulate column headers
+	and column data
+	*/
     var id = this.id;
     var this_ = this;
     var tableheaders = this.tableheaders;
 
-	var tableheadersortgroup = this.tableheader.data(tableheaders)
-    var tableheadersortgroupenter = tableheadersortgroup.enter()
+	this.tableheaderoptionsgroup = this.tableheader.data(tableheaders)
+    this.tableheaderoptionsgroupenter = this.tableheaderoptionsgroup.enter()
 		.append("div")
+		.attr("id",id+"tableheaderoptionsgroup")
         .attr("class","row");
-	tableheadersortgroup.transition().attr("class","row");
-	tableheadersortgroup.exit().remove();
+	this.tableheaderoptionsgroup.transition()
+		.attr("id",id+"tableheaderoptionsgroup")
+		.attr("class","row");
+	this.tableheaderoptionsgroup.exit().remove();
+}
+d3_table.prototype.add_tablesort2tableheaderoptionsgroup = function(){
+    // sort the data
+    // DESCRIPTION:
+    var id = this.id;
+    var this_ = this;
 
-	var tableheadersortasc = tableheadersortgroup.selectAll('.glyphicon-sort-by-attributes')
+	var tableheadersortasc = this.tableheaderoptionsgroup.selectAll('.glyphicon-sort-by-attributes')
 		.data([0]);
 
 	tableheadersortasc.exit().remove();
@@ -575,7 +588,7 @@ d3_table.prototype.add_tablesort = function(sort_settings_I){
             this_.render();
         });
 
-	var tableheadersortdesc = tableheadersortgroup.selectAll('.glyphicon-sort-by-attributes-alt')
+	var tableheadersortdesc = this.tableheaderoptionsgroup.selectAll('.glyphicon-sort-by-attributes-alt')
 		.data([0]);
 
 	tableheadersortdesc.exit().remove();
@@ -631,6 +644,54 @@ d3_table.prototype.add_tablesort = function(sort_settings_I){
 //             showheaderpopover(d);
 //             });
 // };
+d3_table.prototype.add_tablehidecolumn2tableheaderoptionsgroup = function(){
+	/*add column hide
+
+	TODO: fix bug that does not remove the headers
+	*/
+	var id = this.id;
+    var this_ = this;
+
+	var tableheaderhidecolumn = this.tableheaderoptionsgroup.selectAll('.glyphicon-remove-sign')
+		.data([0]);
+
+	function removeA(arr) {
+		var what, a = arguments, L = a.length, ax;
+		while (L > 1 && arr.length) {
+			what = a[--L];
+				while ((ax= arr.indexOf(what)) !== -1) {
+				arr.splice(ax, 1);
+			}
+		}
+		return arr;
+	}
+
+    function updatetablecolumns(){
+        // update the table columns
+        var header = this.parentNode.textContent;
+        var currenttableheaders = this_.get_tableheaders();
+        var tableheaders = removeA(currenttableheaders,header);
+        this_.set_tableheaders(tableheaders);
+        this_.render();
+    };
+
+	tableheaderhidecolumn.exit().remove();
+	tableheaderhidecolumn.transition()
+        .attr("class","glyphicon glyphicon-remove-sign")
+        .attr("id", id + 'tableheaderhidecolumn')
+        .style({"cursor":"pointer"})
+        .attr("data-toggle","tooltip")
+        .attr("title","hide column");
+
+	var tableheaderhidecolumnenter = tableheaderhidecolumn.enter()
+		.append("div")
+        .attr("class","glyphicon glyphicon-remove-sign")
+        .attr("id", id + 'tableheaderhidecolumn')
+        .style({"cursor":"pointer"})
+        .attr("data-toggle","tooltip")
+        .attr("title","hide column");
+    tableheaderhidecolumn.on("click", updatetablecolumns);
+}
 d3_table.prototype.show_headerpopover = function (targetid_I,key_I) {
     // show the search button popover element
     // INPUT:
@@ -764,86 +825,6 @@ d3_table.prototype.add_optionsbuttongroup2footer = function(){
         .append("div")
         .attr("class","btn-group pull-right")
         .attr("id", id + 'tableoptionsbuttongroup');
-};
-d3_table.prototype.add_tablecolumnoptions = function(){
-    // sort the data
-    // DESCRIPTION:
-    // single click: sort in ascending order
-    // double click: sort in descenting order
-    // TODO:
-    // add tooltip
-    // add popover with sort asc and desc
-    var id = this.id;
-    var this_ = this;
-    var tableheaders = this.tableheaders;
-
-    function showcolumnoptionsmenumodal(){
-        this_.show_columnoptionsmenumodal(id+"table");
-    };    
-
-	this.tableheader
-        .style({"cursor":"pointer"})
-        .attr("data-toggle","tooltip")
-        .attr("title","column options")
-        .on('click', showcolumnoptionsmenumodal);
-};
-d3_table.prototype.show_columnoptionsmenumodal = function(targetid_I){
-    // show the column menu options modal
-    var this_ = this;
-    var id = this.id;
-    var tileid = this.tileid;
-    var tableheadersd3data = this.convert_tableheaders2d3data();
-
-    function changetablecolumns(){
-        //...
-    };
-
-    function updatetablecolumns(){
-        // update the table columns
-        this.update_forminput();
-        var tableheaders = this.get_formdata().filters['column_name'];
-        this_.set_tableheaders(tableheaders);
-        this_.render();
-        // prevent browser default page refresh
-        d3.event.preventDefault();
-        $("#"+modalid+'modal').modal('hide');
-    };
-
-    //add the modal menu object
-    var modalid = id + "columnmenu";
-    var modaltargetid = "#" + targetid_I;
-    //remove the previous modal
-    d3.select("#"+modalid+'modal').remove();
-    var menumodal = new d3_html_modal();
-
-    menumodal.add_ndata([tableheadersd3data]);
-    menumodal.set_id(modalid);
-    menumodal.set_tileid(tileid);
-    menumodal.add_modal2tile(modaltargetid);
-    menumodal.add_header2modal();
-    menumodal.add_closebutton2modalheader();
-    menumodal.add_body2modal();
-    menumodal.add_form2modalbody();
-    menumodal.add_footer2modal();
-    menumodal.add_title2modalheader('Column Options');
-    menumodal.add_submitbutton2modalfooter();
-    menumodal.add_content2modalbodyform = function (){
-        // add content to the modal body form
-        var id = this.id;
-
-        var formgroup_I = {};
-        formgroup_I['inputarguments']=this.get_formdata().convert_filter2forminput();
-
-        var formid = id + "modalbodyform";
-        formgroup_I['node_id']='#'+formid;
-
-        this.add_forminput2form(formgroup_I);
-
-        d3.select('#'+id+"modalfootersubmitbutton").on("click",updatetablecolumns.bind(this))
-    };
-    menumodal.add_content2modalbodyform();
-    // show the modal
-    $("#"+modalid+'modal').modal('show');
 };
 d3_table.prototype.convert_tableheaders2listdata = function(){
     // convert table headers to listdata
@@ -1102,4 +1083,146 @@ d3_table.prototype.add_refreshbutton2optionsbuttongroup = function (){
         .attr("data-toggle","tooltip")
         .attr("title","refresh");
     tablerefreshbutton.on("click",refreshtile);
+};
+d3_table.prototype.add_tablecolumnunhidebutton2optionsbuttongroup = function (){
+    // add refresh button to the footer of the chart
+
+    var id = this.id;
+    var tileid = this.tileid;
+    var this_ = this;
+
+    function unhideheaders(){
+    	this_.extract_tableheaders();
+        this_.render();        
+    };
+
+    var tablecolumnunhidebutton = this.tableoptionsbuttongroup
+    	.selectAll(".glyphicon-header")
+    	.data([0]);
+	tablecolumnunhidebutton.exit().remove();
+	tablecolumnunhidebutton.transition()
+        .attr("class","glyphicon glyphicon-header pull-right")
+        .attr("id", tileid + 'unhidecolumns')
+        .style({"cursor":"pointer"})
+        .attr("data-toggle","tooltip")
+        .attr("title","unhide columns");
+
+    var tablecolumnunhidebuttonenter = tablecolumnunhidebutton.enter()
+    	.append("div")
+        .attr("class","glyphicon glyphicon-header pull-right")
+        .attr("id", tileid + 'unhidecolumns')
+        .style({"cursor":"pointer"})
+        .attr("data-toggle","tooltip")
+        .attr("title","unhide columns");
+    tablecolumnunhidebutton.on("click",unhideheaders);
+};
+d3_table.prototype.add_tablecolumnoptionsbutton2optionsbuttongroup = function (){
+    // add refresh button to the footer of the chart
+
+    var id = this.id;
+    var tileid = this.tileid;
+    var this_ = this;
+
+    var tablecolumnoptionsbutton = this.tableoptionsbuttongroup
+    	.selectAll(".glyphicon-header")
+    	.data([0]);
+	tablecolumnoptionsbutton.exit().remove();
+	tablecolumnoptionsbutton.transition()
+        .attr("class","glyphicon glyphicon-header pull-right")
+        .attr("id", tileid + 'refreshtile')
+        .style({"cursor":"pointer"})
+        .attr("data-toggle","tooltip")
+        .attr("title","refresh");
+
+    var tablecolumnoptionsbuttonenter = tablecolumnoptionsbutton.enter()
+    	.append("div")
+        .attr("class","glyphicon glyphicon-header pull-right")
+        .attr("id", tileid + 'refreshtile')
+        .style({"cursor":"pointer"})
+        .attr("data-toggle","tooltip")
+        .attr("title","refresh");
+    this.add_tablecolumnoptions({'node':tablecolumnoptionsbutton,'inputarguments':null});
+};
+d3_table.prototype.add_tablecolumnoptions = function(inputarguments_I){
+    // add or remove headers
+    var id = this.id;
+    var this_ = this;
+    var tableheaders = this.tableheaders;
+
+	if (typeof(inputarguments_I)!=="undefined"){
+		var inputarguments = new ddt_inputarguments();
+		inputarguments.validate_inputarguments(inputarguments_I)
+		var node = inputarguments.get_node();
+		var input = inputarguments.get_inputarguments();
+	} else {
+		var node = this.tableheader;
+		var input = null;
+	}
+
+    function showcolumnoptionsmenumodal(){
+        this_.show_columnoptionsmenumodal(id+"table");
+    };    
+
+	node.style({"cursor":"pointer"})
+        .attr("data-toggle","tooltip")
+        .attr("title","column options")
+        .on('click', showcolumnoptionsmenumodal);
+};
+d3_table.prototype.show_columnoptionsmenumodal = function(targetid_I){
+    // show the column menu options modal
+    var this_ = this;
+    var id = this.id;
+    var tileid = this.tileid;
+    var tableheadersd3data = this.convert_tableheaders2d3data();
+
+    function changetablecolumns(){
+        //...
+    };
+
+    function updatetablecolumns(){
+        // update the table columns
+        this.update_forminput();
+        var tableheaders = this.get_formdata().filters['column_name'];
+        this_.set_tableheaders(tableheaders);
+        this_.render();
+        // prevent browser default page refresh
+        d3.event.preventDefault();
+        $("#"+modalid+'modal').modal('hide');
+    };
+
+    //add the modal menu object
+    var modalid = id + "columnmenu";
+    var modaltargetid = "#" + targetid_I;
+    //remove the previous modal
+    d3.select("#"+modalid+'modal').remove();
+    var menumodal = new d3_html_modal();
+
+    menumodal.add_ndata([tableheadersd3data]);
+    menumodal.set_id(modalid);
+    menumodal.set_tileid(tileid);
+    menumodal.add_modal2tile(modaltargetid);
+    menumodal.add_header2modal();
+    menumodal.add_closebutton2modalheader();
+    menumodal.add_body2modal();
+    menumodal.add_form2modalbody();
+    menumodal.add_footer2modal();
+    menumodal.add_title2modalheader('Column Options');
+    menumodal.add_submitbutton2modalfooter();
+    menumodal.add_content2modalbodyform = function (){
+        // add content to the modal body form
+        var id = this.id;
+
+        var formgroup_I = {};
+        formgroup_I['inputarguments']=this.get_formdata().convert_filter2forminput();
+
+        var formid = id + "modalbodyform";
+        formgroup_I['node_id']='#'+formid;
+
+        this.add_forminput2form(formgroup_I);
+
+        d3.select('#'+id+"modalfootersubmitbutton").on("click",updatetablecolumns.bind(this))
+    };
+    menumodal.add_content2modalbodyform();
+    // show the modal
+    $("#"+modalid+'modal').modal('show');
 };

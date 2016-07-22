@@ -38,6 +38,7 @@ ddt_table_responsivetable_01.prototype.make_table = function(data_I,parameters_I
     else {this.ddttable.extract_tableheaders();};
     this.ddttable.add_csvandjsonexportbutton2tile();
     this.ddttable.add_optionsbuttongroup2footer();
+    this.ddttable.add_tablecolumnunhidebutton2optionsbuttongroup();
     this.ddttable.add_refreshbutton2optionsbuttongroup();
     this.ddttable.add_tablemenubutton2optionsbuttongroup();
     this.ddttable.render = function () {
@@ -68,8 +69,11 @@ ddt_table_responsivetable_01.prototype.make_table = function(data_I,parameters_I
 		this.set_tablestyle();
 		this.set_cellstyle();
 		//this.set_tablebodystyle();
-		this.add_tablesort(parameters_I.tablesort);
-		//this.add_tablecolumnoptions(); //broken (move to tablemenubutton)
+		// set table header options
+		this.set_tableheaderoptionsgroup();
+		this.add_tablesort2tableheaderoptionsgroup();
+		this.add_tablehidecolumn2tableheaderoptionsgroup();		
+		//this.add_tablecolumnoptionsbutton2optionsbuttongroup(); //works
 		//this.set_tablecellszoom();
 		//this.set_tablerowszoom();
 		this.set_tablecellseditor();
