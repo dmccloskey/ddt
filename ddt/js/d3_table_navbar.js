@@ -51,6 +51,10 @@ d3_table.prototype.add_tablerowlimit2tablenavbar = function(){
     var tileid = this.tileid;
     var ntablerows = this.ntablerows;
 
+    //NOTE: by appending elements to the .enter()
+    //      input-group will be added only once
+    //      however, this means that the placeholder
+    //      attribute will not be updated
 	var tablerowlimitgroup = this.tablenavbarenter
 		.select('#'+id+"tablenavbarlabels"+"rows")
 		.selectAll(".input-group")
@@ -68,13 +72,13 @@ d3_table.prototype.add_tablerowlimit2tablenavbar = function(){
 	tablerowlimitinput.exit().remove();
 	tablerowlimitinput.transition()
         .attr("type","text")
-        .attr("placeholder",function(d){return d;})
+        //.attr("placeholder",function(d){return d;})
         .attr("value",function(d){return d;})
         .attr("class","form-control");
 	var tablerowlimitinputenter = tablerowlimitinput.enter()
 		.append("input")
         .attr("type","text")
-        .attr("placeholder",function(d){return d;})
+        //.attr("placeholder",function(d){return d;})
         .attr("value",function(d){return d;})
         .attr("class","form-control");
 
@@ -103,7 +107,6 @@ d3_table.prototype.add_tablerowlimit2tablenavbar = function(){
 };
 d3_table.prototype.add_tablepagination2tablenavbar = function(npagesmax_I=4){
     /* add the table pagination input
-	TODO: fix bug to remove page buttons when rows changes
     */
 	var this_ = this;
 	var id = this.id;
@@ -175,13 +178,15 @@ d3_table.prototype.add_tablepagination2tablenavbar = function(npagesmax_I=4){
     var pages = get_pages(npagesmax,currentpage,lastpage);
 
     //TODO: move code block to new function?
-    //TODO: fix button updates when changing the # of rows
+    //BUG FIX: fix button updates when changing the # of rows
+    //HACK: required to update buttons since we are appending
+    //      the button toolbar to the .enter() function
     function update_pageButtons(){
         var pagesAndColors = get_pagesAndColors(npagesmax,this_.get_tablecurrentpage(),this_.get_tablelastpage());
         var pageButtons = d3.select("#" + id + 'btn-group-pages').node().children;
 		for (var i=0;i<pageButtons.length;i++){   
 		    if (i>=pagesAndColors.length){
-		        //pageButtons[i].remove();
+		        //pageButtons[i].remove(); //not able to add buttons back in
 		    } else {
                 pageButtons[i].style.color=pagesAndColors[i].color;
                 pageButtons[i].textContent=pagesAndColors[i].value;
@@ -296,7 +301,15 @@ d3_table.prototype.add_tablepagination2tablenavbar = function(npagesmax_I=4){
 	// 1. appends buttons each refresh...
 	// 2. appends buttons to the footer row and not footer cell
 	//tablefooterpaginationtoolbar
-	var tablefooterpaginationtoolbar = this.tablenavbarenter
+
+    //BUG FIX/HACK: remove all nodes and then re-append them on each refresh
+    this.tablenavbar.select('#'+id+"tablenavbarlabels"+"page")
+        .selectAll('.btn-toolbar')
+        .remove();
+
+    // pagination toolbar
+	var tablefooterpaginationtoolbar = this.tablenavbar
+// 	var tablefooterpaginationtoolbar = this.tablenavbarenter
 		.select('#'+id+"tablenavbarlabels"+"page")
 // 	var tablefooterpaginationtoolbar = this.tablenavbarlabels
 		.selectAll('.btn-toolbar')
@@ -346,7 +359,7 @@ d3_table.prototype.add_tablepagination2tablenavbar = function(npagesmax_I=4){
         .attr("title","first page");
 	tablefooterpaginationfirst.on("click",function(d){
 		this_.set_tablecurrentpage(1);
-		update_pageButtons();
+		//update_pageButtons();
 		this_.render();
 	});	
 
@@ -369,7 +382,7 @@ d3_table.prototype.add_tablepagination2tablenavbar = function(npagesmax_I=4){
 	    var currentpage = this_.get_tablecurrentpage();
 		var newcurrentpage = currentpage-1<1 ? 1: currentpage-1; //need to pass 'currentpage'
 		this_.set_tablecurrentpage(newcurrentpage);
-		update_pageButtons();
+// 		update_pageButtons();
 		this_.render();
 	});
 	
@@ -421,7 +434,7 @@ d3_table.prototype.add_tablepagination2tablenavbar = function(npagesmax_I=4){
 	tablefooterpaginationbuttons.on("click",function(d){
 		var newcurrentpage = parseFloat(this.textContent);
 		this_.set_tablecurrentpage(newcurrentpage);
-	    update_pageButtons();
+// 	    update_pageButtons();
 		this_.render();
 	});
 
@@ -457,7 +470,7 @@ d3_table.prototype.add_tablepagination2tablenavbar = function(npagesmax_I=4){
 	    var lastpage = this_.get_tablelastpage();
 		var newcurrentpage = curentpage+1>lastpage ? lastpage: curentpage+1;//need to pass 'currentpage'
 		this_.set_tablecurrentpage(newcurrentpage);
-	    update_pageButtons();
+// 	    update_pageButtons();
 		this_.render();
 	});
 
@@ -479,7 +492,7 @@ d3_table.prototype.add_tablepagination2tablenavbar = function(npagesmax_I=4){
 	tablefooterpaginationlast.on("click",function(d){	    
 	    var lastpage = this_.get_tablelastpage();
 		this_.set_tablecurrentpage(lastpage);
-	    update_pageButtons();
+// 	    update_pageButtons();
 		this_.render();
 	});	
 };

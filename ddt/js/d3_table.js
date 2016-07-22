@@ -70,37 +70,34 @@ d3_table.prototype.add_tableheader = function(){
     var tileid = this.tileid;
     var tableheaders = this.tableheaders;
 
-    //table header
-// //     this.tableheader = this.thead.append("tr").selectAll("th")
-// //         .data(tableheaders);
-
-//     this.tableheader = this.thead.append("tr").selectAll("th")
-//         .data(tableheaders);
-// //     this.tableheader = this.theadenter.append("tr").selectAll("th")
-// //         .data(tableheaders);
+    //BUG FIX:
+    //update deletes all children nodes of the th elements
+  	//removing the nodes on each render ensures that
+  	//update will not be called and all th elements will be
+  	//appended on enter
+    this.thead.selectAll("tr").remove();
         
+	//table header rows
     this.tableheaderrow = this.thead.selectAll("tr")
         .data([tableheaders]);
-
     this.tableheaderrow.exit().remove();
     this.tableheaderrowenter = this.tableheaderrow.enter()
         .append("tr");
 
+	//table headers
     this.tableheader = this.tableheaderrow.selectAll("th")
         .data(tableheaders);
-
     this.tableheader.exit().remove();
     this.tableheaderupdate = this.tableheader.transition();
-    this.tableheaderupdate.select("th")
-        .attr('id',function (d) { return id+'th'+d; })
-        .text(function (d) { return d; });
-
+    // SEE BUG FIX
+//     this.tableheaderupdate
+//         .text(function (d) { return d; });
     this.tableheaderenter = this.tableheader.enter();
     this.tableheaderenter
     	.append("th")
+    	.attr("class","tableheaders")
         .attr('id',function (d) { return id+'th'+d; })
         .text(function (d) { return d; });
-
 };
 d3_table.prototype.set_tablebody = function(){
     // set the table body
@@ -539,20 +536,25 @@ d3_table.prototype.set_tableheaderoptionsgroup = function(){
 	/*set the row to append buttons
 	that manipulate column headers
 	and column data
+
+	TODO: add another tr to avoid update deleting the rows?
 	*/
     var id = this.id;
     var this_ = this;
     var tableheaders = this.tableheaders;
 
-	this.tableheaderoptionsgroup = this.tableheader.data(tableheaders)
-    this.tableheaderoptionsgroupenter = this.tableheaderoptionsgroup.enter()
-		.append("div")
-		.attr("id",id+"tableheaderoptionsgroup")
-        .attr("class","row");
+	//this.tableheaderoptionsgroup = this.tableheader.data(tableheaders)
+	this.tableheaderoptionsgroup = this.tableheader
+		.selectAll('div')
+		.data([0]);
 	this.tableheaderoptionsgroup.transition()
 		.attr("id",id+"tableheaderoptionsgroup")
 		.attr("class","row");
 	this.tableheaderoptionsgroup.exit().remove();
+    this.tableheaderoptionsgroupenter = this.tableheaderoptionsgroup.enter()
+		.append("div")
+		.attr("id",id+"tableheaderoptionsgroup")
+        .attr("class","row");
 }
 d3_table.prototype.add_tablesort2tableheaderoptionsgroup = function(){
     // sort the data
@@ -581,7 +583,8 @@ d3_table.prototype.add_tablesort2tableheaderoptionsgroup = function(){
     tableheadersortascenter.on("click", function (d, i) {
             var order = [];
             var key_dir = {};
-            key_dir[this.parentNode.innerText]='asc';
+            key_dir[this.parentNode.parentNode.textContent]='asc';
+            //key_dir[this.parentNode.innerText]='asc';
             order.push(key_dir);
             this_.data.order_listdatafiltered(order);
             this_.data.order_nestdatafiltered(order);
@@ -608,8 +611,9 @@ d3_table.prototype.add_tablesort2tableheaderoptionsgroup = function(){
         .attr("title","sort descending");
     tableheadersortdescenter.on("click", function (d, i) {
             var order = [];
-            var key_dir = {};
-            key_dir[this.parentNode.innerText]='desc';
+            var key_dir = {};            
+            key_dir[this.parentNode.parentNode.textContent]='desc';
+            //key_dir[this.parentNode.innerText]='desc';
             order.push(key_dir);
 //             this_.data.set_listdatafiltered(order);
             this_.data.order_listdatafiltered(order);
@@ -668,7 +672,8 @@ d3_table.prototype.add_tablehidecolumn2tableheaderoptionsgroup = function(){
 
     function updatetablecolumns(){
         // update the table columns
-        var header = this.parentNode.textContent;
+        var header = this.parentNode.parentNode.textContent;
+        //var header = this.parentNode.textContent;
         var currenttableheaders = this_.get_tableheaders();
         var tableheaders = removeA(currenttableheaders,header);
         this_.set_tableheaders(tableheaders);
