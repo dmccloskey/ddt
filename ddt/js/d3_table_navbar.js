@@ -34,6 +34,13 @@ d3_table.prototype.get_tablecurrentpage = function(){
 	*/
 	return this.tablecurrentpage;
 };
+d3_table.prototype.get_tablelastpage = function(){
+	/*return the last table page
+	*/
+	var lastpage = Math.ceil(this.data.listdatafiltered.length / this.ntablerows);
+	return lastpage;
+};
+//
 d3_table.prototype.add_tablerowlimit2tablenavbar = function(){
     /* add the table row limit input
 
@@ -101,25 +108,26 @@ d3_table.prototype.add_tablepagination2tablenavbar = function(npagesmax_I=4){
 	var this_ = this;
 	var id = this.id;
 	var npagesmax = npagesmax_I;
-    var currentpage = this.tablecurrentpage;
-    var lastpage = Math.ceil(this.data.listdatafiltered.length / this.ntablerows);
+    var currentpage = this.get_tablecurrentpage();
+    var lastpage = this.get_tablelastpage();
     
 	//TODO: move code block to seperate function?
     //dynamically determine the page number buttons to show
     //assumption: startpage = 1
 	function calculate_pagesStartAndEnd(npagesmax,currentpage,lastpage){
-		var pagesstart = currentpage-Math.floor(npagesmax_I/2)<1 ? 1 : currentpage-Math.floor(npagesmax_I/2);
-		var pagesend = pagesstart + npagesmax;
-		//var pagesend = currentpage+Math.ceil(npagesmax_I/2)>lastpage ? lastpage : currentpage+Math.ceil(npagesmax_I/2);
+		var pagesstart = currentpage-Math.floor(npagesmax/2)<1 ? 1 : currentpage-Math.floor(npagesmax/2);
+		var pagesend = pagesstart + npagesmax - 1; // -1 required to ensure pagesend-pagesstart = npagesmax
+		//var pagesend = currentpage+Math.ceil(npagesmax/2)>lastpage ? lastpage : currentpage+Math.ceil(npagesmax/2);
 		return {pagesstart:pagesstart,pagesend:pagesend};
 	};
 	function check_pagesStartAndEnd(npagesmax,currentpage,lastpage,pagesstart,pagesend){
-		if (pagesstart === 1 && pagesend === lastpage && pagesend-pagesstart < npagesmax){
+		if (pagesend-pagesstart < npagesmax-1){
 			npagesmax = pagesend-pagesstart;
 			get_pagesStartAndEnd(npagesmax,currentpage,lastpage);
-		} else if (pagesend > npagesmax){
-			pagesstart = pagesend - npagesmax;
-			check_pagesStartAndEnd(npagesmax,currentpage,lastpage,pagesstart,pagesend);
+		} else if (pagesend >= lastpage){ 
+		    pagesend = lastpage;
+			pagesstart = lastpage - npagesmax + 1;
+			return {pagesstart:pagesstart,pagesend:pagesend};
 // 		} else if (pagesstart === 1){
 // 			pagesend = pagesstart + npagesmax;
 // 			check_pagesStartAndEnd(npagesmax,currentpage,lastpage,pagesstart,pagesend);
@@ -129,7 +137,7 @@ d3_table.prototype.add_tablepagination2tablenavbar = function(npagesmax_I=4){
 	};
     function get_pagesStartAndEnd(npagesmax,currentpage,lastpage){
 		var pages1 = calculate_pagesStartAndEnd(npagesmax,currentpage,lastpage);
-		var pages2 = calculate_pagesStartAndEnd(
+		var pages2 = check_pagesStartAndEnd(
 			npagesmax,currentpage,lastpage,
 			pages1.pagesstart,pages1.pagesend);
 		return pages2;
@@ -137,12 +145,34 @@ d3_table.prototype.add_tablepagination2tablenavbar = function(npagesmax_I=4){
     function get_pages(npagesmax,currentpage,lastpage){
 		var pagesStartAndEnd = get_pagesStartAndEnd(npagesmax,currentpage,lastpage);
 		var pages = [];
-		for (var i=pagesStartAndEnd.pagesstart; i<pagesStartAndEnd.pagesend; i++){
+		for (var i=pagesStartAndEnd.pagesstart; i<=pagesStartAndEnd.pagesend; i++){
 			pages.push(i);
 		};
 		return pages;
     };
+    function get_pagesAndColors(npagesmax,currentpage,lastpage){
+        var pages = get_pages(npagesmax,currentpage,lastpage);
+        var pagesAndColors = [];
+        pages.forEach(function(d){
+                if (d===this_.get_tablecurrentpage()){
+                    pagesAndColors.push({color:"#ff0000",value:d});
+                } else{
+                    pagesAndColors.push({color:null,value:d});
+                };
+            });
+        return pagesAndColors;
+    };
     var pages = get_pages(npagesmax,currentpage,lastpage);
+
+    //TODO: move code block to new function?
+    function update_pageButtons(){
+        var pagesAndColors = get_pagesAndColors(npagesmax,this_.get_tablecurrentpage(),this_.get_tablelastpage());
+        var pageButtons = d3.select("#" + id + 'btn-group-pages').node().children;
+		for (var i=0;i<pageButtons.length;i++){   
+            pageButtons[i].style.color=pagesAndColors[i].color;
+		    pageButtons[i].textContent=pagesAndColors[i].value;
+		};
+    };
 
 	//Split 1
 	// 1. buttons are not duplicated each refresh
@@ -151,7 +181,7 @@ d3_table.prototype.add_tablepagination2tablenavbar = function(npagesmax_I=4){
 	//		to avoid resizing issues each refresh
 	//tablefooterpaginationtoolbar
 // 	var tablefooterpaginationtoolbar = d3
-// 		.select('#'+id+"tablenavbarlabels"+"pagination")
+// 		.select('#'+id+"tablenavbarlabels"+"page")
 // 		.append("div")
 //         .attr("class","btn-toolbar")
 //         .attr("id", id + 'tablefooterpaginationtoolbar')
@@ -252,7 +282,7 @@ d3_table.prototype.add_tablepagination2tablenavbar = function(npagesmax_I=4){
 	// 2. appends buttons to the footer row and not footer cell
 	//tablefooterpaginationtoolbar
 	var tablefooterpaginationtoolbar = this.tablenavbarenter
-		.select('#'+id+"tablenavbarlabels"+"pagination")
+		.select('#'+id+"tablenavbarlabels"+"page")
 // 	var tablefooterpaginationtoolbar = this.tablenavbarlabels
 		.selectAll('.btn-toolbar')
 		.data([0]);
@@ -301,6 +331,7 @@ d3_table.prototype.add_tablepagination2tablenavbar = function(npagesmax_I=4){
         .attr("title","first page");
 	tablefooterpaginationfirst.on("click",function(d){
 		this_.set_tablecurrentpage(1);
+		update_pageButtons();
 		this_.render();
 	});	
 
@@ -320,53 +351,61 @@ d3_table.prototype.add_tablepagination2tablenavbar = function(npagesmax_I=4){
         .attr("data-toggle","tooltip")
         .attr("title","previous page");
 	tablefooterpaginationprevious.on("click",function(d){
-		var newcurrentpage = currentpage-1<1 ? 1: currentpage-1;
+	    var currentpage = this_.get_tablecurrentpage();
+		var newcurrentpage = currentpage-1<1 ? 1: currentpage-1; //need to pass 'currentpage'
 		this_.set_tablecurrentpage(newcurrentpage);
+		update_pageButtons();
 		this_.render();
 	});
 	
 	//tablefooterpagination middle pages
 	var tablefooterpaginationbuttonsgroup = tablefooterpaginationtoolbar
 		.selectAll('btn-group pages')
-		.data([pages]);
+		.data([0]);
 	var tablefooterpaginationbuttonsgroupenter = tablefooterpaginationbuttonsgroup.enter()
 		.append("div")
 		.attr('class','btn-group pages')
+		.attr('id',id + 'btn-group-pages')
 		.attr('role','group');
 	tablefooterpaginationbuttonsgroup.transition()
 		.attr('class','btn-group pages')
+		.attr('class','btn-group pages')
+		.attr('id',id + 'btn-group-pages')
 		.attr('role','group');
 	tablefooterpaginationbuttonsgroup.exit().remove();
 	
 	var tablefooterpaginationbuttons = tablefooterpaginationbuttonsgroup
 		.selectAll("button")
-		.data(pages);
+// 		.data(pages);
+		.data(get_pagesAndColors(npagesmax,this_.get_tablecurrentpage(),this_.get_tablelastpage()));
 	tablefooterpaginationbuttons.exit().remove();
 	tablefooterpaginationbuttons.transition()
 		.attr("class","btn btn-default")
 		.attr("type","button")
 		.style("color",function(d){
-			if (d===currentpage){
-				return "#ff0000";
-			} else {
-				return "#000000";
+		    if (d.color){
+				return d.color;//"#ff0000"
 			};
 		})
-		.text(function(d){ return d;});
+		.text(function(d){
+		    return d.value;
+		    });
 	var tablefooterpaginationbuttonsenter=tablefooterpaginationbuttons.enter()
 		.append("button")
 		.attr("class","btn btn-default")
 		.attr("type","button")
 		.style("color",function(d){
-			if (d===currentpage){
-				return "#ff0000";
-			} else {
-				return "#000000";
+		    if (d.color){
+				return d.color;//"#ff0000"
 			};
 		})
-		.text(function(d){ return d;});
+		.text(function(d){
+		    return d.value;
+		    });
 	tablefooterpaginationbuttons.on("click",function(d){
-		this_.set_tablecurrentpage(d);
+		var newcurrentpage = parseFloat(this.textContent);
+		this_.set_tablecurrentpage(newcurrentpage);
+	    update_pageButtons();
 		this_.render();
 	});
 
@@ -399,8 +438,11 @@ d3_table.prototype.add_tablepagination2tablenavbar = function(npagesmax_I=4){
         .attr("data-toggle","tooltip")
         .attr("title","next page");
 	tablefooterpaginationnext.on("click",function(d){
-		var newcurrentpage = currentpage+1>lastpage ? lastpage: currentpage+1;
+	    var curentpage = this_.get_tablecurrentpage();
+	    var lastpage = this_.get_tablelastpage();
+		var newcurrentpage = curentpage+1>lastpage ? lastpage: curentpage+1;//need to pass 'currentpage'
 		this_.set_tablecurrentpage(newcurrentpage);
+	    update_pageButtons();
 		this_.render();
 	});
 
@@ -419,8 +461,10 @@ d3_table.prototype.add_tablepagination2tablenavbar = function(npagesmax_I=4){
         .style({"cursor":"pointer"})
         .attr("data-toggle","tooltip")
         .attr("title","last page");
-	tablefooterpaginationlast.on("click",function(d){
+	tablefooterpaginationlast.on("click",function(d){	    
+	    var lastpage = this_.get_tablelastpage();
 		this_.set_tablecurrentpage(lastpage);
+	    update_pageButtons();
 		this_.render();
 	});	
 };
@@ -453,7 +497,7 @@ d3_table.prototype.set_tablenavbarelements = function (elements_I){
 	if (typeof(elements_I)!=="undefined"){
 		this.tablenavbarelements = elements_I;
 	} else {
-		this.tablenavbarelements = ["rows","pagination","search"];
+		this.tablenavbarelements = ["rows","page","search"];
 	};
 };
 d3_table.prototype.set_tablenavbar = function(){
