@@ -432,7 +432,12 @@ d3_svg.prototype.show_svgmenumodal = function(){
         var id = this.id;
 
         // TODO:...
-        // form to change svg parameters including height, width, labels, label styling, etc.
+        // form to change svg parameters including the following:
+        // svg height and width
+        // svg keymaps
+        // svg xaxis title, and styling
+        // location of the legend (if any)
+        // other labels, label styling, etc.
 
         d3.select('#'+id+"modalfootersubmitbutton").on("click",updatesvgparameters)
     };
