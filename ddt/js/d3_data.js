@@ -222,11 +222,15 @@ d3_data.prototype.set_metadata = function (metadata_I) {
     INPUT:
     metadata_I = dict of objects
     */
+    //var keys = this.keys;
+    var keys = [];
+    for (var k in this.listdata[0]){keys.push(k)};
+
     if (typeof(metadata_I)!=='undefined'){
         var metadata = metadata_I;
     } else {
         var metadata = {};
-        this.keys.forEach(function(d){metadata[d]={'datatype':'string'};});
+        keys.forEach(function(d){metadata[d]={'datatype':'string'};});
     }
 
     this.metadata = metadata;
@@ -697,7 +701,8 @@ d3_data.prototype.convert_filter2forminput = function(filters_I){
     Number
     String
     Object:
-        Date()
+        Date() (see https://msdn.microsoft.com/en-us/library/ff743760(v=vs.94).aspx
+                for details of converting from string to date and from date to string)
 
     */
 
@@ -864,10 +869,10 @@ d3_data.prototype.set_d3data = function(data_I){
 
     this.set_keys(data_I.datakeys);
     this.set_nestkeys(data_I.datanestkeys);
-    this.set_metadata(data_I.metadata);
     this.set_listdata(data_I.data,data_I.datanestkeys);
 //     this.add_usedkey2listdata(); //ensure a used_ key in each data object
 //     this.add_indexkey2listdata(); //ensure a index_ key in each data object
+    this.set_metadata(data_I.metadata);
     this.reset_filters();
 };
 d3_data.prototype.set_crossFilterData = function(){
@@ -958,4 +963,39 @@ d3_data.prototype.format_keyvalues2namechildren = function(lastchild_I){
     var nestdatafiltered = jQuery.extend(true, [], this.nestdatafiltered);
     nestdatafiltered.forEach(rename);
     this.nestdatafiltered = nestdatafiltered;
+};
+d3_data.prototype.convert_date2Number = function(date_I){
+    /*Convert date 2 number*/
+    var date = new Date(date_I);
+    var num = date.valueOf();
+    return num*1e-6;
+};
+d3_data.prototype.convert_number2Date = function(num_I){
+    /*Convert number 2 date*/
+    var num = new Date(num_I*1e6);
+    var date = num.toDateString();
+    return date;
+};
+d3_data.prototype.get_metadata_datatype = function(key_I){
+    /*Get metadata data type*/
+    var datatype = this.metadata[key_I]['datatype'];
+    return datatype;
+};
+d3_data.prototype.checkAndConvert_DateType = function(key_I,value_I){
+    /*
+    return a float version of a Date if in string format
+    or return a string version of aDate if in number format
+    or return the original value if the key is not a Date type
+    INPUT:
+    key_I = string
+    value_I = string or number
+    */
+    var value = value_I;
+    var datatype = this.get_metadata_datatype(key_I);
+    if (datatype==="Date" && typeof(value_I)===typeof("")){
+        var value = this.convert_date2Number(value_I);
+    } else if (datatype==="Date" && typeof(value_I)===typeof(0.0)){
+        var value = this.convert_number2Date(value_I);
+    };
+    return value;
 };

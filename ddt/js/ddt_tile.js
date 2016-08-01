@@ -143,6 +143,10 @@ ddt_tile_svg.prototype.get_svg = function(svgtype_I){
         return new ddt_svg_sankeydiagram2d_01();
     } else if (svgtype_I=='forcedirectedgraph2d_01'){
         return new ddt_svg_forcedirectedgraph2d_01();
+    } else if (svgtype_I=='horizontalBoxAndWhiskersPlot2d_01'){
+        return new ddt_svg_horizontalBoxAndWhiskersPlot2d_01();
+    } else if (svgtype_I=='horizontalBoxAndWhiskersPlot2d_02'){
+        return new ddt_svg_horizontalBoxAndWhiskersPlot2d_02();
     } else {
         return null;
     };

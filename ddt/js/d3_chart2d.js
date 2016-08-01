@@ -167,7 +167,52 @@ d3_chart2d.prototype.set_x1domain = function () {
     // set x1-domain of the plot
     var x_data = this.data1keymap.xdata;
     var _this = this;
-    this.x1scale.domain(d3.extent(_this.data1.listdatafiltered, function (d) { return d[x_data]; })).nice();
+    var data1 = [];
+
+    // required to prevent error bars from being cutoff
+    if (this.data1keymap.xdatamin && this.data1keymap.xdatamax){
+        _this.data1.listdatafiltered.forEach(function(d){
+            var xdatamin = _this.data1.checkAndConvert_DateType(
+                _this.data1keymap.xdatamin,
+                d[_this.data1keymap.xdatamin]);
+            var xdatamax = _this.data1.checkAndConvert_DateType(
+                _this.data1keymap.xdatamax,
+                d[_this.data1keymap.xdatamax]);
+            data1.push(xdatamin);
+            data1.push(xdatamax);
+        })
+    } else if (this.data1keymap.xdatalb && this.data1keymap.xdataub){
+        _this.data1.listdatafiltered.forEach(function(d){
+            var xdatalb = _this.data1.checkAndConvert_DateType(
+                _this.data1keymap.xdatalb,
+                d[_this.data1keymap.xdatalb]);
+            var xdataub = _this.data1.checkAndConvert_DateType(
+                _this.data1keymap.xdataub,
+                d[_this.data1keymap.xdataub]);
+            data1.push(xdatalb);
+            data1.push(xdataub);
+        })
+    } else{
+        _this.data1.listdatafiltered.forEach(function(d){
+            var xdata = _this.data1.checkAndConvert_DateType(
+                _this.data1keymap.xdata,
+                d[_this.data1keymap.xdata]);
+            data1.push(xdata);
+        })
+    };
+    //this.y1scale.domain(d3.extent(_this.data1.listdatafiltered, function (d) { return d[y_data]; })).nice();
+    // check for unique values
+    var unique = data1.filter( onlyUnique );
+    // add in 0.0 if there is only 1 unique value to solve issue#1
+    // Problem: This is caused by an auto-adjustment of the y-axis from min_value(data array) to max_value(data array). When only one or a constant y-value is supplied, the min/max of the y-axis are set to the same value.
+    // Correction: ensure a minimum y-axis value of 0.0.
+    //
+    if (unique.length === 1){
+        data1.push(0.0);
+        };
+    //define the y1 scale
+    this.x1scale.domain(d3.extent(data1)).nice();
+//     this.x1scale.domain(d3.extent(_this.data1.listdatafiltered, function (d) { return d[x_data]; })).nice();
 };
 d3_chart2d.prototype.set_y1domain = function () {
     // set y1-domain of the plot
@@ -301,8 +346,19 @@ d3_chart2d.prototype.copy_y1scalestoy2scales = function () {
 };
 d3_chart2d.prototype.set_x1axis = function () {
     //x1 axis properties
+    var this_ = this;
+    var datatype = this.data1.get_metadata_datatype(this.data1keymap.xdata);
+    if (datatype==="Date"){
+        var format = function(d){
+            return this_.data1.convert_number2Date(d,this_.data1keymap.xdata);
+        };
+    } else {
+        var format = null;
+    }
+    //var format = 
     this._x1axis = d3.svg.axis().scale(this.x1scale)
-            .orient("bottom");
+            .orient("bottom")
+            .tickFormat(format);
 };
 d3_chart2d.prototype.set_x1x2axis = function () {
     //x1 and x2 axis properties using data1

@@ -1,5 +1,4 @@
 "use strict";
-// TODO flip x and y, and rotate to horizontal
 d3_chart2d.prototype.set_y1y2domain_horizontalbarschart = function () {
     // set y1-domain and y1-domain for a barchart
     var series_label = this.data1keymap.serieslabel;
