@@ -49,6 +49,12 @@ d3_graph2d.prototype.add_indentedtreelayoutdata1node = function(source_I){
     function color(d) {
         return d._children ? "#3182bd" : d.children ? "#c6dbef" : "#fd8d3c";
     }
+    //TODO:
+    //1. allow last child to have data
+    //2. use tooltiplabel/tooltipdata
+    function tooltip(d) {
+        return d._children ? "" : d.children ? "" : "#fd8d3c";
+    }
 
     this.treelayoutnode = this.svgg.selectAll("g.node")
         .data(nodes, function(d) { return d.id || (d.id = ++i); });

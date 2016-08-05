@@ -137,7 +137,7 @@ ddt_svg_horizontalBoxAndWhiskersPlot2d_01.prototype.make_svg = function(data_I,p
         this.add_y1axislabel(parameters_I.svgy1axislabel);
         // set style
         this.set_x1andy1axesstyle_horizontalbarschart();
-        this.set_x1andy1axestickstyle();
+        this.set_x1andy1axestickstyle_horizontalbarschart();
         this.add_x1axislabel(parameters_I.svgx1axislabel);
         this.set_x1andy1axeslabelstyle();
         // zoom and pan

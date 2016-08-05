@@ -116,10 +116,10 @@ d3_graph2d.prototype.set_treelayouttree = function(width_I,height_I,nodeWidth_I=
 //     if (nodeHeight_I){var nodeHeight = nodeHeight_I;}
 //     else {var nodeHeight = height;}
 
-    if (nodeWidth_I && nodeHeight_I){
+    if (typeof(nodeWidth_I)==typeof(0.0) && typeof(nodeHeight_I)==typeof(0.0)){
         this.treelayouttree = d3.layout.tree()
             .size([width,height])
-            .nodeSize([nodeWidth,nodeHeight]);
+            .nodeSize([nodeWidth_I,nodeHeight_I]);
     } else {
         this.treelayouttree = d3.layout.tree()
             .size([width,height]);        
