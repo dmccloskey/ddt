@@ -30,6 +30,10 @@ ddt_tile.prototype.update_parameters = function(){
 	var rowid = rowNode.id;
 	this.parameters.colid = colid;
 	this.parameters.rowid = rowid;	
+	// update the row/col/tile classes
+    this.parameters.rowclass = this.tile.rowclass;
+    this.parameters.colclass = this.tile.colclass;
+    this.parameters.tileclass = this.tile.tileclass;
     
 };
 ddt_tile.prototype.set_tile = function(){

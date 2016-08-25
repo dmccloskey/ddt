@@ -29,7 +29,19 @@ ddt_html_editor_01.prototype.make_html = function(data_I,parameters_I){
         this.add_textarea(
         	{"node":this.htmlform,
         	"inputarguments":this.get_htmldata1().listdatafiltered}
-        	);
+        	);		
+
+		var id = this.id;
+		var this_ = this;
+		//TODO: add to d3_html?
+		//update data upon textarea change
+		this.htmltextareagroup.on("change",function(d){
+			var text = document.getElementById(id + 'textarea' + d.inputlabel).value;
+            var inputvalueupdate = {};
+            inputvalueupdate["inputvalue"]=text;
+            inputvalueupdate["inputtext"]=text; //required to persist new textarea value
+            this_.get_htmldata1().update_listdata(inputvalueupdate,d.index_);
+		});
         //add css
 		this.set_htmlstyle();
 		//this.convert_textarea2codeeditor();

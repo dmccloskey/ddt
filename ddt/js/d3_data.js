@@ -451,7 +451,7 @@ d3_data.prototype.update_listdata = function(key_values_I,index__I){
 	};
 
     for (var i = 0; i < this.listdata.length; i++) {
-        if (index_){
+        if (index_!==null){//need to specify !==null or 0 integers will be considered false
             if (this.listdata[i]["used_"] 
                 && this.listdata[i]["index_"]===index_){ //apply update to filtered data
                 for (var key in key_values_I){

@@ -100,7 +100,7 @@ ddt_html_iframe_01.prototype.make_templateData = function(){
     */
 
     // data object
-	var data = {};;
+	var data = {};
 	//metadata, keys, and nestkey
 	var metadata = {};
 	var datakeys = [];
