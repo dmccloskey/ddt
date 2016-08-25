@@ -13,6 +13,25 @@ ddt_tile.prototype.set_parameters = function(parameters_I){
         tileclass:"panel panel-default",rowclass:"row",colclass:"col-sm-12"};};
     
 };
+ddt_tile.prototype.get_parameters = function(){
+    // get tile parameters
+    return this.parameters;
+    
+};
+ddt_tile.prototype.update_parameters = function(){
+    // update input tile parameters
+    
+	var tileid = this.tile.tileid;
+	var tiletype = this.tile.tiletype;
+	// update the row/col ids
+	var colNode = this.tile.get_colnode(tileid);
+	var rowNode = this.tile.get_rownode(tileid);
+	var colid = colNode.id;
+	var rowid = rowNode.id;
+	this.parameters.colid = colid;
+	this.parameters.rowid = rowid;	
+    
+};
 ddt_tile.prototype.set_tile = function(){
     // set input tile parameters
     var tileid = this.parameters.tileid

@@ -33,3 +33,15 @@ ddt_html.prototype.set_ndatakeymap = function(datakeymap_I){
     // add data to ddthtml
     this.ddthtml.set_ndatakeymap(datakeymap_I);
 };
+ddt_html.prototype.get_parameters = function(){
+    // return ddthtml parameters
+	return this.parameters;
+};
+ddt_html.prototype.update_parameters = function(){
+    // return ddthtml parameters
+	
+	// update the 
+    this.parameters.htmlclass = this.ddthtml.htmlclass;
+    this.parameters.htmlheaders = this.ddthtml.htmlheaders;
+	// others?...
+};

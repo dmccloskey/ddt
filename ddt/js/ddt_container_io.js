@@ -49,6 +49,7 @@ ddt_container.prototype.get_filtermenu_string = function(){
 };
 ddt_container.prototype.get_alldata_string = function(){
     //return all container data in string format
+    this.update_tileParametersFromNodes();
     var parameters_str = this.get_parameters_string();
     var data_str = this.get_data_string(true);
     var tile2datamap_str = this.get_tile2datamap_string();
@@ -154,6 +155,7 @@ ddt_container.prototype.get_filtermenu = function(){
 };
 ddt_container.prototype.get_alldata = function(){
     //return all container data in string format
+    this.update_tileParametersFromNodes();
     var parameters_json = this.get_parameters();
     var data_json = this.get_data(true);
     var tile2datamap_json = this.get_tile2datamap();
@@ -316,4 +318,38 @@ ddt_container.prototype.add_updatelistdatabutton2container = function(){
         .attr("class","glyphicon glyphicon-upload pull-left ui-btn ui-btn-inline");
 
     this.updatelistdatabuttontrigger.on("click", showupdatelistdatamodal);
+};
+ddt_container.prototype.update_tileParametersFromNodes = function(start_index_I=0){
+    /* 
+    Udate the tile parameters based on node attributes
+    tiles will be in the same order as the parameters
+    INPUT:
+    start_index_I = int, starting parameter index
+
+    TODO:
+    1. update each ddttable/ddtsvg parameters
+    2. update each tile with ddttable/ddtsvg parameters
+
+    */ 
+    var this_ = this;
+    for (var i=start_index_I;i<this.parameters.length;i++){
+        // common methods to tiletypes = 'svg','table','html'
+        this_.tiles[i].update_parameters();
+        this_.parameters[i] = this_.tiles[i].get_parameters();
+        var tileid = this_.parameters[i].tileid;
+        var tiletype = this_.parameters[i].tiletype;	
+        // update tiletype-specific parameters
+        if (tiletype==='svg'){
+            this_.tiles[i].ddtsvg.update_parameters();
+            this_.parameters[i] = this_.tiles[i].ddtsvg.get_parameters();
+        } else if (tiletype==='table'){
+            this_.tiles[i].ddttable.update_parameters();
+            this_.parameters[i] = this_.tiles[i].ddttable.get_parameters();
+        } else if (tiletype==='html'){
+            this_.tiles[i].ddthtml.update_parameters();
+            this_.parameters[i] = this_.tiles[i].ddthtml.get_parameters();
+        
+        };
+    };
+
 };

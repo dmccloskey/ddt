@@ -117,7 +117,7 @@ ddt_container.prototype.add_containertiles = function(start_index_I=0){
     */ 
     // 
     for (var i=start_index_I;i<this.parameters.length;i++){
-        var tiletype = this.parameters[i].tiletype
+        var tiletype = this.parameters[i].tiletype;
         var tile = this.get_tile(tiletype);
         this.tiles.push(tile);
     };

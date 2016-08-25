@@ -6,7 +6,7 @@ function ddt_table(){
     this.ddttable = null;
 };
 ddt_table.prototype.set_parameters = function(parameters_I){
-    // set chart2d parameters
+    // set ddttable parameters
     this.parameters = parameters_I;
 };
 ddt_table.prototype.set_ddttable = function(){
@@ -22,6 +22,20 @@ ddt_table.prototype.add_data = function(data_I){
     this.ddttable.add_data(data_I[0]);
 };
 ddt_table.prototype.set_datakeymaps = function(datakeymaps_I){
-    // add data to ddtsvg
+    // add datakeymap to ddttable
     this.ddttable.set_datakeymaps(datakeymaps_I);
+};
+ddt_table.prototype.get_parameters = function(){
+    // return ddttable parameters
+	return this.parameters;
+};
+ddt_table.prototype.update_parameters = function(){
+    // return ddttable parameters
+    	
+	// update the table headers, row #s, and current page
+	this.parameters.tableheaders = this.ddttable.tableheaders;
+	this.parameters.ntablerows = this.ddttable.ntablerows;
+	this.parameters.tablecurrentpage = this.ddttable.tablecurrentpage;
+	this.parameters.tablesearch = this.ddttable.tablesearch;
+    this.parameters.tableclass = this.ddttable.tableclass;
 };

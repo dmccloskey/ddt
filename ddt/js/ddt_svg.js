@@ -29,3 +29,16 @@ ddt_svg.prototype.filter_data1and2stringdata = function(){
     // add data to ddtsvg
     this.ddtsvg.filter_data1and2stringdata();
 };
+ddt_svg.prototype.get_parameters = function(){
+    // return ddtsvg parameters
+	return this.parameters;
+};
+ddt_svg.prototype.update_parameters = function(){
+    // return ddtsvg parameters
+	
+	// update the 
+	this.parameters.width = this.ddtsvg.width;
+	this.parameters.height = this.ddtsvg.height;
+	this.parameters.margin = this.ddtsvg.margin;
+	// others?...
+};
