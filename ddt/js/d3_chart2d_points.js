@@ -74,8 +74,12 @@ d3_chart2d.prototype.add_pointsdata1tooltipandfill = function () {
            'border-radius': '2px'
         });
     //this.set_d3tooltipstyle(); //not functional
-    this.svgg.call(this.tooltip);
-    var tip = this.tooltip;
+    if (this.svgg.length!==0){
+        this.svgg.call(this.tooltip);
+        var tip = this.tooltip;
+    } else {
+        var tip = null;
+    }
 
     //show tooltip
     this.pointsdata1enter
@@ -83,11 +87,11 @@ d3_chart2d.prototype.add_pointsdata1tooltipandfill = function () {
             //Change fill color
             d3.select(this).style('fill', 'red');
             //Show the tooltip
-            tip.show(d);
+            if (tip!==null){tip.show(d);};
             })  
         .on("mouseout", function (d) {
             d3.select(this).style("fill", colorscale(d[series_label]));
-            tip.hide(d);
+            if (tip!==null){tip.hide(d)};
         });
 };
 d3_chart2d.prototype.add_pointsdata1seriesfilter = function () {

@@ -329,17 +329,17 @@ ddt_container.prototype.add_datafiltermenuupdatebutton = function (tileid_I,upda
 };
 ddt_container.prototype.add_datafiltermenubuttons = function(datafiltermenu_I){
     // add filtermenu buttons for submit, reset, and update
-    if (typeof datafiltermenu_I !== "undefined"){
-        var datafiltermenu = datafiltermenu_I}
+    if (typeof(datafiltermenu_I)!== "undefined"){
+        this.filtermenu = datafiltermenu_I}
     else {
-        var datafiltermenu = [{"filtermenuid":"filtermenu1","filtermenuhtmlid":"filtermenuform1",
+        this.filtermenu = [{"filtermenuid":"filtermenu1","filtermenuhtmlid":"filtermenuform1",
         "filtermenusubmitbuttonid":"submit1","filtermenuresetbuttonid":"reset1",
         "filtermenuupdatebuttonid":"update1"}]};
 
-    for (var i=0;i<datafiltermenu.length;i++){
-        this.add_datafiltermenusubmitbutton(datafiltermenu[i].filtermenuid,datafiltermenu[i].filtermenuhtmlid,datafiltermenu[i].filtermenusubmitbuttonid);
-        this.add_datafiltermenuresetbutton(datafiltermenu[i].filtermenuid,datafiltermenu[i].filtermenuresetbuttonid);
-        this.add_datafiltermenuupdatebutton(datafiltermenu[i].filtermenuid,datafiltermenu[i].filtermenuupdatebuttonid);
+    for (var i=0;i<this.filtermenu.length;i++){
+        this.add_datafiltermenusubmitbutton(this.filtermenu[i].filtermenuid,this.filtermenu[i].filtermenuhtmlid,this.filtermenu[i].filtermenusubmitbuttonid);
+        this.add_datafiltermenuresetbutton(this.filtermenu[i].filtermenuid,this.filtermenu[i].filtermenuresetbuttonid);
+        this.add_datafiltermenuupdatebutton(this.filtermenu[i].filtermenuid,this.filtermenu[i].filtermenuupdatebuttonid);
     };
 };
 ddt_container.prototype.__main__ = function(parameters,data,tile2datamap,filtermenu){

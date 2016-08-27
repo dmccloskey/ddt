@@ -1,6 +1,6 @@
 ddt_container.prototype.get_parameters_string = function(){
     //return the parameters object in string format
-    if (typeof this.parameters !== "undefined"){
+    if (typeof(this.parameters)!== "undefined"){
         var parameters_O = JSON.stringify(this.parameters);
     } else {
         var parameters_O = null;
@@ -11,7 +11,7 @@ ddt_container.prototype.get_data_string = function(filtereddataonly_I){
     //return the data object in string format
     //need to update to return the only keys, nestkeys, and data
 
-    if (typeof filtereddataonly_I === "undefined"){
+    if (typeof(filtereddataonly_I) === "undefined"){
         var filtereddataonly = false;
     } else {
         var filtereddataonly = filtereddataonly_I;
@@ -31,7 +31,7 @@ ddt_container.prototype.get_data_string = function(filtereddataonly_I){
 };
 ddt_container.prototype.get_tile2datamap_string = function(){
     //return the tile2datamap object in string format
-    if (typeof this.tile2datamap !== "undefined"){
+    if (typeof(this.tile2datamap)!== "undefined"){
         var tile2datamap_O = JSON.stringify(this.tile2datamap);
     } else {
         var tile2datamap_O = null;
@@ -40,7 +40,7 @@ ddt_container.prototype.get_tile2datamap_string = function(){
 };
 ddt_container.prototype.get_filtermenu_string = function(){
     //return the filtermenu object in string format
-    if (typeof this.filtermenu !== "undefined"){
+    if (typeof(this.filtermenu)!== "undefined"){
         var filtermenu_O = JSON.stringify(this.filtermenu);
     } else {
         var filtermenu_O = null;
@@ -87,7 +87,7 @@ ddt_container.prototype.get_parameters = function(include_header_I){
         var include_header = false;
     };
     //get the parameters
-    if (typeof this.parameters !== "undefined"){
+    if (typeof(this.parameters)!== "undefined"){
         var parameters_O = this.parameters;
     } else {
         var parameters_O = null;
@@ -104,14 +104,14 @@ ddt_container.prototype.get_parameters = function(include_header_I){
 ddt_container.prototype.get_data = function(filtereddataonly_I){
     //return the data object in string format
 
-    if (typeof filtereddataonly_I === "undefined"){
+    if (typeof(filtereddataonly_I)=== "undefined"){
         var filtereddataonly = false;
     } else {
         var filtereddataonly = filtereddataonly_I;
     };
     
     var data_O = [];
-    if (typeof this.data !== "undefined"){
+    if (typeof(this.data)!== "undefined"){
         this.data.forEach(function(d){
             data_O.push(d.get_datajson(filtereddataonly));
         });
@@ -133,20 +133,28 @@ ddt_container.prototype.get_tile2datamap = function(include_header_I){
         var include_header = false;
     };
     //get the tile2datamap
-    if (typeof this.tile2datamap !== "undefined"){
-        var tile2datamap_O = this.tile2datamap;
+    if (typeof(this.tile2datamap)!== "undefined"){
+        var tile2datamap = this.tile2datamap;
     } else {
-        var tile2datamap_O = null;
+        var tile2datamap = null;
     };
     //remove the header parameters (if specified)
     if(tile2datamap_O && !include_header){
-       delete tile2datamap_O["containerheader"];
+        var tile2datamap_O = {};
+        for (var k in tile2datamap){
+            if (k!=="containerheader"){
+                tile2datamap_O[k] = tile2datamap[k];
+            };
+        };
+       //delete tile2datamap_O["containerheader"];
+    } else {
+        var tile2datamap_O = tile2datamap;
     };
     return tile2datamap_O
 };
 ddt_container.prototype.get_filtermenu = function(){
     //return the filtermenu object in string format
-    if (typeof this.filtermenu !== "undefined"){
+    if (typeof(this.filtermenu)!== "undefined"){
         var filtermenu_O = this.filtermenu;
     } else {
         var filtermenu_O = null;
