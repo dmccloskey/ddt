@@ -6,8 +6,6 @@
 // labeled force layout: http://bl.ocks.org/mbostock/950642
 // sticky for layout: http://bl.ocks.org/mbostock/3750558
 // add nodes: http://bl.ocks.org/mbostock/929623
-// metabolites, proteins, genes, reactions as nodes
-// metabolite to reaction, reaction to protein to genes as links
 function d3_graph2d() {
     // generic graph
     d3_svg_data.call(this);

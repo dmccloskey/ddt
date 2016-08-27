@@ -343,19 +343,19 @@ ddt_container.prototype.update_tileParametersFromNodes = function(start_index_I=
     for (var i=start_index_I;i<this.parameters.length;i++){
         // common methods to tiletypes = 'svg','table','html'
         this_.tiles[i].update_parameters();
-        this_.parameters[i] = this_.tiles[i].get_parameters();
+//         this_.parameters[i] = this_.tiles[i].get_parameters();
         var tileid = this_.parameters[i].tileid;
         var tiletype = this_.parameters[i].tiletype;	
         // update tiletype-specific parameters
         if (tiletype==='svg'){
             this_.tiles[i].ddtsvg.update_parameters();
-            this_.parameters[i] = this_.tiles[i].ddtsvg.get_parameters();
+//             this_.parameters[i] = this_.tiles[i].ddtsvg.get_parameters();
         } else if (tiletype==='table'){
             this_.tiles[i].ddttable.update_parameters();
-            this_.parameters[i] = this_.tiles[i].ddttable.get_parameters();
+//             this_.parameters[i] = this_.tiles[i].ddttable.get_parameters();
         } else if (tiletype==='html'){
             this_.tiles[i].ddthtml.update_parameters();
-            this_.parameters[i] = this_.tiles[i].ddthtml.get_parameters();
+//             this_.parameters[i] = this_.tiles[i].ddthtml.get_parameters();
         
         };
     };

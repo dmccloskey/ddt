@@ -6,7 +6,7 @@ function ddt_svg(){
     this.ddtsvg = null;
 };
 ddt_svg.prototype.set_parameters = function(parameters_I){
-    // set chart2d parameters
+    // set parameters
     this.parameters = parameters_I;
 };
 ddt_svg.prototype.set_ddtsvg = function(){
@@ -22,7 +22,7 @@ ddt_svg.prototype.add_data = function(data_I){
     this.ddtsvg.add_data(data_I);
 };
 ddt_svg.prototype.set_datakeymaps = function(set_datakeymaps_I){
-    // add data to ddtsvg
+    // add datakeymaps to ddtsvg
     this.ddtsvg.set_datakeymaps(set_datakeymaps_I);
 };
 ddt_svg.prototype.filter_data1and2stringdata = function(){
@@ -34,11 +34,12 @@ ddt_svg.prototype.get_parameters = function(){
 	return this.parameters;
 };
 ddt_svg.prototype.update_parameters = function(){
-    // return ddtsvg parameters
-	
-	// update the 
+    // update parameters	
+	 
 	this.parameters.width = this.ddtsvg.width;
 	this.parameters.height = this.ddtsvg.height;
 	this.parameters.margin = this.ddtsvg.margin;
+	this.parameters.duration = this.ddtsvg.duration;
+	this.parameters.radius = this.ddtsvg.radius;
 	// others?...
 };
