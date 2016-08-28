@@ -15,6 +15,7 @@ function d3_tile() {
     this.colclass = '';
     this.tileclass = '';
     this.tile = null;
+    this.headertitle = '';
     this.width = 1;
     this.height = 1;
 };
@@ -235,7 +236,10 @@ d3_tile.prototype.add_submitbutton2footer = function (button_idtext_I) {
         .text(button_idtext.text);
 };
 d3_tile.prototype.remove_tile = function(){
-    // remove tile from the container
+    /*remove tile from the container
+
+    TODO: remove associated parameters and tile2data
+    */
     var tileid = this.tileid;
     d3.selectAll('#'+tileid).remove();
     this.tile = null;
@@ -256,7 +260,7 @@ d3_tile.prototype.add_datalist2body = function (datalist_valuetext_I) {
             .text(datalist_valuetext_I[i].text);
     };  
 };
-d3_tile.prototype.add_header2tile = function (title_I){
+d3_tile.prototype.add_header2tile = function (){
     //add title to tileid
 
     var tileid = this.tileid;
@@ -265,13 +269,26 @@ d3_tile.prototype.add_header2tile = function (title_I){
         .attr("class","panel-heading")
         .attr("id",tileid+"panel-heading");
 };
-d3_tile.prototype.add_title2header = function (title_I){
+d3_tile.prototype.set_headertitle = function (headertitle_I){
+    /*
+    set the tileheader
+    */
+    this.headertitle = headertitle_I;
+}
+d3_tile.prototype.get_headertitle = function (){
+    /*
+    return the headertitle
+    */
+    return this.headertitle;
+}
+d3_tile.prototype.add_title2header = function (){
     //add title to tileid
 
     var tileid = this.tileid;
+    var headertitle = this.headertitle;
 
     var title = this.tileheader.append("h3")
-        .text(title_I);
+        .text(headertitle);
 };
 d3_tile.prototype.add_removebutton2header = function(){
     // add button to remove tile from the container
@@ -280,9 +297,7 @@ d3_tile.prototype.add_removebutton2header = function(){
     var this_ = this;
 
     function removetile(){
-        d3.selectAll('#'+tileid).remove();
-        this_.tile = null;
-        //this_ = null;
+        this_.remove_tile()
     };
     
     //Split #1

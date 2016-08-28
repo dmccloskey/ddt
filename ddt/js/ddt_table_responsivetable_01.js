@@ -41,6 +41,9 @@ ddt_table_responsivetable_01.prototype.make_table = function(data_I,parameters_I
     this.ddttable.add_tablecolumnunhidebutton2optionsbuttongroup();
     this.ddttable.add_refreshbutton2optionsbuttongroup();
     this.ddttable.add_tablemenubutton2optionsbuttongroup();
+    //set row limits and current page
+	this.ddttable.set_ntablerows(parameters_I.ntablerows);
+	this.ddttable.set_tablecurrentpage(parameters_I.tablecurrentpage);
     this.ddttable.render = function () {
     	// permanent filter on the data
     	if (parameters_I.tablefilters){

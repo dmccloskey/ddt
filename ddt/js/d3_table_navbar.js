@@ -9,7 +9,7 @@ d3_table.prototype.set_ntablerows = function(ntablerows_I){
 	if (typeof(ntablerows_I)!=="undefined"){
 		var ntablerows = ntablerows_I;
 	} else {
-		var ntablerows = 100;
+		var ntablerows = 25;
 	};
 	this.ntablerows = ntablerows>this.data.listdatafiltered.length ? this.data.listdatafiltered.length : ntablerows;
 };

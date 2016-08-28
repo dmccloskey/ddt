@@ -36,10 +36,14 @@ ddt_svg.prototype.get_parameters = function(){
 ddt_svg.prototype.update_parameters = function(){
     // update parameters	
 	 
-	this.parameters.width = this.ddtsvg.width;
-	this.parameters.height = this.ddtsvg.height;
-	this.parameters.margin = this.ddtsvg.margin;
-	this.parameters.duration = this.ddtsvg.duration;
-	this.parameters.radius = this.ddtsvg.radius;
+	this.parameters.svgwidth = this.ddtsvg.width;
+	this.parameters.svgheight = this.ddtsvg.height;
+	this.parameters.svgmargin = this.ddtsvg.margin;
+	this.parameters.svgduration = this.ddtsvg.duration;
+	this.parameters.svgradius = this.ddtsvg.radius;
+    this.parameters.svgcolorscale = this.ddtsvg.svgcolorscale;
+    this.parameters.svgcolorcategory = this.ddtsvg.colorcategory;
+    this.parameters.svgcolordomain = this.ddtsvg.colordomain;
 	// others?...
+// 	this.parameters.svgtype = ;
 };

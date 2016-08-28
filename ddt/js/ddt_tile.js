@@ -34,6 +34,8 @@ ddt_tile.prototype.update_parameters = function(){
     this.parameters.rowclass = this.tile.rowclass;
     this.parameters.colclass = this.tile.colclass;
     this.parameters.tileclass = this.tile.tileclass;
+    // TODO: rename to avoid confusion...
+    this.parameters.tileheader = this.tile.headertitle;
     
 };
 ddt_tile.prototype.set_tile = function(){
@@ -76,7 +78,7 @@ ddt_tile_svg.prototype = Object.create(ddt_tile.prototype);
 ddt_tile_svg.prototype.constructor = ddt_tile_svg;
 ddt_tile_svg.prototype.make_tile = function(data_I,parameters_I){
     // make svg tile
-    var header_I = parameters_I.tileheader;
+    var header_I = parameters_I.tileheader; //rename to avoid confusion
     var svgtype_I = parameters_I.svgtype;
 
     this.set_parameters(parameters_I);
@@ -89,7 +91,8 @@ ddt_tile_svg.prototype.make_tile = function(data_I,parameters_I){
     this.tile.add_tilemenubutton2header();
     this.tile.add_removebutton2header();
     this.tile.add_duplicatebutton2header();
-    this.tile.add_title2header(header_I);
+    this.tile.set_headertitle(header_I);
+    this.tile.add_title2header();
     this.tile.add_body2tile();
     this.tile.add_footer2tile();
     
@@ -199,7 +202,8 @@ ddt_tile_table.prototype.make_tile = function(data_I,parameters_I){
     this.tile.add_navigationmenu2header();
     this.tile.add_resize2header();
     this.tile.add_removebutton2header();
-    this.tile.add_title2header(header_I);
+    this.tile.set_headertitle(header_I);
+    this.tile.add_title2header();
     this.tile.add_body2tile();
     this.tile.add_footer2tile();
     
@@ -247,7 +251,7 @@ ddt_tile_html.prototype = Object.create(ddt_tile.prototype);
 ddt_tile_html.prototype.constructor = ddt_tile_html;
 ddt_tile_html.prototype.make_tile = function(data_I,parameters_I){
     // make html tile
-    var header_I = parameters_I.tileheader;
+    var header_I = parameters_I.tileheader; //todo rename to avoid confusion
     var htmltype_I = parameters_I.htmltype;
 
     this.set_parameters(parameters_I);
@@ -258,7 +262,8 @@ ddt_tile_html.prototype.make_tile = function(data_I,parameters_I){
     this.tile.add_navigationmenu2header();
     this.tile.add_resize2header();
     this.tile.add_removebutton2header();
-    this.tile.add_title2header(header_I);
+    this.tile.set_headertitle(header_I);
+    this.tile.add_title2header();
     this.tile.add_body2tile();
     this.tile.add_footer2tile();
     if (parameters_I.formsubmitbuttonidtext){

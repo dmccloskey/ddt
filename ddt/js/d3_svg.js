@@ -13,6 +13,11 @@ function d3_svg() {
     this.render = null; // function defining the calls to make the svg element
     this.duration = 1;
     this.radius = 1;
+    this.cellsize = 1;
+    this.svgcolorscale = null;
+    this.colorcategory = null;
+    this.colordomain = null;
+    
 };
 d3_svg.prototype.set_tileid = function (tileid_I) {
     // set svg tile id

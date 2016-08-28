@@ -10,6 +10,12 @@ function ddt_container(){
     this.containerid = 'container'
     this.container=null;
     this.containerheader=null;
+    //TODO:
+    //[[this.parameters, this.tile2datamap, this.data],...]
+    // where only .keys,.nestkey,.filters,.metadata of this.data
+    // is recorded
+    this.containerstate = []; //record of container states
+
 };
 ddt_container.prototype.set_parameters = function(parameters_I){
     // set parameters to container
@@ -134,7 +140,12 @@ ddt_container.prototype.append_containertiles = function(start_index_I=0){
         if (typeof(tiledataindex)!=="undefined"){
             var tiledata = [];
             tiledataindex.forEach(function(d){tiledata.push(data[d]);});
-            this.tiles[cnt].make_tile(tiledata,this.parameters[cnt]);
+            try {
+                this.tiles[cnt].make_tile(tiledata,this.parameters[cnt]);
+            }
+            catch(err) {
+                console.log(err);
+            };            
         };
     };
 };

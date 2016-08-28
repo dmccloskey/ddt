@@ -341,22 +341,38 @@ ddt_container.prototype.update_tileParametersFromNodes = function(start_index_I=
     */ 
     var this_ = this;
     for (var i=start_index_I;i<this.parameters.length;i++){
-        // common methods to tiletypes = 'svg','table','html'
-        this_.tiles[i].update_parameters();
-//         this_.parameters[i] = this_.tiles[i].get_parameters();
         var tileid = this_.parameters[i].tileid;
-        var tiletype = this_.parameters[i].tiletype;	
-        // update tiletype-specific parameters
-        if (tiletype==='svg'){
-            this_.tiles[i].ddtsvg.update_parameters();
-//             this_.parameters[i] = this_.tiles[i].ddtsvg.get_parameters();
-        } else if (tiletype==='table'){
-            this_.tiles[i].ddttable.update_parameters();
-//             this_.parameters[i] = this_.tiles[i].ddttable.get_parameters();
-        } else if (tiletype==='html'){
-            this_.tiles[i].ddthtml.update_parameters();
-//             this_.parameters[i] = this_.tiles[i].ddthtml.get_parameters();
-        
+        var tiletype = this_.parameters[i].tiletype;
+        if (this_.tiles[i].tile.tile){ //check for removed tiles
+            // common methods to tiletypes = 'svg','table','html'
+            this_.tiles[i].update_parameters();	
+            // update tiletype-specific parameters
+            if (tiletype==='svg'){
+                this_.tiles[i].ddtsvg.update_parameters();
+            } else if (tiletype==='table'){
+                this_.tiles[i].ddttable.update_parameters();
+            } else if (tiletype==='html'){
+                this_.tiles[i].ddthtml.update_parameters();        
+            };
+        } else {
+            //remove tile2datamap and parameters
+            delete this_.tiles[i];
+            delete this_.parameters[i];
+            var tiledataindex = this_.tile2datamap[tileid];
+            delete this_.tile2datamap[tileid];
+            //count the number of occurances of the data left
+            //if === 0 remove the associated data
+            for (var i=0; i<tiledataindex.length; i++){
+                var datacnt = 0;
+                for (var k in this_.tile2datamap){
+                    if (this_.tile2datamap[k].includes(tiledataindex[i])){
+                        datacnt++;
+                    }
+                }
+                if (datacnt === 0){
+                    delete this_.data[tiledataindex];
+                }
+            }
         };
     };
 
