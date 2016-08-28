@@ -359,8 +359,15 @@ ddt_container.prototype.__main__ = function(parameters,data,tile2datamap,filterm
     if (typeof(parameters) !== "undefined") {ddt_test.set_parameters(parameters);};
     if (typeof(data) !== "undefined") {ddt_test.add_data(data);};
     if (typeof(tile2datamap) !== "undefined") {ddt_test.set_tile2datamap(tile2datamap);};
-    //add container options menu
-    if (!ddt_test.containerheader){
+    //add container options menu if it is not instanciated
+    //or it is not in the parameters
+    var headerparameter = false;
+    for (var i=0;i<parameters.length;i++){
+        if (parameters[i].tileid==="containerheader"){
+            headerparameter = true;
+        }
+    }
+    if (!ddt_test.containerheader && !headerparameter){
         ddt_test.add_headerparameters();
         ddt_test.add_headerdata();
         ddt_test.add_headertile2datamap();

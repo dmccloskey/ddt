@@ -14,14 +14,17 @@ ddt_container.prototype.add_headerparameters = function(){
 };
 ddt_container.prototype.add_headerdata = function(){
     // add header row data
-    var data = {"data":[{"version":"developer"}],
-            "datakeys":['version'],
-            "datanestkeys":['version']}
+    var data = [
+        {"data":[{"version":"developer"}],
+        "datakeys":['version'],
+        "datanestkeys":['version']
+        }
+    ];
     this.add_data(data);
 };
 ddt_container.prototype.add_headertile2datamap = function(){
     // add header row tile2datamap
-    var datalength = this.data.length;
+    var datalength = this.data.length-1;
     var tile2datamap = {'containerheader':[datalength]};
     this.add_tile2datamap(tile2datamap);
 };

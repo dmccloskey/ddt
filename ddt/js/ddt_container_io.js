@@ -164,7 +164,7 @@ ddt_container.prototype.get_filtermenu = function(){
 ddt_container.prototype.get_alldata = function(){
     //return all container data in string format
     this.update_tileParametersFromNodes();
-    var parameters_json = this.get_parameters();
+    var parameters_json = this.get_parameters(true);
     var data_json = this.get_data(true);
     var tile2datamap_json = this.get_tile2datamap();
     var filtermenu_json = this.get_filtermenu();
@@ -340,7 +340,14 @@ ddt_container.prototype.update_tileParametersFromNodes = function(start_index_I=
 
     */ 
     var this_ = this;
-    for (var i=start_index_I;i<this.parameters.length;i++){
+    var parameters = [];
+    var tiles = [];
+    var tile2datamap = {};
+    var data = [];
+    for (var i=0;i<this_.data.length;i++){
+        data.push(null);
+    };
+    for (var i=start_index_I;i<this_.parameters.length;i++){
         var tileid = this_.parameters[i].tileid;
         var tiletype = this_.parameters[i].tiletype;
         if (this_.tiles[i].tile.tile){ //check for removed tiles
@@ -354,26 +361,57 @@ ddt_container.prototype.update_tileParametersFromNodes = function(start_index_I=
             } else if (tiletype==='html'){
                 this_.tiles[i].ddthtml.update_parameters();        
             };
-        } else {
-            //remove tile2datamap and parameters
-            delete this_.tiles[i];
-            delete this_.parameters[i];
+            // rebuild the lists and objects
+            tiles.push(this_.tiles[i]);
+            parameters.push(this_.parameters[i]);
+            tile2datamap[tileid] = this_.tile2datamap[tileid];
             var tiledataindex = this_.tile2datamap[tileid];
-            delete this_.tile2datamap[tileid];
-            //count the number of occurances of the data left
-            //if === 0 remove the associated data
-            for (var i=0; i<tiledataindex.length; i++){
-                var datacnt = 0;
-                for (var k in this_.tile2datamap){
-                    if (this_.tile2datamap[k].includes(tiledataindex[i])){
-                        datacnt++;
-                    }
-                }
-                if (datacnt === 0){
-                    delete this_.data[tiledataindex];
-                }
-            }
+            for (var j=0; j<tiledataindex.length; j++){
+                data[tiledataindex[j]] = this_.data[tiledataindex[j]];
+            };                
+//         } else {
+//             //remove tile2datamap and parameters
+// //             this_.tiles.slice(i,1);
+// //             this_.parameters.slice(i,1);
+//             delete this_.tiles[i];
+//             delete this_.parameters[i];
+//             var tiledataindex = this_.tile2datamap[tileid];
+//             //count the number of occurances of the data left
+//             //if === 0 remove the associated data
+//             for (var i=0; i<tiledataindex.length; i++){
+//                 var datacnt = 0;
+//                 for (var k in this_.tile2datamap){
+//                     if (this_.tile2datamap[k].includes(tiledataindex[i])){
+//                         datacnt++;
+//                     }
+//                 }
+//                 if (datacnt === 0){
+//                     delete this_.data[tiledataindex];
+//                 }
+//             }
+//             delete this_.tile2datamap[tileid];
         };
     };
+    this.parameters = parameters;
+    this.tiles = tiles;
+
+    //re-normalize indexes of data and tile2datamap
+    var nullDataIndices = [];
+    data.forEach(function(d,i){
+        if (d===null || d===undefined){
+            nullDataindices.push(i);
+        };
+    });
+    data.filter(function(d){return d!==null;});
+    var nullDataIndicesMin = Math.min(nullDataIndices);
+    for (var k in tile2datamap){
+        for (var i=0;i<tile2datamap[k].length;i++){
+            if (tile2datamap[k][i]>nullDataIndicesMin){
+                tile2datamap[k][i] = tile2datamap[k][i]-nullDataIndices.length;
+            };
+        };
+    };
+    this.tile2datamap = tile2datamap;
+    this.data = data;
 
 };
