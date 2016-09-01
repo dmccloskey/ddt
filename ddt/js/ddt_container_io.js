@@ -395,14 +395,15 @@ ddt_container.prototype.update_tileParametersFromNodes = function(start_index_I=
     this.parameters = parameters;
     this.tiles = tiles;
 
+    //remove null values from data
     //re-normalize indexes of data and tile2datamap
     var nullDataIndices = [];
     data.forEach(function(d,i){
         if (d===null || d===undefined){
-            nullDataindices.push(i);
+            nullDataIndices.push(i);
         };
     });
-    data.filter(function(d){return d!==null;});
+    var data = data.filter(function(d){return d!==null;});
     var nullDataIndicesMin = Math.min(nullDataIndices);
     for (var k in tile2datamap){
         for (var i=0;i<tile2datamap[k].length;i++){
@@ -413,5 +414,4 @@ ddt_container.prototype.update_tileParametersFromNodes = function(start_index_I=
     };
     this.tile2datamap = tile2datamap;
     this.data = data;
-
 };

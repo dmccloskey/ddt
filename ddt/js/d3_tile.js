@@ -629,6 +629,8 @@ d3_tile.prototype.set_draganddrop = function () {
 
     this.tile.attr("draggable", "true")
         .on("dragstart", drag);
+//     this.tileheader.attr("draggable", "true")
+//         .on("dragstart", drag);
 };
 d3_tile.prototype.trigger_drop = function() {
     // drop event function
