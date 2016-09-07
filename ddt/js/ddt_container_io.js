@@ -398,17 +398,23 @@ ddt_container.prototype.update_tileParametersFromNodes = function(start_index_I=
     //remove null values from data
     //re-normalize indexes of data and tile2datamap
     var nullDataIndices = [];
+    nullDataIndices.sort(function(a, b){return a-b});
     data.forEach(function(d,i){
         if (d===null || d===undefined){
             nullDataIndices.push(i);
         };
     });
     var data = data.filter(function(d){return d!==null;});
-    var nullDataIndicesMin = Math.min(nullDataIndices);
     for (var k in tile2datamap){
         for (var i=0;i<tile2datamap[k].length;i++){
-            if (tile2datamap[k][i]>nullDataIndicesMin){
-                tile2datamap[k][i] = tile2datamap[k][i]-nullDataIndices.length;
+            var nullDataIndicesMax = null;
+            for (var j=0;j<nullDataIndices.length;j++){
+                if (tile2datamap[k][i]>nullDataIndices[j]){
+                    var nullDataIndicesMax =nullDataIndices[j];
+                };
+            };
+            if (nullDataIndicesMax!==null){
+                tile2datamap[k][i] = tile2datamap[k][i]-nullDataIndices.indexOf(nullDataIndicesMax)-1;
             };
         };
     };
