@@ -84,6 +84,6 @@ ddt_table_responsivecrosstable_01.prototype.make_table = function(data_I,paramet
 		this.set_tablestyle();
 		this.set_headerstyle();
 		this.set_cellstyle();
-		this.add_tablesort(parameters_I.tablesort);
+		//this.add_tablesort(parameters_I.tablesort);
     };
 }
